@@ -1,30 +1,148 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMockReport } from "@/lib/mock-analytics-data";
+import { getMockMultiChannelReport } from "@/lib/mock-analytics-data";
+import { hasYouTubeCredentials, getAccessToken, getChannelConfigs } from "@/lib/youtube/token";
+import {
+  fetchChannelStats,
+  fetchChannelVideos,
+  fetchDailyMetrics,
+  fetchVideoAnalytics,
+} from "@/lib/youtube/client";
+import type { MultiChannelReport, DailyMetric, VideoStats } from "@/lib/types";
 
-const ANALYTICS_API = process.env.ANALYTICS_API_URL ?? "http://localhost:8000";
+function daysAgoDate(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString().slice(0, 10);
+}
+
+function todayDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Combine daily metrics from multiple channels. CTR is weighted by impressions. */
+function combineDailyMetrics(...metricSets: DailyMetric[][]): DailyMetric[] {
+  const byDay = new Map<string, DailyMetric>();
+
+  for (const metrics of metricSets) {
+    for (const m of metrics) {
+      const existing = byDay.get(m.day);
+      if (existing) {
+        const totalViews = existing.views + m.views;
+        existing.views = totalViews;
+        existing.watch_time_minutes += m.watch_time_minutes;
+        existing.subscribers_gained += m.subscribers_gained;
+        existing.likes += m.likes;
+        // Weighted averages
+        existing.avg_view_duration_seconds = totalViews > 0
+          ? (existing.avg_view_duration_seconds * existing.views + m.avg_view_duration_seconds * m.views) / totalViews
+          : 0;
+        existing.avg_view_percentage = totalViews > 0
+          ? (existing.avg_view_percentage * existing.views + m.avg_view_percentage * m.views) / totalViews
+          : 0;
+      } else {
+        byDay.set(m.day, { ...m });
+      }
+    }
+  }
+
+  return Array.from(byDay.values()).sort((a, b) => a.day.localeCompare(b.day));
+}
+
+async function fetchChannelData(
+  channelConfig: { id: string; label: string; refreshToken: string },
+  startDate: string,
+  endDate: string
+) {
+  const token = await getAccessToken(channelConfig);
+
+  const [stats, videos, daily] = await Promise.all([
+    fetchChannelStats(token, channelConfig.id),
+    fetchChannelVideos(token, channelConfig.id),
+    fetchDailyMetrics(token, channelConfig.id, startDate, endDate),
+  ]);
+
+  // Enrich videos with analytics data
+  const videoIds = videos.map((v) => v.video_id);
+  let enrichedVideos: VideoStats[] = videos;
+
+  if (videoIds.length > 0) {
+    const analytics = await fetchVideoAnalytics(
+      token,
+      channelConfig.id,
+      videoIds,
+      startDate,
+      endDate
+    );
+
+    enrichedVideos = videos.map((v) => {
+      const a = analytics.get(v.video_id);
+      return {
+        ...v,
+        impressions: a?.impressions ?? v.impressions,
+        ctr: a?.ctr ?? v.ctr,
+        watch_time_minutes: a?.watch_time_minutes ?? v.watch_time_minutes,
+        channel_label: channelConfig.label,
+      };
+    });
+  }
+
+  return { stats, videos: enrichedVideos, daily };
+}
 
 export async function GET(req: NextRequest) {
-  const days = req.nextUrl.searchParams.get("days") ?? "30";
+  const days = Number(req.nextUrl.searchParams.get("days") ?? "30");
+  const channels = getChannelConfigs();
+
+  if (!hasYouTubeCredentials() || channels.length === 0) {
+    const report = getMockMultiChannelReport(days);
+    return NextResponse.json(report);
+  }
 
   try {
-    const res = await fetch(`${ANALYTICS_API}/api/report?days=${days}`, {
-      headers: { Accept: "application/json" },
-    });
+    const startDate = daysAgoDate(days);
+    const endDate = todayDate();
 
-    if (!res.ok) {
-      return NextResponse.json(
-        { error: `Upstream error: ${res.status}` },
-        { status: res.status }
-      );
+    // Fetch all channels in parallel (each with its own token)
+    const results = await Promise.all(
+      channels.map((ch) => fetchChannelData(ch, startDate, endDate))
+    );
+
+    const perChannel: MultiChannelReport["per_channel"] = {};
+    const allVideos: VideoStats[] = [];
+    const allDailyMetrics: DailyMetric[][] = [];
+    const allChannelStats = [];
+
+    for (let i = 0; i < channels.length; i++) {
+      const ch = channels[i];
+      const data = results[i];
+      perChannel[ch.id] = {
+        channel: data.stats,
+        videos: data.videos,
+        daily_metrics: data.daily,
+      };
+      allVideos.push(...data.videos);
+      allDailyMetrics.push(data.daily);
+      allChannelStats.push(data.stats);
     }
 
-    const data = await res.json();
-    return NextResponse.json(data, {
+    allVideos.sort(
+      (a, b) =>
+        new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+    );
+
+    const report: MultiChannelReport = {
+      channels: allChannelStats,
+      videos: allVideos,
+      daily_metrics: combineDailyMetrics(...allDailyMetrics),
+      per_channel: perChannel,
+    };
+
+    return NextResponse.json(report, {
       headers: { "Cache-Control": "s-maxage=300, stale-while-revalidate=60" },
     });
-  } catch {
-    // Analytics API unreachable — serve mock data for demo
-    const report = getMockReport(Number(days) || 30);
+  } catch (error) {
+    console.error("YouTube API error, falling back to mock:", error);
+    const report = getMockMultiChannelReport(days);
     return NextResponse.json(report);
   }
 }

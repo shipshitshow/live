@@ -11,12 +11,21 @@ import {
 } from "recharts";
 import { format, parseISO } from "date-fns";
 
-interface TimeSeriesChartProps<T extends { day: string } = { day: string }> {
-  data: T[];
+export interface ChartLine {
+  dataKey: string;
+  color: string;
+  label: string;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+interface TimeSeriesChartProps {
+  data: any[];
   dataKey: string;
   color?: string;
   formatValue?: (v: number) => string;
   formatTick?: (v: number) => string;
+  /** Additional lines to overlay (for multi-channel "All" view) */
+  lines?: ChartLine[];
 }
 
 function CustomTooltip({
@@ -26,20 +35,27 @@ function CustomTooltip({
   formatValue,
 }: {
   active?: boolean;
-  payload?: Array<{ value: number }>;
+  payload?: Array<{ value: number; stroke: string; name: string }>;
   label?: string;
   formatValue?: (v: number) => string;
 }) {
   if (!active || !payload?.length) return null;
-  const value = payload[0].value;
   return (
     <div className="bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-sm shadow-xl">
-      <div className="text-text-secondary mb-0.5">
+      <div className="text-text-secondary mb-1">
         {label ? format(parseISO(label), "MMM d") : ""}
       </div>
-      <div className="text-text-primary font-semibold">
-        {formatValue ? formatValue(value) : value.toLocaleString()}
-      </div>
+      {payload.map((entry, i) => (
+        <div key={i} className="flex items-center gap-2">
+          <span
+            className="w-2 h-2 rounded-full shrink-0"
+            style={{ backgroundColor: entry.stroke }}
+          />
+          <span className="text-text-primary font-semibold">
+            {formatValue ? formatValue(entry.value) : entry.value.toLocaleString()}
+          </span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -50,7 +66,11 @@ export function TimeSeriesChart({
   color = "#ff2d20",
   formatValue,
   formatTick,
+  lines,
 }: TimeSeriesChartProps) {
+  // If lines are provided, render multiple lines; otherwise single line
+  const renderLines = lines && lines.length > 0;
+
   return (
     <ResponsiveContainer width="100%" height={180}>
       <LineChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
@@ -74,14 +94,29 @@ export function TimeSeriesChart({
           content={<CustomTooltip formatValue={formatValue} />}
           cursor={{ stroke: "#2a2a2a", strokeWidth: 1 }}
         />
-        <Line
-          type="monotone"
-          dataKey={dataKey}
-          stroke={color}
-          strokeWidth={2}
-          dot={false}
-          activeDot={{ r: 4, fill: color, strokeWidth: 0 }}
-        />
+        {renderLines ? (
+          lines.map((line) => (
+            <Line
+              key={line.dataKey}
+              type="monotone"
+              dataKey={line.dataKey}
+              name={line.label}
+              stroke={line.color}
+              strokeWidth={2}
+              dot={false}
+              activeDot={{ r: 4, fill: line.color, strokeWidth: 0 }}
+            />
+          ))
+        ) : (
+          <Line
+            type="monotone"
+            dataKey={dataKey}
+            stroke={color}
+            strokeWidth={2}
+            dot={false}
+            activeDot={{ r: 4, fill: color, strokeWidth: 0 }}
+          />
+        )}
       </LineChart>
     </ResponsiveContainer>
   );
