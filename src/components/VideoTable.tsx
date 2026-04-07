@@ -1,16 +1,16 @@
 "use client";
 
 import { useState } from "react";
-import { formatNumber, formatCtr, formatWatchTime } from "@/lib/format";
+import { formatNumber, formatWatchTime } from "@/lib/format";
 import type { VideoStats } from "@/lib/types";
 
-type SortKey = "views" | "ctr" | "watch_time_minutes" | "impressions";
+type SortKey = "views" | "likes" | "comments" | "watch_time_minutes";
 
 const PAGE_SIZE = 10;
 
 const CHANNEL_HANDLES: Record<string, { handle: string; cls: string }> = {
   main: { handle: "@shipshitshow", cls: "bg-accent-red/20 text-accent-red" },
-  clips: { handle: "@sssclips", cls: "bg-blue-500/20 text-blue-400" },
+  clips: { handle: "@sssclips", cls: "bg-red-400/20 text-red-400" },
 };
 
 export function VideoTable({ videos, showChannel = false }: { videos: VideoStats[]; showChannel?: boolean }) {
@@ -33,8 +33,8 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
 
   const cols: { key: SortKey; label: string }[] = [
     { key: "views", label: "Views" },
-    { key: "impressions", label: "Impressions" },
-    { key: "ctr", label: "CTR" },
+    { key: "likes", label: "Likes" },
+    { key: "comments", label: "Comments" },
     { key: "watch_time_minutes", label: "Watch Time" },
   ];
 
@@ -90,10 +90,10 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
                     {formatNumber(v.views)}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
-                    {v.impressions ? formatNumber(v.impressions) : "—"}
+                    {formatNumber(v.likes)}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
-                    {v.ctr ? formatCtr(v.ctr) : "—"}
+                    {formatNumber(v.comments)}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
                     {v.watch_time_minutes ? formatWatchTime(v.watch_time_minutes) : "—"}

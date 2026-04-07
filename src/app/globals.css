@@ -36,3 +36,22 @@ body {
 .recharts-tooltip-wrapper {
   outline: none !important;
 }
+
+/* react-tweet dark theme overrides */
+.tweet-embed {
+  --tweet-bg-color: #1a1a1a;
+  --tweet-border: 1px solid #2a2a2a;
+  --tweet-font-family: 'Space Grotesk', sans-serif;
+  --tweet-font-color: #f0f0f0;
+  --tweet-font-color-secondary: #a0a0a0;
+  --tweet-color-blue-secondary: #ff2d20;
+  --tweet-border-radius: 12px;
+}
+
+.tweet-embed > div {
+  margin: 0 !important;
+}
+
+.tweet-embed [data-theme="light"] {
+  color-scheme: dark;
+}

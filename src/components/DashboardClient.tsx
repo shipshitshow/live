@@ -39,7 +39,7 @@ export function DashboardClient() {
   // Channel label colors for multi-line charts
   const CHANNEL_COLORS: Record<string, string> = {
     main: "#ff2d20",
-    clips: "#3b82f6",
+    clips: "#ff7b72",
   };
 
   const { channels, daily, videos, headerTitle, headerSub, multiChartData, isMulti } = useMemo(() => {
@@ -172,103 +172,150 @@ export function DashboardClient() {
       </div>
 
       {/* KPI cards */}
-      <div
-        className={`grid grid-cols-2 md:grid-cols-4 gap-4 transition-opacity duration-200 ${loading ? "opacity-50" : ""}`}
-      >
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           label="Views"
           value={formatNumber(periodViews)}
           sub={`last ${days} days`}
+          loading={loading}
         />
         <StatCard
           label="Watch Time"
           value={formatWatchTime(periodWatchTime)}
           sub={`last ${days} days`}
+          loading={loading}
         />
         <StatCard
           label="Subscribers Gained"
           value={formatNumber(periodSubs)}
           sub={`last ${days} days`}
           accent={periodSubs > 0}
+          loading={loading}
         />
         <StatCard
           label="Avg View %"
           value={`${avgViewPct.toFixed(1)}%`}
           sub={`last ${days} days`}
+          loading={loading}
         />
       </div>
 
       {/* Time-series charts */}
-      <div className={`grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity duration-200 ${loading ? "opacity-50" : ""}`}>
-        <div className="bg-surface-card border border-surface-border rounded-xl p-5">
-          <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest mb-4">
-            Views over time
-          </h3>
-          <TimeSeriesChart
-            data={isMulti && multiChartData ? multiChartData : daily}
-            dataKey="views"
-            formatValue={formatNumber}
-            formatTick={(v: number) => formatNumber(v)}
-            lines={isMulti ? makeLines("views") : undefined}
-          />
-        </div>
-
-        <div className="bg-surface-card border border-surface-border rounded-xl p-5">
-          <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest mb-4">
-            Subscriber growth
-          </h3>
-          <TimeSeriesChart
-            data={isMulti && multiChartData ? multiChartData : daily}
-            dataKey="subscribers_gained"
-            color="#22c55e"
-            formatValue={(v: number) => `+${formatNumber(v)}`}
-            formatTick={(v: number) => formatNumber(v)}
-            lines={isMulti ? makeLines("subscribers_gained") : undefined}
-          />
-        </div>
-
-        <div className="bg-surface-card border border-surface-border rounded-xl p-5">
-          <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest mb-4">
-            Watch time (minutes)
-          </h3>
-          <TimeSeriesChart
-            data={isMulti && multiChartData ? multiChartData : daily}
-            dataKey="watch_time_minutes"
-            color="#f59e0b"
-            formatValue={formatWatchTime}
-            formatTick={(v: number) => formatWatchTime(v)}
-            lines={isMulti ? makeLines("watch_time_minutes") : undefined}
-          />
-        </div>
-
-        <div className="bg-surface-card border border-surface-border rounded-xl p-5">
-          <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest mb-4">
-            Avg view %
-          </h3>
-          <TimeSeriesChart
-            data={isMulti && multiChartData ? multiChartData : daily}
-            dataKey="avg_view_percentage"
-            color="#8b5cf6"
-            formatValue={(v: number) => `${v.toFixed(1)}%`}
-            formatTick={(v: number) => `${v.toFixed(0)}%`}
-            lines={isMulti ? makeLines("avg_view_percentage") : undefined}
-          />
-        </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {[
+          { label: "Views over time", key: "views", color: undefined, fmtVal: formatNumber, fmtTick: (v: number) => formatNumber(v) },
+          { label: "Subscriber growth", key: "subscribers_gained", color: "#22c55e", fmtVal: (v: number) => `+${formatNumber(v)}`, fmtTick: (v: number) => formatNumber(v) },
+          { label: "Watch time (minutes)", key: "watch_time_minutes", color: "#f59e0b", fmtVal: formatWatchTime, fmtTick: (v: number) => formatWatchTime(v) },
+          { label: "Avg view %", key: "avg_view_percentage", color: "#8b5cf6", fmtVal: (v: number) => `${v.toFixed(1)}%`, fmtTick: (v: number) => `${v.toFixed(0)}%` },
+        ].map((chart) => (
+          <div key={chart.key} className="bg-surface-card border border-surface-border rounded-xl p-5">
+            <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest mb-4">
+              {chart.label}
+            </h3>
+            {loading ? (
+              <ChartSkeleton />
+            ) : (
+              <TimeSeriesChart
+                data={isMulti && multiChartData ? multiChartData : daily}
+                dataKey={chart.key}
+                color={chart.color}
+                formatValue={chart.fmtVal}
+                formatTick={chart.fmtTick}
+                lines={isMulti ? makeLines(chart.key) : undefined}
+              />
+            )}
+          </div>
+        ))}
       </div>
 
       {/* Best performers */}
-      <div className={`transition-opacity duration-200 ${loading ? "opacity-50" : ""}`}>
+      {loading ? (
+        <TopVideosSkeleton />
+      ) : (
         <TopVideos videos={videos} />
-      </div>
+      )}
 
       {/* Videos table */}
-      <div className={`bg-surface-card border border-surface-border rounded-xl transition-opacity duration-200 ${loading ? "opacity-50" : ""}`}>
-        <div className="px-5 pt-5 pb-3 border-b border-surface-border">
-          <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
-            Videos — {videos.length} total
-          </h3>
+      {loading ? (
+        <VideoTableSkeleton />
+      ) : (
+        <div className="bg-surface-card border border-surface-border rounded-xl">
+          <div className="px-5 pt-5 pb-3 border-b border-surface-border">
+            <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+              Videos — {videos.length} total
+            </h3>
+          </div>
+          <VideoTable videos={videos} showChannel={channelFilter === "all" && channels.length > 1} />
         </div>
-        <VideoTable videos={videos} showChannel={channelFilter === "all" && channels.length > 1} />
+      )}
+    </div>
+  );
+}
+
+const SKELETON_HEIGHTS = [43, 50, 62, 52, 47, 28, 15, 19, 27, 48, 45, 52, 71, 41, 26, 14, 9, 14, 30, 54];
+
+function ChartSkeleton() {
+  return (
+    <div className="h-[180px] flex items-end gap-1.5 px-2">
+      {SKELETON_HEIGHTS.map((h, i) => (
+        <div
+          key={i}
+          className="flex-1 bg-surface-elevated rounded-t animate-pulse"
+          style={{ height: `${h}%` }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function TopVideosSkeleton() {
+  return (
+    <div className="bg-surface-card border border-surface-border rounded-xl">
+      <div className="px-5 pt-5 pb-3 border-b border-surface-border">
+        <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+          Best Performers
+        </h3>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-surface-border">
+        {[0, 1, 2].map((col) => (
+          <div key={col} className="p-5">
+            <div className="h-4 w-16 bg-surface-elevated rounded animate-pulse mb-4" />
+            <div className="flex flex-col gap-4">
+              {[0, 1, 2].map((row) => (
+                <div key={row} className="flex gap-3">
+                  <div className="w-5 h-5 bg-surface-elevated rounded animate-pulse" />
+                  <div className="w-28 h-16 bg-surface-elevated rounded-lg animate-pulse shrink-0" />
+                  <div className="flex-1 space-y-2">
+                    <div className="h-3 w-full bg-surface-elevated rounded animate-pulse" />
+                    <div className="h-3 w-2/3 bg-surface-elevated rounded animate-pulse" />
+                    <div className="h-2 w-1/2 bg-surface-elevated rounded animate-pulse mt-1" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VideoTableSkeleton() {
+  return (
+    <div className="bg-surface-card border border-surface-border rounded-xl">
+      <div className="px-5 pt-5 pb-3 border-b border-surface-border">
+        <div className="h-3 w-28 bg-surface-elevated rounded animate-pulse" />
+      </div>
+      <div className="divide-y divide-surface-border/50">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className="flex items-center gap-4 px-4 py-3">
+            <div className="h-3 flex-1 max-w-xs bg-surface-elevated rounded animate-pulse" />
+            <div className="h-3 w-12 bg-surface-elevated rounded animate-pulse" />
+            <div className="h-3 w-12 bg-surface-elevated rounded animate-pulse" />
+            <div className="h-3 w-10 bg-surface-elevated rounded animate-pulse" />
+            <div className="h-3 w-14 bg-surface-elevated rounded animate-pulse" />
+          </div>
+        ))}
       </div>
     </div>
   );

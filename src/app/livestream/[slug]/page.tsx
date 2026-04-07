@@ -5,6 +5,7 @@ import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Topic, ContentField } from "@/lib/livestream-types";
 import { ContentGeneratorPanel } from "@/components/livestream/ContentGeneratorPanel";
+import { TweetEmbed, isTweetUrl } from "@/components/livestream/TweetEmbed";
 
 const SOURCE_COLORS: Record<string, string> = {
   HN: "bg-orange-500/20 text-orange-400",
@@ -208,18 +209,11 @@ function getBadgeForUrl(url: string): { badge: string; cls: string } {
   }
 }
 
-const SEGMENT_ACCENTS: Record<string, string> = {
-  intro: "border-l-blue-500",
-  segment: "border-l-accent-red",
-  hottake: "border-l-yellow-500",
-  conclusion: "border-l-green-500",
-};
-
-const SEGMENT_TIME_BG: Record<string, string> = {
-  intro: "bg-blue-500/10 text-blue-400",
-  segment: "bg-accent-red/10 text-accent-red",
-  hottake: "bg-yellow-500/10 text-yellow-400",
-  conclusion: "bg-green-500/10 text-green-400",
+const SEGMENT_COLORS: Record<string, { time: string; dot: string; line: string }> = {
+  intro: { time: "text-blue-400", dot: "bg-blue-400", line: "bg-blue-400/20" },
+  segment: { time: "text-accent-red", dot: "bg-accent-red", line: "bg-accent-red/20" },
+  hottake: { time: "text-yellow-400", dot: "bg-yellow-400", line: "bg-yellow-400/20" },
+  conclusion: { time: "text-green-400", dot: "bg-green-400", line: "bg-green-400/20" },
 };
 
 export default function TopicDetailPage() {
@@ -294,12 +288,14 @@ export default function TopicDetailPage() {
       {/* Header */}
       <header className="border-b border-surface-border px-6 py-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-accent-red flex items-center justify-center">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="white">
-              <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81z" />
-              <path d="M9.75 15.02V8.98L15.5 12l-5.75 3.02z" fill="#ff2d20" />
+          <Link
+            href={`/livestream?date=${date}`}
+            className="w-8 h-8 rounded-lg bg-surface-card border border-surface-border flex items-center justify-center hover:border-accent-red/30 transition-colors"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
+              <path d="M15 18l-6-6 6-6" />
             </svg>
-          </div>
+          </Link>
           <div>
             <h1 className="text-sm font-semibold text-text-primary leading-none">
               {topic.title}
@@ -320,92 +316,118 @@ export default function TopicDetailPage() {
         </div>
         <nav className="flex items-center gap-4 text-xs text-text-secondary">
           <Link href="/" className="hover:text-text-primary transition-colors">Analytics</Link>
-          <Link href="/review" className="hover:text-text-primary transition-colors">Review Queue</Link>
+          <Link href="/review" className="hover:text-text-primary transition-colors">Unpublished</Link>
           <Link href="/livestream" className="hover:text-text-primary transition-colors">Livestream</Link>
         </nav>
       </header>
 
       {/* Two-column layout */}
       <div className="flex" style={{ height: "calc(100vh - 65px)" }}>
-        {/* Left: Show Rundown */}
-        <main className="flex-1 overflow-y-auto p-6">
-          {/* Summary */}
-          {sections.find((s) => s.heading === "Summary") && (
-            <div className="bg-surface-elevated border border-surface-border rounded-xl p-5 mb-6">
-              <p className="text-sm text-text-secondary leading-relaxed italic">
-                {sections.find((s) => s.heading === "Summary")!.body}
-              </p>
-            </div>
-          )}
+        {/* Left: Show Rundown — timeline layout */}
+        <main className="flex-1 overflow-y-auto px-8 py-8">
+          <div className="relative">
+            {segments.map((seg, segIdx) => {
+              const colors = SEGMENT_COLORS[seg.type];
+              const isLast = segIdx === segments.length - 1;
 
-          {/* Show Rundown */}
-          <div className="flex flex-col gap-4">
-            {segments.map((seg) => (
-              <div
-                key={seg.number}
-                className={`bg-surface-card border border-surface-border rounded-xl p-5 border-l-[3px] ${SEGMENT_ACCENTS[seg.type]}`}
-              >
-                {/* Segment header */}
-                <div className="flex items-center gap-3 mb-3">
-                  <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${SEGMENT_TIME_BG[seg.type]}`}>
-                    {seg.time}
-                  </span>
-                  <h2 className="text-sm font-bold text-text-primary">{seg.label}</h2>
-                  <span className="text-[10px] text-text-muted font-mono ml-auto">{seg.duration}</span>
-                </div>
-
-                {/* Hot take = raw text block */}
-                {seg.rawText && (
-                  <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-4">
-                    <p className="text-sm text-text-secondary leading-relaxed">
-                      {seg.rawText}
-                    </p>
+              return (
+                <div key={seg.number} className="relative flex gap-6 pb-10 last:pb-0">
+                  {/* Timeline track */}
+                  <div className="flex flex-col items-center shrink-0 w-12">
+                    <span className={`text-[10px] font-mono font-bold ${colors.time} mb-2`}>
+                      {seg.time}
+                    </span>
+                    <div className={`w-2.5 h-2.5 rounded-full ${colors.dot} shrink-0 ring-4 ring-surface`} />
+                    {!isLast && (
+                      <div className={`w-px flex-1 mt-2 ${colors.line}`} />
+                    )}
                   </div>
-                )}
 
-                {/* Talking points with inline sources */}
-                {seg.points.length > 0 && (
-                  <div className="space-y-3">
-                    {seg.points.map((point, i) => (
-                      <div key={i} className="group">
-                        {/* Main bullet */}
-                        <div className="flex gap-2 text-sm text-text-secondary leading-relaxed">
-                          <span className="text-text-muted select-none shrink-0 mt-0.5">
-                            {seg.type === "hottake" ? "\u26A1" : "\u2022"}
-                          </span>
-                          <span>{renderInlineLinks(point.text)}</span>
-                        </div>
+                  {/* Segment content */}
+                  <div className="flex-1 min-w-0 -mt-1">
+                    {/* Header */}
+                    <div className="flex items-baseline gap-3 mb-4">
+                      <h2 className="text-lg font-bold text-text-primary tracking-tight">{seg.label}</h2>
+                      <span className="text-[10px] text-text-muted font-mono">{seg.duration}</span>
+                    </div>
 
-                        {/* Inline source links */}
-                        {point.sources.length > 0 && (
-                          <div className="ml-5 mt-1.5 flex flex-wrap gap-1.5">
-                            {point.sources.map((src, j) => {
-                              const { badge, cls } = getBadgeForUrl(src.url);
-                              return (
-                                <a
-                                  key={j}
-                                  href={src.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-surface-elevated border border-surface-border hover:border-accent-red/30 transition-colors group/link"
-                                >
-                                  <span className={`text-[8px] font-mono font-bold px-1 py-0.5 rounded ${cls}`}>
-                                    {badge}
-                                  </span>
-                                  <span className="text-[11px] text-text-muted group-hover/link:text-text-secondary transition-colors truncate max-w-[280px]">
-                                    {src.text}
-                                  </span>
-                                </a>
-                              );
-                            })}
-                          </div>
-                        )}
+                    {/* Hot take = raw text block */}
+                    {seg.rawText && (
+                      <div className="bg-yellow-500/5 border-l-2 border-yellow-500/40 pl-4 py-3 mb-4">
+                        <p className="text-[14px] text-text-secondary leading-[1.8]">
+                          {seg.rawText}
+                        </p>
                       </div>
-                    ))}
+                    )}
+
+                    {/* Talking points */}
+                    {seg.points.length > 0 && (
+                      <div className="flex flex-col gap-5">
+                        {seg.points.map((point, i) => (
+                          <div key={i} className="group">
+                            <div className="flex gap-4">
+                              {/* Point number */}
+                              <span className="text-[11px] font-mono font-bold text-text-muted/40 select-none shrink-0 pt-0.5 w-4 text-right">
+                                {seg.type === "hottake" ? "\u26A1" : `${i + 1}`}
+                              </span>
+
+                              <div className="flex-1 min-w-0">
+                                {/* Point text */}
+                                <p className="text-[14px] text-text-secondary leading-[1.8]">
+                                  {renderInlineLinks(point.text)}
+                                </p>
+
+                                {/* Sources */}
+                                {point.sources.length > 0 && (() => {
+                                  const tweets = point.sources.filter((s) => isTweetUrl(s.url));
+                                  const others = point.sources.filter((s) => !isTweetUrl(s.url));
+                                  return (
+                                    <div className="mt-3 space-y-2">
+                                      {/* Tweet embeds */}
+                                      {tweets.length > 0 && (
+                                        <div className="flex flex-wrap gap-3">
+                                          {tweets.map((src, j) => (
+                                            <TweetEmbed key={j} url={src.url} />
+                                          ))}
+                                        </div>
+                                      )}
+                                      {/* Other sources — compact */}
+                                      {others.length > 0 && (
+                                        <div className="flex flex-wrap gap-1">
+                                          {others.map((src, j) => {
+                                            const { badge, cls } = getBadgeForUrl(src.url);
+                                            return (
+                                              <a
+                                                key={j}
+                                                href={src.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] text-text-muted hover:text-text-secondary transition-colors"
+                                              >
+                                                <span className={`text-[8px] font-mono font-bold px-1 rounded ${cls}`}>
+                                                  {badge}
+                                                </span>
+                                                <span className="truncate max-w-[200px]">
+                                                  {src.text}
+                                                </span>
+                                              </a>
+                                            );
+                                          })}
+                                        </div>
+                                      )}
+                                    </div>
+                                  );
+                                })()}
+                              </div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                </div>
+              );
+            })}
           </div>
         </main>
 

@@ -1,0 +1,312 @@
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { formatNumber } from "@/lib/format";
+import { generateVideoContent, regenerateField, type VideoGeneratedContent } from "@/lib/video-content-generator";
+import type { VideoStats } from "@/lib/types";
+
+interface UnlistedVideo extends VideoStats {
+  description: string;
+  thumbnail_url: string;
+  privacy_status: string;
+}
+
+const CHANNEL_HANDLES: Record<string, { handle: string; cls: string }> = {
+  main: { handle: "@shipshitshow", cls: "bg-accent-red/20 text-accent-red" },
+  clips: { handle: "@sssclips", cls: "bg-blue-500/20 text-blue-400" },
+};
+
+function CopyButton({ text }: { text: string }) {
+  const [copied, setCopied] = useState(false);
+  return (
+    <button
+      onClick={() => {
+        navigator.clipboard.writeText(text);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+      }}
+      className="text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors shrink-0"
+    >
+      {copied ? "Copied!" : "Copy"}
+    </button>
+  );
+}
+
+function ContentBlock({
+  label,
+  content,
+  onRegen,
+}: {
+  label: string;
+  content: string;
+  onRegen: () => void;
+}) {
+  return (
+    <div className="bg-surface-elevated rounded-lg border border-surface-border overflow-hidden">
+      <div className="flex items-center justify-between px-3 py-2 border-b border-surface-border">
+        <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
+          {label}
+        </span>
+        <div className="flex gap-1.5">
+          <button
+            onClick={onRegen}
+            className="text-[10px] font-medium px-2 py-1 rounded bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+          >
+            Regen
+          </button>
+          <CopyButton text={content} />
+        </div>
+      </div>
+      <div className="px-3 py-2">
+        <pre className="text-xs text-text-secondary font-mono whitespace-pre-wrap leading-relaxed">
+          {content}
+        </pre>
+      </div>
+    </div>
+  );
+}
+
+function formatDuration(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+  return `${m}:${String(s).padStart(2, "0")}`;
+}
+
+export function UnpublishedClient() {
+  const [videos, setVideos] = useState<UnlistedVideo[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [selected, setSelected] = useState<UnlistedVideo | null>(null);
+  const [content, setContent] = useState<VideoGeneratedContent | null>(null);
+
+  const fetchVideos = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch("/api/unpublished");
+      const data = await res.json();
+      setVideos(data);
+    } catch {
+      setVideos([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchVideos();
+  }, [fetchVideos]);
+
+  function handleSelect(video: UnlistedVideo) {
+    setSelected(video);
+    setContent(null);
+  }
+
+  function handleGenerate() {
+    if (!selected) return;
+    const generated = generateVideoContent({
+      title: selected.title,
+      videoType: selected.video_type === "short" ? "short" : "video",
+      channelLabel: selected.channel_label || "main",
+      duration: selected.avg_view_duration_seconds,
+    });
+    setContent(generated);
+  }
+
+  function handleRegenField(field: keyof VideoGeneratedContent) {
+    if (!selected || !content) return;
+    const input = {
+      title: selected.title,
+      videoType: (selected.video_type === "short" ? "short" : "video") as "short" | "video",
+      channelLabel: selected.channel_label || "main",
+      duration: selected.avg_view_duration_seconds,
+    };
+    const newValue = regenerateField(input, field);
+    setContent({ ...content, [field]: newValue });
+  }
+
+  return (
+    <div className="flex" style={{ height: "calc(100vh - 65px)" }}>
+      {/* Left: Video list */}
+      <div className="flex-1 overflow-y-auto p-6">
+        {loading ? (
+          <div className="space-y-3 animate-pulse">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="bg-surface-card border border-surface-border rounded-xl h-24" />
+            ))}
+          </div>
+        ) : videos.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="text-text-muted text-4xl">📭</div>
+            <p className="text-text-secondary text-sm">No unlisted videos found</p>
+            <p className="text-text-muted text-xs">Upload a video as unlisted from Premiere, then refresh</p>
+            <button
+              onClick={fetchVideos}
+              className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
+            >
+              Refresh
+            </button>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            <div className="flex items-center justify-between mb-2">
+              <p className="text-xs text-text-muted">
+                {videos.length} unlisted video{videos.length !== 1 ? "s" : ""} ready for content
+              </p>
+              <button
+                onClick={fetchVideos}
+                className="text-xs px-3 py-1.5 bg-surface-card border border-surface-border rounded-lg text-text-muted hover:text-text-primary transition-colors"
+              >
+                Refresh
+              </button>
+            </div>
+
+            {videos.map((video) => {
+              const ch = video.channel_label
+                ? CHANNEL_HANDLES[video.channel_label]
+                : null;
+              const isSelected = selected?.video_id === video.video_id;
+
+              return (
+                <button
+                  key={video.video_id}
+                  onClick={() => handleSelect(video)}
+                  className={`w-full text-left flex gap-4 p-4 rounded-xl border transition-colors ${
+                    isSelected
+                      ? "bg-accent-red/5 border-accent-red/30"
+                      : "bg-surface-card border-surface-border hover:border-surface-border/80"
+                  }`}
+                >
+                  {/* Thumbnail */}
+                  {video.thumbnail_url && (
+                    <div className="w-32 h-[72px] rounded-lg overflow-hidden shrink-0 bg-surface-elevated">
+                      <img
+                        src={video.thumbnail_url}
+                        alt=""
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  )}
+
+                  {/* Info */}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      {ch && (
+                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${ch.cls}`}>
+                          {ch.handle}
+                        </span>
+                      )}
+                      {video.video_type === "short" && (
+                        <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400">
+                          SHORT
+                        </span>
+                      )}
+                      <span className="text-[9px] font-mono px-1.5 py-0.5 rounded bg-yellow-500/20 text-yellow-400">
+                        UNLISTED
+                      </span>
+                    </div>
+                    <p className="text-sm text-text-primary font-medium line-clamp-2">
+                      {video.title}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1.5 text-[10px] text-text-muted">
+                      <span>{formatDuration(video.avg_view_duration_seconds)}</span>
+                      <span>{formatNumber(video.views)} views</span>
+                      <span>{new Date(video.published_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {/* Right sidebar: Content generator */}
+      <aside className="w-[420px] shrink-0 border-l border-surface-border overflow-y-auto p-4">
+        {!selected ? (
+          <div className="flex items-center justify-center h-full">
+            <p className="text-xs text-text-muted text-center">
+              Select a video to generate<br />title, description &amp; social copy
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-4">
+            {/* Selected video header */}
+            <div className="bg-surface-card border border-surface-border rounded-xl p-4">
+              <p className="text-sm font-semibold text-text-primary line-clamp-2">
+                {selected.title}
+              </p>
+              <p className="text-[10px] text-text-muted mt-1">
+                {formatDuration(selected.avg_view_duration_seconds)} · {selected.video_type}
+              </p>
+              <div className="mt-3">
+                <button
+                  onClick={handleGenerate}
+                  className="w-full text-xs font-medium px-3 py-2 rounded-lg bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+                >
+                  {content ? "Regenerate All" : "Generate Content"}
+                </button>
+              </div>
+            </div>
+
+            {content && (
+              <>
+                {/* Title variants */}
+                <div className="bg-surface-elevated rounded-lg border border-surface-border overflow-hidden">
+                  <div className="flex items-center justify-between px-3 py-2 border-b border-surface-border">
+                    <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
+                      Title Variants
+                    </span>
+                    <button
+                      onClick={() => handleRegenField("titles")}
+                      className="text-[10px] font-medium px-2 py-1 rounded bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+                    >
+                      Regen
+                    </button>
+                  </div>
+                  <div className="p-3 space-y-2">
+                    {content.titles.map((t, i) => (
+                      <div
+                        key={i}
+                        className="flex items-start gap-2 group"
+                      >
+                        <span className="text-[10px] text-text-muted shrink-0 mt-0.5 w-4">
+                          {i + 1}.
+                        </span>
+                        <span className="text-xs text-text-secondary flex-1">
+                          {t}
+                        </span>
+                        <CopyButton text={t} />
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <ContentBlock
+                  label="YouTube Description"
+                  content={content.youtubeDescription}
+                  onRegen={() => handleRegenField("youtubeDescription")}
+                />
+                <ContentBlock
+                  label="LinkedIn Post"
+                  content={content.linkedinPost}
+                  onRegen={() => handleRegenField("linkedinPost")}
+                />
+                <ContentBlock
+                  label="Tweet — Announcement"
+                  content={content.announcementTweet}
+                  onRegen={() => handleRegenField("announcementTweet")}
+                />
+                <ContentBlock
+                  label="Tweet — Recap"
+                  content={content.recapTweet}
+                  onRegen={() => handleRegenField("recapTweet")}
+                />
+              </>
+            )}
+          </div>
+        )}
+      </aside>
+    </div>
+  );
+}
