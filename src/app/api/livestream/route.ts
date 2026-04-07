@@ -89,3 +89,42 @@ export async function GET(request: Request) {
   const topics = getTopicsForDate(date);
   return NextResponse.json(topics);
 }
+
+export async function POST(request: Request) {
+  const body = await request.json();
+  const { title, slug, source, date, content } = body as {
+    title: string;
+    slug: string;
+    source: string;
+    date: string;
+    content: string;
+  };
+
+  const dir = path.join(DATA_DIR, date);
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+
+  const existing = fs.readdirSync(dir).filter((f) => f.endsWith(".md")).sort();
+  const nextNum = existing.length + 1;
+  const padded = String(nextNum).padStart(2, "0");
+  const fileName = `topic-${padded}-${slug}.md`;
+
+  const markdown = `---
+title: "${title}"
+slug: "${slug}"
+source: "${source}"
+status: "backlog"
+date: "${date}"
+thumbnail_prompt: null
+---
+
+${content}
+
+## Generated Content
+`;
+
+  fs.writeFileSync(path.join(dir, fileName), markdown, "utf-8");
+
+  return NextResponse.json({ fileName, slug, status: "backlog" }, { status: 201 });
+}
