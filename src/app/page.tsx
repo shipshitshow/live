@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import Link from "next/link";
 import { DashboardClient } from "@/components/DashboardClient";
+import { DateDisplay } from "@/components/DateDisplay";
 
 export default function Home() {
   return (
@@ -21,12 +22,11 @@ export default function Home() {
         <div className="flex items-center gap-4">
           <nav className="flex items-center gap-4 text-xs text-text-secondary">
             <span className="text-text-primary font-medium">Analytics</span>
-            <Link href="/review" className="hover:text-text-primary transition-colors">Review Queue</Link>
+            <Link href="/review" className="hover:text-text-primary transition-colors">Unpublished</Link>
             <Link href="/livestream" className="hover:text-text-primary transition-colors">Livestream</Link>
+            <Link href="/trends" className="hover:text-text-primary transition-colors">Trends</Link>
           </nav>
-          <span className="text-xs text-text-muted font-mono">
-            {new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-          </span>
+          <DateDisplay />
         </div>
       </header>
 

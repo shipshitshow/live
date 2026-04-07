@@ -71,8 +71,9 @@ export default function LivestreamPage() {
         <div className="flex items-center gap-4">
           <nav className="flex items-center gap-4 text-xs text-text-secondary">
             <Link href="/" className="hover:text-text-primary transition-colors">Analytics</Link>
-            <Link href="/review" className="hover:text-text-primary transition-colors">Review Queue</Link>
+            <Link href="/review" className="hover:text-text-primary transition-colors">Unpublished</Link>
             <span className="text-text-primary font-medium">Livestream</span>
+            <Link href="/trends" className="hover:text-text-primary transition-colors">Trends</Link>
           </nav>
           <button
             onClick={fetchTopics}

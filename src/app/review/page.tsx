@@ -1,9 +1,8 @@
-import { Suspense } from "react";
 import Link from "next/link";
-import { ReviewQueueClient } from "@/components/review/ReviewQueueClient";
+import { UnpublishedClient } from "@/components/review/UnpublishedClient";
 
 export const metadata = {
-  title: "Ship Shit Show — Review Queue",
+  title: "Ship Shit Show — Unpublished Videos",
 };
 
 export default function ReviewPage() {
@@ -19,35 +18,18 @@ export default function ReviewPage() {
           </div>
           <div>
             <h1 className="text-sm font-semibold text-text-primary leading-none">Ship Shit Show</h1>
-            <p className="text-xs text-text-muted mt-0.5">Review Queue</p>
+            <p className="text-xs text-text-muted mt-0.5">Unpublished Videos</p>
           </div>
         </div>
         <nav className="flex items-center gap-4 text-xs text-text-secondary">
           <Link href="/" className="hover:text-text-primary transition-colors">Analytics</Link>
-          <span className="text-text-primary font-medium">Review</span>
+          <span className="text-text-primary font-medium">Unpublished</span>
           <Link href="/livestream" className="hover:text-text-primary transition-colors">Livestream</Link>
+          <Link href="/trends" className="hover:text-text-primary transition-colors">Trends</Link>
         </nav>
       </header>
 
-      <main className="px-6 py-8 max-w-5xl mx-auto">
-        <div className="mb-6">
-          <h2 className="text-xl font-bold text-text-primary">Pre-publish Review Queue</h2>
-          <p className="text-text-muted text-sm mt-0.5">Videos awaiting human approval before YouTube upload</p>
-        </div>
-        <Suspense fallback={<QueueSkeleton />}>
-          <ReviewQueueClient />
-        </Suspense>
-      </main>
-    </div>
-  );
-}
-
-function QueueSkeleton() {
-  return (
-    <div className="space-y-3 animate-pulse">
-      {[...Array(3)].map((_, i) => (
-        <div key={i} className="bg-surface-card border border-surface-border rounded-xl h-20" />
-      ))}
+      <UnpublishedClient />
     </div>
   );
 }
