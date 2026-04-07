@@ -1,0 +1,56 @@
+export type TopicStatus = "backlog" | "in_progress" | "done";
+
+export type TopicSource = "HN" | "X" | "YouTube" | "Reddit" | "GitHub";
+
+export type ContentField =
+  | "thumbnail_v1"
+  | "thumbnail_v2"
+  | "thumbnail_v3"
+  | "youtube_title"
+  | "youtube_description"
+  | "linkedin_post"
+  | "livestream_tweet"
+  | "recap_tweet";
+
+export const CONTENT_FIELDS: ContentField[] = [
+  "thumbnail_v1",
+  "thumbnail_v2",
+  "thumbnail_v3",
+  "youtube_title",
+  "youtube_description",
+  "linkedin_post",
+  "livestream_tweet",
+  "recap_tweet",
+];
+
+export interface TopicFrontmatter {
+  title: string;
+  slug: string;
+  source: string;
+  status: TopicStatus;
+  date: string;
+  thumbnail_prompt: string | null;
+}
+
+export interface TopicGeneratedContent {
+  thumbnail_v1: string | null;
+  thumbnail_v2: string | null;
+  thumbnail_v3: string | null;
+  youtube_title: string | null;
+  youtube_description: string | null;
+  linkedin_post: string | null;
+  livestream_tweet: string | null;
+  recap_tweet: string | null;
+}
+
+export interface Topic extends TopicFrontmatter {
+  content: string;
+  generated: TopicGeneratedContent;
+  fileName: string;
+}
+
+export interface TopicUpdate {
+  status?: TopicStatus;
+  thumbnail_prompt?: string;
+  generated?: Partial<TopicGeneratedContent>;
+}
