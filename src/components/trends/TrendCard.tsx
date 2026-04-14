@@ -23,32 +23,48 @@ interface TrendCardProps {
   onToggle: (id: string) => void;
   compact?: boolean;
   onAddToLivestream?: (item: TrendItem) => void;
+  onPreview?: (id: string) => void;
+  previewed?: boolean;
 }
 
-export function TrendCard({ item, selected, onToggle, compact, onAddToLivestream }: TrendCardProps) {
+export function TrendCard({
+  item,
+  selected,
+  onToggle,
+  compact,
+  onAddToLivestream,
+  onPreview,
+  previewed,
+}: TrendCardProps) {
   const timeAgo = formatDistanceToNow(new Date(item.timestamp), { addSuffix: true });
 
   return (
     <div
       className={`bg-surface-card border rounded-xl ${compact ? "p-3" : "p-4"} transition-colors cursor-pointer ${
-        selected ? "border-accent-red" : "border-surface-border hover:border-accent-red/40"
+        selected || previewed ? "border-accent-red" : "border-surface-border hover:border-accent-red/40"
       }`}
-      onClick={() => onToggle(item.id)}
+      onClick={() => (onPreview ? onPreview(item.id) : onToggle(item.id))}
     >
       <div className="flex items-start gap-3">
         {!compact && (
           <div className="pt-0.5">
-            <div
+            <button
+              type="button"
+              aria-label={selected ? "Deselect trend" : "Select trend"}
               className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
                 selected ? "bg-accent-red border-accent-red" : "border-surface-border"
               }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggle(item.id);
+              }}
             >
               {selected && (
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
                   <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
-            </div>
+            </button>
           </div>
         )}
 

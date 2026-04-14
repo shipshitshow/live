@@ -41,6 +41,7 @@ function extractKeywords(titles: string[]): string {
 
 export function TrendsClient() {
   const [items, setItems] = useState<TrendItem[]>([]);
+  const [activeItemId, setActiveItemId] = useState<string | null>(null);
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -61,6 +62,7 @@ export function TrendsClient() {
       if (!res.ok) throw new Error(`API error ${res.status}`);
       const data: TrendsResponse = await res.json();
       setItems(data.items);
+      setActiveItemId((prev) => prev && data.items.some((item) => item.id === prev) ? prev : (data.items[0]?.id ?? null));
       setFetchedAt(data.fetchedAt);
       setSources(data.sources);
     } catch (e) {
@@ -111,6 +113,11 @@ export function TrendsClient() {
       return next;
     });
   }
+
+  const activeItem = useMemo(
+    () => items.find((item) => item.id === activeItemId) || null,
+    [items, activeItemId]
+  );
 
   async function handleGoDeeper() {
     const selectedTitles = items.filter((i) => selectedIds.has(i.id)).map((i) => i.title);
@@ -182,6 +189,7 @@ export function TrendsClient() {
 
   function handleRefresh() {
     setSelectedIds(new Set());
+    setActiveItemId(null);
     setDeepDiveItems([]);
     setDeepDiveQuery(null);
     fetchTrends();
@@ -236,6 +244,8 @@ export function TrendsClient() {
                 item={item}
                 selected={selectedIds.has(item.id)}
                 onToggle={toggleSelection}
+                onPreview={setActiveItemId}
+                previewed={activeItemId === item.id}
               />
             ))
           )}
@@ -253,9 +263,12 @@ export function TrendsClient() {
       {/* Right Panel — Deep Dive */}
       <div className="w-full lg:w-2/5 overflow-y-auto lg:border-l border-surface-border lg:pl-6">
         <DeepDivePanel
+          activeItem={activeItem}
+          activeSelected={!!activeItem && selectedIds.has(activeItem.id)}
           items={deepDiveItems}
           loading={deepDiveLoading}
           query={deepDiveQuery}
+          onToggleActive={(item) => toggleSelection(item.id)}
           onAddToLivestream={handleAddSingleToLivestream}
         />
       </div>
