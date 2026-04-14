@@ -83,7 +83,7 @@ export function TrendCard({
             href={item.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-sm font-semibold text-text-primary hover:text-accent-red transition-colors leading-tight block"
+            className="inline text-sm font-semibold text-text-primary hover:text-accent-red transition-colors leading-tight"
             onClick={(e) => e.stopPropagation()}
           >
             {item.title}

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { TrendItem, TrendsResponse, TrendsSearchResponse, TrendSource } from "@/lib/trends-types";
+import { todayLocalDate } from "@/lib/date";
 import { TrendCard } from "./TrendCard";
 import { TrendFilters, type FilterValue } from "./TrendFilters";
 import { DeepDivePanel } from "./DeepDivePanel";
@@ -141,7 +142,7 @@ export function TrendsClient() {
 
   async function addToLivestream(trendsToAdd: TrendItem[]) {
     setAddingToLivestream(true);
-    const date = new Date().toISOString().slice(0, 10);
+    const date = todayLocalDate();
     const sourceMap: Record<TrendSource, string> = {
       hackernews: "HN",
       reddit: "Reddit",

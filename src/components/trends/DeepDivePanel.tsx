@@ -48,15 +48,6 @@ export function DeepDivePanel({
     );
   }
 
-  if (!query) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full text-center py-24">
-        <p className="text-sm text-text-muted">Click a trend to read it here</p>
-        <p className="text-xs text-text-muted mt-1">Use the header button to select it after you review it</p>
-      </div>
-    );
-  }
-
   const grouped = new Map<TrendSource, TrendItem[]>();
   for (const item of items) {
     const list = grouped.get(item.source) || [];
@@ -140,7 +131,11 @@ export function DeepDivePanel({
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center py-24">
           <p className="text-sm text-text-muted">Click a trend to preview it here</p>
-          <p className="text-xs text-text-muted mt-1">Then select it from the header if it is worth keeping</p>
+          <p className="text-xs text-text-muted mt-1">
+            {query
+              ? "Then add it to the livestream if it is worth keeping"
+              : "Select from the feed to read the story"}
+          </p>
         </div>
       )}
 

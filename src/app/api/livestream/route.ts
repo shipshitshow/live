@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { todayLocalDate } from "@/lib/date";
 import type { Topic, TopicFrontmatter, TopicGeneratedContent } from "@/lib/livestream-types";
 import { CONTENT_FIELDS } from "@/lib/livestream-types";
 import { logError, logEvent } from "@/lib/logger";
@@ -101,7 +102,7 @@ function resolveDate(requestedDate: string): string {
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const requestedDate = searchParams.get("date") || new Date().toISOString().slice(0, 10);
+  const requestedDate = searchParams.get("date") || todayLocalDate();
   const resolvedDate = resolveDate(requestedDate);
   const availableDates = listAvailableDates();
 

@@ -6,6 +6,7 @@ import {
   fetchDailyMetrics,
   fetchVideoAnalytics,
 } from "@/lib/youtube/client";
+import { formatLocalDate, todayLocalDate } from "@/lib/date";
 import type { MultiChannelReport, DailyMetric, VideoStats } from "@/lib/types";
 
 function getEmptyReport(): MultiChannelReport {
@@ -17,13 +18,6 @@ function getEmptyReport(): MultiChannelReport {
   };
 }
 
-function formatLocalDate(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
-}
-
 function daysAgoDate(days: number): string {
   const d = new Date();
   d.setDate(d.getDate() - days);
@@ -31,7 +25,7 @@ function daysAgoDate(days: number): string {
 }
 
 function todayDate(): string {
-  return formatLocalDate(new Date());
+  return todayLocalDate();
 }
 
 /** Combine daily metrics from multiple channels. CTR is weighted by impressions. */
@@ -42,17 +36,18 @@ function combineDailyMetrics(...metricSets: DailyMetric[][]): DailyMetric[] {
     for (const m of metrics) {
       const existing = byDay.get(m.day);
       if (existing) {
-        const totalViews = existing.views + m.views;
+        const existingViews = existing.views;
+        const totalViews = existingViews + m.views;
         existing.views = totalViews;
         existing.watch_time_minutes += m.watch_time_minutes;
         existing.subscribers_gained += m.subscribers_gained;
         existing.likes += m.likes;
         // Weighted averages
         existing.avg_view_duration_seconds = totalViews > 0
-          ? (existing.avg_view_duration_seconds * existing.views + m.avg_view_duration_seconds * m.views) / totalViews
+          ? (existing.avg_view_duration_seconds * existingViews + m.avg_view_duration_seconds * m.views) / totalViews
           : 0;
         existing.avg_view_percentage = totalViews > 0
-          ? (existing.avg_view_percentage * existing.views + m.avg_view_percentage * m.views) / totalViews
+          ? (existing.avg_view_percentage * existingViews + m.avg_view_percentage * m.views) / totalViews
           : 0;
       } else {
         byDay.set(m.day, { ...m });

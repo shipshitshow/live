@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import { todayLocalDate } from "@/lib/date";
 import type { TopicUpdate, ContentField } from "@/lib/livestream-types";
 import { CONTENT_FIELDS } from "@/lib/livestream-types";
 
@@ -56,7 +57,7 @@ export async function GET(
 ) {
   const { slug } = await params;
   const { searchParams } = new URL(_request.url);
-  const date = searchParams.get("date") || new Date().toISOString().slice(0, 10);
+  const date = searchParams.get("date") || todayLocalDate();
   const filePath = findTopicFile(slug, date);
 
   if (!filePath) {
@@ -73,7 +74,7 @@ export async function PATCH(
 ) {
   const { slug } = await params;
   const { searchParams } = new URL(request.url);
-  const date = searchParams.get("date") || new Date().toISOString().slice(0, 10);
+  const date = searchParams.get("date") || todayLocalDate();
   const filePath = findTopicFile(slug, date);
 
   if (!filePath) {

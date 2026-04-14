@@ -1,11 +1,12 @@
 "use client";
 
-import { Profiler, useEffect, useState, useCallback } from "react";
+import { Profiler, useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import type { Topic, ContentField } from "@/lib/livestream-types";
-import { ContentGeneratorPanel } from "@/components/livestream/ContentGeneratorPanel";
+import { AppHeader } from "@/components/AppHeader";
+import type { Topic } from "@/lib/livestream-types";
 import { logClientEvent, logClientPerf } from "@/lib/client-logger";
+import { todayLocalDate } from "@/lib/date";
 
 const SOURCE_COLORS: Record<string, string> = {
   HN: "bg-orange-500/20 text-orange-400",
@@ -24,6 +25,11 @@ const STATUS_BADGES: Record<string, string> = {
 interface ParsedSection {
   heading: string;
   body: string;
+}
+
+interface MarkdownLink {
+  text: string;
+  url: string;
 }
 
 interface LivestreamMeta {
@@ -98,6 +104,26 @@ function renderInlineLinks(text: string) {
 
 function stripSourcePrefix(text: string): string {
   return text.replace(/^TWEET:\s*/i, "").replace(/^Source:\s*/i, "");
+}
+
+function extractMarkdownLinks(text: string): MarkdownLink[] {
+  return Array.from(text.matchAll(/\[(.*?)\]\((.*?)\)/g)).map((match) => ({
+    text: match[1],
+    url: match[2],
+  }));
+}
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\[(.*?)\]\((.*?)\)/g, "$1")
+    .replace(/^\s*-\s+/gm, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function clampText(text: string, maxLength = 180): string {
+  if (text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength - 1).trimEnd()}…`;
 }
 
 function isTweetUrl(url: string): boolean {
@@ -256,12 +282,15 @@ export default function TopicDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
   const slug = params.slug as string;
-  const date = searchParams.get("date") || new Date().toISOString().slice(0, 10);
+  const date = searchParams.get("date") || todayLocalDate();
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
   const [resolvedDate, setResolvedDate] = useState(date);
   const [streamMeta, setStreamMeta] = useState<LivestreamMeta | null>(null);
+  const [activeSegmentNumber, setActiveSegmentNumber] = useState(0);
+  const rundownScrollRef = useRef<HTMLElement | null>(null);
+  const segmentRefs = useRef(new Map<number, HTMLDivElement>());
 
   const fetchTopics = useCallback(async () => {
     const startedAt = performance.now();
@@ -321,15 +350,105 @@ export default function TopicDetailPage() {
   );
 
   const topic = topics.find((t) => t.slug === slug);
+  const sections = parseMarkdownSections(topic?.content ?? "");
+  const sourceBadges = topic?.source.split(",").map((s) => s.trim()) ?? [];
+  const summarySection = sections.find((s) => s.heading === "Summary");
+  const hotTakeSection = sections.find((s) => s.heading === "Hot Take");
+  const livestreamNotesSection = sections.find((s) => s.heading === "Livestream Notes");
+  const segments = buildShowRundown(sections);
+  const activeSegment = segments.find((seg) => seg.number === activeSegmentNumber) || segments[0];
+  const keyFacts = segments
+    .filter((seg) => seg.type === "segment")
+    .flatMap((seg) => seg.points.slice(0, 2))
+    .map((point) => clampText(stripMarkdown(point.text), 170))
+    .slice(0, 6);
+  const cohostCues = [
+    hotTakeSection
+      ? `Push on the main angle: ${clampText(stripMarkdown(hotTakeSection.body), 140)}`
+      : "Push on the strongest claim and ask if the backlash is actually deserved.",
+    segments[1]
+      ? `Jump in on "${segments[1].label}" and ask whether this was a one-off mistake or a deeper platform problem.`
+      : "Ask whether this changes how devs should trust the platform.",
+    segments[2]
+      ? `Use "${segments[2].label}" to bring the conversation back to how this affects real users this week.`
+      : "Ask what this means for indie devs using the product right now.",
+    "If chat disagrees, ask what Anthropic should have done instead."
+  ];
+  const keyLinks = (() => {
+    const links: MarkdownLink[] = [];
 
-  async function handleSaveField(field: ContentField, value: string) {
-    await fetch(`/api/livestream/${slug}?date=${resolvedDate}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ generated: { [field]: value } }),
-    });
-    fetchTopics();
-  }
+    if (streamMeta?.youtubeUrl) {
+      links.push({
+        text: streamMeta.liveStatus === "live" ? "Livestream" : "Replay",
+        url: streamMeta.youtubeUrl,
+      });
+    }
+
+    for (const link of extractMarkdownLinks(livestreamNotesSection?.body ?? "")) {
+      links.push(link);
+    }
+
+    for (const segment of segments.filter((seg) => seg.type === "segment")) {
+      const firstSource = segment.points.flatMap((point) => point.sources).at(0);
+      if (firstSource) {
+        links.push({
+          text: `${segment.label} — ${stripSourcePrefix(firstSource.text)}`,
+          url: firstSource.url,
+        });
+      }
+    }
+
+    const deduped = new Map<string, MarkdownLink>();
+    for (const link of links) {
+      if (!deduped.has(link.url)) deduped.set(link.url, link);
+    }
+    return Array.from(deduped.values()).slice(0, 7);
+  })();
+
+  const setSegmentRef = useCallback((segmentNumber: number, node: HTMLDivElement | null) => {
+    if (node) {
+      segmentRefs.current.set(segmentNumber, node);
+      return;
+    }
+    segmentRefs.current.delete(segmentNumber);
+  }, []);
+
+  useEffect(() => {
+    setActiveSegmentNumber(segments[0]?.number ?? 0);
+  }, [slug, date, topic?.content]);
+
+  useEffect(() => {
+    const root = rundownScrollRef.current;
+    if (!root || segments.length === 0) return;
+    const stickyOffset = 88;
+
+    const updateActiveSegment = () => {
+      const scrollTop = root.scrollTop;
+      let nextActive = segments[0]?.number ?? 0;
+
+      for (const segment of segments) {
+        const node = segmentRefs.current.get(segment.number);
+        if (!node) continue;
+
+        if (node.offsetTop - stickyOffset <= scrollTop) {
+          nextActive = segment.number;
+        } else {
+          break;
+        }
+      }
+
+      setActiveSegmentNumber((current) => (current === nextActive ? current : nextActive));
+    };
+
+    updateActiveSegment();
+    root.addEventListener("scroll", updateActiveSegment, { passive: true });
+    window.addEventListener("resize", updateActiveSegment);
+
+    return () => {
+      root.removeEventListener("scroll", updateActiveSegment);
+      window.removeEventListener("resize", updateActiveSegment);
+    };
+  }, [topic?.content]);
 
   if (loading) {
     return (
@@ -352,53 +471,59 @@ export default function TopicDetailPage() {
     );
   }
 
-  const sections = parseMarkdownSections(topic.content);
-  const sourceBadges = topic.source.split(",").map((s) => s.trim());
-  const hotTakeSection = sections.find((s) => s.heading === "Hot Take");
-  const segments = buildShowRundown(sections);
-
   return (
     <div className="min-h-screen bg-surface">
-      {/* Header */}
-      <header className="border-b border-surface-border px-6 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <Link
-            href={`/livestream?date=${date}`}
-            className="w-8 h-8 rounded-lg bg-surface-card border border-surface-border flex items-center justify-center hover:border-accent-red/30 transition-colors"
-          >
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
-              <path d="M15 18l-6-6 6-6" />
-            </svg>
-          </Link>
-          <div>
-            <h1 className="text-sm font-semibold text-text-primary leading-none">
-              {topic.title}
-            </h1>
-            <div className="flex items-center gap-2 mt-1">
-              {sourceBadges.map((src) => (
-                <span key={src} className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[src] || "bg-surface-border text-text-secondary"}`}>
-                  {src}
-                </span>
-              ))}
-              <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${STATUS_BADGES[topic.status]}`}>
-                {topic.status.replace("_", " ")}
-              </span>
-              <span className="text-[10px] text-text-muted font-mono">{topic.date}</span>
-              <span className="text-[10px] text-text-muted">~1h stream</span>
-            </div>
-          </div>
-        </div>
-        <nav className="flex items-center gap-4 text-xs text-text-secondary">
-          <Link href="/" className="hover:text-text-primary transition-colors">Analytics</Link>
-          <Link href="/review" className="hover:text-text-primary transition-colors">Unpublished</Link>
-          <Link href="/livestream" className="hover:text-text-primary transition-colors">Livestream</Link>
-        </nav>
-      </header>
+      <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
 
       {/* Two-column layout */}
       <div className="flex" style={{ height: "calc(100vh - 65px)" }}>
         {/* Left: Show Rundown — timeline layout */}
-        <main className="flex-1 overflow-y-auto px-8 py-8">
+        <main ref={rundownScrollRef} className="flex-1 overflow-y-auto px-8 py-8">
+          <div className="mb-6 flex items-start gap-3">
+            <Link
+              href={`/livestream?date=${date}`}
+              className="w-8 h-8 rounded-lg bg-surface-card border border-surface-border flex items-center justify-center hover:border-accent-red/30 transition-colors shrink-0"
+            >
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-text-secondary">
+                <path d="M15 18l-6-6 6-6" />
+              </svg>
+            </Link>
+            <div>
+              <h1 className="text-xl font-semibold text-text-primary leading-tight">
+                {topic.title}
+              </h1>
+              <div className="flex flex-wrap items-center gap-2 mt-2">
+                {sourceBadges.map((src) => (
+                  <span key={src} className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[src] || "bg-surface-border text-text-secondary"}`}>
+                    {src}
+                  </span>
+                ))}
+                <span className={`text-[10px] font-medium px-2 py-0.5 rounded ${STATUS_BADGES[topic.status]}`}>
+                  {topic.status.replace("_", " ")}
+                </span>
+                <span className="text-[10px] text-text-muted font-mono">{topic.date}</span>
+                <span className="text-[10px] text-text-muted">~1h stream</span>
+              </div>
+            </div>
+          </div>
+          {activeSegment && (
+            <div className="sticky top-0 z-20 mb-6 -mx-2 px-2 pb-3">
+              <div className="rounded-xl border border-surface-border bg-surface/92 backdrop-blur supports-[backdrop-filter]:bg-surface/78 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+                <div className="flex items-center gap-3 px-4 py-3">
+                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                    Now Covering
+                  </span>
+                  <span className="h-1 w-1 rounded-full bg-text-muted/50" />
+                  <span className="text-sm font-semibold text-text-primary truncate">
+                    {activeSegment.label}
+                  </span>
+                  <span className={`ml-auto text-[10px] font-mono font-bold ${SEGMENT_COLORS[activeSegment.type].time}`}>
+                    {activeSegment.time}
+                  </span>
+                </div>
+              </div>
+            </div>
+          )}
           <Profiler id="LivestreamTopicMain" onRender={handleProfilerRender}>
           <div className="relative">
             {segments.map((seg, segIdx) => {
@@ -406,7 +531,12 @@ export default function TopicDetailPage() {
               const isLast = segIdx === segments.length - 1;
 
               return (
-                <div key={seg.number} className="relative flex gap-6 pb-10 last:pb-0">
+                <div
+                  key={seg.number}
+                  ref={(node) => setSegmentRef(seg.number, node)}
+                  data-segment-number={seg.number}
+                  className="relative flex gap-6 scroll-mt-24 pb-10 last:pb-0"
+                >
                   {/* Timeline track */}
                   <div className="flex flex-col items-center shrink-0 w-12">
                     <span className={`text-[10px] font-mono font-bold ${colors.time} mb-2`}>
@@ -501,10 +631,21 @@ export default function TopicDetailPage() {
           <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-surface-border">
               <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
-                Livestream Info
+                Co-Host Prep
               </h3>
             </div>
             <div className="p-4 space-y-4">
+              {streamMeta?.youtubeUrl && (
+                <a
+                  href={streamMeta.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 rounded-lg bg-accent-red px-4 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                >
+                  <span>{streamMeta.liveStatus === "live" ? "Open Livestream" : "Open Replay"}</span>
+                </a>
+              )}
+
               {streamMeta?.thumbnailUrl && (
                 <img
                   src={streamMeta.thumbnailUrl}
@@ -513,7 +654,7 @@ export default function TopicDetailPage() {
                 />
               )}
 
-              {(streamMeta?.title || streamMeta?.channelTitle) && (
+              {(streamMeta?.title || streamMeta?.channelTitle || summarySection?.body) && (
                 <div>
                   {streamMeta?.title && (
                     <p className="text-sm font-semibold text-text-primary leading-snug">
@@ -523,6 +664,11 @@ export default function TopicDetailPage() {
                   {streamMeta?.channelTitle && (
                     <p className="text-xs text-text-muted mt-1">
                       {streamMeta.channelTitle}
+                    </p>
+                  )}
+                  {summarySection?.body && (
+                    <p className="mt-3 text-sm text-text-secondary leading-relaxed">
+                      {clampText(stripMarkdown(summarySection.body), 220)}
                     </p>
                   )}
                 </div>
@@ -552,8 +698,8 @@ export default function TopicDetailPage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-xs text-accent-red hover:underline truncate max-w-[220px] text-right"
-                    >
-                      Open stream
+                      >
+                      {streamMeta.liveStatus === "live" ? "Open stream" : "Open replay"}
                     </a>
                   </div>
                 )}
@@ -597,15 +743,109 @@ export default function TopicDetailPage() {
             </div>
           </div>
 
-          <ContentGeneratorPanel
-            title={topic.title}
-            hotTake={hotTakeSection?.body || ""}
-            summary={sections.find((s) => s.heading === "Summary")?.body || ""}
-            source={topic.source}
-            date={topic.date}
-            saved={topic.generated}
-            onSaveField={handleSaveField}
-          />
+          <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Episode Brief
+              </h3>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <p className="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-2">What Happened</p>
+                <p className="text-sm text-text-primary leading-relaxed">
+                  {summarySection ? stripMarkdown(summarySection.body) : "No summary provided yet."}
+                </p>
+              </div>
+              {hotTakeSection && (
+                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
+                  <p className="text-[10px] font-medium uppercase tracking-widest text-yellow-300/80 mb-2">What Side To Take</p>
+                  <p className="text-sm text-text-primary leading-relaxed">
+                    {stripMarkdown(hotTakeSection.body)}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Segment Timeline
+              </h3>
+            </div>
+            <div className="p-4 space-y-2">
+              {segments.map((seg) => (
+                <div key={seg.number} className="flex items-start gap-3 rounded-lg border border-surface-border/70 bg-surface-elevated/30 px-3 py-2">
+                  <span className={`text-[11px] font-mono font-bold mt-0.5 ${SEGMENT_COLORS[seg.type].time}`}>
+                    {seg.time}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium text-text-primary leading-snug">{seg.label}</p>
+                    <p className="text-[11px] text-text-muted mt-0.5">{seg.duration}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Co-Host Cues
+              </h3>
+            </div>
+            <div className="p-4 space-y-3">
+              {cohostCues.map((cue) => (
+                <div key={cue} className="flex gap-3">
+                  <span className="text-[11px] font-mono font-bold text-accent-red mt-0.5">Q</span>
+                  <p className="text-sm text-text-primary leading-relaxed">{cue}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Must-Hit Facts
+              </h3>
+            </div>
+            <div className="p-4 space-y-3">
+              {keyFacts.map((fact, index) => (
+                <div key={`${index}-${fact}`} className="flex gap-3">
+                  <span className="text-[11px] font-mono font-bold text-text-muted mt-0.5">{index + 1}</span>
+                  <p className="text-sm text-text-primary leading-relaxed">{fact}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Key Links
+              </h3>
+            </div>
+            <div className="p-4 space-y-2">
+              {keyLinks.map((link, index) => {
+                const { badge, cls } = getBadgeForUrl(link.url);
+                return (
+                  <a
+                    key={`${link.url}-${index}`}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:border-accent-red/30 transition-colors"
+                  >
+                    <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${cls}`}>
+                      {index === 0 && streamMeta?.youtubeUrl === link.url ? "LIVE" : badge}
+                    </span>
+                    <span className="truncate">{stripSourcePrefix(link.text)}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
           </Profiler>
         </aside>
       </div>
