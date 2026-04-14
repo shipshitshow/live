@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { getAccessToken, getChannelConfigs, hasYouTubeCredentials } from "@/lib/youtube/token";
+import { logError, logEvent } from "@/lib/logger";
 
 const DATA_DIR = path.join(process.cwd(), "data", "livestream");
 const DATA_API = "https://www.googleapis.com/youtube/v3";
@@ -86,6 +87,16 @@ export async function GET(
 
     const live = item.liveStreamingDetails;
     const isLiveNow = !!live?.actualStartTime && !live?.actualEndTime;
+    const liveStatus = isLiveNow ? "live" : live?.actualEndTime ? "ended" : "scheduled";
+
+    logEvent("api.livestream.youtube", {
+      slug,
+      date,
+      videoId,
+      liveStatus,
+      concurrentViewers: live?.concurrentViewers ? Number(live.concurrentViewers) : null,
+      viewCount: Number(item.statistics?.viewCount ?? 0),
+    });
 
     return NextResponse.json({
       youtubeUrl,
@@ -102,10 +113,10 @@ export async function GET(
       scheduledStartTime: live?.scheduledStartTime ?? null,
       actualStartTime: live?.actualStartTime ?? null,
       actualEndTime: live?.actualEndTime ?? null,
-      liveStatus: isLiveNow ? "live" : live?.actualEndTime ? "ended" : "scheduled",
+      liveStatus,
     });
   } catch (error) {
-    console.error("Failed to fetch livestream YouTube metadata:", error);
+    logError("api.livestream.youtube_failed", error, { slug, date, videoId });
     return NextResponse.json({ youtubeUrl, videoId, liveStatus: "error" }, { status: 500 });
   }
 }

@@ -3,6 +3,7 @@ import fs from "fs";
 import path from "path";
 import type { Topic, TopicFrontmatter, TopicGeneratedContent } from "@/lib/livestream-types";
 import { CONTENT_FIELDS } from "@/lib/livestream-types";
+import { logError, logEvent } from "@/lib/logger";
 
 const DATA_DIR = path.join(process.cwd(), "data", "livestream");
 
@@ -104,14 +105,35 @@ export async function GET(request: Request) {
   const resolvedDate = resolveDate(requestedDate);
   const availableDates = listAvailableDates();
 
-  const topics = getTopicsForDate(resolvedDate);
-  return NextResponse.json({
-    topics,
-    requestedDate,
-    resolvedDate,
-    availableDates,
-    isFallback: requestedDate !== resolvedDate,
-  });
+  try {
+    const topics = getTopicsForDate(resolvedDate);
+    logEvent("api.livestream.list", {
+      requestedDate,
+      resolvedDate,
+      topicCount: topics.length,
+      isFallback: requestedDate !== resolvedDate,
+    });
+
+    return NextResponse.json({
+      topics,
+      requestedDate,
+      resolvedDate,
+      availableDates,
+      isFallback: requestedDate !== resolvedDate,
+    });
+  } catch (error) {
+    logError("api.livestream.list_failed", error, {
+      requestedDate,
+      resolvedDate,
+    });
+    return NextResponse.json({
+      topics: [],
+      requestedDate,
+      resolvedDate,
+      availableDates,
+      isFallback: requestedDate !== resolvedDate,
+    });
+  }
 }
 
 export async function POST(request: Request) {
@@ -149,6 +171,7 @@ ${content}
 `;
 
   fs.writeFileSync(path.join(dir, fileName), markdown, "utf-8");
+  logEvent("api.livestream.created", { title, slug, source, date, fileName });
 
   return NextResponse.json({ fileName, slug, status: "backlog" }, { status: 201 });
 }

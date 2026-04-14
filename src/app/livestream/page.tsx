@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Profiler, useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import type { Topic, TopicStatus } from "@/lib/livestream-types";
 import { KanbanColumn } from "@/components/livestream/KanbanColumn";
+import { logClientEvent, logClientPerf } from "@/lib/client-logger";
 
 const COLUMNS: TopicStatus[] = ["backlog", "in_progress", "done"];
 
@@ -24,6 +25,7 @@ export default function LivestreamPage() {
   const [isFallback, setIsFallback] = useState(false);
 
   const fetchTopics = useCallback(async () => {
+    const startedAt = performance.now();
     const res = await fetch(`/api/livestream?date=${requestedDate}`);
     const data: LivestreamResponse = await res.json();
     setTopics(data.topics);
@@ -31,11 +33,36 @@ export default function LivestreamPage() {
     setAvailableDates(data.availableDates);
     setIsFallback(data.isFallback);
     setLoading(false);
+    logClientPerf("livestream_board_fetch_topics", {
+      requestedDate,
+      resolvedDate: data.resolvedDate,
+      topicCount: data.topics.length,
+      durationMs: Number((performance.now() - startedAt).toFixed(2)),
+      isFallback: data.isFallback,
+    });
   }, [requestedDate]);
 
   useEffect(() => {
     fetchTopics();
   }, [fetchTopics]);
+
+  useEffect(() => {
+    logClientEvent("livestream_board_view", { requestedDate });
+  }, [requestedDate]);
+
+  const handleProfilerRender = useCallback(
+    (id: string, phase: "mount" | "update" | "nested-update", actualDuration: number, baseDuration: number) => {
+      logClientPerf("react_render", {
+        page: "livestream_board",
+        component: id,
+        phase,
+        actualDuration: Number(actualDuration.toFixed(2)),
+        baseDuration: Number(baseDuration.toFixed(2)),
+        topicCount: topics.length,
+      });
+    },
+    [topics.length]
+  );
 
   async function handleStatusChange(slug: string, status: TopicStatus) {
     // Optimistic update
@@ -128,17 +155,19 @@ export default function LivestreamPage() {
             </p>
           </div>
         ) : (
-          <div className="flex gap-6 overflow-x-auto">
-            {COLUMNS.map((status) => (
-              <KanbanColumn
-                key={status}
-                status={status}
-                topics={topics.filter((t) => t.status === status)}
-                onStatusChange={handleStatusChange}
-                onSelect={handleSelect}
-              />
-            ))}
-          </div>
+          <Profiler id="LivestreamBoardColumns" onRender={handleProfilerRender}>
+            <div className="flex gap-6 overflow-x-auto">
+              {COLUMNS.map((status) => (
+                <KanbanColumn
+                  key={status}
+                  status={status}
+                  topics={topics.filter((t) => t.status === status)}
+                  onStatusChange={handleStatusChange}
+                  onSelect={handleSelect}
+                />
+              ))}
+            </div>
+          </Profiler>
         )}
       </main>
     </div>

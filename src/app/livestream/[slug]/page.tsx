@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { Profiler, useEffect, useState, useCallback } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Topic, ContentField } from "@/lib/livestream-types";
 import { ContentGeneratorPanel } from "@/components/livestream/ContentGeneratorPanel";
+import { logClientEvent, logClientPerf } from "@/lib/client-logger";
 
 const SOURCE_COLORS: Record<string, string> = {
   HN: "bg-orange-500/20 text-orange-400",
@@ -263,11 +264,19 @@ export default function TopicDetailPage() {
   const [streamMeta, setStreamMeta] = useState<LivestreamMeta | null>(null);
 
   const fetchTopics = useCallback(async () => {
+    const startedAt = performance.now();
     const res = await fetch(`/api/livestream?date=${date}`);
     const data: LivestreamResponse = await res.json();
     setTopics(data.topics);
     setResolvedDate(data.resolvedDate);
     setLoading(false);
+    logClientPerf("livestream_topic_fetch_topics", {
+      slug,
+      requestedDate: date,
+      resolvedDate: data.resolvedDate,
+      topicCount: data.topics.length,
+      durationMs: Number((performance.now() - startedAt).toFixed(2)),
+    });
   }, [date]);
 
   useEffect(() => {
@@ -275,9 +284,16 @@ export default function TopicDetailPage() {
   }, [fetchTopics]);
 
   const fetchStreamMeta = useCallback(async () => {
+    const startedAt = performance.now();
     const res = await fetch(`/api/livestream/${slug}/youtube?date=${date}`);
     const data: LivestreamMeta = await res.json();
     setStreamMeta(data);
+    logClientPerf("livestream_topic_fetch_stream_meta", {
+      slug,
+      requestedDate: date,
+      liveStatus: data.liveStatus,
+      durationMs: Number((performance.now() - startedAt).toFixed(2)),
+    });
   }, [date, slug]);
 
   useEffect(() => {
@@ -285,6 +301,24 @@ export default function TopicDetailPage() {
     const interval = setInterval(fetchStreamMeta, 30000);
     return () => clearInterval(interval);
   }, [fetchStreamMeta]);
+
+  useEffect(() => {
+    logClientEvent("livestream_topic_view", { slug, requestedDate: date });
+  }, [slug, date]);
+
+  const handleProfilerRender = useCallback(
+    (id: string, phase: "mount" | "update" | "nested-update", actualDuration: number, baseDuration: number) => {
+      logClientPerf("react_render", {
+        page: "livestream_topic",
+        slug,
+        component: id,
+        phase,
+        actualDuration: Number(actualDuration.toFixed(2)),
+        baseDuration: Number(baseDuration.toFixed(2)),
+      });
+    },
+    [slug]
+  );
 
   const topic = topics.find((t) => t.slug === slug);
 
@@ -365,6 +399,7 @@ export default function TopicDetailPage() {
       <div className="flex" style={{ height: "calc(100vh - 65px)" }}>
         {/* Left: Show Rundown — timeline layout */}
         <main className="flex-1 overflow-y-auto px-8 py-8">
+          <Profiler id="LivestreamTopicMain" onRender={handleProfilerRender}>
           <div className="relative">
             {segments.map((seg, segIdx) => {
               const colors = SEGMENT_COLORS[seg.type];
@@ -457,10 +492,12 @@ export default function TopicDetailPage() {
               );
             })}
           </div>
+          </Profiler>
         </main>
 
         {/* Right sidebar */}
         <aside className="w-[420px] shrink-0 border-l border-surface-border overflow-y-auto p-4 space-y-4">
+          <Profiler id="LivestreamTopicSidebar" onRender={handleProfilerRender}>
           <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
             <div className="px-5 py-3 border-b border-surface-border">
               <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
@@ -569,6 +606,7 @@ export default function TopicDetailPage() {
             saved={topic.generated}
             onSaveField={handleSaveField}
           />
+          </Profiler>
         </aside>
       </div>
     </div>

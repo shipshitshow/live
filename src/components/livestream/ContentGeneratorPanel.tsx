@@ -15,6 +15,7 @@ import {
   type GeneratedContent,
 } from "@/lib/content-generator";
 import type { ContentField, TopicGeneratedContent } from "@/lib/livestream-types";
+import { logClientEvent, logClientPerf } from "@/lib/client-logger";
 
 interface ContentGeneratorPanelProps {
   title: string;
@@ -152,15 +153,28 @@ export function ContentGeneratorPanel({
     saved.recap_tweet,
   ]);
 
+  useEffect(() => {
+    logClientEvent("content_generator_mount", {
+      title,
+      hasSavedContent: hasSavedContent(saved),
+    });
+  }, [title, saved]);
+
   function handleGenerateAll() {
+    const startedAt = performance.now();
     const generated = generateAllContent(input);
     setContent(generated);
     setActiveThumb(0);
+    logClientPerf("content_generator_generate_all", {
+      title,
+      durationMs: Number((performance.now() - startedAt).toFixed(2)),
+    });
   }
 
   const handleRegenerate = useCallback(
     (field: ContentField) => {
       if (!content) return;
+      const startedAt = performance.now();
       const newValue = FIELD_GENERATORS[field](input);
       const updated = { ...content };
 
@@ -174,12 +188,22 @@ export function ContentGeneratorPanel({
       else if (field === "recap_tweet") updated.recapTweet = newValue;
 
       setContent(updated);
+      logClientPerf("content_generator_regenerate_field", {
+        title,
+        field,
+        durationMs: Number((performance.now() - startedAt).toFixed(2)),
+      });
     },
     [content, input]
   );
 
   const handleSave = useCallback(
     (field: ContentField, value: string) => {
+      logClientEvent("content_generator_save_field", {
+        title,
+        field,
+        size: value.length,
+      });
       onSaveField(field, value);
     },
     [onSaveField]
