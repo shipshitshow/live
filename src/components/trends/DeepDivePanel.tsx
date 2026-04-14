@@ -2,6 +2,7 @@
 
 import { formatDistanceToNow } from "date-fns";
 import type { TrendItem, TrendSource } from "@/lib/trends-types";
+import { dispatchTrendPrompt } from "@/lib/dev-terminal-events";
 import { TrendCard } from "./TrendCard";
 
 const SOURCE_ORDER: TrendSource[] = ["hackernews", "reddit", "youtube", "x"];
@@ -124,6 +125,13 @@ export function DeepDivePanel({
                 className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
               >
                 + Livestream
+              </button>
+              <button
+                type="button"
+                onClick={() => dispatchTrendPrompt(activeItem)}
+                className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-surface-elevated border border-surface-border text-text-primary hover:border-accent-red/40 transition-colors"
+              >
+                Terminal
               </button>
             </div>
           </div>

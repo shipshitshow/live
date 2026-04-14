@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import type { TrendItem, TrendsResponse, TrendsSearchResponse, TrendSource } from "@/lib/trends-types";
 import { todayLocalDate } from "@/lib/date";
+import { dispatchTerminalPrompt } from "@/lib/dev-terminal-events";
 import { TrendCard } from "./TrendCard";
 import { TrendFilters, type FilterValue } from "./TrendFilters";
 import { DeepDivePanel } from "./DeepDivePanel";
@@ -188,6 +189,31 @@ export function TrendsClient() {
     if (!addedIds.has(item.id)) addToLivestream([item]);
   }
 
+  function handleSelectedOpenInTerminal() {
+    const selected = items.filter((item) => selectedIds.has(item.id));
+    if (selected.length === 0) return;
+
+    const prompt = [
+      "Research these selected trends for Ship Shit Show and turn them into livestream prep.",
+      "",
+      ...selected.flatMap((item, index) => [
+        `${index + 1}. ${item.title}`,
+        `Source: ${item.source}`,
+        `URL: ${item.url}`,
+        item.summary ? `Summary: ${item.summary}` : null,
+        "",
+      ]).filter(Boolean),
+      "Return:",
+      "- which trends are strongest",
+      "- how they connect",
+      "- a recommended segment order",
+      "- talking points per segment",
+      "- one hot take per segment",
+    ].join("\n");
+
+    dispatchTerminalPrompt(prompt);
+  }
+
   function handleRefresh() {
     setSelectedIds(new Set());
     setActiveItemId(null);
@@ -256,6 +282,7 @@ export function TrendsClient() {
           selectedCount={selectedIds.size}
           onGoDeeper={handleGoDeeper}
           onAddToLivestream={handleAddSelectedToLivestream}
+          onOpenInTerminal={handleSelectedOpenInTerminal}
           deepDiveLoading={deepDiveLoading}
           addingToLivestream={addingToLivestream}
         />

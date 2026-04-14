@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
+import "xterm/css/xterm.css";
 import "./globals.scss";
+import { TerminalDrawer } from "@/components/dev/TerminalDrawer";
+import { isDevToolsEnabled } from "@/lib/dev-tools";
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ["latin"],
@@ -24,10 +27,13 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const devToolsEnabled = isDevToolsEnabled();
+
   return (
     <html lang="en">
       <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
         {children}
+        {devToolsEnabled ? <TerminalDrawer /> : null}
       </body>
     </html>
   );

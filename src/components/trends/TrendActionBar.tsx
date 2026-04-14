@@ -4,6 +4,7 @@ interface TrendActionBarProps {
   selectedCount: number;
   onGoDeeper: () => void;
   onAddToLivestream: () => void;
+  onOpenInTerminal: () => void;
   deepDiveLoading: boolean;
   addingToLivestream: boolean;
 }
@@ -12,6 +13,7 @@ export function TrendActionBar({
   selectedCount,
   onGoDeeper,
   onAddToLivestream,
+  onOpenInTerminal,
   deepDiveLoading,
   addingToLivestream,
 }: TrendActionBarProps) {
@@ -30,6 +32,13 @@ export function TrendActionBar({
         className="text-xs font-medium px-4 py-2 rounded-lg bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
       >
         {addingToLivestream ? "Adding..." : `Add to Livestream (${selectedCount})`}
+      </button>
+      <button
+        onClick={onOpenInTerminal}
+        disabled={selectedCount === 0}
+        className="text-xs font-medium px-4 py-2 rounded-lg bg-surface-elevated border border-surface-border text-text-secondary hover:text-text-primary hover:border-accent-red/40 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+      >
+        Use in Terminal
       </button>
     </div>
   );
