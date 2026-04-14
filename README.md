@@ -10,9 +10,8 @@ Next.js dashboard for YouTube channel analytics. Displays views, CTR, watch time
 ## Setup
 
 ```bash
-cd dashboard
-npm install
-npm run dev   # http://localhost:3001
+bun install
+bun run dev   # http://localhost:3001
 ```
 
 ## Environment
@@ -50,6 +49,5 @@ cd ..
 python -m pipeline.analytics.api
 
 # Terminal 2: Next.js dashboard
-cd dashboard
-npm run dev
+bun run dev
 ```

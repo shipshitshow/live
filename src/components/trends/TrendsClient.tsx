@@ -41,8 +41,10 @@ function extractKeywords(titles: string[]): string {
 
 export function TrendsClient() {
   const [items, setItems] = useState<TrendItem[]>([]);
+  const [fetchedAt, setFetchedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [sources, setSources] = useState<TrendsResponse["sources"] | null>(null);
   const [sourceFilter, setSourceFilter] = useState<FilterValue>("all");
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deepDiveItems, setDeepDiveItems] = useState<TrendItem[]>([]);
@@ -59,6 +61,8 @@ export function TrendsClient() {
       if (!res.ok) throw new Error(`API error ${res.status}`);
       const data: TrendsResponse = await res.json();
       setItems(data.items);
+      setFetchedAt(data.fetchedAt);
+      setSources(data.sources);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load trends");
     } finally {
@@ -80,6 +84,24 @@ export function TrendsClient() {
     for (const item of items) c[item.source]++;
     return c;
   }, [items]);
+
+  const sourceSummary = useMemo(() => {
+    if (!sources) return null;
+
+    const labels: Record<TrendSource, string> = {
+      hackernews: "HN",
+      reddit: "Reddit",
+      youtube: "YouTube",
+      x: "X",
+    };
+
+    const failed = Object.entries(sources)
+      .filter(([, status]) => status === "error")
+      .map(([source]) => labels[source as TrendSource]);
+
+    if (failed.length === 0) return "All sources live";
+    return `${failed.join(", ")} unavailable`;
+  }, [sources]);
 
   function toggleSelection(id: string) {
     setSelectedIds((prev) => {
@@ -185,10 +207,18 @@ export function TrendsClient() {
       {/* Left Panel — Trend Feed */}
       <div className="w-full lg:w-3/5 flex flex-col min-w-0">
         <div className="flex items-center justify-between mb-4">
-          <TrendFilters active={sourceFilter} onChange={setSourceFilter} counts={counts} />
+          <div className="min-w-0">
+            <TrendFilters active={sourceFilter} onChange={setSourceFilter} counts={counts} />
+            {(fetchedAt || sourceSummary) && (
+              <p className="text-[10px] text-text-muted mt-2">
+                {fetchedAt ? `Updated ${new Date(fetchedAt).toLocaleTimeString()}` : "Not fetched yet"}
+                {sourceSummary ? ` · ${sourceSummary}` : ""}
+              </p>
+            )}
+          </div>
           <button
             onClick={handleRefresh}
-            className="text-xs font-medium px-3 py-1.5 rounded-md bg-surface-card border border-surface-border text-text-secondary hover:text-text-primary transition-colors"
+            className="text-xs font-medium px-3 py-1.5 rounded-md bg-surface-card border border-surface-border text-text-secondary hover:text-text-primary transition-colors shrink-0"
           >
             Refresh
           </button>

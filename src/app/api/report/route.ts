@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getMockMultiChannelReport } from "@/lib/mock-analytics-data";
 import { hasYouTubeCredentials, getAccessToken, getChannelConfigs } from "@/lib/youtube/token";
 import {
   fetchChannelStats,
@@ -8,6 +7,15 @@ import {
   fetchVideoAnalytics,
 } from "@/lib/youtube/client";
 import type { MultiChannelReport, DailyMetric, VideoStats } from "@/lib/types";
+
+function getEmptyReport(): MultiChannelReport {
+  return {
+    channels: [],
+    videos: [],
+    daily_metrics: [],
+    per_channel: {},
+  };
+}
 
 function daysAgoDate(days: number): string {
   const d = new Date();
@@ -94,8 +102,7 @@ export async function GET(req: NextRequest) {
   const channels = getChannelConfigs();
 
   if (!hasYouTubeCredentials() || channels.length === 0) {
-    const report = getMockMultiChannelReport(days);
-    return NextResponse.json(report);
+    return NextResponse.json(getEmptyReport());
   }
 
   try {
@@ -141,8 +148,7 @@ export async function GET(req: NextRequest) {
       headers: { "Cache-Control": "s-maxage=300, stale-while-revalidate=60" },
     });
   } catch (error) {
-    console.error("YouTube API error, falling back to mock:", error);
-    const report = getMockMultiChannelReport(days);
-    return NextResponse.json(report);
+    console.error("YouTube API error, returning empty analytics report:", error);
+    return NextResponse.json(getEmptyReport());
   }
 }

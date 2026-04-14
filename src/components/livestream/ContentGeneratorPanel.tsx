@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import {
   generateAllContent,
   generateThumbnailV1,
@@ -124,9 +124,9 @@ export function ContentGeneratorPanel({
 
   const input: ContentInput = { title, hotTake, summary, source, date };
 
-  // Load saved content into state on first render if any exists
-  const [initialized, setInitialized] = useState(false);
-  if (!initialized && hasSavedContent(saved)) {
+  useEffect(() => {
+    if (!hasSavedContent(saved)) return;
+
     const restored: GeneratedContent = {
       thumbnails: [
         { label: "Shock & Drama", prompt: saved.thumbnail_v1 || "" },
@@ -139,11 +139,18 @@ export function ContentGeneratorPanel({
       livestreamTweet: saved.livestream_tweet || "",
       recapTweet: saved.recap_tweet || "",
     };
+
     setContent(restored);
-    setInitialized(true);
-  } else if (!initialized) {
-    setInitialized(true);
-  }
+  }, [
+    saved.thumbnail_v1,
+    saved.thumbnail_v2,
+    saved.thumbnail_v3,
+    saved.youtube_title,
+    saved.youtube_description,
+    saved.linkedin_post,
+    saved.livestream_tweet,
+    saved.recap_tweet,
+  ]);
 
   function handleGenerateAll() {
     const generated = generateAllContent(input);

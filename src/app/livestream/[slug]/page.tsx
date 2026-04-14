@@ -5,7 +5,6 @@ import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import type { Topic, ContentField } from "@/lib/livestream-types";
 import { ContentGeneratorPanel } from "@/components/livestream/ContentGeneratorPanel";
-import { TweetEmbed, isTweetUrl } from "@/components/livestream/TweetEmbed";
 
 const SOURCE_COLORS: Record<string, string> = {
   HN: "bg-orange-500/20 text-orange-400",
@@ -24,6 +23,21 @@ const STATUS_BADGES: Record<string, string> = {
 interface ParsedSection {
   heading: string;
   body: string;
+}
+
+interface LivestreamMeta {
+  youtubeUrl: string | null;
+  videoId?: string;
+  title?: string | null;
+  channelTitle?: string | null;
+  thumbnailUrl?: string | null;
+  publishedAt?: string | null;
+  viewCount?: number;
+  concurrentViewers?: number | null;
+  scheduledStartTime?: string | null;
+  actualStartTime?: string | null;
+  actualEndTime?: string | null;
+  liveStatus: "live" | "ended" | "scheduled" | "missing" | "invalid" | "unauthorized" | "error";
 }
 
 function parseMarkdownSections(content: string): ParsedSection[] {
@@ -53,6 +67,13 @@ function isTalkingPointSection(heading: string): boolean {
   return heading.toLowerCase().includes("talking point");
 }
 
+function formatCompactNumber(value: number | null | undefined): string {
+  if (value === null || value === undefined) return "0";
+  if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
+  if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
+  return String(value);
+}
+
 function renderInlineLinks(text: string) {
   const parts = text.split(/(\[.*?\]\(.*?\))/g);
   return parts.map((part, j) => {
@@ -72,6 +93,14 @@ function renderInlineLinks(text: string) {
     }
     return <span key={j}>{part}</span>;
   });
+}
+
+function stripSourcePrefix(text: string): string {
+  return text.replace(/^TWEET:\s*/i, "").replace(/^Source:\s*/i, "");
+}
+
+function isTweetUrl(url: string): boolean {
+  return /(?:twitter\.com|x\.com)\/\w+\/status\/\d+/.test(url);
 }
 
 // Parse a section body into structured talking points with inline sources
@@ -216,6 +245,12 @@ const SEGMENT_COLORS: Record<string, { time: string; dot: string; line: string }
   conclusion: { time: "text-green-400", dot: "bg-green-400", line: "bg-green-400/20" },
 };
 
+interface LivestreamResponse {
+  topics: Topic[];
+  requestedDate: string;
+  resolvedDate: string;
+}
+
 export default function TopicDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -224,11 +259,14 @@ export default function TopicDetailPage() {
 
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [resolvedDate, setResolvedDate] = useState(date);
+  const [streamMeta, setStreamMeta] = useState<LivestreamMeta | null>(null);
 
   const fetchTopics = useCallback(async () => {
     const res = await fetch(`/api/livestream?date=${date}`);
-    const data = await res.json();
-    setTopics(data);
+    const data: LivestreamResponse = await res.json();
+    setTopics(data.topics);
+    setResolvedDate(data.resolvedDate);
     setLoading(false);
   }, [date]);
 
@@ -236,10 +274,22 @@ export default function TopicDetailPage() {
     fetchTopics();
   }, [fetchTopics]);
 
+  const fetchStreamMeta = useCallback(async () => {
+    const res = await fetch(`/api/livestream/${slug}/youtube?date=${date}`);
+    const data: LivestreamMeta = await res.json();
+    setStreamMeta(data);
+  }, [date, slug]);
+
+  useEffect(() => {
+    fetchStreamMeta();
+    const interval = setInterval(fetchStreamMeta, 30000);
+    return () => clearInterval(interval);
+  }, [fetchStreamMeta]);
+
   const topic = topics.find((t) => t.slug === slug);
 
   async function handleSaveField(field: ContentField, value: string) {
-    await fetch(`/api/livestream/${slug}?date=${date}`, {
+    await fetch(`/api/livestream/${slug}?date=${resolvedDate}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ generated: { [field]: value } }),
@@ -272,16 +322,6 @@ export default function TopicDetailPage() {
   const sourceBadges = topic.source.split(",").map((s) => s.trim());
   const hotTakeSection = sections.find((s) => s.heading === "Hot Take");
   const segments = buildShowRundown(sections);
-
-  // Collect all source links for the sidebar quick-reference
-  const allSources: { text: string; url: string }[] = [];
-  for (const seg of segments) {
-    for (const pt of seg.points) {
-      for (const src of pt.sources) {
-        allSources.push(src);
-      }
-    }
-  }
 
   return (
     <div className="min-h-screen bg-surface">
@@ -346,15 +386,15 @@ export default function TopicDetailPage() {
                   {/* Segment content */}
                   <div className="flex-1 min-w-0 -mt-1">
                     {/* Header */}
-                    <div className="flex items-baseline gap-3 mb-4">
-                      <h2 className="text-lg font-bold text-text-primary tracking-tight">{seg.label}</h2>
-                      <span className="text-[10px] text-text-muted font-mono">{seg.duration}</span>
+                    <div className="flex items-baseline gap-3 mb-5">
+                      <h2 className="text-[26px] font-bold text-text-primary tracking-tight leading-tight">{seg.label}</h2>
+                      <span className="text-xs text-text-muted font-mono">{seg.duration}</span>
                     </div>
 
                     {/* Hot take = raw text block */}
                     {seg.rawText && (
                       <div className="bg-yellow-500/5 border-l-2 border-yellow-500/40 pl-4 py-3 mb-4">
-                        <p className="text-[14px] text-text-secondary leading-[1.8]">
+                        <p className="text-[20px] text-text-primary leading-[1.7]">
                           {seg.rawText}
                         </p>
                       </div>
@@ -373,7 +413,7 @@ export default function TopicDetailPage() {
 
                               <div className="flex-1 min-w-0">
                                 {/* Point text */}
-                                <p className="text-[14px] text-text-secondary leading-[1.8]">
+                                <p className="text-[20px] text-text-primary leading-[1.7] font-medium">
                                   {renderInlineLinks(point.text)}
                                 </p>
 
@@ -381,40 +421,28 @@ export default function TopicDetailPage() {
                                 {point.sources.length > 0 && (() => {
                                   const tweets = point.sources.filter((s) => isTweetUrl(s.url));
                                   const others = point.sources.filter((s) => !isTweetUrl(s.url));
+                                  const ordered = [...tweets, ...others];
                                   return (
-                                    <div className="mt-3 space-y-2">
-                                      {/* Tweet embeds */}
-                                      {tweets.length > 0 && (
-                                        <div className="flex flex-wrap gap-3">
-                                          {tweets.map((src, j) => (
-                                            <TweetEmbed key={j} url={src.url} />
-                                          ))}
-                                        </div>
-                                      )}
-                                      {/* Other sources — compact */}
-                                      {others.length > 0 && (
-                                        <div className="flex flex-wrap gap-1">
-                                          {others.map((src, j) => {
-                                            const { badge, cls } = getBadgeForUrl(src.url);
-                                            return (
-                                              <a
-                                                key={j}
-                                                href={src.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] text-text-muted hover:text-text-secondary transition-colors"
-                                              >
-                                                <span className={`text-[8px] font-mono font-bold px-1 rounded ${cls}`}>
-                                                  {badge}
-                                                </span>
-                                                <span className="truncate max-w-[200px]">
-                                                  {src.text}
-                                                </span>
-                                              </a>
-                                            );
-                                          })}
-                                        </div>
-                                      )}
+                                    <div className="mt-4 flex flex-wrap gap-2">
+                                      {ordered.map((src, j) => {
+                                        const { badge, cls } = getBadgeForUrl(src.url);
+                                        return (
+                                          <a
+                                            key={j}
+                                            href={src.url}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-card border border-surface-border text-xs text-text-secondary hover:text-text-primary hover:border-accent-red/30 transition-colors max-w-full"
+                                          >
+                                            <span className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${cls}`}>
+                                              {badge}
+                                            </span>
+                                            <span className="truncate max-w-[360px]">
+                                              {stripSourcePrefix(src.text)}
+                                            </span>
+                                          </a>
+                                        );
+                                      })}
                                     </div>
                                   );
                                 })()}
@@ -431,8 +459,107 @@ export default function TopicDetailPage() {
           </div>
         </main>
 
-        {/* Right sidebar: Content Generator */}
-        <aside className="w-[420px] shrink-0 border-l border-surface-border overflow-y-auto p-4">
+        {/* Right sidebar */}
+        <aside className="w-[420px] shrink-0 border-l border-surface-border overflow-y-auto p-4 space-y-4">
+          <div className="bg-surface-card border border-surface-border rounded-xl overflow-hidden">
+            <div className="px-5 py-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Livestream Info
+              </h3>
+            </div>
+            <div className="p-4 space-y-4">
+              {streamMeta?.thumbnailUrl && (
+                <img
+                  src={streamMeta.thumbnailUrl}
+                  alt={streamMeta.title || topic.title}
+                  className="w-full rounded-lg border border-surface-border"
+                />
+              )}
+
+              {(streamMeta?.title || streamMeta?.channelTitle) && (
+                <div>
+                  {streamMeta?.title && (
+                    <p className="text-sm font-semibold text-text-primary leading-snug">
+                      {streamMeta.title}
+                    </p>
+                  )}
+                  {streamMeta?.channelTitle && (
+                    <p className="text-xs text-text-muted mt-1">
+                      {streamMeta.channelTitle}
+                    </p>
+                  )}
+                </div>
+              )}
+
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs text-text-muted">Status</span>
+                  <span
+                    className={`text-[11px] font-medium px-2 py-1 rounded ${
+                      streamMeta?.liveStatus === "live"
+                        ? "bg-red-500/10 text-red-400"
+                        : streamMeta?.liveStatus === "ended"
+                        ? "bg-green-500/10 text-green-400"
+                        : "bg-surface-border text-text-secondary"
+                    }`}
+                  >
+                    {streamMeta?.liveStatus || "missing"}
+                  </span>
+                </div>
+
+                {streamMeta?.youtubeUrl && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">YouTube</span>
+                    <a
+                      href={streamMeta.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-accent-red hover:underline truncate max-w-[220px] text-right"
+                    >
+                      Open stream
+                    </a>
+                  </div>
+                )}
+
+                {streamMeta?.viewCount !== undefined && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Views</span>
+                    <span className="text-sm font-semibold text-text-primary">
+                      {formatCompactNumber(streamMeta.viewCount)}
+                    </span>
+                  </div>
+                )}
+
+                {streamMeta?.liveStatus === "live" && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Current viewers</span>
+                    <span className="text-sm font-semibold text-red-400">
+                      {formatCompactNumber(streamMeta.concurrentViewers)}
+                    </span>
+                  </div>
+                )}
+
+                {streamMeta?.actualStartTime && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Started</span>
+                    <span className="text-xs text-text-secondary">
+                      {new Date(streamMeta.actualStartTime).toLocaleString()}
+                    </span>
+                  </div>
+                )}
+
+                {streamMeta?.actualEndTime && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Ended</span>
+                    <span className="text-xs text-text-secondary">
+                      {new Date(streamMeta.actualEndTime).toLocaleString()}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
           <ContentGeneratorPanel
             title={topic.title}
             hotTake={hotTakeSection?.body || ""}

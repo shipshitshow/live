@@ -2,7 +2,7 @@
 title: "Anthropic's Worst Week Ever — Leaks, Bans & Backlash"
 slug: "anthropic-meltdown"
 source: "HN, X, YouTube, Reddit, GitHub"
-status: "in_progress"
+status: "done"
 date: "2026-04-07"
 thumbnail_prompt: null
 ---
@@ -77,3 +77,6 @@ Can you leak your own source code, ban your biggest community tools, AND have yo
 
 ## Hot Take
 This is Anthropic's "New Coke" moment. In one week they managed to: accidentally leak their entire codebase (revealing they secretly contribute to open source repos in "undercover mode"), ban the open-source tools that evangelized their platform, AND have their flagship product called "unusable" on the front page of Hacker News. The indie dev community that built Anthropic's developer mindshare is feeling betrayed. The question isn't whether Claude is good — it's whether Anthropic can be trusted as a platform to build on.
+
+## Livestream Notes
+- [Livestream Replay](https://www.youtube.com/watch?v=MJp8l5ZBlI4)

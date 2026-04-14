@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import type { TrendItem, TrendSource, TrendsResponse } from "@/lib/trends-types";
 import { fetchHNTrending } from "@/lib/trends/hackernews";
+import { isAIRelevant } from "@/lib/trends/relevance";
 import { fetchRedditTrending } from "@/lib/trends/reddit";
+import { sortTrendItems } from "@/lib/trends/ranking";
 import { fetchYouTubeTrending } from "@/lib/trends/youtube";
 import { fetchXTrending } from "@/lib/trends/x";
 
@@ -37,10 +39,8 @@ export async function GET() {
     }
   }
 
-  items.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
-
   const response: TrendsResponse = {
-    items,
+    items: sortTrendItems(items.filter(isAIRelevant)),
     fetchedAt: new Date().toISOString(),
     sources,
   };

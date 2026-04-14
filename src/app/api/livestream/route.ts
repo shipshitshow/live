@@ -82,12 +82,36 @@ function getTopicsForDate(dateStr: string): Topic[] {
     });
 }
 
+function listAvailableDates(): string[] {
+  if (!fs.existsSync(DATA_DIR)) return [];
+
+  return fs
+    .readdirSync(DATA_DIR, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory() && /^\d{4}-\d{2}-\d{2}$/.test(entry.name))
+    .map((entry) => entry.name)
+    .sort((a, b) => b.localeCompare(a));
+}
+
+function resolveDate(requestedDate: string): string {
+  const availableDates = listAvailableDates();
+  if (availableDates.includes(requestedDate)) return requestedDate;
+  return availableDates[0] || requestedDate;
+}
+
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const date = searchParams.get("date") || new Date().toISOString().slice(0, 10);
+  const requestedDate = searchParams.get("date") || new Date().toISOString().slice(0, 10);
+  const resolvedDate = resolveDate(requestedDate);
+  const availableDates = listAvailableDates();
 
-  const topics = getTopicsForDate(date);
-  return NextResponse.json(topics);
+  const topics = getTopicsForDate(resolvedDate);
+  return NextResponse.json({
+    topics,
+    requestedDate,
+    resolvedDate,
+    availableDates,
+    isFallback: requestedDate !== resolvedDate,
+  });
 }
 
 export async function POST(request: Request) {

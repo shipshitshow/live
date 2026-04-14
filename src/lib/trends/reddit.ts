@@ -15,6 +15,54 @@ interface RedditPost {
   subreddit: string;
   thumbnail: string;
   permalink: string;
+  url_overridden_by_dest?: string;
+  preview?: {
+    images?: Array<{
+      source?: {
+        url?: string;
+      };
+    }>;
+  };
+}
+
+function decodeHtmlEntities(value: string | undefined): string | undefined {
+  if (!value) return undefined;
+  return value
+    .replaceAll("&amp;", "&")
+    .replaceAll("&lt;", "<")
+    .replaceAll("&gt;", ">")
+    .replaceAll("&#x27;", "'")
+    .replaceAll("&quot;", '"');
+}
+
+function isDirectImageUrl(value: string | undefined): boolean {
+  if (!value) return false;
+  return /\.(avif|gif|jpe?g|png|webp)$/i.test(value.split("?")[0]);
+}
+
+function toOriginalRedditImage(value: string): string {
+  try {
+    const url = new URL(value);
+    if (url.hostname === "preview.redd.it") {
+      return `https://i.redd.it${url.pathname}`;
+    }
+  } catch {
+    return value;
+  }
+  return value;
+}
+
+function pickThumbnail(post: RedditPost): string | undefined {
+  const previewSource = decodeHtmlEntities(post.preview?.images?.[0]?.source?.url);
+  if (previewSource) return previewSource;
+
+  const overridden = decodeHtmlEntities(post.url_overridden_by_dest);
+  if (isDirectImageUrl(overridden)) return overridden;
+
+  const thumbnail = decodeHtmlEntities(post.thumbnail);
+  if (!thumbnail?.startsWith("http")) return undefined;
+
+  return toOriginalRedditImage(thumbnail);
 }
 
 function toTrendItem(post: RedditPost): TrendItem {
@@ -29,7 +77,7 @@ function toTrendItem(post: RedditPost): TrendItem {
     summary: post.selftext?.slice(0, 200) || undefined,
     author: post.author,
     subreddit: post.subreddit,
-    thumbnail: post.thumbnail?.startsWith("http") ? post.thumbnail : undefined,
+    thumbnail: pickThumbnail(post),
   };
 }
 

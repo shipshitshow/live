@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { ReviewAction } from "@/lib/pipeline-types";
-import { getMockJob, reviewMockJob } from "@/lib/mock-pipeline-data";
 
 const PIPELINE_BASE = process.env.PIPELINE_API_URL ?? "http://localhost:8001";
 
@@ -19,12 +18,7 @@ export async function GET(
     }
     return NextResponse.json(await res.json());
   } catch {
-    // Pipeline API unreachable — serve mock data for demo
-    const job = getMockJob(jobId);
-    if (!job) {
-      return NextResponse.json({ error: "Job not found" }, { status: 404 });
-    }
-    return NextResponse.json(job);
+    return NextResponse.json({ error: "Pipeline API unavailable" }, { status: 503 });
   }
 }
 
@@ -54,11 +48,6 @@ export async function PATCH(
     }
     return NextResponse.json(await res.json());
   } catch {
-    // Pipeline API unreachable — simulate review with mock data
-    const result = reviewMockJob(jobId, body.action, body.reason);
-    if (!result) {
-      return NextResponse.json({ error: "Job not found" }, { status: 404 });
-    }
-    return NextResponse.json(result);
+    return NextResponse.json({ error: "Pipeline API unavailable" }, { status: 503 });
   }
 }

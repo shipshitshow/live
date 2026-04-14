@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import { MOCK_JOBS } from "@/lib/mock-pipeline-data";
 
 const PIPELINE_BASE = process.env.PIPELINE_API_URL ?? "http://localhost:8001";
 
@@ -20,8 +19,6 @@ export async function GET(request: Request) {
     const data = await res.json();
     return NextResponse.json(data);
   } catch {
-    // Pipeline API unreachable — serve mock data for demo
-    const filtered = MOCK_JOBS.filter((j) => j.status === status);
-    return NextResponse.json(filtered);
+    return NextResponse.json([]);
   }
 }

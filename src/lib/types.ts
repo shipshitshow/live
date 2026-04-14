@@ -35,7 +35,7 @@ export interface DailyMetric {
   likes: number;
 }
 
-// Legacy single-channel report (kept for mock fallback compat)
+// Legacy single-channel report
 export interface AnalyticsReport {
   channel: ChannelStats;
   videos: VideoStats[];
