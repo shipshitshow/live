@@ -17,6 +17,7 @@
     "@types/react-dom": "19",
     "autoprefixer": "10",
     "postcss": "8",
+    "sass": "^1.99.0",
     "tailwindcss": "4.2.2",
     "typescript": "5"
   },

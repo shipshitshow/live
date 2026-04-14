@@ -1,11 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-@import "tailwindcss";
+@import "tailwindcss" source(none);
+@source "../app";
+@source "../components";
 @config "../../tailwind.config.ts";
-
-:root {
-  --font-space-grotesk: 'Space Grotesk', sans-serif;
-  --font-jetbrains-mono: 'JetBrains Mono', monospace;
-}
 
 * {
   box-sizing: border-box;
@@ -41,7 +37,7 @@ body {
 .tweet-embed {
   --tweet-bg-color: #1a1a1a;
   --tweet-border: 1px solid #2a2a2a;
-  --tweet-font-family: 'Space Grotesk', sans-serif;
+  --tweet-font-family: var(--font-space-grotesk);
   --tweet-font-color: #f0f0f0;
   --tweet-font-color-secondary: #a0a0a0;
   --tweet-color-blue-secondary: #ff2d20;
