@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo } from "react";
 import type { TrendItem, TrendsResponse, TrendsSearchResponse, TrendSource } from "@/lib/trends-types";
 import { todayLocalDate } from "@/lib/date";
 import { dispatchTerminalPrompt } from "@/lib/dev-terminal-events";
+import { parseJsonResponse } from "@/lib/parse-json-response";
 import { TrendCard } from "./TrendCard";
 import { TrendFilters, type FilterValue } from "./TrendFilters";
 import { DeepDivePanel } from "./DeepDivePanel";
@@ -63,7 +64,7 @@ export function TrendsClient() {
     try {
       const res = await fetch("/api/trends");
       if (!res.ok) throw new Error(`API error ${res.status}`);
-      const data: TrendsResponse = await res.json();
+      const data = await parseJsonResponse<TrendsResponse>(res);
       setItems(data.items);
       setActiveItemId((prev) => prev && data.items.some((item) => item.id === prev) ? prev : (data.items[0]?.id ?? null));
       setFetchedAt(data.fetchedAt);
@@ -132,7 +133,7 @@ export function TrendsClient() {
     try {
       const res = await fetch(`/api/trends/search?q=${encodeURIComponent(query)}`);
       if (!res.ok) throw new Error(`Search error ${res.status}`);
-      const data: TrendsSearchResponse = await res.json();
+      const data = await parseJsonResponse<TrendsSearchResponse>(res);
       const mainIds = new Set(items.map((i) => i.id));
       setDeepDiveItems(data.items.filter((i) => !mainIds.has(i.id)));
     } catch {

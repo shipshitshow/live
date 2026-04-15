@@ -14,6 +14,7 @@ import type {
   TerminalSessionCreateResponse,
   TerminalSnapshot,
 } from '@/lib/dev-terminal-types';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 
 const TERMINAL_OPEN_KEY = 'shipshitshow.devTerminal.open';
 const TERMINAL_AGENT_KEY = 'shipshitshow.devTerminal.agent';
@@ -74,7 +75,7 @@ export function TerminalDrawer() {
           return;
         }
 
-        const data = (await res.json()) as TerminalSnapshot;
+        const data = await parseJsonResponse<TerminalSnapshot>(res);
         setCursor(data.cursor);
         setStatus(data.status);
       });
@@ -113,7 +114,7 @@ export function TerminalDrawer() {
       return null;
     }
 
-    const data = (await res.json()) as TerminalSessionCreateResponse;
+    const data = await parseJsonResponse<TerminalSessionCreateResponse>(res);
     setSessionId(data.id);
     setCursor(data.cursor);
     setStatus(data.status);
@@ -294,7 +295,7 @@ export function TerminalDrawer() {
         return;
       }
 
-      const data = (await res.json()) as TerminalSnapshot;
+      const data = await parseJsonResponse<TerminalSnapshot>(res);
       const terminal = terminalRef.current;
       if (!terminal) return;
 

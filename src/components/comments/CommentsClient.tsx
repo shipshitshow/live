@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { isErrorResponse, isReauthRequiredResponse } from '@/lib/api-types';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import type {
   CommentReplyDraftResponse,
   YouTubeCommentListResponse,
@@ -29,6 +30,9 @@ const formatPublishedAt = (value: string) =>
 
 const buildYouTubeVideoUrl = (videoId: string) =>
   `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
+
+const buildYouTubeCommentUrl = (videoId: string, commentId: string) =>
+  `${buildYouTubeVideoUrl(videoId)}&lc=${encodeURIComponent(commentId)}`;
 
 export function CommentsClient() {
   const [comments, setComments] = useState<YouTubeCommentThread[]>([]);
@@ -51,9 +55,9 @@ export function CommentsClient() {
       const res = await fetch('/api/youtube/comments?maxResults=100', {
         cache: 'no-store',
       });
-      const data = (await res.json()) as
-        | YouTubeCommentListResponse
-        | { error: string };
+      const data = await parseJsonResponse<
+        YouTubeCommentListResponse | { error: string }
+      >(res);
 
       if (res.status === 401 && isReauthRequiredResponse(data)) {
         window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
@@ -154,9 +158,9 @@ export function CommentsClient() {
           method: 'POST',
         });
 
-        const data = (await res.json()) as
-          | CommentReplyDraftResponse
-          | { error: string };
+        const data = await parseJsonResponse<
+          CommentReplyDraftResponse | { error: string }
+        >(res);
         if (!res.ok || !('drafts' in data)) {
           throw new Error(
             isErrorResponse(data) ? data.error : `API error ${res.status}`,
@@ -196,9 +200,9 @@ export function CommentsClient() {
           method: 'POST',
         });
 
-        const data = (await res.json()) as
-          | YouTubeCommentReply
-          | { error: string };
+        const data = await parseJsonResponse<
+          YouTubeCommentReply | { error: string }
+        >(res);
         if (res.status === 401 && isReauthRequiredResponse(data)) {
           window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
           return;
@@ -372,16 +376,13 @@ export function CommentsClient() {
                 <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
                   Video
                 </p>
-                <p className="text-sm text-text-primary font-semibold">
-                  {selectedComment.videoTitle}
-                </p>
                 <a
                   href={buildYouTubeVideoUrl(selectedComment.videoId)}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-2 inline-flex text-xs text-accent-red hover:underline"
+                  className="text-sm font-semibold text-text-primary transition-colors hover:text-accent-red hover:underline"
                 >
-                  Open on YouTube
+                  {selectedComment.videoTitle}
                 </a>
               </div>
               <div>
@@ -463,9 +464,15 @@ export function CommentsClient() {
                 </p>
                 <div className="space-y-3">
                   {selectedComment.replies.map((reply) => (
-                    <div
+                    <a
                       key={reply.id}
-                      className="border border-surface-border rounded-lg p-3 bg-surface-elevated"
+                      href={buildYouTubeCommentUrl(
+                        selectedComment.videoId,
+                        reply.id,
+                      )}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="block rounded-lg border border-surface-border bg-surface-elevated p-3 transition-colors hover:border-accent-red/40 hover:bg-surface-elevated/80"
                     >
                       <div className="flex items-center justify-between gap-3">
                         <p className="text-xs font-medium text-text-primary">
@@ -478,7 +485,7 @@ export function CommentsClient() {
                       <p className="text-xs text-text-secondary leading-relaxed mt-2">
                         {reply.text}
                       </p>
-                    </div>
+                    </a>
                   ))}
                 </div>
               </div>

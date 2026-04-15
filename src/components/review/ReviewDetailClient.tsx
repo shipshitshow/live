@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { VideoPlayer } from "@/components/review/VideoPlayer";
 import { ReviewChecklist } from "@/components/review/ReviewChecklist";
 import { PipelineSidebar } from "@/components/review/PipelineSidebar";
+import { parseJsonResponse } from "@/lib/parse-json-response";
 import type { PipelineJob } from "@/lib/pipeline-types";
 
 interface ReviewDetailClientProps {
@@ -34,7 +35,7 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
         signal: controller.signal,
       });
       if (!res.ok) throw new Error(`API error ${res.status}`);
-      const data: PipelineJob = await res.json();
+      const data = await parseJsonResponse<PipelineJob>(res);
       setJob(data);
     } catch (e) {
       if (e instanceof Error && e.name === "AbortError") return;

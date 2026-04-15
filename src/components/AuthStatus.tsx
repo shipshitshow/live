@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 
 export function AuthStatus() {
   const [status, setStatus] = useState<{
@@ -14,7 +15,10 @@ export function AuthStatus() {
         if (!res.ok) {
           throw new Error(`API error ${res.status}`);
         }
-        return res.json();
+        return parseJsonResponse<{
+          connected: boolean;
+          status: 'connected' | 'missing_credentials' | 'reauth_required';
+        }>(res);
       })
       .then((data) => setStatus(data))
       .catch(() => setStatus(null));

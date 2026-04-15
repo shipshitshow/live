@@ -1,5 +1,8 @@
 import { randomUUID } from 'node:crypto';
-import { type IPty, spawn } from 'node-pty';
+import {
+  type ChildProcessWithoutNullStreams,
+  spawn,
+} from 'node:child_process';
 import type {
   TerminalSessionCreateResponse,
   TerminalSessionStatus,
@@ -11,7 +14,7 @@ interface TerminalSession {
   id: string;
   shell: string;
   cwd: string;
-  pty: IPty;
+  process: ChildProcessWithoutNullStreams;
   buffer: string;
   offset: number;
   createdAt: number;
@@ -86,8 +89,7 @@ class DevTerminalManager {
     const id = randomUUID();
     const shell = process.env.SHELL || '/bin/zsh';
     const cwd = process.cwd();
-    const child = spawn(shell, ['-il'], {
-      cols: 120,
+    const child = spawn(shell, ['-i'], {
       cwd,
       env: {
         ...process.env,
@@ -95,8 +97,7 @@ class DevTerminalManager {
         FORCE_COLOR: '1',
         TERM: process.env.TERM || 'xterm-256color',
       },
-      name: process.env.TERM || 'xterm-256color',
-      rows: 30,
+      stdio: 'pipe',
     });
 
     const session: TerminalSession = {
@@ -106,19 +107,24 @@ class DevTerminalManager {
       exitCode: null,
       id,
       offset: 0,
-      pty: child,
+      process: child,
       shell,
       status: 'ready',
       updatedAt: Date.now(),
     };
 
-    child.onData((data) => {
-      appendToSession(session, data);
+    child.stdout.on('data', (data) => {
+      appendToSession(session, data.toString());
       session.status = 'ready';
     });
 
-    child.onExit(({ exitCode }) => {
-      session.exitCode = exitCode;
+    child.stderr.on('data', (data) => {
+      appendToSession(session, data.toString());
+      session.status = 'ready';
+    });
+
+    child.on('exit', (exitCode) => {
+      session.exitCode = exitCode ?? null;
       session.status = 'closed';
       appendToSession(session, `\r\n[session closed]\r\n`);
     });
@@ -156,7 +162,7 @@ class DevTerminalManager {
 
     session.status = 'running';
     session.updatedAt = Date.now();
-    session.pty.write(input);
+    session.process.stdin.write(input);
 
     await this.waitForOutput(session);
     return buildSnapshot(session, 0);
@@ -165,7 +171,7 @@ class DevTerminalManager {
   closeSession(id: string) {
     const session = this.sessions.get(id);
     if (!session) return;
-    session.pty.kill();
+    session.process.kill();
     this.sessions.delete(id);
   }
 
@@ -226,7 +232,7 @@ class DevTerminalManager {
         session.status === 'closed' ||
         now - session.updatedAt > STALE_SESSION_MS
       ) {
-        session.pty.kill();
+        session.process.kill();
         this.sessions.delete(id);
       }
     }

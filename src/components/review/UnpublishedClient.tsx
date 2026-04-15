@@ -5,6 +5,7 @@ import { CopyButton } from '@/components/CopyButton';
 import { Button } from '@/components/ui/button';
 import { isErrorResponse } from '@/lib/api-types';
 import { formatNumber } from '@/lib/format';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { UnlistedVideo } from '@/lib/review-types';
 import {
   generateVideoContent,
@@ -73,7 +74,9 @@ export function UnpublishedClient() {
     setError(null);
     try {
       const res = await fetch('/api/unpublished');
-      const data = (await res.json()) as UnlistedVideo[] | { error: string };
+      const data = await parseJsonResponse<UnlistedVideo[] | { error: string }>(
+        res,
+      );
       if (!res.ok || isErrorResponse(data)) {
         throw new Error(
           isErrorResponse(data) ? data.error : `API error ${res.status}`,

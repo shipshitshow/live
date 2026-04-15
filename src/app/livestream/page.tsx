@@ -21,6 +21,7 @@ import type {
 } from '@/lib/livestream-types';
 
 const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
+const SHOULD_PROFILE_RENDER = process.env.NODE_ENV === 'production';
 
 async function parseJsonResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -197,7 +198,7 @@ export default function LivestreamPage() {
               <code>data/livestream/YYYY-MM-DD/</code>.
             </p>
           </div>
-        ) : (
+        ) : SHOULD_PROFILE_RENDER ? (
           <Profiler id="LivestreamBoardColumns" onRender={handleProfilerRender}>
             <div className="flex gap-6 overflow-x-auto">
               {COLUMNS.map((status) => (
@@ -211,6 +212,18 @@ export default function LivestreamPage() {
               ))}
             </div>
           </Profiler>
+        ) : (
+          <div className="flex gap-6 overflow-x-auto">
+            {COLUMNS.map((status) => (
+              <KanbanColumn
+                key={status}
+                status={status}
+                topics={topics.filter((t) => t.status === status)}
+                onStatusChange={handleStatusChange}
+                onSelect={handleSelect}
+              />
+            ))}
+          </div>
         )}
       </main>
     </div>

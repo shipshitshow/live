@@ -11,6 +11,7 @@ import { AuthStatus } from "@/components/AuthStatus";
 import { Button } from "@/components/ui/button";
 import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
 import { formatNumber, formatWatchTime } from "@/lib/format";
+import { parseJsonResponse } from "@/lib/parse-json-response";
 import type { MultiChannelReport, DateRange, ChannelFilter, DailyMetric, VideoStats, ChannelStats } from "@/lib/types";
 
 interface MultiChannelMetricPoint {
@@ -37,7 +38,7 @@ export function DashboardClient() {
     setError(null);
     try {
       const res = await fetch(`/api/report?days=${days}`);
-      const data = (await res.json()) as MultiChannelReport | { error: string };
+      const data = await parseJsonResponse<MultiChannelReport | { error: string }>(res);
       if (!res.ok) {
         if (isReauthRequiredResponse(data)) {
           window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;

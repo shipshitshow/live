@@ -11,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { YouTubeAuthStatus } from '@/lib/youtube/types';
 
 interface YouTubeAuthConfigResponse {
@@ -29,7 +30,7 @@ export function YouTubeAuthPageClient() {
 
   useEffect(() => {
     fetch('/api/auth/youtube/status', { cache: 'no-store' })
-      .then((res) => res.json() as Promise<YouTubeAuthStatus>)
+      .then((res) => parseJsonResponse<YouTubeAuthStatus>(res))
       .then((data) => {
         setStatus(data);
         if (data.channelLabelsNeedingAuth.length > 0) {
@@ -50,7 +51,7 @@ export function YouTubeAuthPageClient() {
 
   useEffect(() => {
     fetch('/api/auth/youtube/config', { cache: 'no-store' })
-      .then((res) => res.json() as Promise<YouTubeAuthConfigResponse>)
+      .then((res) => parseJsonResponse<YouTubeAuthConfigResponse>(res))
       .then((data) => setRedirectUri(data.redirectUri))
       .catch(() => setRedirectUri(null));
   }, []);

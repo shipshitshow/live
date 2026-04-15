@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { parseJsonResponse } from "@/lib/parse-json-response";
 import type { YouTubeAuthStatus } from "@/lib/youtube/types";
 
 const AUTH_ROUTE = "/auth/youtube";
@@ -22,7 +23,7 @@ export function YouTubeAuthGate() {
     const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
     fetch("/api/auth/youtube/status", { cache: "no-store" })
-      .then((res) => res.json() as Promise<YouTubeAuthStatus>)
+      .then((res) => parseJsonResponse<YouTubeAuthStatus>(res))
       .then((status) => {
         if (cancelled) return;
         if (status.status === "reauth_required") {

@@ -82,10 +82,22 @@ export async function POST(request: Request) {
     }
   }
 
-  const session = await getDevTerminalManager().createSession();
-  return NextResponse.json(session, {
-    headers: { 'Cache-Control': 'no-store' },
-  });
+  try {
+    const session = await getDevTerminalManager().createSession();
+    return NextResponse.json(session, {
+      headers: { 'Cache-Control': 'no-store' },
+    });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to create terminal session',
+      },
+      { status: 500 },
+    );
+  }
 }
 
 export async function DELETE(request: Request) {
