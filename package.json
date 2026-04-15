@@ -57,6 +57,5 @@
     "prepare": "bunx husky",
     "start": "next start -p 3001"
   },
-  "type": "module",
   "version": "0.1.0"
 }
