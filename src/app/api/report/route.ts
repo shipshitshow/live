@@ -1,5 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { hasYouTubeCredentials, getAccessToken, getChannelConfigs } from "@/lib/youtube/token";
+import {
+  hasYouTubeCredentials,
+  getAccessToken,
+  getChannelConfigs,
+  isYouTubeReauthError,
+} from "@/lib/youtube/token";
 import {
   fetchChannelStats,
   fetchChannelVideos,
@@ -101,7 +106,7 @@ async function fetchChannelData(
 
 export async function GET(req: NextRequest) {
   const days = Number(req.nextUrl.searchParams.get("days") ?? "30");
-  const channels = getChannelConfigs();
+  const channels = await getChannelConfigs();
 
   if (!hasYouTubeCredentials() || channels.length === 0) {
     return NextResponse.json(getEmptyReport());
@@ -150,6 +155,16 @@ export async function GET(req: NextRequest) {
       headers: { "Cache-Control": "s-maxage=300, stale-while-revalidate=60" },
     });
   } catch (error) {
+    if (isYouTubeReauthError(error)) {
+      return NextResponse.json(
+        {
+          error: "YouTube authentication expired. Reconnect YouTube to continue.",
+          reauthRequired: true,
+          channelLabel: error.channelLabel ?? null,
+        },
+        { status: 401 }
+      );
+    }
     console.error("YouTube API error, returning empty analytics report:", error);
     return NextResponse.json(getEmptyReport());
   }

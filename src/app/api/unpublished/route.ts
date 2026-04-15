@@ -107,7 +107,7 @@ export async function GET() {
   }
 
   try {
-    const channels = getChannelConfigs();
+    const channels = await getChannelConfigs();
     const results = await Promise.all(
       channels.map((ch) => fetchUnlistedVideos(ch))
     );

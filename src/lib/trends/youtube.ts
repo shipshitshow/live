@@ -73,7 +73,7 @@ async function searchVideoIds(query: string, token: string, maxResults: number, 
 
 export async function fetchYouTubeTrending(): Promise<TrendItem[]> {
   if (!hasYouTubeCredentials()) return [];
-  const configs = getChannelConfigs();
+  const configs = await getChannelConfigs();
   if (configs.length === 0) return [];
   const token = await getAccessToken(configs[0]);
 
@@ -98,7 +98,7 @@ export async function fetchYouTubeTrending(): Promise<TrendItem[]> {
 
 export async function searchYouTube(query: string): Promise<TrendItem[]> {
   if (!hasYouTubeCredentials()) return [];
-  const configs = getChannelConfigs();
+  const configs = await getChannelConfigs();
   if (configs.length === 0) return [];
   const token = await getAccessToken(configs[0]);
   const videoIds = await searchVideoIds(query, token, 15, "relevance");

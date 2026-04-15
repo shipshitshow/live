@@ -57,6 +57,11 @@ export function CommentsClient() {
       });
       const data = (await res.json()) as YouTubeCommentListResponse | { error: string };
 
+      if (res.status === 401 && "reauthRequired" in (data as Record<string, unknown>)) {
+        window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
+
       if (!res.ok || !("items" in data)) {
         throw new Error("error" in data ? data.error : `API error ${res.status}`);
       }
@@ -173,6 +178,10 @@ export function CommentsClient() {
       });
 
       const data = (await res.json()) as YouTubeCommentReply | { error: string };
+      if (res.status === 401 && "reauthRequired" in (data as Record<string, unknown>)) {
+        window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+        return;
+      }
       if (!res.ok || !("id" in data)) {
         throw new Error("error" in data ? data.error : `API error ${res.status}`);
       }

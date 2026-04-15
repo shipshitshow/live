@@ -23,9 +23,15 @@ export function DashboardClient() {
     setError(null);
     try {
       const res = await fetch(`/api/report?days=${days}`);
-      if (!res.ok) throw new Error(`API error ${res.status}`);
-      const data: MultiChannelReport = await res.json();
-      setReport(data);
+      const data = await res.json() as MultiChannelReport | { error?: string; reauthRequired?: boolean };
+      if (!res.ok) {
+        if ("reauthRequired" in data && data.reauthRequired) {
+          window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+          return;
+        }
+        throw new Error("error" in data && data.error ? data.error : `API error ${res.status}`);
+      }
+      setReport(data as MultiChannelReport);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load analytics");
     } finally {

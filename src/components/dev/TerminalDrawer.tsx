@@ -26,6 +26,7 @@ function buildAgentCommand(mode: AgentMode, prompt: string) {
 }
 
 export function TerminalDrawer() {
+  const drawerHeight = 360;
   const [open, setOpen] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [cursor, setCursor] = useState(0);
@@ -132,6 +133,16 @@ export function TerminalDrawer() {
   useEffect(() => {
     window.localStorage.setItem(TERMINAL_OPEN_KEY, open ? "1" : "0");
   }, [open]);
+
+  useEffect(() => {
+    document.body.style.setProperty("--dev-terminal-height", `${drawerHeight}px`);
+    document.body.classList.toggle("terminal-open", open);
+
+    return () => {
+      document.body.classList.remove("terminal-open");
+      document.body.style.removeProperty("--dev-terminal-height");
+    };
+  }, [drawerHeight, open]);
 
   useEffect(() => {
     window.localStorage.setItem(TERMINAL_AGENT_KEY, agentMode);
@@ -308,7 +319,18 @@ export function TerminalDrawer() {
         onClick={() => setOpen((prev) => !prev)}
         className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg border border-surface-border bg-surface-card/95 px-3 py-2 text-xs font-medium text-text-secondary shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur hover:text-text-primary"
       >
-        <span className="inline-flex h-2 w-2 rounded-full bg-accent-red" />
+        <svg
+          width="14"
+          height="14"
+          viewBox="0 0 16 16"
+          fill="none"
+          aria-hidden="true"
+          className="shrink-0"
+        >
+          <rect x="1.5" y="2" width="13" height="11.5" rx="2" stroke="currentColor" strokeWidth="1.25" />
+          <path d="M4.5 5.5L6.75 7.75L4.5 10" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+          <path d="M8.25 10H11.25" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+        </svg>
         Terminal
         <span className="rounded border border-surface-border px-1.5 py-0.5 text-[10px] text-text-muted">
           ⌘J
@@ -319,7 +341,7 @@ export function TerminalDrawer() {
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-surface-border bg-[#0b0b0c] shadow-[0_-20px_60px_rgba(0,0,0,0.55)] transition-transform duration-200 ${
           open ? "translate-y-0" : "translate-y-[calc(100%-1px)]"
         }`}
-        style={{ height: 360 }}
+        style={{ height: drawerHeight }}
       >
         <div className="flex items-center justify-between border-b border-surface-border px-4 py-2">
           <div className="flex items-center gap-3">

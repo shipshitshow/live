@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { replyToComment } from "@/lib/youtube/comments";
-import { getAccessToken, getChannelConfigs } from "@/lib/youtube/token";
+import { getAccessToken, getChannelConfigs, isYouTubeReauthError } from "@/lib/youtube/token";
 
 interface ReplyRequestBody {
   parentCommentId?: unknown;
@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const parentCommentId = readString(body.parentCommentId, "parentCommentId");
     const channelId = readString(body.channelId, "channelId");
     const text = readString(body.text, "text");
-    const channelConfig = getChannelConfigs().find((channel) => channel.id === channelId);
+    const channelConfig = (await getChannelConfigs()).find((channel) => channel.id === channelId);
 
     if (!channelConfig) {
       return NextResponse.json({ error: "Unknown channel" }, { status: 404 });
@@ -44,6 +44,16 @@ export async function POST(request: Request) {
     const reply = await replyToComment(token, parentCommentId, text);
     return NextResponse.json(reply);
   } catch (error) {
+    if (isYouTubeReauthError(error)) {
+      return NextResponse.json(
+        {
+          error: "YouTube authentication expired. Reconnect YouTube to continue.",
+          reauthRequired: true,
+          channelLabel: error.channelLabel ?? null,
+        },
+        { status: 401 }
+      );
+    }
     const message = error instanceof Error ? error.message : "Failed to reply";
     const status = message.includes("Missing") || message.includes("Invalid") ? 400 : 500;
     return NextResponse.json({ error: message }, { status });

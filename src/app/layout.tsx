@@ -3,6 +3,7 @@ import { JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import "xterm/css/xterm.css";
 import "./globals.scss";
 import { TerminalDrawer } from "@/components/dev/TerminalDrawer";
+import { YouTubeAuthGate } from "@/components/YouTubeAuthGate";
 import { isDevToolsEnabled } from "@/lib/dev-tools";
 
 const spaceGrotesk = Space_Grotesk({
@@ -32,7 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
-        {children}
+        <YouTubeAuthGate />
+        <div id="app-content-shell" className="app-content-shell">
+          {children}
+        </div>
         {devToolsEnabled ? <TerminalDrawer /> : null}
       </body>
     </html>

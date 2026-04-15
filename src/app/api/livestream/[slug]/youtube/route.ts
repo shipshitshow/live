@@ -2,7 +2,12 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { todayLocalDate } from "@/lib/date";
-import { getAccessToken, getChannelConfigs, hasYouTubeCredentials } from "@/lib/youtube/token";
+import {
+  getAccessToken,
+  getChannelConfigs,
+  hasYouTubeCredentials,
+  isYouTubeReauthError,
+} from "@/lib/youtube/token";
 import { logError, logEvent } from "@/lib/logger";
 
 const DATA_DIR = path.join(process.cwd(), "data", "livestream");
@@ -74,7 +79,10 @@ export async function GET(
   }
 
   try {
-    const channelConfig = getChannelConfigs()[0];
+    const channelConfig = (await getChannelConfigs())[0];
+    if (!channelConfig) {
+      return NextResponse.json({ youtubeUrl, videoId, liveStatus: "unauthorized" });
+    }
     const token = await getAccessToken(channelConfig);
     const res = await ytFetch(
       `${DATA_API}/videos?part=snippet,statistics,liveStreamingDetails&id=${videoId}`,
@@ -117,6 +125,18 @@ export async function GET(
       liveStatus,
     });
   } catch (error) {
+    if (isYouTubeReauthError(error)) {
+      return NextResponse.json(
+        {
+          youtubeUrl,
+          videoId,
+          liveStatus: "unauthorized",
+          reauthRequired: true,
+          channelLabel: error.channelLabel ?? null,
+        },
+        { status: 401 }
+      );
+    }
     logError("api.livestream.youtube_failed", error, { slug, date, videoId });
     return NextResponse.json({ youtubeUrl, videoId, liveStatus: "error" }, { status: 500 });
   }

@@ -1,6 +1,9 @@
 import { NextResponse } from "next/server";
-import { hasYouTubeCredentials } from "@/lib/youtube/token";
+import { getYouTubeAuthStatus } from "@/lib/youtube/token";
 
 export async function GET() {
-  return NextResponse.json({ connected: hasYouTubeCredentials() });
+  const status = await getYouTubeAuthStatus();
+  return NextResponse.json(status, {
+    headers: { "Cache-Control": "no-store" },
+  });
 }
