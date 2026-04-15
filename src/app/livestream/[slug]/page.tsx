@@ -56,6 +56,15 @@ interface LivestreamMeta {
     | 'error';
 }
 
+async function parseJsonResponse<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    throw new Error(`Unexpected ${res.status} response from ${new URL(res.url).pathname}`);
+  }
+}
+
 function parseMarkdownSections(content: string): ParsedSection[] {
   const sections: ParsedSection[] = [];
   const lines = content.split('\n');
@@ -381,9 +390,10 @@ export default function TopicDetailPage() {
     const startedAt = performance.now();
     try {
       const res = await fetch(`/api/livestream?date=${date}`);
-      const data = (await res.json()) as
+      const data = await parseJsonResponse<
         | LivestreamListResponse
-        | { error: string };
+        | { error: string }
+      >(res);
       if (!res.ok || isErrorResponse(data)) {
         throw new Error(
           isErrorResponse(data) ? data.error : `API error ${res.status}`,
@@ -410,7 +420,7 @@ export default function TopicDetailPage() {
   const fetchStreamMeta = useCallback(async () => {
     const startedAt = performance.now();
     const res = await fetch(`/api/livestream/${slug}/youtube?date=${date}`);
-    const data: LivestreamMeta = await res.json();
+    const data = await parseJsonResponse<LivestreamMeta>(res);
     setStreamMeta(data);
     logClientPerf('livestream_topic_fetch_stream_meta', {
       durationMs: Number((performance.now() - startedAt).toFixed(2)),
@@ -528,7 +538,9 @@ export default function TopicDetailPage() {
     const res = await fetch(
       `/api/trends/search?q=${encodeURIComponent(topicSearchQuery)}`,
     );
-    const data = (await res.json()) as TrendsSearchResponse | { error: string };
+    const data = await parseJsonResponse<TrendsSearchResponse | { error: string }>(
+      res,
+    );
 
     if (!res.ok || isErrorResponse(data)) {
       throw new Error(
@@ -653,118 +665,119 @@ export default function TopicDetailPage() {
           ref={rundownScrollRef}
           className="flex-1 overflow-y-auto px-8 py-8"
         >
-          <div className="mb-6 flex items-start gap-3">
-            <Link
-              href={`/livestream?date=${date}`}
-              className="w-8 h-8 rounded-lg bg-surface-card border border-surface-border flex items-center justify-center hover:border-accent-red/30 transition-colors shrink-0"
-            >
-              <svg
-                width="14"
-                height="14"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="text-text-secondary"
+          <div className="mx-auto w-full max-w-[1480px]">
+            <div className="mb-6 flex items-start gap-3">
+              <Link
+                href={`/livestream?date=${date}`}
+                className="w-8 h-8 rounded-lg bg-surface-card border border-surface-border flex items-center justify-center hover:border-accent-red/30 transition-colors shrink-0"
               >
-                <path d="M15 18l-6-6 6-6" />
-              </svg>
-            </Link>
-            <div>
-              <h1 className="text-xl font-semibold text-text-primary leading-tight">
-                {topic.title}
-              </h1>
-              <div className="flex flex-wrap items-center gap-2 mt-2">
-                {sourceBadges.map((src) => (
-                  <span
-                    key={src}
-                    className={`text-[10px] font-mono font-medium uppercase px-1.5 py-0.5 rounded ${SOURCE_COLORS[src] || 'bg-surface-border text-text-secondary'}`}
-                  >
-                    {src}
-                  </span>
-                ))}
-                <span
-                  className={`text-[10px] font-medium uppercase px-2 py-0.5 rounded ${STATUS_BADGES[topic.status]}`}
+                <svg
+                  width="14"
+                  height="14"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="text-text-secondary"
                 >
-                  {topic.status.replace('_', ' ')}
-                </span>
-                <span className="text-[10px] text-text-muted font-mono">
-                  {topic.date}
-                </span>
-                <span className="text-[10px] text-text-muted">~1h stream</span>
-              </div>
-            </div>
-          </div>
-          {activeSegment && (
-            <div className="sticky top-0 z-20 mb-6 -mx-2 px-2 pb-3">
-              <div className="rounded-xl border border-surface-border bg-surface/92 backdrop-blur supports-[backdrop-filter]:bg-surface/78 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
-                <div className="flex items-center gap-3 px-4 py-3">
-                  <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
-                    Now Covering
-                  </span>
-                  <span className="h-1 w-1 rounded-full bg-text-muted/50" />
-                  <span className="text-sm font-semibold text-text-primary truncate">
-                    {activeSegment.label}
-                  </span>
+                  <path d="M15 18l-6-6 6-6" />
+                </svg>
+              </Link>
+              <div>
+                <h1 className="text-xl font-semibold text-text-primary leading-tight">
+                  {topic.title}
+                </h1>
+                <div className="flex flex-wrap items-center gap-2 mt-2">
+                  {sourceBadges.map((src) => (
+                    <span
+                      key={src}
+                      className={`text-[10px] font-mono font-medium uppercase px-1.5 py-0.5 rounded ${SOURCE_COLORS[src] || 'bg-surface-border text-text-secondary'}`}
+                    >
+                      {src}
+                    </span>
+                  ))}
                   <span
-                    className={`ml-auto text-[10px] font-mono font-bold ${SEGMENT_COLORS[activeSegment.type].time}`}
+                    className={`text-[10px] font-medium uppercase px-2 py-0.5 rounded ${STATUS_BADGES[topic.status]}`}
                   >
-                    {activeSegment.time}
+                    {topic.status.replace('_', ' ')}
                   </span>
+                  <span className="text-[10px] text-text-muted font-mono">
+                    {topic.date}
+                  </span>
+                  <span className="text-[10px] text-text-muted">~1h stream</span>
                 </div>
               </div>
             </div>
-          )}
-          <Profiler id="LivestreamTopicMain" onRender={handleProfilerRender}>
-            <div className="relative">
-              {segments.map((seg, segIdx) => {
-                const colors = SEGMENT_COLORS[seg.type];
-                const isLast = segIdx === segments.length - 1;
+            {activeSegment && (
+              <div className="sticky top-0 z-20 mb-6 -mx-2 px-2 pb-3">
+                <div className="rounded-xl border border-surface-border bg-surface/92 backdrop-blur supports-[backdrop-filter]:bg-surface/78 shadow-[0_10px_30px_rgba(0,0,0,0.18)]">
+                  <div className="flex items-center gap-3 px-4 py-3">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.18em] text-text-muted">
+                      Now Covering
+                    </span>
+                    <span className="h-1 w-1 rounded-full bg-text-muted/50" />
+                    <span className="text-sm font-semibold text-text-primary truncate">
+                      {activeSegment.label}
+                    </span>
+                    <span
+                      className={`ml-auto text-[10px] font-mono font-bold ${SEGMENT_COLORS[activeSegment.type].time}`}
+                    >
+                      {activeSegment.time}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+            <Profiler id="LivestreamTopicMain" onRender={handleProfilerRender}>
+              <div className="relative">
+                {segments.map((seg, segIdx) => {
+                  const colors = SEGMENT_COLORS[seg.type];
+                  const isLast = segIdx === segments.length - 1;
 
-                return (
-                  <div
-                    key={seg.number}
-                    ref={(node) => setSegmentRef(seg.number, node)}
-                    data-segment-number={seg.number}
-                    className="relative flex gap-6 scroll-mt-24 pb-10 last:pb-0"
-                  >
-                    {/* Timeline track */}
-                    <div className="flex flex-col items-center shrink-0 w-12">
-                      <span
-                        className={`text-[10px] font-mono font-bold ${colors.time} mb-2`}
-                      >
-                        {seg.time}
-                      </span>
-                      <div
-                        className={`w-2.5 h-2.5 rounded-full ${colors.dot} shrink-0 ring-4 ring-surface`}
-                      />
-                      {!isLast && (
-                        <div className={`w-px flex-1 mt-2 ${colors.line}`} />
-                      )}
-                    </div>
-
-                    {/* Segment content */}
-                    <div className="flex-1 min-w-0 -mt-1">
-                      {/* Header */}
-                      <div className="flex items-baseline gap-3 mb-5">
-                        <h2 className="text-[26px] font-bold text-text-primary tracking-tight leading-tight">
-                          {seg.label}
-                        </h2>
-                        <span className="text-xs text-text-muted font-mono">
-                          {seg.duration}
+                  return (
+                    <div
+                      key={seg.number}
+                      ref={(node) => setSegmentRef(seg.number, node)}
+                      data-segment-number={seg.number}
+                      className="relative flex gap-6 scroll-mt-24 pb-10 last:pb-0"
+                    >
+                      {/* Timeline track */}
+                      <div className="flex flex-col items-center shrink-0 w-12">
+                        <span
+                          className={`text-[10px] font-mono font-bold ${colors.time} mb-2`}
+                        >
+                          {seg.time}
                         </span>
+                        <div
+                          className={`w-2.5 h-2.5 rounded-full ${colors.dot} shrink-0 ring-4 ring-surface`}
+                        />
+                        {!isLast && (
+                          <div className={`w-px flex-1 mt-2 ${colors.line}`} />
+                        )}
                       </div>
 
-                      {/* Hot take = raw text block */}
-                      {seg.rawText && (
-                        <div className="bg-yellow-500/5 border-l-2 border-yellow-500/40 pl-4 py-3 mb-4">
-                          <p className="text-[20px] text-text-primary leading-[1.7]">
-                            {seg.rawText}
-                          </p>
+                      {/* Segment content */}
+                      <div className="flex-1 min-w-0 -mt-1">
+                        {/* Header */}
+                        <div className="flex items-baseline gap-3 mb-5">
+                          <h2 className="text-[26px] font-bold text-text-primary tracking-tight leading-tight">
+                            {seg.label}
+                          </h2>
+                          <span className="text-xs text-text-muted font-mono">
+                            {seg.duration}
+                          </span>
                         </div>
-                      )}
+
+                        {/* Hot take = raw text block */}
+                        {seg.rawText && (
+                          <div className="bg-yellow-500/5 border-l-2 border-yellow-500/40 pl-4 py-3 mb-4">
+                            <p className="text-[20px] text-text-primary leading-[1.7]">
+                              {seg.rawText}
+                            </p>
+                          </div>
+                        )}
 
                       {/* Talking points */}
                       {seg.points.length > 0 && (
@@ -828,12 +841,13 @@ export default function TopicDetailPage() {
                           ))}
                         </div>
                       )}
+                      </div>
                     </div>
-                  </div>
-                );
-              })}
-            </div>
-          </Profiler>
+                  );
+                })}
+              </div>
+            </Profiler>
+          </div>
         </main>
 
         {/* Right sidebar */}

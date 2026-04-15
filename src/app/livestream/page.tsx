@@ -18,6 +18,15 @@ import {
 
 const COLUMNS: TopicStatus[] = ["backlog", "in_progress", "done"];
 
+async function parseJsonResponse<T>(res: Response): Promise<T> {
+  const text = await res.text();
+  try {
+    return JSON.parse(text) as T;
+  } catch {
+    throw new Error(`Unexpected ${res.status} response from ${new URL(res.url).pathname}`);
+  }
+}
+
 export default function LivestreamPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
@@ -32,7 +41,7 @@ export default function LivestreamPage() {
     setError(null);
     try {
       const res = await fetch(`/api/livestream?date=${requestedDate}`);
-      const data = (await res.json()) as LivestreamListResponse | { error: string };
+      const data = await parseJsonResponse<LivestreamListResponse | { error: string }>(res);
       if (!res.ok || isErrorResponse(data)) {
         throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
       }
