@@ -13,10 +13,10 @@ import { logError, logEvent } from '@/lib/logger';
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const requestedDate = searchParams.get('date') || todayLocalDate();
-  const resolvedDate = await resolveLivestreamDate(requestedDate);
-  const availableDates = await listAvailableLivestreamDates();
 
   try {
+    const resolvedDate = await resolveLivestreamDate(requestedDate);
+    const availableDates = await listAvailableLivestreamDates();
     const topics = await getTopicsForDate(resolvedDate);
     logEvent('api.livestream.list', {
       isFallback: requestedDate !== resolvedDate,
@@ -37,7 +37,6 @@ export async function GET(request: Request) {
   } catch (error) {
     logError('api.livestream.list_failed', error, {
       requestedDate,
-      resolvedDate,
     });
     const response: ErrorResponse = {
       error:

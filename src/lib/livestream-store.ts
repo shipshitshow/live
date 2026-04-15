@@ -262,37 +262,49 @@ async function listAllBlobs(
 ): Promise<Array<{ pathname: string }>> {
   if (!isBlobPersistenceEnabled()) return [];
 
-  const blobs: Array<{ pathname: string }> = [];
-  let cursor: string | undefined;
+  try {
+    const blobs: Array<{ pathname: string }> = [];
+    let cursor: string | undefined;
 
-  do {
-    const result = await list({ cursor, prefix });
-    blobs.push(...result.blobs.map((blob) => ({ pathname: blob.pathname })));
-    cursor = result.hasMore ? result.cursor : undefined;
-  } while (cursor);
+    do {
+      const result = await list({ cursor, prefix });
+      blobs.push(...result.blobs.map((blob) => ({ pathname: blob.pathname })));
+      cursor = result.hasMore ? result.cursor : undefined;
+    } while (cursor);
 
-  return blobs;
+    return blobs;
+  } catch {
+    return [];
+  }
 }
 
 async function listBlobDates(prefix: string): Promise<string[]> {
   if (!isBlobPersistenceEnabled()) return [];
 
-  const folders = new Set<string>();
-  let cursor: string | undefined;
+  try {
+    const folders = new Set<string>();
+    let cursor: string | undefined;
 
-  do {
-    const result = await list({ cursor, mode: 'folded', prefix: `${prefix}/` });
-    for (const folder of result.folders) {
-      const parts = folder.split('/').filter(Boolean);
-      const date = parts.at(-1);
-      if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-        folders.add(date);
+    do {
+      const result = await list({
+        cursor,
+        mode: 'folded',
+        prefix: `${prefix}/`,
+      });
+      for (const folder of result.folders) {
+        const parts = folder.split('/').filter(Boolean);
+        const date = parts.at(-1);
+        if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          folders.add(date);
+        }
       }
-    }
-    cursor = result.hasMore ? result.cursor : undefined;
-  } while (cursor);
+      cursor = result.hasMore ? result.cursor : undefined;
+    } while (cursor);
 
-  return Array.from(folders);
+    return Array.from(folders);
+  } catch {
+    return [];
+  }
 }
 
 function applyTopicUpdate(topic: Topic, updates: TopicUpdate): Topic {
