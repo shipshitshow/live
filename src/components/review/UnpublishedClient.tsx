@@ -1,16 +1,20 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { CopyButton } from "@/components/CopyButton";
-import { Button } from "@/components/ui/button";
-import { isErrorResponse } from "@/lib/api-types";
-import { formatNumber } from "@/lib/format";
-import { generateVideoContent, regenerateField, type VideoGeneratedContent } from "@/lib/video-content-generator";
-import type { UnlistedVideo } from "@/lib/review-types";
+import { useCallback, useEffect, useState } from 'react';
+import { CopyButton } from '@/components/CopyButton';
+import { Button } from '@/components/ui/button';
+import { isErrorResponse } from '@/lib/api-types';
+import { formatNumber } from '@/lib/format';
+import type { UnlistedVideo } from '@/lib/review-types';
+import {
+  generateVideoContent,
+  regenerateField,
+  type VideoGeneratedContent,
+} from '@/lib/video-content-generator';
 
 const CHANNEL_HANDLES: Record<string, { handle: string; cls: string }> = {
-  main: { handle: "@shipshitshow", cls: "bg-accent-red/20 text-accent-red" },
-  clips: { handle: "@sssclips", cls: "bg-blue-500/20 text-blue-400" },
+  clips: { cls: 'bg-blue-500/20 text-blue-400', handle: '@sssclips' },
+  main: { cls: 'bg-accent-red/20 text-accent-red', handle: '@shipshitshow' },
 };
 
 function ContentBlock({
@@ -52,8 +56,9 @@ function formatDuration(seconds: number): string {
   const h = Math.floor(seconds / 3600);
   const m = Math.floor((seconds % 3600) / 60);
   const s = seconds % 60;
-  if (h > 0) return `${h}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-  return `${m}:${String(s).padStart(2, "0")}`;
+  if (h > 0)
+    return `${h}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+  return `${m}:${String(s).padStart(2, '0')}`;
 }
 
 export function UnpublishedClient() {
@@ -67,15 +72,21 @@ export function UnpublishedClient() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/unpublished");
+      const res = await fetch('/api/unpublished');
       const data = (await res.json()) as UnlistedVideo[] | { error: string };
       if (!res.ok || isErrorResponse(data)) {
-        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+        throw new Error(
+          isErrorResponse(data) ? data.error : `API error ${res.status}`,
+        );
       }
       setVideos(data);
     } catch (fetchError) {
       setVideos([]);
-      setError(fetchError instanceof Error ? fetchError.message : "Failed to load unpublished videos");
+      setError(
+        fetchError instanceof Error
+          ? fetchError.message
+          : 'Failed to load unpublished videos',
+      );
     } finally {
       setLoading(false);
     }
@@ -93,10 +104,10 @@ export function UnpublishedClient() {
   function handleGenerate() {
     if (!selected) return;
     const generated = generateVideoContent({
-      title: selected.title,
-      videoType: selected.video_type === "short" ? "short" : "video",
-      channelLabel: selected.channel_label || "main",
+      channelLabel: selected.channel_label || 'main',
       duration: selected.avg_view_duration_seconds,
+      title: selected.title,
+      videoType: selected.video_type === 'short' ? 'short' : 'video',
     });
     setContent(generated);
   }
@@ -104,10 +115,12 @@ export function UnpublishedClient() {
   function handleRegenField(field: keyof VideoGeneratedContent) {
     if (!selected || !content) return;
     const input = {
-      title: selected.title,
-      videoType: (selected.video_type === "short" ? "short" : "video") as "short" | "video",
-      channelLabel: selected.channel_label || "main",
+      channelLabel: selected.channel_label || 'main',
       duration: selected.avg_view_duration_seconds,
+      title: selected.title,
+      videoType: (selected.video_type === 'short' ? 'short' : 'video') as
+        | 'short'
+        | 'video',
     };
     const newValue = regenerateField(input, field);
     setContent({ ...content, [field]: newValue });
@@ -116,30 +129,43 @@ export function UnpublishedClient() {
   return (
     <div
       className="mx-auto flex w-full max-w-[1800px]"
-      style={{ height: "calc(100vh - 65px)" }}
+      style={{ height: 'calc(100vh - 65px)' }}
     >
       {/* Left: Video list */}
       <div className="flex-1 overflow-y-auto p-6">
         {loading ? (
           <div className="space-y-3 animate-pulse">
             {[...Array(3)].map((_, i) => (
-              <div key={i} className="bg-surface-card border border-surface-border rounded-xl h-24" />
+              <div
+                key={i}
+                className="bg-surface-card border border-surface-border rounded-xl h-24"
+              />
             ))}
           </div>
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-accent-red text-4xl">⚠</div>
             <p className="text-text-secondary text-sm">{error}</p>
-            <Button onClick={fetchVideos} className="text-xs hover:border-accent-red">
+            <Button
+              onClick={fetchVideos}
+              className="text-xs hover:border-accent-red"
+            >
               Retry
             </Button>
           </div>
         ) : videos.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-text-muted text-4xl">📭</div>
-            <p className="text-text-secondary text-sm">No unlisted videos found</p>
-            <p className="text-text-muted text-xs">Upload a video as unlisted from Premiere, then refresh</p>
-            <Button onClick={fetchVideos} className="text-xs hover:border-accent-red">
+            <p className="text-text-secondary text-sm">
+              No unlisted videos found
+            </p>
+            <p className="text-text-muted text-xs">
+              Upload a video as unlisted from Premiere, then refresh
+            </p>
+            <Button
+              onClick={fetchVideos}
+              className="text-xs hover:border-accent-red"
+            >
               Refresh
             </Button>
           </div>
@@ -147,9 +173,13 @@ export function UnpublishedClient() {
           <div className="space-y-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-text-muted">
-                {videos.length} unlisted video{videos.length !== 1 ? "s" : ""} ready for content
+                {videos.length} unlisted video{videos.length !== 1 ? 's' : ''}{' '}
+                ready for content
               </p>
-              <Button onClick={fetchVideos} className="text-xs text-text-muted hover:text-text-primary">
+              <Button
+                onClick={fetchVideos}
+                className="text-xs text-text-muted hover:text-text-primary"
+              >
                 Refresh
               </Button>
             </div>
@@ -167,8 +197,8 @@ export function UnpublishedClient() {
                   variant="ghost"
                   className={`h-auto w-full justify-start gap-4 whitespace-normal rounded-xl border p-4 text-left transition-colors ${
                     isSelected
-                      ? "bg-accent-red/5 border-accent-red/30 hover:bg-accent-red/5"
-                      : "bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card"
+                      ? 'bg-accent-red/5 border-accent-red/30 hover:bg-accent-red/5'
+                      : 'bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card'
                   }`}
                 >
                   {/* Thumbnail */}
@@ -186,11 +216,13 @@ export function UnpublishedClient() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       {ch && (
-                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${ch.cls}`}>
+                        <span
+                          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded ${ch.cls}`}
+                        >
                           {ch.handle}
                         </span>
                       )}
-                      {video.video_type === "short" && (
+                      {video.video_type === 'short' && (
                         <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400">
                           SHORT
                         </span>
@@ -203,9 +235,13 @@ export function UnpublishedClient() {
                       {video.title}
                     </p>
                     <div className="flex items-center gap-3 mt-1.5 text-[10px] text-text-muted">
-                      <span>{formatDuration(video.avg_view_duration_seconds)}</span>
+                      <span>
+                        {formatDuration(video.avg_view_duration_seconds)}
+                      </span>
                       <span>{formatNumber(video.views)} views</span>
-                      <span>{new Date(video.published_at).toLocaleDateString()}</span>
+                      <span>
+                        {new Date(video.published_at).toLocaleDateString()}
+                      </span>
                     </div>
                   </div>
                 </Button>
@@ -220,7 +256,9 @@ export function UnpublishedClient() {
         {!selected ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-xs text-text-muted text-center">
-              Select a video to generate<br />title, description &amp; social copy
+              Select a video to generate
+              <br />
+              title, description &amp; social copy
             </p>
           </div>
         ) : (
@@ -231,11 +269,15 @@ export function UnpublishedClient() {
                 {selected.title}
               </p>
               <p className="text-[10px] text-text-muted mt-1">
-                {formatDuration(selected.avg_view_duration_seconds)} · {selected.video_type}
+                {formatDuration(selected.avg_view_duration_seconds)} ·{' '}
+                {selected.video_type}
               </p>
               <div className="mt-3">
-                <Button onClick={handleGenerate} className="w-full text-xs bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red">
-                  {content ? "Regenerate All" : "Generate Content"}
+                <Button
+                  onClick={handleGenerate}
+                  className="w-full text-xs bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
+                >
+                  {content ? 'Regenerate All' : 'Generate Content'}
                 </Button>
               </div>
             </div>
@@ -249,7 +291,7 @@ export function UnpublishedClient() {
                       Title Variants
                     </span>
                     <Button
-                      onClick={() => handleRegenField("titles")}
+                      onClick={() => handleRegenField('titles')}
                       size="sm"
                       className="rounded bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
                     >
@@ -258,45 +300,42 @@ export function UnpublishedClient() {
                   </div>
                   <div className="p-3 space-y-2">
                     {content.titles.map((t, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start gap-2 group"
-                      >
+                      <div key={i} className="flex items-start gap-2 group">
                         <span className="text-[10px] text-text-muted shrink-0 mt-0.5 w-4">
                           {i + 1}.
                         </span>
                         <span className="text-xs text-text-secondary flex-1">
                           {t}
                         </span>
-                          <CopyButton
-                            text={t}
-                            timeoutMs={2000}
-                            className="text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors shrink-0"
-                          />
-                        </div>
-                      ))}
-                    </div>
+                        <CopyButton
+                          text={t}
+                          timeoutMs={2000}
+                          className="text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors shrink-0"
+                        />
+                      </div>
+                    ))}
+                  </div>
                 </div>
 
                 <ContentBlock
                   label="YouTube Description"
                   content={content.youtubeDescription}
-                  onRegen={() => handleRegenField("youtubeDescription")}
+                  onRegen={() => handleRegenField('youtubeDescription')}
                 />
                 <ContentBlock
                   label="LinkedIn Post"
                   content={content.linkedinPost}
-                  onRegen={() => handleRegenField("linkedinPost")}
+                  onRegen={() => handleRegenField('linkedinPost')}
                 />
                 <ContentBlock
                   label="Tweet — Announcement"
                   content={content.announcementTweet}
-                  onRegen={() => handleRegenField("announcementTweet")}
+                  onRegen={() => handleRegenField('announcementTweet')}
                 />
                 <ContentBlock
                   label="Tweet — Recap"
                   content={content.recapTweet}
-                  onRegen={() => handleRegenField("recapTweet")}
+                  onRegen={() => handleRegenField('recapTweet')}
                 />
               </>
             )}

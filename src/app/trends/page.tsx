@@ -1,5 +1,5 @@
-import { TrendsClient } from "@/components/trends/TrendsClient";
-import { AppHeader } from "@/components/AppHeader";
+import { AppHeader } from '@/components/AppHeader';
+import { TrendsClient } from '@/components/trends/TrendsClient';
 
 export default function TrendsPage() {
   return (
