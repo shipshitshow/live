@@ -236,10 +236,7 @@ interface ShowSegment {
 }
 
 function countWords(text: string): number {
-  return text
-    .trim()
-    .split(/\s+/)
-    .filter(Boolean).length;
+  return text.trim().split(/\s+/).filter(Boolean).length;
 }
 
 function formatSegmentTime(totalSeconds: number): string {
