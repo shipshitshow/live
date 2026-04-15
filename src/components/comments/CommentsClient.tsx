@@ -1,39 +1,42 @@
-"use client";
+'use client';
 
-import { useCallback, useEffect, useMemo, useState } from "react";
-import { CopyButton } from "@/components/CopyButton";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { CopyButton } from '@/components/CopyButton';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
+} from '@/components/ui/select';
+import { isErrorResponse, isReauthRequiredResponse } from '@/lib/api-types';
 import type {
   CommentReplyDraftResponse,
   YouTubeCommentListResponse,
   YouTubeCommentReply,
   YouTubeCommentThread,
-} from "@/lib/types";
+} from '@/lib/types';
 
 type DraftState = Record<string, string[]>;
 type SendingState = Record<string, number | null>;
 
 const formatPublishedAt = (value: string) =>
   new Date(value).toLocaleString([], {
-    dateStyle: "medium",
-    timeStyle: "short",
+    dateStyle: 'medium',
+    timeStyle: 'short',
   });
+
+const buildYouTubeVideoUrl = (videoId: string) =>
+  `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
 
 export function CommentsClient() {
   const [comments, setComments] = useState<YouTubeCommentThread[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [channelFilter, setChannelFilter] = useState("all");
-  const [videoFilter, setVideoFilter] = useState("all");
+  const [channelFilter, setChannelFilter] = useState('all');
+  const [videoFilter, setVideoFilter] = useState('all');
   const [draftsByComment, setDraftsByComment] = useState<DraftState>({});
   const [draftLoadingId, setDraftLoadingId] = useState<string | null>(null);
   const [sendingByComment, setSendingByComment] = useState<SendingState>({});
@@ -45,29 +48,38 @@ export function CommentsClient() {
     setError(null);
 
     try {
-      const res = await fetch("/api/youtube/comments?maxResults=100", {
-        cache: "no-store",
+      const res = await fetch('/api/youtube/comments?maxResults=100', {
+        cache: 'no-store',
       });
-      const data = (await res.json()) as YouTubeCommentListResponse | { error: string };
+      const data = (await res.json()) as
+        | YouTubeCommentListResponse
+        | { error: string };
 
       if (res.status === 401 && isReauthRequiredResponse(data)) {
         window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         return;
       }
 
-      if (!res.ok || !("items" in data)) {
-        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+      if (!res.ok || !('items' in data)) {
+        throw new Error(
+          isErrorResponse(data) ? data.error : `API error ${res.status}`,
+        );
       }
 
       setComments(data.items);
       setFetchedAt(data.fetchedAt);
       setSelectedId((prev) => {
-        if (prev && data.items.some((item) => item.commentId === prev)) return prev;
+        if (prev && data.items.some((item) => item.commentId === prev))
+          return prev;
         return data.items[0]?.commentId ?? null;
       });
     } catch (loadError) {
       setComments([]);
-      setError(loadError instanceof Error ? loadError.message : "Failed to load comments");
+      setError(
+        loadError instanceof Error
+          ? loadError.message
+          : 'Failed to load comments',
+      );
     } finally {
       setLoading(false);
     }
@@ -78,13 +90,12 @@ export function CommentsClient() {
   }, [loadComments]);
 
   const channelOptions = useMemo(
-    () =>
-      Array.from(new Set(comments.map((item) => item.channelLabel))).sort(),
-    [comments]
+    () => Array.from(new Set(comments.map((item) => item.channelLabel))).sort(),
+    [comments],
   );
 
   const filteredByChannel = useMemo(() => {
-    if (channelFilter === "all") return comments;
+    if (channelFilter === 'all') return comments;
     return comments.filter((item) => item.channelLabel === channelFilter);
   }, [comments, channelFilter]);
 
@@ -97,20 +108,23 @@ export function CommentsClient() {
   }, [filteredByChannel]);
 
   useEffect(() => {
-    if (videoFilter === "all") return;
+    if (videoFilter === 'all') return;
     if (!videoOptions.some(([videoId]) => videoId === videoFilter)) {
-      setVideoFilter("all");
+      setVideoFilter('all');
     }
   }, [videoFilter, videoOptions]);
 
   const visibleComments = useMemo(() => {
-    if (videoFilter === "all") return filteredByChannel;
+    if (videoFilter === 'all') return filteredByChannel;
     return filteredByChannel.filter((item) => item.videoId === videoFilter);
   }, [filteredByChannel, videoFilter]);
 
   const selectedComment = useMemo(
-    () => visibleComments.find((item) => item.commentId === selectedId) ?? visibleComments[0] ?? null,
-    [selectedId, visibleComments]
+    () =>
+      visibleComments.find((item) => item.commentId === selectedId) ??
+      visibleComments[0] ??
+      null,
+    [selectedId, visibleComments],
   );
 
   useEffect(() => {
@@ -123,95 +137,118 @@ export function CommentsClient() {
     }
   }, [selectedComment, selectedId]);
 
-  const handleGenerateDrafts = useCallback(async (comment: YouTubeCommentThread) => {
-    setDraftLoadingId(comment.commentId);
-    setActionError(null);
+  const handleGenerateDrafts = useCallback(
+    async (comment: YouTubeCommentThread) => {
+      setDraftLoadingId(comment.commentId);
+      setActionError(null);
 
-    try {
-      const res = await fetch("/api/youtube/comments/draft-reply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          videoTitle: comment.videoTitle,
-          commentText: comment.text,
-          channelLabel: comment.channelLabel,
-          authorDisplayName: comment.authorDisplayName,
-        }),
-      });
+      try {
+        const res = await fetch('/api/youtube/comments/draft-reply', {
+          body: JSON.stringify({
+            authorDisplayName: comment.authorDisplayName,
+            channelLabel: comment.channelLabel,
+            commentText: comment.text,
+            videoTitle: comment.videoTitle,
+          }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
 
-      const data = (await res.json()) as CommentReplyDraftResponse | { error: string };
-      if (!res.ok || !("drafts" in data)) {
-        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+        const data = (await res.json()) as
+          | CommentReplyDraftResponse
+          | { error: string };
+        if (!res.ok || !('drafts' in data)) {
+          throw new Error(
+            isErrorResponse(data) ? data.error : `API error ${res.status}`,
+          );
+        }
+
+        setDraftsByComment((prev) => ({
+          ...prev,
+          [comment.commentId]: data.drafts,
+        }));
+      } catch (draftError) {
+        setActionError(
+          draftError instanceof Error
+            ? draftError.message
+            : 'Failed to generate drafts',
+        );
+      } finally {
+        setDraftLoadingId(null);
       }
+    },
+    [],
+  );
 
-      setDraftsByComment((prev) => ({
-        ...prev,
-        [comment.commentId]: data.drafts,
-      }));
-    } catch (draftError) {
-      setActionError(draftError instanceof Error ? draftError.message : "Failed to generate drafts");
-    } finally {
-      setDraftLoadingId(null);
-    }
-  }, []);
+  const handleSendReply = useCallback(
+    async (comment: YouTubeCommentThread, draft: string, index: number) => {
+      setSendingByComment((prev) => ({ ...prev, [comment.commentId]: index }));
+      setActionError(null);
 
-  const handleSendReply = useCallback(async (comment: YouTubeCommentThread, draft: string, index: number) => {
-    setSendingByComment((prev) => ({ ...prev, [comment.commentId]: index }));
-    setActionError(null);
+      try {
+        const res = await fetch('/api/youtube/comments/reply', {
+          body: JSON.stringify({
+            channelId: comment.channelId,
+            parentCommentId: comment.commentId,
+            text: draft,
+          }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
+        });
 
-    try {
-      const res = await fetch("/api/youtube/comments/reply", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          parentCommentId: comment.commentId,
-          channelId: comment.channelId,
-          text: draft,
-        }),
-      });
+        const data = (await res.json()) as
+          | YouTubeCommentReply
+          | { error: string };
+        if (res.status === 401 && isReauthRequiredResponse(data)) {
+          window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+          return;
+        }
+        if (!res.ok || !('id' in data)) {
+          throw new Error(
+            isErrorResponse(data) ? data.error : `API error ${res.status}`,
+          );
+        }
 
-      const data = (await res.json()) as YouTubeCommentReply | { error: string };
-      if (res.status === 401 && isReauthRequiredResponse(data)) {
-        window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
-        return;
+        setComments((prev) =>
+          prev.map((item) =>
+            item.commentId === comment.commentId
+              ? {
+                  ...item,
+                  replies: [...item.replies, data],
+                  totalReplyCount: item.totalReplyCount + 1,
+                }
+              : item,
+          ),
+        );
+      } catch (sendError) {
+        setActionError(
+          sendError instanceof Error
+            ? sendError.message
+            : 'Failed to send reply',
+        );
+      } finally {
+        setSendingByComment((prev) => ({ ...prev, [comment.commentId]: null }));
       }
-      if (!res.ok || !("id" in data)) {
-        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
-      }
-
-      setComments((prev) =>
-        prev.map((item) =>
-          item.commentId === comment.commentId
-            ? {
-                ...item,
-                totalReplyCount: item.totalReplyCount + 1,
-                replies: [...item.replies, data],
-              }
-            : item
-        )
-      );
-    } catch (sendError) {
-      setActionError(sendError instanceof Error ? sendError.message : "Failed to send reply");
-    } finally {
-      setSendingByComment((prev) => ({ ...prev, [comment.commentId]: null }));
-    }
-  }, []);
+    },
+    [],
+  );
 
   return (
-    <div className="flex" style={{ height: "calc(100vh - 65px)" }}>
+    <div className="flex" style={{ height: 'calc(100vh - 65px)' }}>
       <div className="flex-1 overflow-y-auto p-6">
         <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
           <div>
             <p className="text-xs text-text-muted">
-              {loading ? "Loading comments..." : `${visibleComments.length} comments loaded`}
-              {fetchedAt ? ` · updated ${new Date(fetchedAt).toLocaleTimeString()}` : ""}
+              {loading
+                ? 'Loading comments...'
+                : `${visibleComments.length} comments loaded`}
+              {fetchedAt
+                ? ` · updated ${new Date(fetchedAt).toLocaleTimeString()}`
+                : ''}
             </p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <Select
-              value={channelFilter}
-              onValueChange={setChannelFilter}
-            >
+            <Select value={channelFilter} onValueChange={setChannelFilter}>
               <SelectTrigger className="h-9 text-xs text-text-primary">
                 <SelectValue placeholder="All channels" />
               </SelectTrigger>
@@ -224,10 +261,7 @@ export function CommentsClient() {
                 ))}
               </SelectContent>
             </Select>
-            <Select
-              value={videoFilter}
-              onValueChange={setVideoFilter}
-            >
+            <Select value={videoFilter} onValueChange={setVideoFilter}>
               <SelectTrigger className="h-9 max-w-[320px] text-xs text-text-primary">
                 <SelectValue placeholder="All videos" />
               </SelectTrigger>
@@ -240,7 +274,10 @@ export function CommentsClient() {
                 ))}
               </SelectContent>
             </Select>
-            <Button onClick={loadComments} className="text-xs hover:border-accent-red">
+            <Button
+              onClick={loadComments}
+              className="text-xs hover:border-accent-red"
+            >
               Refresh
             </Button>
           </div>
@@ -250,7 +287,10 @@ export function CommentsClient() {
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-accent-red text-4xl">⚠</div>
             <p className="text-text-secondary text-sm">{error}</p>
-            <Button onClick={loadComments} className="text-xs hover:border-accent-red">
+            <Button
+              onClick={loadComments}
+              className="text-xs hover:border-accent-red"
+            >
               Retry
             </Button>
           </div>
@@ -266,12 +306,15 @@ export function CommentsClient() {
         ) : visibleComments.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-text-muted text-4xl">💬</div>
-            <p className="text-text-secondary text-sm">No comments found for this filter</p>
+            <p className="text-text-secondary text-sm">
+              No comments found for this filter
+            </p>
           </div>
         ) : (
           <div className="space-y-3">
             {visibleComments.map((comment) => {
-              const isSelected = selectedComment?.commentId === comment.commentId;
+              const isSelected =
+                selectedComment?.commentId === comment.commentId;
 
               return (
                 <Button
@@ -280,8 +323,8 @@ export function CommentsClient() {
                   variant="ghost"
                   className={`h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-xl border p-4 text-left transition-colors ${
                     isSelected
-                      ? "bg-accent-red/5 border-accent-red/30 hover:bg-accent-red/5"
-                      : "bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card"
+                      ? 'bg-accent-red/5 border-accent-red/30 hover:bg-accent-red/5'
+                      : 'bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card'
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -314,7 +357,9 @@ export function CommentsClient() {
         {!selectedComment ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-xs text-text-muted text-center">
-              Select a comment to generate<br />reply drafts and send one
+              Select a comment to generate
+              <br />
+              reply drafts and send one
             </p>
           </div>
         ) : (
@@ -327,6 +372,14 @@ export function CommentsClient() {
                 <p className="text-sm text-text-primary font-semibold">
                   {selectedComment.videoTitle}
                 </p>
+                <a
+                  href={buildYouTubeVideoUrl(selectedComment.videoId)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 inline-flex text-xs text-accent-red hover:underline"
+                >
+                  Open on YouTube
+                </a>
               </div>
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
@@ -338,14 +391,17 @@ export function CommentsClient() {
               </div>
               <div className="flex items-center justify-between gap-3">
                 <div className="text-[10px] text-text-muted">
-                  {selectedComment.authorDisplayName} · {formatPublishedAt(selectedComment.publishedAt)}
+                  {selectedComment.authorDisplayName} ·{' '}
+                  {formatPublishedAt(selectedComment.publishedAt)}
                 </div>
                 <Button
                   onClick={() => handleGenerateDrafts(selectedComment)}
                   disabled={draftLoadingId === selectedComment.commentId}
                   className="text-xs bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
                 >
-                  {draftLoadingId === selectedComment.commentId ? "Generating..." : "Generate drafts"}
+                  {draftLoadingId === selectedComment.commentId
+                    ? 'Generating...'
+                    : 'Generate drafts'}
                 </Button>
               </div>
             </div>
@@ -358,35 +414,42 @@ export function CommentsClient() {
 
             {(draftsByComment[selectedComment.commentId] ?? []).length > 0 && (
               <div className="space-y-3">
-                {(draftsByComment[selectedComment.commentId] ?? []).map((draft, index) => {
-                  const sendingIndex = sendingByComment[selectedComment.commentId];
-                  return (
-                    <div
-                      key={`${selectedComment.commentId}-${index}`}
-                      className="bg-surface-elevated border border-surface-border rounded-xl p-4"
-                    >
-                      <div className="flex items-center justify-between gap-3 mb-3">
-                        <span className="text-[10px] uppercase tracking-wider text-text-muted">
-                          Draft {index + 1}
-                        </span>
-                        <CopyButton text={draft} />
+                {(draftsByComment[selectedComment.commentId] ?? []).map(
+                  (draft, index) => {
+                    const sendingIndex =
+                      sendingByComment[selectedComment.commentId];
+                    return (
+                      <div
+                        key={`${selectedComment.commentId}-${index}`}
+                        className="bg-surface-elevated border border-surface-border rounded-xl p-4"
+                      >
+                        <div className="flex items-center justify-between gap-3 mb-3">
+                          <span className="text-[10px] uppercase tracking-wider text-text-muted">
+                            Draft {index + 1}
+                          </span>
+                          <CopyButton text={draft} />
+                        </div>
+                        <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
+                          {draft}
+                        </p>
+                        <div className="mt-4">
+                          <Button
+                            onClick={() =>
+                              handleSendReply(selectedComment, draft, index)
+                            }
+                            disabled={sendingIndex === index}
+                            variant="accent"
+                            className="w-full text-xs"
+                          >
+                            {sendingIndex === index
+                              ? 'Sending...'
+                              : 'Send this reply'}
+                          </Button>
+                        </div>
                       </div>
-                      <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
-                        {draft}
-                      </p>
-                      <div className="mt-4">
-                        <Button
-                          onClick={() => handleSendReply(selectedComment, draft, index)}
-                          disabled={sendingIndex === index}
-                          variant="accent"
-                          className="w-full text-xs"
-                        >
-                          {sendingIndex === index ? "Sending..." : "Send this reply"}
-                        </Button>
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  },
+                )}
               </div>
             )}
 

@@ -1,22 +1,10 @@
 import type { Metadata } from 'next';
-import { JetBrains_Mono, Space_Grotesk } from 'next/font/google';
+import { Suspense } from 'react';
 import 'xterm/css/xterm.css';
 import './globals.scss';
 import { TerminalDrawerGate } from '@/components/dev/TerminalDrawerGate';
 import { YouTubeAuthGate } from '@/components/YouTubeAuthGate';
-import { isDevToolsEnabled } from '@/lib/dev-tools';
-
-const spaceGrotesk = Space_Grotesk({
-  display: 'swap',
-  subsets: ['latin'],
-  variable: '--font-space-grotesk',
-});
-
-const jetBrainsMono = JetBrains_Mono({
-  display: 'swap',
-  subsets: ['latin'],
-  variable: '--font-jetbrains-mono',
-});
+import { isDevToolsEnabled, isYouTubeAuthEnabled } from '@/lib/dev-tools';
 
 export const metadata: Metadata = {
   description: 'YouTube channel analytics and review dashboard',
@@ -29,11 +17,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const devToolsEnabled = isDevToolsEnabled();
+  const youtubeAuthEnabled = isYouTubeAuthEnabled();
 
   return (
     <html lang="en">
-      <body className={`${spaceGrotesk.variable} ${jetBrainsMono.variable}`}>
-        <YouTubeAuthGate />
+      <body>
+        {youtubeAuthEnabled ? (
+          <Suspense fallback={null}>
+            <YouTubeAuthGate />
+          </Suspense>
+        ) : null}
         <div id="app-content-shell" className="app-content-shell">
           {children}
         </div>

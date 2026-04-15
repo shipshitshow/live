@@ -181,7 +181,8 @@ export function TerminalDrawer() {
         allowTransparency: false,
         convertEol: true,
         cursorBlink: true,
-        fontFamily: 'var(--font-jetbrains-mono), monospace',
+        fontFamily:
+          'ui-monospace, SFMono-Regular, SF Mono, Menlo, Monaco, Consolas, monospace',
         fontSize: 12,
         theme: {
           background: '#0f0f10',
