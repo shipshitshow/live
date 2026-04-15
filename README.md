@@ -14,6 +14,21 @@ bun install
 bun run dev   # http://localhost:3001
 ```
 
+## Repo Skills
+
+This repo has two skill buckets:
+- [`skills`](/Users/decod3rs/www/shipshitshow/live/skills) for repo-authored local skills
+- `.agents/skills` for project-level installs managed by the official `skills.sh` CLI
+
+To install your shared skills repo into this project for Claude, Cursor, Codex, and OpenClaw:
+
+```bash
+./skills.sh install
+./skills.sh status
+```
+
+Under the hood this runs `npx skills` against `https://github.com/shipshitshow/skills`.
+
 ## Environment
 
 ```

@@ -1,0 +1,7 @@
+interface:
+  display_name: "Find Channel-Fit Trends"
+  short_description: "Find ranked trend briefs for Ship Sh!t Show"
+  default_prompt: "Use $finding-channel-fit-trends to find live Reddit, Hacker News, YouTube, and X trends that best fit Ship Sh!t Show, then turn them into ranked content briefs."
+policy:
+  allow_implicit_invocation: true
+

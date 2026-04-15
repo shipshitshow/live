@@ -1,15 +1,30 @@
 {
+  "version": 1,
   "skills": {
     "copywriting": {
       "computedHash": "2e83eda2221e97166172a0798e9b0379e34080595e107e2fc0cf580e9b3bbf7b",
       "source": "coreyhaines31/marketingskills",
       "sourceType": "github"
     },
+    "finding-channel-fit-trends": {
+      "source": "shipshitshow/skills",
+      "sourceType": "github",
+      "computedHash": "f16570c26156b4500c3de850f2a10a9e3a5484c7423040f46ea2bab172c2dd02"
+    },
+    "generating-thumbnail-prompt-variations": {
+      "source": "shipshitshow/skills",
+      "sourceType": "github",
+      "computedHash": "6c164e966a26b3890cdf1b84d2727c85ad302d2a78e99f3dd4e4b5377d34c30e"
+    },
+    "generating-youtube-metadata": {
+      "source": "shipshitshow/skills",
+      "sourceType": "github",
+      "computedHash": "c8ba0a5b7bc0d832146b5fc79ebcd4edaa0a5e3395f2656b670a6dc522e373f8"
+    },
     "social-media-marketing": {
       "computedHash": "1b248a7a12c2f91ad0a20a058d6b37d43e47c32c230a35f3f27855a4f752e10b",
       "source": "dengineproblem/agents-monorepo",
       "sourceType": "github"
     }
-  },
-  "version": 1
+  }
 }

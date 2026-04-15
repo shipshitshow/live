@@ -22,6 +22,14 @@ logs/
 .env
 .env*.local
 
+# repo-local generated skill links
+.claude/skills/show-rundown
+.claude/skills/stream-content
+.claude/skills/trend-scout
+.codex/skills/
+.cursor/skills/
+.openclaw/skills/
+
 # youtube tokens & cache
 data/youtube-tokens.json
 data/youtube-cache/
