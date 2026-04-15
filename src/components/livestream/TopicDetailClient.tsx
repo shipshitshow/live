@@ -847,344 +847,344 @@ export function TopicDetailClient() {
 
         <aside className="min-h-0 w-full max-w-[360px] shrink-0 overflow-y-auto">
           <div className="space-y-4">
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Stream Snapshot
-              </h3>
-            </div>
-            <div className="space-y-4 p-4">
-              <div className="grid grid-cols-1 gap-2">
-                {streamMeta?.youtubeUrl && (
-                  <a
-                    href={streamMeta.youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                  >
-                    <span>
-                      {streamMeta.liveStatus === 'live'
-                        ? 'Open Livestream'
-                        : 'Open Replay'}
-                    </span>
-                  </a>
-                )}
-
-                {restreamLink && (
-                  <a
-                    href={restreamLink.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                  >
-                    <span>Open Restream Studio</span>
-                  </a>
-                )}
-
-                {announcementTweetLink && (
-                  <a
-                    href={announcementTweetLink.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                  >
-                    <span>Open Announcement Tweet</span>
-                  </a>
-                )}
-
-                <Link
-                  href={`/livestream/${slug}/draw?date=${date}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                >
-                  <span>Open Drawing Board</span>
-                </Link>
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Stream Snapshot
+                </h3>
               </div>
-
-              {streamMeta?.thumbnailUrl && (
-                <img
-                  src={streamMeta.thumbnailUrl}
-                  alt={streamMeta.title || topic.title}
-                  className="w-full rounded-lg border border-surface-border"
-                />
-              )}
-
-              {(streamMeta?.title ||
-                streamMeta?.channelTitle ||
-                summarySection?.body) && (
-                <div>
-                  {streamMeta?.title && (
-                    <p className="text-sm font-semibold leading-snug text-text-primary">
-                      {streamMeta.title}
-                    </p>
-                  )}
-                  {streamMeta?.channelTitle && (
-                    <p className="mt-1 text-xs text-text-muted">
-                      {streamMeta.channelTitle}
-                    </p>
-                  )}
-                  {summarySection?.body && (
-                    <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-                      {clampText(stripMarkdown(summarySection.body), 220)}
-                    </p>
-                  )}
-                </div>
-              )}
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs text-text-muted">Status</span>
-                  <span
-                    className={`rounded px-2 py-1 text-[11px] font-medium uppercase ${
-                      streamMeta?.liveStatus === 'live'
-                        ? 'bg-red-500/10 text-red-400'
-                        : streamMeta?.liveStatus === 'ended'
-                          ? 'bg-green-500/10 text-green-400'
-                          : 'bg-surface-border text-text-secondary'
-                    }`}
-                  >
-                    {streamMeta?.liveStatus || 'missing'}
-                  </span>
-                </div>
-
-                {streamMeta?.youtubeUrl && (
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-text-muted">YouTube</span>
+              <div className="space-y-4 p-4">
+                <div className="grid grid-cols-1 gap-2">
+                  {streamMeta?.youtubeUrl && (
                     <a
                       href={streamMeta.youtubeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="max-w-[220px] truncate text-right text-xs text-accent-red hover:underline"
+                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
                     >
-                      {streamMeta.liveStatus === 'live'
-                        ? 'Open stream'
-                        : 'Open replay'}
-                    </a>
-                  </div>
-                )}
-
-                {streamMeta?.viewCount !== undefined && (
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-text-muted">Views</span>
-                    <span className="text-sm font-semibold text-text-primary">
-                      {formatCompactNumber(streamMeta.viewCount)}
-                    </span>
-                  </div>
-                )}
-
-                {streamMeta?.liveStatus === 'live' && (
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-text-muted">
-                      Current viewers
-                    </span>
-                    <span className="text-sm font-semibold text-red-400">
-                      {formatCompactNumber(streamMeta.concurrentViewers)}
-                    </span>
-                  </div>
-                )}
-
-                {streamMeta?.actualStartTime && (
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-text-muted">Started</span>
-                    <span className="text-xs text-text-secondary">
-                      {new Date(streamMeta.actualStartTime).toLocaleString()}
-                    </span>
-                  </div>
-                )}
-
-                {streamMeta?.actualEndTime && (
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-text-muted">Ended</span>
-                    <span className="text-xs text-text-secondary">
-                      {new Date(streamMeta.actualEndTime).toLocaleString()}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Co-Host Cues
-              </h3>
-            </div>
-            <div className="space-y-3 p-4">
-              {cohostCues.map((cue) => (
-                <div key={cue} className="flex gap-3">
-                  <span className="mt-0.5 text-[11px] font-mono font-bold text-accent-red">
-                    Q
-                  </span>
-                  <p className="text-sm leading-relaxed text-text-primary">
-                    {cue}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Episode Brief
-              </h3>
-            </div>
-            <div className="space-y-4 p-4">
-              <div>
-                <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-text-muted">
-                  What Happened
-                </p>
-                <p className="text-sm leading-relaxed text-text-primary">
-                  {summarySection
-                    ? stripMarkdown(summarySection.body)
-                    : 'No summary provided yet.'}
-                </p>
-              </div>
-              {hotTakeSection && (
-                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
-                  <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-yellow-300/80">
-                    What Side To Take
-                  </p>
-                  <p className="text-sm leading-relaxed text-text-primary">
-                    {stripMarkdown(hotTakeSection.body)}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Segment Timeline
-              </h3>
-            </div>
-            <div className="space-y-2 p-4">
-              {segments.map((seg) => (
-                <button
-                  key={seg.number}
-                  type="button"
-                  onClick={() => jumpToSegment(seg.number)}
-                  className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
-                    activeSegmentNumber === seg.number
-                      ? 'border-accent-red/30 bg-accent-red/5'
-                      : 'border-surface-border/70 bg-surface-elevated/30 hover:border-accent-red/20 hover:bg-surface-elevated/50'
-                  }`}
-                >
-                  <span
-                    className={`mt-0.5 text-[11px] font-mono font-bold ${SEGMENT_COLORS[seg.type].time}`}
-                  >
-                    {seg.time}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-medium leading-snug text-text-primary">
-                      {seg.label}
-                    </p>
-                    <p className="mt-0.5 text-[11px] text-text-muted">
-                      {seg.duration}
-                    </p>
-                  </div>
-                </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Must-Hit Facts
-              </h3>
-            </div>
-            <div className="space-y-3 p-4">
-              {keyFacts.map((fact, index) => (
-                <div key={`${index}-${fact}`} className="flex gap-3">
-                  <span className="mt-0.5 text-[11px] font-mono font-bold text-text-muted">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm leading-relaxed text-text-primary">
-                    {fact}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Key Links
-              </h3>
-            </div>
-            <div className="space-y-2 p-4">
-              {keyLinks.map((link, index) => {
-                const { badge, cls } = getBadgeForUrl(link.url);
-                return (
-                  <a
-                    key={`${link.url}-${index}`}
-                    href={link.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
-                  >
-                    <span
-                      className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
-                    >
-                      {index === 0 && streamMeta?.youtubeUrl === link.url
-                        ? 'LIVE'
-                        : badge}
-                    </span>
-                    <span className="truncate">
-                      {stripSourcePrefix(link.text)}
-                    </span>
-                  </a>
-                );
-              })}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                X Reactions
-              </h3>
-            </div>
-            <div className="space-y-2 p-4">
-              {xReactions.length > 0 ? (
-                xReactions.map((tweet) => (
-                  <a
-                    key={tweet.id}
-                    href={tweet.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-accent-red/30"
-                  >
-                    <div className="flex items-center gap-2 text-[10px] text-text-muted">
-                      <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono font-bold text-blue-400">
-                        X
+                      <span>
+                        {streamMeta.liveStatus === 'live'
+                          ? 'Open Livestream'
+                          : 'Open Replay'}
                       </span>
-                      {tweet.author ? (
-                        <span className="truncate text-text-secondary">
-                          {tweet.author}
-                        </span>
-                      ) : null}
-                      <span className="ml-auto font-mono">
-                        {formatCompactNumber(tweet.score)}
+                    </a>
+                  )}
+
+                  {restreamLink && (
+                    <a
+                      href={restreamLink.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                    >
+                      <span>Open Restream Studio</span>
+                    </a>
+                  )}
+
+                  {announcementTweetLink && (
+                    <a
+                      href={announcementTweetLink.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                    >
+                      <span>Open Announcement Tweet</span>
+                    </a>
+                  )}
+
+                  <Link
+                    href={`/livestream/${slug}/draw?date=${date}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                  >
+                    <span>Open Drawing Board</span>
+                  </Link>
+                </div>
+
+                {streamMeta?.thumbnailUrl && (
+                  <img
+                    src={streamMeta.thumbnailUrl}
+                    alt={streamMeta.title || topic.title}
+                    className="w-full rounded-lg border border-surface-border"
+                  />
+                )}
+
+                {(streamMeta?.title ||
+                  streamMeta?.channelTitle ||
+                  summarySection?.body) && (
+                  <div>
+                    {streamMeta?.title && (
+                      <p className="text-sm font-semibold leading-snug text-text-primary">
+                        {streamMeta.title}
+                      </p>
+                    )}
+                    {streamMeta?.channelTitle && (
+                      <p className="mt-1 text-xs text-text-muted">
+                        {streamMeta.channelTitle}
+                      </p>
+                    )}
+                    {summarySection?.body && (
+                      <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                        {clampText(stripMarkdown(summarySection.body), 220)}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Status</span>
+                    <span
+                      className={`rounded px-2 py-1 text-[11px] font-medium uppercase ${
+                        streamMeta?.liveStatus === 'live'
+                          ? 'bg-red-500/10 text-red-400'
+                          : streamMeta?.liveStatus === 'ended'
+                            ? 'bg-green-500/10 text-green-400'
+                            : 'bg-surface-border text-text-secondary'
+                      }`}
+                    >
+                      {streamMeta?.liveStatus || 'missing'}
+                    </span>
+                  </div>
+
+                  {streamMeta?.youtubeUrl && (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs text-text-muted">YouTube</span>
+                      <a
+                        href={streamMeta.youtubeUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="max-w-[220px] truncate text-right text-xs text-accent-red hover:underline"
+                      >
+                        {streamMeta.liveStatus === 'live'
+                          ? 'Open stream'
+                          : 'Open replay'}
+                      </a>
+                    </div>
+                  )}
+
+                  {streamMeta?.viewCount !== undefined && (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs text-text-muted">Views</span>
+                      <span className="text-sm font-semibold text-text-primary">
+                        {formatCompactNumber(streamMeta.viewCount)}
                       </span>
                     </div>
-                    <p className="mt-2 text-sm leading-relaxed text-text-primary">
-                      {clampText(tweet.title, 180)}
-                    </p>
-                  </a>
-                ))
-              ) : (
-                <p className="text-sm text-text-muted">
-                  No matching tweets surfaced for this topic yet.
-                </p>
-              )}
+                  )}
+
+                  {streamMeta?.liveStatus === 'live' && (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs text-text-muted">
+                        Current viewers
+                      </span>
+                      <span className="text-sm font-semibold text-red-400">
+                        {formatCompactNumber(streamMeta.concurrentViewers)}
+                      </span>
+                    </div>
+                  )}
+
+                  {streamMeta?.actualStartTime && (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs text-text-muted">Started</span>
+                      <span className="text-xs text-text-secondary">
+                        {new Date(streamMeta.actualStartTime).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+
+                  {streamMeta?.actualEndTime && (
+                    <div className="flex items-center justify-between gap-3">
+                      <span className="text-xs text-text-muted">Ended</span>
+                      <span className="text-xs text-text-secondary">
+                        {new Date(streamMeta.actualEndTime).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
+
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Co-Host Cues
+                </h3>
+              </div>
+              <div className="space-y-3 p-4">
+                {cohostCues.map((cue) => (
+                  <div key={cue} className="flex gap-3">
+                    <span className="mt-0.5 text-[11px] font-mono font-bold text-accent-red">
+                      Q
+                    </span>
+                    <p className="text-sm leading-relaxed text-text-primary">
+                      {cue}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Episode Brief
+                </h3>
+              </div>
+              <div className="space-y-4 p-4">
+                <div>
+                  <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-text-muted">
+                    What Happened
+                  </p>
+                  <p className="text-sm leading-relaxed text-text-primary">
+                    {summarySection
+                      ? stripMarkdown(summarySection.body)
+                      : 'No summary provided yet.'}
+                  </p>
+                </div>
+                {hotTakeSection && (
+                  <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
+                    <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-yellow-300/80">
+                      What Side To Take
+                    </p>
+                    <p className="text-sm leading-relaxed text-text-primary">
+                      {stripMarkdown(hotTakeSection.body)}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Segment Timeline
+                </h3>
+              </div>
+              <div className="space-y-2 p-4">
+                {segments.map((seg) => (
+                  <button
+                    key={seg.number}
+                    type="button"
+                    onClick={() => jumpToSegment(seg.number)}
+                    className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
+                      activeSegmentNumber === seg.number
+                        ? 'border-accent-red/30 bg-accent-red/5'
+                        : 'border-surface-border/70 bg-surface-elevated/30 hover:border-accent-red/20 hover:bg-surface-elevated/50'
+                    }`}
+                  >
+                    <span
+                      className={`mt-0.5 text-[11px] font-mono font-bold ${SEGMENT_COLORS[seg.type].time}`}
+                    >
+                      {seg.time}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium leading-snug text-text-primary">
+                        {seg.label}
+                      </p>
+                      <p className="mt-0.5 text-[11px] text-text-muted">
+                        {seg.duration}
+                      </p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Must-Hit Facts
+                </h3>
+              </div>
+              <div className="space-y-3 p-4">
+                {keyFacts.map((fact, index) => (
+                  <div key={`${index}-${fact}`} className="flex gap-3">
+                    <span className="mt-0.5 text-[11px] font-mono font-bold text-text-muted">
+                      {index + 1}
+                    </span>
+                    <p className="text-sm leading-relaxed text-text-primary">
+                      {fact}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Key Links
+                </h3>
+              </div>
+              <div className="space-y-2 p-4">
+                {keyLinks.map((link, index) => {
+                  const { badge, cls } = getBadgeForUrl(link.url);
+                  return (
+                    <a
+                      key={`${link.url}-${index}`}
+                      href={link.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+                    >
+                      <span
+                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
+                      >
+                        {index === 0 && streamMeta?.youtubeUrl === link.url
+                          ? 'LIVE'
+                          : badge}
+                      </span>
+                      <span className="truncate">
+                        {stripSourcePrefix(link.text)}
+                      </span>
+                    </a>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+              <div className="border-b border-surface-border px-5 py-3">
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  X Reactions
+                </h3>
+              </div>
+              <div className="space-y-2 p-4">
+                {xReactions.length > 0 ? (
+                  xReactions.map((tweet) => (
+                    <a
+                      key={tweet.id}
+                      href={tweet.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-accent-red/30"
+                    >
+                      <div className="flex items-center gap-2 text-[10px] text-text-muted">
+                        <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono font-bold text-blue-400">
+                          X
+                        </span>
+                        {tweet.author ? (
+                          <span className="truncate text-text-secondary">
+                            {tweet.author}
+                          </span>
+                        ) : null}
+                        <span className="ml-auto font-mono">
+                          {formatCompactNumber(tweet.score)}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-sm leading-relaxed text-text-primary">
+                        {clampText(tweet.title, 180)}
+                      </p>
+                    </a>
+                  ))
+                ) : (
+                  <p className="text-sm text-text-muted">
+                    No matching tweets surfaced for this topic yet.
+                  </p>
+                )}
+              </div>
+            </div>
           </div>
         </aside>
       </div>
