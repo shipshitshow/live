@@ -1,7 +1,7 @@
 {
-  "type": "excalidraw",
-  "version": 2,
-  "source": "http://localhost:3001",
+  "appState": {
+    "viewBackgroundColor": "#101010"
+  },
   "elements": [
     {
       "angle": 0,
@@ -101,7 +101,7 @@
       "y": 404.44921875
     }
   ],
-  "appState": {
-    "viewBackgroundColor": "#101010"
-  }
+  "source": "http://localhost:3001",
+  "type": "excalidraw",
+  "version": 2
 }
