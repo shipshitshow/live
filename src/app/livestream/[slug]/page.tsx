@@ -235,6 +235,85 @@ interface ShowSegment {
   type: 'intro' | 'segment' | 'hottake' | 'conclusion';
 }
 
+function countWords(text: string): number {
+  return text
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean).length;
+}
+
+function formatSegmentTime(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  return `${minutes}:${String(seconds).padStart(2, '0')}`;
+}
+
+function formatSegmentDuration(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  if (minutes === 0) {
+    return `${seconds} sec`;
+  }
+  if (seconds === 0) {
+    return `${minutes} min`;
+  }
+  return `${minutes} min ${seconds} sec`;
+}
+
+function clampSeconds(
+  value: number,
+  minSeconds: number,
+  maxSeconds: number,
+): number {
+  return Math.max(minSeconds, Math.min(maxSeconds, Math.round(value)));
+}
+
+function buildColdOpenHook(summary?: ParsedSection): string {
+  if (!summary?.body) return "Let's get into it.";
+
+  const firstSentence = summary.body
+    .split(/(?<=[.!?])\s+/)
+    .find((sentence) => sentence.trim().length > 0);
+  if (!firstSentence) return "Let's get into it.";
+
+  const words = firstSentence.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= 18) return firstSentence.trim();
+  return `${words.slice(0, 18).join(' ')}…`;
+}
+
+function estimateSegmentSeconds(
+  type: ShowSegment['type'],
+  points: TalkingPoint[],
+  rawText?: string,
+): number {
+  const pointTextWords = points.reduce(
+    (sum, point) => sum + countWords(stripMarkdown(point.text)),
+    0,
+  );
+  const sourceCount = points.reduce(
+    (sum, point) => sum + point.sources.length,
+    0,
+  );
+  const rawTextWords = rawText ? countWords(stripMarkdown(rawText)) : 0;
+  const totalWords = pointTextWords + rawTextWords;
+
+  switch (type) {
+    case 'intro':
+      return clampSeconds(totalWords * 4 + 20, 45, 180);
+    case 'segment':
+      return clampSeconds(
+        totalWords * 4 + points.length * 50 + sourceCount * 15,
+        180,
+        900,
+      );
+    case 'hottake':
+      return clampSeconds(totalWords * 4.5 + 90, 120, 480);
+    case 'conclusion':
+      return clampSeconds(totalWords * 3.5 + points.length * 35, 120, 360);
+  }
+}
+
 function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   const talkingSections = sections.filter((s) =>
     isTalkingPointSection(s.heading),
@@ -244,71 +323,72 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
 
   const segments: ShowSegment[] = [];
   let segNum = 0;
+  let currentSeconds = 0;
 
-  // Intro — straight into it
-  const introHook = summary
-    ? summary.body.split('.').slice(0, 2).join('.') + '.'
-    : "Let's get into it.";
+  // Intro — one clean opener, timed from the actual prompt size.
+  const introHook = buildColdOpenHook(summary);
+  const introPoints = [{ sources: [], text: introHook }];
+  const introSeconds = estimateSegmentSeconds('intro', introPoints);
   segments.push({
-    duration: '2 min',
+    duration: formatSegmentDuration(introSeconds),
     label: 'Cold Open',
     number: segNum++,
-    points: [{ sources: [], text: introHook }],
-    time: '0:00',
+    points: introPoints,
+    time: formatSegmentTime(currentSeconds),
     type: 'intro',
   });
-
-  // Talking point sections
-  const totalTalkingTime = 45;
-  const perSegment =
-    talkingSections.length > 0
-      ? Math.floor(totalTalkingTime / talkingSections.length)
-      : 45;
-  let currentMin = 5;
+  currentSeconds += introSeconds;
 
   for (const section of talkingSections) {
     const points = parseTalkingPoints(section.body);
     const shortLabel = section.heading
       .replace(/^Talking Points?\s*—?\s*/i, '')
       .replace(/^—\s*/, '');
+    const segmentSeconds = estimateSegmentSeconds('segment', points);
 
     segments.push({
-      duration: `${perSegment} min`,
+      duration: formatSegmentDuration(segmentSeconds),
       label: shortLabel || section.heading,
       number: segNum++,
       points,
-      time: `${currentMin}:00`,
+      time: formatSegmentTime(currentSeconds),
       type: 'segment',
     });
-    currentMin += perSegment;
+    currentSeconds += segmentSeconds;
   }
 
   // Hot take
   if (hotTake) {
+    const hotTakeSeconds = estimateSegmentSeconds('hottake', [], hotTake.body);
     segments.push({
-      duration: '5 min',
+      duration: formatSegmentDuration(hotTakeSeconds),
       label: 'Hot Take',
       number: segNum++,
       points: [],
       rawText: hotTake.body,
-      time: `${currentMin}:00`,
+      time: formatSegmentTime(currentSeconds),
       type: 'hottake',
     });
-    currentMin += 5;
+    currentSeconds += hotTakeSeconds;
   }
 
   // Conclusion
+  const conclusionPoints = [
+    { sources: [], text: 'Recap the key takeaways' },
+    { sources: [], text: 'What does this mean for indie devs this week?' },
+    { sources: [], text: 'Shoutouts, like & subscribe, next stream teaser' },
+    { sources: [], text: 'Open floor for chat questions' },
+  ];
+  const conclusionSeconds = estimateSegmentSeconds(
+    'conclusion',
+    conclusionPoints,
+  );
   segments.push({
-    duration: '5 min',
+    duration: formatSegmentDuration(conclusionSeconds),
     label: 'Wrap Up & Chat Q&A',
     number: segNum++,
-    points: [
-      { sources: [], text: 'Recap the key takeaways' },
-      { sources: [], text: 'What does this mean for indie devs this week?' },
-      { sources: [], text: 'Shoutouts, like & subscribe, next stream teaser' },
-      { sources: [], text: 'Open floor for chat questions' },
-    ],
-    time: `${currentMin}:00`,
+    points: conclusionPoints,
+    time: formatSegmentTime(currentSeconds),
     type: 'conclusion',
   });
 
@@ -553,7 +633,7 @@ export default function TopicDetailPage() {
 
     const tweets = data.items
       .filter((item) => item.source === 'x' && isTweetUrl(item.url))
-      .slice(0, 6);
+      .slice(0, 12);
 
     setXReactions(tweets);
     logClientPerf('livestream_topic_fetch_x_reactions', {
