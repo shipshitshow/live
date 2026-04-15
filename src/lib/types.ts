@@ -60,3 +60,41 @@ export interface MultiChannelReport {
 export type ChannelFilter = "all" | string;
 
 export type DateRange = 7 | 30 | 90;
+
+export interface YouTubeCommentReply {
+  id: string;
+  text: string;
+  authorDisplayName: string;
+  authorProfileImageUrl: string | null;
+  publishedAt: string;
+  updatedAt: string;
+  likeCount: number;
+}
+
+export interface YouTubeCommentThread {
+  id: string;
+  commentId: string;
+  channelId: string;
+  channelLabel: string;
+  videoId: string;
+  videoTitle: string;
+  text: string;
+  authorDisplayName: string;
+  authorProfileImageUrl: string | null;
+  publishedAt: string;
+  updatedAt: string;
+  likeCount: number;
+  totalReplyCount: number;
+  canReply: boolean;
+  viewerRating: string;
+  replies: YouTubeCommentReply[];
+}
+
+export interface YouTubeCommentListResponse {
+  items: YouTubeCommentThread[];
+  fetchedAt: string;
+}
+
+export interface CommentReplyDraftResponse {
+  drafts: string[];
+}

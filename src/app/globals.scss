@@ -1,6 +1,4 @@
-@import "tailwindcss" source(none);
-@source "../app";
-@source "../components";
+@import url("tailwindcss");
 @config "../../tailwind.config.ts";
 
 * {

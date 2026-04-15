@@ -8,14 +8,14 @@
  * 1. Opens Google consent in your browser
  * 2. After you approve, captures the auth code via local callback
  * 3. Exchanges for tokens and prints the refresh token
- * 4. Paste the refresh token into your .env / Vercel env vars as YOUTUBE_REFRESH_TOKEN
+ * 4. Paste the refresh token into your .env / Vercel env vars
  */
 
 const CLIENT_ID = process.env.YOUTUBE_CLIENT_ID;
 const CLIENT_SECRET = process.env.YOUTUBE_CLIENT_SECRET;
 const REDIRECT_URI = "http://localhost:9876/callback";
 const SCOPES = [
-  "https://www.googleapis.com/auth/youtube.readonly",
+  "https://www.googleapis.com/auth/youtube.force-ssl",
   "https://www.googleapis.com/auth/yt-analytics.readonly",
 ].join(" ");
 
