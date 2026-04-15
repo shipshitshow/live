@@ -1,24 +1,24 @@
-export type TopicStatus = "backlog" | "in_progress" | "done";
+export type TopicStatus = 'backlog' | 'in_progress' | 'done';
 
 export type ContentField =
-  | "thumbnail_v1"
-  | "thumbnail_v2"
-  | "thumbnail_v3"
-  | "youtube_title"
-  | "youtube_description"
-  | "linkedin_post"
-  | "livestream_tweet"
-  | "recap_tweet";
+  | 'thumbnail_v1'
+  | 'thumbnail_v2'
+  | 'thumbnail_v3'
+  | 'youtube_title'
+  | 'youtube_description'
+  | 'linkedin_post'
+  | 'livestream_tweet'
+  | 'recap_tweet';
 
 export const CONTENT_FIELDS: ContentField[] = [
-  "thumbnail_v1",
-  "thumbnail_v2",
-  "thumbnail_v3",
-  "youtube_title",
-  "youtube_description",
-  "linkedin_post",
-  "livestream_tweet",
-  "recap_tweet",
+  'thumbnail_v1',
+  'thumbnail_v2',
+  'thumbnail_v3',
+  'youtube_title',
+  'youtube_description',
+  'linkedin_post',
+  'livestream_tweet',
+  'recap_tweet',
 ];
 
 export interface TopicFrontmatter {
@@ -45,6 +45,11 @@ export interface Topic extends TopicFrontmatter {
   content: string;
   generated: TopicGeneratedContent;
   fileName: string;
+}
+
+export interface TopicDrawingResponse {
+  scene: Record<string, unknown> | null;
+  updatedAt: string | null;
 }
 
 export interface TopicUpdate {

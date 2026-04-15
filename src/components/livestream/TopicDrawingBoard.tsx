@@ -1,0 +1,433 @@
+'use client';
+
+import '@excalidraw/excalidraw/index.css';
+import {
+  exportToBlob,
+  MainMenu,
+  serializeAsJSON,
+  WelcomeScreen,
+} from '@excalidraw/excalidraw';
+import type {
+  ExcalidrawImperativeAPI,
+  ExcalidrawInitialDataState,
+} from '@excalidraw/excalidraw/types';
+import dynamic from 'next/dynamic';
+import Link from 'next/link';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { isErrorResponse } from '@/lib/api-types';
+import type {
+  LivestreamListResponse,
+  Topic,
+  TopicDrawingResponse,
+} from '@/lib/livestream-types';
+
+const Excalidraw = dynamic(
+  async () => (await import('@excalidraw/excalidraw')).Excalidraw,
+  { ssr: false },
+);
+
+const EMPTY_SCENE: ExcalidrawInitialDataState = {
+  appState: {
+    viewBackgroundColor: '#101010',
+  },
+  elements: [],
+};
+
+interface TopicDrawingBoardProps {
+  date: string;
+  slug: string;
+}
+
+interface ParsedSection {
+  heading: string;
+  body: string;
+}
+
+type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+
+function parseMarkdownSections(content: string): ParsedSection[] {
+  const sections: ParsedSection[] = [];
+  const lines = content.split('\n');
+  let currentHeading = '';
+  let currentBody: string[] = [];
+
+  for (const line of lines) {
+    if (line.startsWith('## ')) {
+      if (currentHeading) {
+        sections.push({
+          body: currentBody.join('\n').trim(),
+          heading: currentHeading,
+        });
+      }
+      currentHeading = line.slice(3);
+      currentBody = [];
+    } else {
+      currentBody.push(line);
+    }
+  }
+
+  if (currentHeading) {
+    sections.push({
+      body: currentBody.join('\n').trim(),
+      heading: currentHeading,
+    });
+  }
+
+  return sections;
+}
+
+function isTalkingPointSection(heading: string): boolean {
+  return heading.toLowerCase().includes('talking point');
+}
+
+function parseTalkingPoints(body: string): string[] {
+  return body
+    .split('\n')
+    .filter((line) => line.startsWith('- ') && !line.startsWith('  - '))
+    .map((line) => line.slice(2).trim())
+    .filter(Boolean);
+}
+
+function stripMarkdown(text: string): string {
+  return text
+    .replace(/\[(.*?)\]\((.*?)\)/g, '$1')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/`(.*?)`/g, '$1')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function formatSavedAt(value: string | null): string {
+  if (!value) return 'Not saved yet';
+  return new Date(value).toLocaleTimeString([], {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
+
+function downloadBlob(blob: Blob, fileName: string) {
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement('a');
+  anchor.href = url;
+  anchor.download = fileName;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
+export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
+  const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pendingContentRef = useRef<string | null>(null);
+
+  const [topic, setTopic] = useState<Topic | null>(null);
+  const [initialScene, setInitialScene] =
+    useState<ExcalidrawInitialDataState | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
+  const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
+  const [exporting, setExporting] = useState(false);
+
+  const sections = useMemo(
+    () => parseMarkdownSections(topic?.content ?? ''),
+    [topic?.content],
+  );
+  const summary = sections.find((section) => section.heading === 'Summary');
+  const talkingPointSections = sections.filter((section) =>
+    isTalkingPointSection(section.heading),
+  );
+
+  const saveDrawing = useCallback(async () => {
+    if (!pendingContentRef.current) return;
+
+    const content = pendingContentRef.current;
+    pendingContentRef.current = null;
+    setSaveStatus('saving');
+
+    try {
+      const res = await fetch(`/api/livestream/${slug}/drawing?date=${date}`, {
+        body: JSON.stringify({ content }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
+      });
+      const data = (await res.json()) as { error?: string; updatedAt?: string };
+      if (!res.ok) {
+        throw new Error(data.error || `Save failed with ${res.status}`);
+      }
+
+      setLastSavedAt(data.updatedAt || new Date().toISOString());
+      setSaveStatus('saved');
+    } catch {
+      pendingContentRef.current = content;
+      setSaveStatus('error');
+    }
+  }, [date, slug]);
+
+  const scheduleSave = useCallback(
+    (content: string) => {
+      pendingContentRef.current = content;
+      setSaveStatus((current) => (current === 'saving' ? current : 'idle'));
+
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+
+      saveTimerRef.current = setTimeout(() => {
+        saveDrawing().catch(() => {
+          setSaveStatus('error');
+        });
+      }, 1200);
+    },
+    [saveDrawing],
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const load = async () => {
+      try {
+        const [topicsRes, drawingRes] = await Promise.all([
+          fetch(`/api/livestream?date=${date}`),
+          fetch(`/api/livestream/${slug}/drawing?date=${date}`),
+        ]);
+
+        const topicsData = (await topicsRes.json()) as
+          | LivestreamListResponse
+          | { error: string };
+        const drawingData = (await drawingRes.json()) as
+          | TopicDrawingResponse
+          | { error: string };
+
+        if (!topicsRes.ok || isErrorResponse(topicsData)) {
+          throw new Error(
+            isErrorResponse(topicsData)
+              ? topicsData.error
+              : `Failed to load topic ${topicsRes.status}`,
+          );
+        }
+
+        if (!drawingRes.ok && !isErrorResponse(drawingData)) {
+          throw new Error(`Failed to load drawing ${drawingRes.status}`);
+        }
+
+        if (cancelled) return;
+
+        setTopic(topicsData.topics.find((item) => item.slug === slug) || null);
+        setInitialScene(
+          !isErrorResponse(drawingData) && drawingData.scene
+            ? (drawingData.scene as ExcalidrawInitialDataState)
+            : EMPTY_SCENE,
+        );
+        setLastSavedAt(
+          !isErrorResponse(drawingData) ? drawingData.updatedAt : null,
+        );
+        setSaveStatus(
+          !isErrorResponse(drawingData) && drawingData.updatedAt
+            ? 'saved'
+            : 'idle',
+        );
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    };
+
+    load().catch(() => {
+      if (!cancelled) {
+        setInitialScene(EMPTY_SCENE);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [date, slug]);
+
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+      }
+    };
+  }, []);
+
+  const handleChange = useCallback(
+    (
+      elements: Parameters<typeof serializeAsJSON>[0],
+      appState: Parameters<typeof serializeAsJSON>[1],
+      files: Parameters<typeof serializeAsJSON>[2],
+    ) => {
+      scheduleSave(serializeAsJSON(elements, appState, files, 'database'));
+    },
+    [scheduleSave],
+  );
+
+  const handleSaveNow = useCallback(async () => {
+    if (saveTimerRef.current) {
+      clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+    await saveDrawing();
+  }, [saveDrawing]);
+
+  const handleExportPng = useCallback(async () => {
+    const api = apiRef.current;
+    if (!api) return;
+
+    setExporting(true);
+    try {
+      const blob = await exportToBlob({
+        appState: {
+          ...api.getAppState(),
+          exportBackground: true,
+        },
+        elements: api.getSceneElements(),
+        files: api.getFiles(),
+        mimeType: 'image/png',
+      });
+
+      downloadBlob(blob, `${slug}-${date}.png`);
+    } finally {
+      setExporting(false);
+    }
+  }, [date, slug]);
+
+  if (loading || !initialScene) {
+    return (
+      <div className="flex min-h-[calc(100vh-65px)] items-center justify-center bg-surface">
+        <p className="text-sm text-text-muted animate-pulse">
+          Loading drawing board…
+        </p>
+      </div>
+    );
+  }
+
+  const saveLabel =
+    saveStatus === 'saving'
+      ? 'Saving…'
+      : saveStatus === 'error'
+        ? 'Save failed'
+        : `Saved ${formatSavedAt(lastSavedAt)}`;
+
+  return (
+    <div className="flex h-[calc(100vh-65px)] bg-surface">
+      <aside className="w-[360px] shrink-0 overflow-y-auto border-r border-surface-border bg-surface-card/60 p-5">
+        <div className="space-y-3">
+          <Link
+            href={`/livestream/${slug}?date=${date}`}
+            className="inline-flex items-center gap-2 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary"
+          >
+            <span aria-hidden="true">←</span>
+            Back to rundown
+          </Link>
+
+          <div>
+            <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-text-muted">
+              Topic Drawing Board
+            </p>
+            <h1 className="mt-2 text-xl font-semibold leading-tight text-text-primary">
+              {topic?.title || slug}
+            </h1>
+            <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+              {summary
+                ? stripMarkdown(summary.body)
+                : 'Use this board to sketch key ideas live.'}
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-6 grid gap-2">
+          <button
+            type="button"
+            onClick={handleSaveNow}
+            className="rounded-lg bg-accent-red px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
+          >
+            Save Board
+          </button>
+          <button
+            type="button"
+            onClick={handleExportPng}
+            disabled={exporting}
+            className="rounded-lg border border-surface-border bg-surface px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {exporting ? 'Exporting PNG…' : 'Download PNG'}
+          </button>
+          <p
+            className={`text-xs ${
+              saveStatus === 'error' ? 'text-red-400' : 'text-text-muted'
+            }`}
+          >
+            {saveLabel}
+          </p>
+        </div>
+
+        <div className="mt-8 space-y-6">
+          {talkingPointSections.map((section) => {
+            const points = parseTalkingPoints(section.body);
+
+            return (
+              <section
+                key={section.heading}
+                className="rounded-xl border border-surface-border bg-surface/60 p-4"
+              >
+                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary">
+                  {section.heading}
+                </h2>
+                <div className="mt-3 space-y-3">
+                  {points.map((point, index) => (
+                    <div
+                      key={`${section.heading}-${index}`}
+                      className="rounded-lg border border-surface-border/70 bg-surface-card px-3 py-2"
+                    >
+                      <p className="text-sm leading-relaxed text-text-primary">
+                        {stripMarkdown(point)}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            );
+          })}
+        </div>
+      </aside>
+
+      <main className="flex-1">
+        <div className="h-full w-full">
+          <Excalidraw
+            excalidrawAPI={(api) => {
+              apiRef.current = api;
+            }}
+            initialData={initialScene}
+            onChange={handleChange}
+            renderTopRightUI={() => (
+              <div className="flex items-center gap-2 rounded-lg border border-surface-border bg-surface-card/90 px-3 py-2 text-xs text-text-secondary shadow-sm">
+                <span>{topic?.title || slug}</span>
+                <span className="text-text-muted">•</span>
+                <span>{date}</span>
+              </div>
+            )}
+            theme="dark"
+          >
+            <MainMenu>
+              <MainMenu.DefaultItems.LoadScene />
+              <MainMenu.DefaultItems.SaveToActiveFile />
+              <MainMenu.DefaultItems.Export />
+              <MainMenu.DefaultItems.ClearCanvas />
+            </MainMenu>
+            <WelcomeScreen>
+              <WelcomeScreen.Center>
+                <WelcomeScreen.Center.Logo />
+                <WelcomeScreen.Center.Heading>
+                  Sketch the talking points live
+                </WelcomeScreen.Center.Heading>
+                <WelcomeScreen.Center.Menu>
+                  <WelcomeScreen.Center.MenuItemHelp />
+                </WelcomeScreen.Center.Menu>
+              </WelcomeScreen.Center>
+            </WelcomeScreen>
+          </Excalidraw>
+        </div>
+      </main>
+    </div>
+  );
+}

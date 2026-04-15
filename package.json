@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.0",
     "@radix-ui/react-select": "2.2.6",
     "@radix-ui/react-slot": "1.2.4",
     "@tailwindcss/postcss": "4.2.2",
@@ -52,8 +53,8 @@
     "check:types": "tsc --noEmit",
     "check:unused": "knip",
     "deps:update": "bunx npm-check-updates -u --deep && bun install",
-    "dev": "next dev -p 3001",
-    "lint": "next lint",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
     "prepare": "bunx husky",
     "start": "next start -p 3001"
   },
