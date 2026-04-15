@@ -13,6 +13,30 @@ export function extractVideoId(url: string): string | null {
   return shortMatch?.[1] ?? null;
 }
 
-export function buildYouTubeThumbnailUrl(videoId: string): string {
-  return `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`;
+function buildImgYouTubeThumbnailUrl(
+  videoId: string,
+  filename: 'maxresdefault.jpg' | 'hqdefault.jpg',
+): string {
+  return `https://img.youtube.com/vi/${videoId}/${filename}`;
+}
+
+export async function buildYouTubeThumbnailUrl(
+  videoId: string,
+): Promise<string> {
+  const maxResUrl = buildImgYouTubeThumbnailUrl(videoId, 'maxresdefault.jpg');
+
+  try {
+    const response = await fetch(maxResUrl, {
+      cache: 'force-cache',
+      method: 'HEAD',
+      next: { revalidate: 3600 },
+    });
+    if (response.ok) {
+      return maxResUrl;
+    }
+  } catch {
+    // Fall back to the reliable default thumbnail URL below.
+  }
+
+  return buildImgYouTubeThumbnailUrl(videoId, 'hqdefault.jpg');
 }

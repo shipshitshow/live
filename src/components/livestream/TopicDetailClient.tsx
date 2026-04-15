@@ -704,8 +704,11 @@ export function TopicDetailClient() {
     <div className="min-h-screen bg-surface text-text-primary">
       <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
 
-      <div className="mx-auto flex w-full max-w-[1800px] gap-6 px-6 py-6">
-        <main className="flex min-w-0 flex-1 flex-col gap-4">
+      <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 px-6 py-6">
+        <main
+          ref={rundownScrollRef}
+          className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto pr-2"
+        >
           <div className="rounded-xl border border-surface-border bg-surface-card p-5">
             <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-widest">
               <Link
@@ -742,11 +745,7 @@ export function TopicDetailClient() {
             </h1>
           </div>
 
-          <section
-            ref={rundownScrollRef}
-            className="flex-1 space-y-5 overflow-y-auto rounded-xl border border-surface-border bg-surface-card p-6"
-            style={{ maxHeight: 'calc(100vh - 180px)' }}
-          >
+          <section className="rounded-xl border border-surface-border bg-surface-card px-6">
             {segments.map((seg) => (
               <div
                 key={seg.number}
@@ -758,9 +757,9 @@ export function TopicDetailClient() {
                   }
                 }}
                 data-segment-number={seg.number}
-                className="rounded-xl border border-surface-border bg-surface-elevated/20 p-5"
+                className="border-t border-surface-border/70 py-5 first:border-t-0"
               >
-                <div className="mb-4 flex items-center gap-3">
+                <div className="sticky top-0 z-10 -mx-6 mb-4 flex items-center gap-3 border-b border-surface-border bg-surface-card/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
                   <span
                     className={`h-2.5 w-2.5 rounded-full ${SEGMENT_COLORS[seg.type].dot}`}
                   />
@@ -846,7 +845,8 @@ export function TopicDetailClient() {
           </section>
         </main>
 
-        <aside className="w-full max-w-[360px] shrink-0 space-y-4">
+        <aside className="min-h-0 w-full max-w-[360px] shrink-0 overflow-y-auto">
+          <div className="space-y-4">
           <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
             <div className="border-b border-surface-border px-5 py-3">
               <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
@@ -1008,6 +1008,26 @@ export function TopicDetailClient() {
           <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
             <div className="border-b border-surface-border px-5 py-3">
               <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Co-Host Cues
+              </h3>
+            </div>
+            <div className="space-y-3 p-4">
+              {cohostCues.map((cue) => (
+                <div key={cue} className="flex gap-3">
+                  <span className="mt-0.5 text-[11px] font-mono font-bold text-accent-red">
+                    Q
+                  </span>
+                  <p className="text-sm leading-relaxed text-text-primary">
+                    {cue}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
                 Episode Brief
               </h3>
             </div>
@@ -1067,26 +1087,6 @@ export function TopicDetailClient() {
                     </p>
                   </div>
                 </button>
-              ))}
-            </div>
-          </div>
-
-          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="border-b border-surface-border px-5 py-3">
-              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                Co-Host Cues
-              </h3>
-            </div>
-            <div className="space-y-3 p-4">
-              {cohostCues.map((cue) => (
-                <div key={cue} className="flex gap-3">
-                  <span className="mt-0.5 text-[11px] font-mono font-bold text-accent-red">
-                    Q
-                  </span>
-                  <p className="text-sm leading-relaxed text-text-primary">
-                    {cue}
-                  </p>
-                </div>
               ))}
             </div>
           </div>
@@ -1184,6 +1184,7 @@ export function TopicDetailClient() {
                 </p>
               )}
             </div>
+          </div>
           </div>
         </aside>
       </div>

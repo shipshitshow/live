@@ -18,16 +18,16 @@ function extractSummary(content: string): string | null {
   return summary.length > 0 ? summary : null;
 }
 
-function buildTopicImageUrl(
+async function buildTopicImageUrl(
   slug: string,
   date: string,
   content: string,
-): string {
+): Promise<string> {
   const youtubeUrl = extractYouTubeUrl(content);
   const videoId = youtubeUrl ? extractVideoId(youtubeUrl) : null;
 
   if (videoId) {
-    return buildYouTubeThumbnailUrl(videoId);
+    return await buildYouTubeThumbnailUrl(videoId);
   }
 
   return toAbsoluteUrl(
@@ -61,7 +61,11 @@ export async function generateMetadata({
     extractSummary(topic.content) ||
     'Livestream topic and show prep for Ship Shit Show.';
   const description = clampText(summary, 220);
-  const imageUrl = buildTopicImageUrl(topic.slug, resolvedDate, topic.content);
+  const imageUrl = await buildTopicImageUrl(
+    topic.slug,
+    resolvedDate,
+    topic.content,
+  );
   const pageUrl = toAbsoluteUrl(
     `/livestream/${encodeURIComponent(topic.slug)}?date=${encodeURIComponent(resolvedDate)}`,
   );
