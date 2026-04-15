@@ -145,6 +145,10 @@ function isTweetUrl(url: string): boolean {
   return /(?:twitter\.com|x\.com)\/\w+\/status\/\d+/.test(url);
 }
 
+function isRestreamUrl(url: string): boolean {
+  return /studio\.restream\.io/i.test(url);
+}
+
 const TOPIC_QUERY_STOP_WORDS = new Set([
   'a',
   'an',
@@ -453,6 +457,11 @@ export default function TopicDetailPage() {
   const livestreamNotesSection = sections.find(
     (s) => s.heading === 'Livestream Notes',
   );
+  const livestreamNoteLinks = extractMarkdownLinks(
+    livestreamNotesSection?.body ?? '',
+  );
+  const restreamLink =
+    livestreamNoteLinks.find((link) => isRestreamUrl(link.url)) ?? null;
   const segments = buildShowRundown(sections);
   const activeSegment =
     segments.find((seg) => seg.number === activeSegmentNumber) || segments[0];
@@ -483,9 +492,7 @@ export default function TopicDetailPage() {
       });
     }
 
-    for (const link of extractMarkdownLinks(
-      livestreamNotesSection?.body ?? '',
-    )) {
+    for (const link of livestreamNoteLinks) {
       links.push(link);
     }
 
@@ -673,13 +680,13 @@ export default function TopicDetailPage() {
                 {sourceBadges.map((src) => (
                   <span
                     key={src}
-                    className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[src] || 'bg-surface-border text-text-secondary'}`}
+                    className={`text-[10px] font-mono font-medium uppercase px-1.5 py-0.5 rounded ${SOURCE_COLORS[src] || 'bg-surface-border text-text-secondary'}`}
                   >
                     {src}
                   </span>
                 ))}
                 <span
-                  className={`text-[10px] font-medium px-2 py-0.5 rounded ${STATUS_BADGES[topic.status]}`}
+                  className={`text-[10px] font-medium uppercase px-2 py-0.5 rounded ${STATUS_BADGES[topic.status]}`}
                 >
                   {topic.status.replace('_', ' ')}
                 </span>
@@ -802,7 +809,7 @@ export default function TopicDetailPage() {
                                                 className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-card border border-surface-border text-xs text-text-secondary hover:text-text-primary hover:border-accent-red/30 transition-colors max-w-full"
                                               >
                                                 <span
-                                                  className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${cls}`}
+                                                  className={`text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${cls}`}
                                                 >
                                                   {badge}
                                                 </span>
@@ -839,20 +846,34 @@ export default function TopicDetailPage() {
                 </h3>
               </div>
               <div className="p-4 space-y-4">
-                {streamMeta?.youtubeUrl && (
-                  <a
-                    href={streamMeta.youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center justify-center gap-2 rounded-lg bg-accent-red px-4 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
-                  >
-                    <span>
-                      {streamMeta.liveStatus === 'live'
-                        ? 'Open Livestream'
-                        : 'Open Replay'}
-                    </span>
-                  </a>
-                )}
+                <div className="grid gap-2">
+                  {streamMeta?.youtubeUrl && (
+                    <a
+                      href={streamMeta.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-lg bg-accent-red px-4 py-3 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+                    >
+                      <span>
+                        {streamMeta.liveStatus === 'live' ||
+                        streamMeta.liveStatus === 'scheduled'
+                          ? 'Open Livestream Link'
+                          : 'Open Replay Link'}
+                      </span>
+                    </a>
+                  )}
+
+                  {restreamLink && (
+                    <a
+                      href={restreamLink.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary hover:border-accent-red/30 hover:text-accent-red transition-colors"
+                    >
+                      <span>Open Restream Studio</span>
+                    </a>
+                  )}
+                </div>
 
                 {streamMeta?.thumbnailUrl && (
                   <img
@@ -888,7 +909,7 @@ export default function TopicDetailPage() {
                   <div className="flex items-center justify-between gap-3">
                     <span className="text-xs text-text-muted">Status</span>
                     <span
-                      className={`text-[11px] font-medium px-2 py-1 rounded ${
+                      className={`text-[11px] font-medium uppercase px-2 py-1 rounded ${
                         streamMeta?.liveStatus === 'live'
                           ? 'bg-red-500/10 text-red-400'
                           : streamMeta?.liveStatus === 'ended'
@@ -1081,7 +1102,7 @@ export default function TopicDetailPage() {
                       className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary hover:text-text-primary hover:border-accent-red/30 transition-colors"
                     >
                       <span
-                        className={`text-[10px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${cls}`}
+                        className={`text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${cls}`}
                       >
                         {index === 0 && streamMeta?.youtubeUrl === link.url
                           ? 'LIVE'
