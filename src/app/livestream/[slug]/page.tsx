@@ -61,7 +61,9 @@ async function parseJsonResponse<T>(res: Response): Promise<T> {
   try {
     return JSON.parse(text) as T;
   } catch {
-    throw new Error(`Unexpected ${res.status} response from ${new URL(res.url).pathname}`);
+    throw new Error(
+      `Unexpected ${res.status} response from ${new URL(res.url).pathname}`,
+    );
   }
 }
 
@@ -391,8 +393,7 @@ export default function TopicDetailPage() {
     try {
       const res = await fetch(`/api/livestream?date=${date}`);
       const data = await parseJsonResponse<
-        | LivestreamListResponse
-        | { error: string }
+        LivestreamListResponse | { error: string }
       >(res);
       if (!res.ok || isErrorResponse(data)) {
         throw new Error(
@@ -538,9 +539,9 @@ export default function TopicDetailPage() {
     const res = await fetch(
       `/api/trends/search?q=${encodeURIComponent(topicSearchQuery)}`,
     );
-    const data = await parseJsonResponse<TrendsSearchResponse | { error: string }>(
-      res,
-    );
+    const data = await parseJsonResponse<
+      TrendsSearchResponse | { error: string }
+    >(res);
 
     if (!res.ok || isErrorResponse(data)) {
       throw new Error(
@@ -706,7 +707,9 @@ export default function TopicDetailPage() {
                   <span className="text-[10px] text-text-muted font-mono">
                     {topic.date}
                   </span>
-                  <span className="text-[10px] text-text-muted">~1h stream</span>
+                  <span className="text-[10px] text-text-muted">
+                    ~1h stream
+                  </span>
                 </div>
               </div>
             </div>
@@ -779,68 +782,70 @@ export default function TopicDetailPage() {
                           </div>
                         )}
 
-                      {/* Talking points */}
-                      {seg.points.length > 0 && (
-                        <div className="flex flex-col gap-5">
-                          {seg.points.map((point, i) => (
-                            <div key={i} className="group">
-                              <div className="flex gap-4">
-                                {/* Point number */}
-                                <span className="text-[11px] font-mono font-bold text-text-muted/40 select-none shrink-0 pt-0.5 w-4 text-right">
-                                  {seg.type === 'hottake'
-                                    ? '\u26A1'
-                                    : `${i + 1}`}
-                                </span>
+                        {/* Talking points */}
+                        {seg.points.length > 0 && (
+                          <div className="flex flex-col gap-5">
+                            {seg.points.map((point, i) => (
+                              <div key={i} className="group">
+                                <div className="flex gap-4">
+                                  {/* Point number */}
+                                  <span className="text-[11px] font-mono font-bold text-text-muted/40 select-none shrink-0 pt-0.5 w-4 text-right">
+                                    {seg.type === 'hottake'
+                                      ? '\u26A1'
+                                      : `${i + 1}`}
+                                  </span>
 
-                                <div className="flex-1 min-w-0">
-                                  {/* Point text */}
-                                  <p className="text-[20px] text-text-primary leading-[1.7] font-medium">
-                                    {renderInlineLinks(point.text)}
-                                  </p>
+                                  <div className="flex-1 min-w-0">
+                                    {/* Point text */}
+                                    <p className="text-[20px] text-text-primary leading-[1.7] font-medium">
+                                      {renderInlineLinks(point.text)}
+                                    </p>
 
-                                  {/* Sources */}
-                                  {point.sources.length > 0 &&
-                                    (() => {
-                                      const tweets = point.sources.filter((s) =>
-                                        isTweetUrl(s.url),
-                                      );
-                                      const others = point.sources.filter(
-                                        (s) => !isTweetUrl(s.url),
-                                      );
-                                      const ordered = [...tweets, ...others];
-                                      return (
-                                        <div className="mt-4 flex flex-wrap gap-2">
-                                          {ordered.map((src, j) => {
-                                            const { badge, cls } =
-                                              getBadgeForUrl(src.url);
-                                            return (
-                                              <a
-                                                key={j}
-                                                href={src.url}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-card border border-surface-border text-xs text-text-secondary hover:text-text-primary hover:border-accent-red/30 transition-colors max-w-full"
-                                              >
-                                                <span
-                                                  className={`text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${cls}`}
+                                    {/* Sources */}
+                                    {point.sources.length > 0 &&
+                                      (() => {
+                                        const tweets = point.sources.filter(
+                                          (s) => isTweetUrl(s.url),
+                                        );
+                                        const others = point.sources.filter(
+                                          (s) => !isTweetUrl(s.url),
+                                        );
+                                        const ordered = [...tweets, ...others];
+                                        return (
+                                          <div className="mt-4 flex flex-wrap gap-2">
+                                            {ordered.map((src, j) => {
+                                              const { badge, cls } =
+                                                getBadgeForUrl(src.url);
+                                              return (
+                                                <a
+                                                  key={j}
+                                                  href={src.url}
+                                                  target="_blank"
+                                                  rel="noopener noreferrer"
+                                                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-card border border-surface-border text-xs text-text-secondary hover:text-text-primary hover:border-accent-red/30 transition-colors max-w-full"
                                                 >
-                                                  {badge}
-                                                </span>
-                                                <span className="truncate max-w-[360px]">
-                                                  {stripSourcePrefix(src.text)}
-                                                </span>
-                                              </a>
-                                            );
-                                          })}
-                                        </div>
-                                      );
-                                    })()}
+                                                  <span
+                                                    className={`text-[10px] font-mono font-bold uppercase px-1.5 py-0.5 rounded shrink-0 ${cls}`}
+                                                  >
+                                                    {badge}
+                                                  </span>
+                                                  <span className="truncate max-w-[360px]">
+                                                    {stripSourcePrefix(
+                                                      src.text,
+                                                    )}
+                                                  </span>
+                                                </a>
+                                              );
+                                            })}
+                                          </div>
+                                        );
+                                      })()}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
-                      )}
+                            ))}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

@@ -1,29 +1,35 @@
-"use client";
+'use client';
 
-import { Profiler, useEffect, useState, useCallback } from "react";
-import { isErrorResponse } from "@/lib/api-types";
-import type { LivestreamListResponse, Topic, TopicStatus } from "@/lib/livestream-types";
-import { KanbanColumn } from "@/components/livestream/KanbanColumn";
-import { todayLocalDate } from "@/lib/date";
-import { logClientEvent, logClientPerf } from "@/lib/client-logger";
-import { AppHeader } from "@/components/AppHeader";
-import { Button } from "@/components/ui/button";
+import { Profiler, useCallback, useEffect, useState } from 'react';
+import { AppHeader } from '@/components/AppHeader';
+import { KanbanColumn } from '@/components/livestream/KanbanColumn';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
+} from '@/components/ui/select';
+import { isErrorResponse } from '@/lib/api-types';
+import { logClientEvent, logClientPerf } from '@/lib/client-logger';
+import { todayLocalDate } from '@/lib/date';
+import type {
+  LivestreamListResponse,
+  Topic,
+  TopicStatus,
+} from '@/lib/livestream-types';
 
-const COLUMNS: TopicStatus[] = ["backlog", "in_progress", "done"];
+const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
 
 async function parseJsonResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
   try {
     return JSON.parse(text) as T;
   } catch {
-    throw new Error(`Unexpected ${res.status} response from ${new URL(res.url).pathname}`);
+    throw new Error(
+      `Unexpected ${res.status} response from ${new URL(res.url).pathname}`,
+    );
   }
 }
 
@@ -41,26 +47,34 @@ export default function LivestreamPage() {
     setError(null);
     try {
       const res = await fetch(`/api/livestream?date=${requestedDate}`);
-      const data = await parseJsonResponse<LivestreamListResponse | { error: string }>(res);
+      const data = await parseJsonResponse<
+        LivestreamListResponse | { error: string }
+      >(res);
       if (!res.ok || isErrorResponse(data)) {
-        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+        throw new Error(
+          isErrorResponse(data) ? data.error : `API error ${res.status}`,
+        );
       }
       setTopics(data.topics);
       setDate(data.resolvedDate);
       setAvailableDates(data.availableDates);
       setIsFallback(data.isFallback);
-      logClientPerf("livestream_board_fetch_topics", {
+      logClientPerf('livestream_board_fetch_topics', {
+        durationMs: Number((performance.now() - startedAt).toFixed(2)),
+        isFallback: data.isFallback,
         requestedDate,
         resolvedDate: data.resolvedDate,
         topicCount: data.topics.length,
-        durationMs: Number((performance.now() - startedAt).toFixed(2)),
-        isFallback: data.isFallback,
       });
     } catch (fetchError) {
       setTopics([]);
       setAvailableDates([]);
       setIsFallback(false);
-      setError(fetchError instanceof Error ? fetchError.message : "Failed to load topics");
+      setError(
+        fetchError instanceof Error
+          ? fetchError.message
+          : 'Failed to load topics',
+      );
     } finally {
       setLoading(false);
     }
@@ -71,33 +85,38 @@ export default function LivestreamPage() {
   }, [fetchTopics]);
 
   useEffect(() => {
-    logClientEvent("livestream_board_view", { requestedDate });
+    logClientEvent('livestream_board_view', { requestedDate });
   }, [requestedDate]);
 
   const handleProfilerRender = useCallback(
-    (id: string, phase: "mount" | "update" | "nested-update", actualDuration: number, baseDuration: number) => {
-      logClientPerf("react_render", {
-        page: "livestream_board",
-        component: id,
-        phase,
+    (
+      id: string,
+      phase: 'mount' | 'update' | 'nested-update',
+      actualDuration: number,
+      baseDuration: number,
+    ) => {
+      logClientPerf('react_render', {
         actualDuration: Number(actualDuration.toFixed(2)),
         baseDuration: Number(baseDuration.toFixed(2)),
+        component: id,
+        page: 'livestream_board',
+        phase,
         topicCount: topics.length,
       });
     },
-    [topics.length]
+    [topics.length],
   );
 
   async function handleStatusChange(slug: string, status: TopicStatus) {
     // Optimistic update
     setTopics((prev) =>
-      prev.map((t) => (t.slug === slug ? { ...t, status } : t))
+      prev.map((t) => (t.slug === slug ? { ...t, status } : t)),
     );
 
     await fetch(`/api/livestream/${slug}?date=${date}`, {
-      method: "PATCH",
-      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
+      headers: { 'Content-Type': 'application/json' },
+      method: 'PATCH',
     });
   }
 
@@ -108,12 +127,14 @@ export default function LivestreamPage() {
   if (loading) {
     return (
       <div className="min-h-screen bg-surface p-8 flex items-center justify-center">
-        <p className="text-text-muted text-sm animate-pulse">Loading topics...</p>
+        <p className="text-text-muted text-sm animate-pulse">
+          Loading topics...
+        </p>
       </div>
     );
   }
 
-  const selectedCount = topics.filter((t) => t.status === "in_progress").length;
+  const selectedCount = topics.filter((t) => t.status === 'in_progress').length;
   const totalCount = topics.length;
 
   return (
@@ -158,16 +179,22 @@ export default function LivestreamPage() {
                 </SelectContent>
               </Select>
             )}
-            <Button onClick={fetchTopics} className="h-8 text-xs text-text-secondary">
+            <Button
+              onClick={fetchTopics}
+              className="h-8 text-xs text-text-secondary"
+            >
               Refresh
             </Button>
           </div>
         </div>
         {availableDates.length === 0 ? (
           <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/30 p-8 text-center">
-            <p className="text-sm text-text-primary">No livestream topics yet.</p>
+            <p className="text-sm text-text-primary">
+              No livestream topics yet.
+            </p>
             <p className="text-xs text-text-muted mt-2">
-              Add markdown topic files under <code>data/livestream/YYYY-MM-DD/</code>.
+              Add markdown topic files under{' '}
+              <code>data/livestream/YYYY-MM-DD/</code>.
             </p>
           </div>
         ) : (
