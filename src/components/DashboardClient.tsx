@@ -8,8 +8,21 @@ import { TopVideos } from "@/components/TopVideos";
 import { DateRangeSelector } from "@/components/DateRangeSelector";
 import { ChannelSelector } from "@/components/ChannelSelector";
 import { AuthStatus } from "@/components/AuthStatus";
+import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
 import { formatNumber, formatWatchTime } from "@/lib/format";
 import type { MultiChannelReport, DateRange, ChannelFilter, DailyMetric, VideoStats, ChannelStats } from "@/lib/types";
+
+interface MultiChannelMetricPoint {
+  day: string;
+  views_main?: number;
+  views_clips?: number;
+  watch_time_minutes_main?: number;
+  watch_time_minutes_clips?: number;
+  subscribers_gained_main?: number;
+  subscribers_gained_clips?: number;
+  avg_view_percentage_main?: number;
+  avg_view_percentage_clips?: number;
+}
 
 export function DashboardClient() {
   const [days, setDays] = useState<DateRange>(30);
@@ -23,15 +36,18 @@ export function DashboardClient() {
     setError(null);
     try {
       const res = await fetch(`/api/report?days=${days}`);
-      const data = await res.json() as MultiChannelReport | { error?: string; reauthRequired?: boolean };
+      const data = (await res.json()) as MultiChannelReport | { error: string };
       if (!res.ok) {
-        if ("reauthRequired" in data && data.reauthRequired) {
+        if (isReauthRequiredResponse(data)) {
           window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
           return;
         }
-        throw new Error("error" in data && data.error ? data.error : `API error ${res.status}`);
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
       }
-      setReport(data as MultiChannelReport);
+      if (isErrorResponse(data)) {
+        throw new Error(data.error);
+      }
+      setReport(data);
     } catch (e) {
       setError(e instanceof Error ? e.message : "Failed to load analytics");
     } finally {
@@ -41,8 +57,6 @@ export function DashboardClient() {
 
   useEffect(() => { load(); }, [load]);
 
-  // Derive displayed data from channel filter
-  // Channel label colors for multi-line charts
   const CHANNEL_COLORS: Record<string, string> = {
     main: "#ff2d20",
     clips: "#ff7b72",
@@ -56,7 +70,7 @@ export function DashboardClient() {
         videos: [] as VideoStats[],
         headerTitle: "Channel Analytics",
         headerSub: "Loading channel data…",
-        multiChartData: null as null | Record<string, unknown>[],
+        multiChartData: null as null | MultiChannelMetricPoint[],
         isMulti: false,
       };
     }
@@ -65,14 +79,13 @@ export function DashboardClient() {
       const totalSubs = report.channels.reduce((s, c) => s + c.subscriber_count, 0);
       const totalVids = report.channels.reduce((s, c) => s + c.total_videos, 0);
 
-      // Build merged chart data: { day, views_main, views_clips, ... }
       const perChannelEntries = Object.entries(report.per_channel);
-      const dayMap = new Map<string, Record<string, unknown>>();
+      const dayMap = new Map<string, MultiChannelMetricPoint>();
 
       for (const [, chData] of perChannelEntries) {
         const label = chData.channel.channel_title.toLowerCase().includes("clip") ? "clips" : "main";
         for (const m of chData.daily_metrics) {
-          const existing = dayMap.get(m.day) || { day: m.day };
+          const existing = dayMap.get(m.day) ?? { day: m.day };
           existing[`views_${label}`] = m.views;
           existing[`watch_time_minutes_${label}`] = m.watch_time_minutes;
           existing[`subscribers_gained_${label}`] = m.subscribers_gained;
@@ -82,7 +95,7 @@ export function DashboardClient() {
       }
 
       const merged = Array.from(dayMap.values()).sort((a, b) =>
-        (a.day as string).localeCompare(b.day as string)
+        a.day.localeCompare(b.day)
       );
 
       return {
@@ -120,7 +133,6 @@ export function DashboardClient() {
     };
   }, [report, channelFilter]);
 
-  // Build chart line configs for multi-channel view
   function makeLines(metric: string): ChartLine[] {
     return [
       { dataKey: `${metric}_main`, color: CHANNEL_COLORS.main, label: "Main" },
@@ -154,7 +166,6 @@ export function DashboardClient() {
 
   return (
     <div className="space-y-8">
-      {/* Top bar */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3">
@@ -177,7 +188,6 @@ export function DashboardClient() {
         </div>
       </div>
 
-      {/* KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           label="Views"
@@ -206,7 +216,6 @@ export function DashboardClient() {
         />
       </div>
 
-      {/* Time-series charts */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[
           { label: "Views over time", key: "views", color: undefined, fmtVal: formatNumber, fmtTick: (v: number) => formatNumber(v) },

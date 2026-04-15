@@ -1,11 +1,8 @@
-// Content generator for unpublished YouTube videos
-// Generates title variants, description, and social copy
-
 interface VideoContentInput {
   title: string;
   videoType: "video" | "short";
   channelLabel: string;
-  duration: number; // seconds
+  duration: number;
 }
 
 export interface VideoGeneratedContent {
@@ -26,7 +23,6 @@ function generateTitles(input: VideoContentInput): string[] {
 
   const variants: string[] = [base];
 
-  // Variant 2: Add urgency
   const urgencyPrefixes = [
     "BREAKING:",
     "This Changes Everything —",
@@ -36,7 +32,6 @@ function generateTitles(input: VideoContentInput): string[] {
   ];
   variants.push(`${pickRandom(urgencyPrefixes)} ${base}`);
 
-  // Variant 3: Question format
   if (!base.includes("?")) {
     const questionTemplates = [
       `Is ${base} Actually Real?`,
@@ -48,7 +43,6 @@ function generateTitles(input: VideoContentInput): string[] {
     variants.push(base.replace("?", "?!"));
   }
 
-  // Ensure all under 100 chars
   return variants.map((t) => (t.length > 100 ? t.slice(0, 97) + "..." : t));
 }
 

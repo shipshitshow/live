@@ -2,12 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-interface YouTubeAuthStatusResponse {
-  connected: boolean;
-  status: "connected" | "missing_credentials" | "reauth_required";
-  channelLabelsNeedingAuth: string[];
-}
+import type { YouTubeAuthStatus } from "@/lib/youtube/types";
 
 const AUTH_ROUTE = "/auth/youtube";
 
@@ -27,7 +22,7 @@ export function YouTubeAuthGate() {
     const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
     fetch("/api/auth/youtube/status", { cache: "no-store" })
-      .then((res) => res.json() as Promise<YouTubeAuthStatusResponse>)
+      .then((res) => res.json() as Promise<YouTubeAuthStatus>)
       .then((status) => {
         if (cancelled) return;
         if (status.status === "reauth_required") {

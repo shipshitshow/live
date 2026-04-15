@@ -1,36 +1,16 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { CopyButton } from "@/components/CopyButton";
+import { isErrorResponse } from "@/lib/api-types";
 import { formatNumber } from "@/lib/format";
 import { generateVideoContent, regenerateField, type VideoGeneratedContent } from "@/lib/video-content-generator";
-import type { VideoStats } from "@/lib/types";
-
-interface UnlistedVideo extends VideoStats {
-  description: string;
-  thumbnail_url: string;
-  privacy_status: string;
-}
+import type { UnlistedVideo } from "@/lib/review-types";
 
 const CHANNEL_HANDLES: Record<string, { handle: string; cls: string }> = {
   main: { handle: "@shipshitshow", cls: "bg-accent-red/20 text-accent-red" },
   clips: { handle: "@sssclips", cls: "bg-blue-500/20 text-blue-400" },
 };
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-  return (
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
-      }}
-      className="text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors shrink-0"
-    >
-      {copied ? "Copied!" : "Copy"}
-    </button>
-  );
-}
 
 function ContentBlock({
   label,
@@ -77,17 +57,23 @@ function formatDuration(seconds: number): string {
 export function UnpublishedClient() {
   const [videos, setVideos] = useState<UnlistedVideo[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selected, setSelected] = useState<UnlistedVideo | null>(null);
   const [content, setContent] = useState<VideoGeneratedContent | null>(null);
 
   const fetchVideos = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch("/api/unpublished");
-      const data = await res.json();
+      const data = (await res.json()) as UnlistedVideo[] | { error: string };
+      if (!res.ok || isErrorResponse(data)) {
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+      }
       setVideos(data);
-    } catch {
+    } catch (fetchError) {
       setVideos([]);
+      setError(fetchError instanceof Error ? fetchError.message : "Failed to load unpublished videos");
     } finally {
       setLoading(false);
     }
@@ -134,6 +120,17 @@ export function UnpublishedClient() {
             {[...Array(3)].map((_, i) => (
               <div key={i} className="bg-surface-card border border-surface-border rounded-xl h-24" />
             ))}
+          </div>
+        ) : error ? (
+          <div className="flex flex-col items-center justify-center py-24 gap-4">
+            <div className="text-accent-red text-4xl">⚠</div>
+            <p className="text-text-secondary text-sm">{error}</p>
+            <button
+              onClick={fetchVideos}
+              className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
+            >
+              Retry
+            </button>
           </div>
         ) : videos.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
@@ -276,10 +273,14 @@ export function UnpublishedClient() {
                         <span className="text-xs text-text-secondary flex-1">
                           {t}
                         </span>
-                        <CopyButton text={t} />
-                      </div>
-                    ))}
-                  </div>
+                          <CopyButton
+                            text={t}
+                            timeoutMs={2000}
+                            className="text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors shrink-0"
+                          />
+                        </div>
+                      ))}
+                    </div>
                 </div>
 
                 <ContentBlock

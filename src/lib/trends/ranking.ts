@@ -26,7 +26,7 @@ function getAgeHours(timestamp: string): number {
   return Math.max(0, ageMs / (1000 * 60 * 60));
 }
 
-export function hasMinimumTrendEngagement(item: TrendItem): boolean {
+function hasMinimumTrendEngagement(item: TrendItem): boolean {
   switch (item.source) {
     case "reddit":
       return item.score >= 25 || item.commentCount >= 12;
@@ -41,7 +41,7 @@ export function hasMinimumTrendEngagement(item: TrendItem): boolean {
   }
 }
 
-export function getTrendRank(item: TrendItem): number {
+function getTrendRank(item: TrendItem): number {
   const ageHours = getAgeHours(item.timestamp);
   const maxAge = MAX_AGE_HOURS[item.source];
 

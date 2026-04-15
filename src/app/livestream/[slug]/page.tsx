@@ -4,7 +4,8 @@ import { Profiler, useEffect, useState, useCallback, useRef } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { AppHeader } from "@/components/AppHeader";
-import type { Topic } from "@/lib/livestream-types";
+import { isErrorResponse } from "@/lib/api-types";
+import type { LivestreamListResponse, Topic } from "@/lib/livestream-types";
 import { logClientEvent, logClientPerf } from "@/lib/client-logger";
 import { todayLocalDate } from "@/lib/date";
 
@@ -272,12 +273,6 @@ const SEGMENT_COLORS: Record<string, { time: string; dot: string; line: string }
   conclusion: { time: "text-green-400", dot: "bg-green-400", line: "bg-green-400/20" },
 };
 
-interface LivestreamResponse {
-  topics: Topic[];
-  requestedDate: string;
-  resolvedDate: string;
-}
-
 export default function TopicDetailPage() {
   const params = useParams();
   const searchParams = useSearchParams();
@@ -294,18 +289,24 @@ export default function TopicDetailPage() {
 
   const fetchTopics = useCallback(async () => {
     const startedAt = performance.now();
-    const res = await fetch(`/api/livestream?date=${date}`);
-    const data: LivestreamResponse = await res.json();
-    setTopics(data.topics);
-    setResolvedDate(data.resolvedDate);
-    setLoading(false);
-    logClientPerf("livestream_topic_fetch_topics", {
-      slug,
-      requestedDate: date,
-      resolvedDate: data.resolvedDate,
-      topicCount: data.topics.length,
-      durationMs: Number((performance.now() - startedAt).toFixed(2)),
-    });
+    try {
+      const res = await fetch(`/api/livestream?date=${date}`);
+      const data = (await res.json()) as LivestreamListResponse | { error: string };
+      if (!res.ok || isErrorResponse(data)) {
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+      }
+      setTopics(data.topics);
+      setResolvedDate(data.resolvedDate);
+      logClientPerf("livestream_topic_fetch_topics", {
+        slug,
+        requestedDate: date,
+        resolvedDate: data.resolvedDate,
+        topicCount: data.topics.length,
+        durationMs: Number((performance.now() - startedAt).toFixed(2)),
+      });
+    } finally {
+      setLoading(false);
+    }
   }, [date]);
 
   useEffect(() => {

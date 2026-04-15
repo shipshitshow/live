@@ -1,65 +1,23 @@
 import type { YouTubeCommentReply, YouTubeCommentThread } from "@/lib/types";
+import type {
+  ChannelConfig,
+  YouTubeCommentReplyItem,
+  YouTubeCommentThreadItem,
+  YouTubeVideoItem,
+} from "@/lib/youtube/types";
 
 const DATA_API = "https://www.googleapis.com/youtube/v3";
-
-interface ChannelConfig {
-  id: string;
-  label: string;
-  refreshToken: string;
-}
 
 interface FetchCommentThreadsOptions {
   maxResults?: number;
   videoId?: string | null;
 }
 
-interface YTCommentThreadItem {
-  id: string;
-  snippet?: {
-    videoId?: string;
-    channelId?: string;
-    canReply?: boolean;
-    totalReplyCount?: number;
-    topLevelComment?: {
-      id?: string;
-      snippet?: {
-        textDisplay?: string;
-        textOriginal?: string;
-        authorDisplayName?: string;
-        authorProfileImageUrl?: string;
-        publishedAt?: string;
-        updatedAt?: string;
-        likeCount?: number;
-        viewerRating?: string;
-      };
-    };
-  };
-  replies?: {
-    comments?: YTCommentReplyItem[];
-  };
+function isDefined<T>(value: T | null | undefined): value is T {
+  return value !== null && value !== undefined;
 }
 
-interface YTCommentReplyItem {
-  id?: string;
-  snippet?: {
-    textDisplay?: string;
-    textOriginal?: string;
-    authorDisplayName?: string;
-    authorProfileImageUrl?: string;
-    publishedAt?: string;
-    updatedAt?: string;
-    likeCount?: number;
-  };
-}
-
-interface YTVideoItem {
-  id: string;
-  snippet?: {
-    title?: string;
-  };
-}
-
-const ytFetch = async (url: string, token: string) => {
+const ytFetch = async <T>(url: string, token: string): Promise<T> => {
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -69,10 +27,10 @@ const ytFetch = async (url: string, token: string) => {
     throw new Error(`YouTube API ${res.status}: ${body}`);
   }
 
-  return res.json();
+  return (await res.json()) as T;
 };
 
-const mapReply = (reply: YTCommentReplyItem): YouTubeCommentReply => ({
+const mapReply = (reply: YouTubeCommentReplyItem): YouTubeCommentReply => ({
   id: reply.id ?? "",
   text: reply.snippet?.textOriginal ?? reply.snippet?.textDisplay ?? "",
   authorDisplayName: reply.snippet?.authorDisplayName ?? "Unknown",
@@ -88,12 +46,12 @@ const fetchVideoTitles = async (
 ): Promise<Map<string, string>> => {
   if (videoIds.length === 0) return new Map();
 
-  const res = await ytFetch(
+  const res = await ytFetch<{ items?: YouTubeVideoItem[] }>(
     `${DATA_API}/videos?part=snippet&id=${videoIds.join(",")}`,
     token
   );
 
-  const items = (res.items ?? []) as YTVideoItem[];
+  const items = res.items ?? [];
   return new Map(
     items.map((item) => [item.id, item.snippet?.title ?? item.id])
   );
@@ -119,10 +77,13 @@ export const fetchCommentThreads = async (
     params.set("allThreadsRelatedToChannelId", channelConfig.id);
   }
 
-  const res = await ytFetch(`${DATA_API}/commentThreads?${params.toString()}`, token);
-  const items = (res.items ?? []) as YTCommentThreadItem[];
+  const res = await ytFetch<{ items?: YouTubeCommentThreadItem[] }>(
+    `${DATA_API}/commentThreads?${params.toString()}`,
+    token
+  );
+  const items = res.items ?? [];
   const videoIds = Array.from(
-    new Set(items.map((item) => item.snippet?.videoId).filter(Boolean) as string[])
+    new Set(items.map((item) => item.snippet?.videoId).filter(isDefined))
   );
   const videoTitles = await fetchVideoTitles(token, videoIds);
 
@@ -181,6 +142,6 @@ export const replyToComment = async (
     throw new Error(`YouTube API ${res.status}: ${body}`);
   }
 
-  const item = await res.json();
+  const item = (await res.json()) as YouTubeCommentReplyItem;
   return mapReply(item);
 };

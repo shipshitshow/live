@@ -1,7 +1,5 @@
 export type TopicStatus = "backlog" | "in_progress" | "done";
 
-export type TopicSource = "HN" | "X" | "YouTube" | "Reddit" | "GitHub";
-
 export type ContentField =
   | "thumbnail_v1"
   | "thumbnail_v2"
@@ -53,4 +51,12 @@ export interface TopicUpdate {
   status?: TopicStatus;
   thumbnail_prompt?: string;
   generated?: Partial<TopicGeneratedContent>;
+}
+
+export interface LivestreamListResponse {
+  topics: Topic[];
+  requestedDate: string;
+  resolvedDate: string;
+  availableDates: string[];
+  isFallback: boolean;
 }

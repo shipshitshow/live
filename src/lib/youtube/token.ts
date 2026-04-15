@@ -1,6 +1,7 @@
 import { kv } from "@vercel/kv";
 import fs from "node:fs";
 import path from "node:path";
+import type { ChannelConfig, YouTubeAuthStatus } from "@/lib/youtube/types";
 
 const TOKEN_TTL_SECONDS = 3000; // 50 min (tokens last 60 min)
 const TOKEN_FILE_PATH = path.join(process.cwd(), "data", "youtube-tokens.json");
@@ -16,17 +17,11 @@ interface TokenResponse {
   refresh_token?: string;
 }
 
-export interface ChannelConfig {
-  id: string;
-  label: string;
-  refreshToken: string;
-}
-
 interface StoredTokenFile {
   refreshTokens?: Record<string, string>;
 }
 
-export class YouTubeAuthError extends Error {
+class YouTubeAuthError extends Error {
   code: "reauth_required" | "missing_credentials";
   channelLabel?: string;
   channelId?: string;
@@ -42,12 +37,6 @@ export class YouTubeAuthError extends Error {
     this.channelLabel = options?.channelLabel;
     this.channelId = options?.channelId;
   }
-}
-
-export interface YouTubeAuthStatus {
-  connected: boolean;
-  status: "connected" | "missing_credentials" | "reauth_required";
-  channelLabelsNeedingAuth: string[];
 }
 
 function readTokenFile(): StoredTokenFile {
@@ -214,7 +203,9 @@ export function hasYouTubeCredentials(): boolean {
   return getConfiguredChannelMeta().length > 0;
 }
 
-export function isYouTubeReauthError(error: unknown): error is YouTubeAuthError {
+export function isYouTubeReauthError(
+  error: unknown
+): error is Error & { code: "reauth_required"; channelLabel?: string; channelId?: string } {
   return error instanceof YouTubeAuthError && error.code === "reauth_required";
 }
 

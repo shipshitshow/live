@@ -1,6 +1,8 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { CopyButton } from "@/components/CopyButton";
+import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
 import type {
   CommentReplyDraftResponse,
   YouTubeCommentListResponse,
@@ -10,23 +12,6 @@ import type {
 
 type DraftState = Record<string, string[]>;
 type SendingState = Record<string, number | null>;
-
-function CopyButton({ text }: { text: string }) {
-  const [copied, setCopied] = useState(false);
-
-  return (
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(text);
-        setCopied(true);
-        setTimeout(() => setCopied(false), 1500);
-      }}
-      className="text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors"
-    >
-      {copied ? "Copied!" : "Copy"}
-    </button>
-  );
-}
 
 const formatPublishedAt = (value: string) =>
   new Date(value).toLocaleString([], {
@@ -57,13 +42,13 @@ export function CommentsClient() {
       });
       const data = (await res.json()) as YouTubeCommentListResponse | { error: string };
 
-      if (res.status === 401 && "reauthRequired" in (data as Record<string, unknown>)) {
+      if (res.status === 401 && isReauthRequiredResponse(data)) {
         window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         return;
       }
 
       if (!res.ok || !("items" in data)) {
-        throw new Error("error" in data ? data.error : `API error ${res.status}`);
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
       }
 
       setComments(data.items);
@@ -148,7 +133,7 @@ export function CommentsClient() {
 
       const data = (await res.json()) as CommentReplyDraftResponse | { error: string };
       if (!res.ok || !("drafts" in data)) {
-        throw new Error("error" in data ? data.error : `API error ${res.status}`);
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
       }
 
       setDraftsByComment((prev) => ({
@@ -178,12 +163,12 @@ export function CommentsClient() {
       });
 
       const data = (await res.json()) as YouTubeCommentReply | { error: string };
-      if (res.status === 401 && "reauthRequired" in (data as Record<string, unknown>)) {
+      if (res.status === 401 && isReauthRequiredResponse(data)) {
         window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
         return;
       }
       if (!res.ok || !("id" in data)) {
-        throw new Error("error" in data ? data.error : `API error ${res.status}`);
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
       }
 
       setComments((prev) =>

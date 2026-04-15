@@ -40,7 +40,7 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as { action?: "create" | "exec"; sessionId?: string; input?: string };
   } catch {
-    body = { action: "create" };
+    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
   }
 
   if (body.action === "exec") {

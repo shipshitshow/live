@@ -1,11 +1,10 @@
 import Link from "next/link";
-
-export interface AppHeaderLink {
+interface AppHeaderLink {
   href: string;
   label: string;
 }
 
-export const PRIMARY_HEADER_LINKS: AppHeaderLink[] = [
+const DEFAULT_HEADER_LINKS: AppHeaderLink[] = [
   { href: "/", label: "Analytics" },
   { href: "/comments", label: "Comments" },
   { href: "/review", label: "Unpublished" },
@@ -22,7 +21,7 @@ interface AppHeaderProps {
 export function AppHeader({
   subtitle,
   activeHref,
-  links = PRIMARY_HEADER_LINKS,
+  links = DEFAULT_HEADER_LINKS,
 }: AppHeaderProps) {
   return (
     <header className="border-b border-surface-border px-6 py-4 flex items-center justify-between gap-6">

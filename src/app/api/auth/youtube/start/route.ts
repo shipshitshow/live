@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
       response_type: "code",
       scope: scopes,
       access_type: "offline",
-      prompt: "consent",
+      prompt: "select_account consent",
       state: encodeState({ next, channel }),
     }).toString();
 

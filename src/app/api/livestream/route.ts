@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
 import { todayLocalDate } from "@/lib/date";
-import type { Topic, TopicFrontmatter, TopicGeneratedContent } from "@/lib/livestream-types";
+import type { ErrorResponse } from "@/lib/api-types";
+import type { LivestreamListResponse, Topic, TopicFrontmatter, TopicGeneratedContent, TopicStatus } from "@/lib/livestream-types";
 import { CONTENT_FIELDS } from "@/lib/livestream-types";
 import { logError, logEvent } from "@/lib/logger";
 
@@ -25,7 +26,7 @@ function parseGeneratedContent(raw: string): TopicGeneratedContent {
   if (idx === -1) return { ...EMPTY_GENERATED };
 
   const section = raw.slice(idx + marker.length);
-  const result: Record<string, string | null> = { ...EMPTY_GENERATED };
+  const result: TopicGeneratedContent = { ...EMPTY_GENERATED };
 
   for (const field of CONTENT_FIELDS) {
     const tag = `<!-- ${field} -->`;
@@ -37,7 +38,7 @@ function parseGeneratedContent(raw: string): TopicGeneratedContent {
     }
   }
 
-  return result as unknown as TopicGeneratedContent;
+  return result;
 }
 
 function parseFrontmatter(raw: string): { frontmatter: TopicFrontmatter; content: string; generated: TopicGeneratedContent } {
@@ -61,12 +62,38 @@ function parseFrontmatter(raw: string): { frontmatter: TopicFrontmatter; content
   const genIdx = body.indexOf(genMarker);
   const content = genIdx !== -1 ? body.slice(0, genIdx).trim() : body;
   const generated = parseGeneratedContent(raw);
+  const title = fm.title;
+  const slug = fm.slug;
+  const source = fm.source;
+  const status = fm.status;
+  const date = fm.date;
+
+  if (
+    typeof title !== "string" ||
+    typeof slug !== "string" ||
+    typeof source !== "string" ||
+    !isTopicStatus(status) ||
+    typeof date !== "string"
+  ) {
+    throw new Error("Invalid topic frontmatter");
+  }
 
   return {
-    frontmatter: fm as unknown as TopicFrontmatter,
+    frontmatter: {
+      title,
+      slug,
+      source,
+      status,
+      date,
+      thumbnail_prompt: fm.thumbnail_prompt,
+    },
     content,
     generated,
   };
+}
+
+function isTopicStatus(value: string | null): value is TopicStatus {
+  return value === "backlog" || value === "in_progress" || value === "done";
 }
 
 function getTopicsForDate(dateStr: string): Topic[] {
@@ -115,25 +142,24 @@ export async function GET(request: Request) {
       isFallback: requestedDate !== resolvedDate,
     });
 
-    return NextResponse.json({
+    const response: LivestreamListResponse = {
       topics,
       requestedDate,
       resolvedDate,
       availableDates,
       isFallback: requestedDate !== resolvedDate,
-    });
+    };
+
+    return NextResponse.json(response);
   } catch (error) {
     logError("api.livestream.list_failed", error, {
       requestedDate,
       resolvedDate,
     });
-    return NextResponse.json({
-      topics: [],
-      requestedDate,
-      resolvedDate,
-      availableDates,
-      isFallback: requestedDate !== resolvedDate,
-    });
+    const response: ErrorResponse = {
+      error: error instanceof Error ? error.message : "Failed to load livestream topics",
+    };
+    return NextResponse.json(response, { status: 500 });
   }
 }
 

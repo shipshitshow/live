@@ -7,7 +7,6 @@
     "next": "16.2.3",
     "react": "19.2.5",
     "react-dom": "19.2.5",
-    "react-tweet": "3.3.0",
     "recharts": "3.8.1",
     "winston": "^3.19.0",
     "xterm": "^5.3.0",
@@ -17,7 +16,8 @@
     "@types/node": "25",
     "@types/react": "19",
     "@types/react-dom": "19",
-    "autoprefixer": "10",
+    "knip": "^6.4.1",
+    "madge": "^8.0.0",
     "postcss": "8",
     "sass": "^1.99.0",
     "tailwindcss": "4.2.2",
@@ -28,11 +28,24 @@
   "private": true,
   "scripts": {
     "build": "next build",
+    "check:cycles": "madge --extensions ts,tsx --ts-config ./tsconfig.json --circular src",
+    "check:types": "tsc --noEmit",
+    "check:unused": "knip",
     "deps:update": "bunx npm-check-updates -u --deep --reject typescript && bun install",
     "dev": "next dev -p 3001",
     "lint": "next lint",
     "start": "next start -p 3001"
   },
   "type": "module",
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "knip": {
+    "entry": [
+      "src/app/**/page.tsx",
+      "src/app/**/layout.tsx",
+      "src/app/**/route.ts"
+    ],
+    "project": [
+      "src/**/*.{ts,tsx}"
+    ]
+  }
 }

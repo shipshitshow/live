@@ -1,7 +1,8 @@
 "use client";
 
 import { Profiler, useEffect, useState, useCallback } from "react";
-import type { Topic, TopicStatus } from "@/lib/livestream-types";
+import { isErrorResponse } from "@/lib/api-types";
+import type { LivestreamListResponse, Topic, TopicStatus } from "@/lib/livestream-types";
 import { KanbanColumn } from "@/components/livestream/KanbanColumn";
 import { todayLocalDate } from "@/lib/date";
 import { logClientEvent, logClientPerf } from "@/lib/client-logger";
@@ -9,17 +10,10 @@ import { AppHeader } from "@/components/AppHeader";
 
 const COLUMNS: TopicStatus[] = ["backlog", "in_progress", "done"];
 
-interface LivestreamResponse {
-  topics: Topic[];
-  requestedDate: string;
-  resolvedDate: string;
-  availableDates: string[];
-  isFallback: boolean;
-}
-
 export default function LivestreamPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [requestedDate, setRequestedDate] = useState(() => todayLocalDate());
   const [date, setDate] = useState(() => todayLocalDate());
   const [availableDates, setAvailableDates] = useState<string[]>([]);
@@ -27,20 +21,32 @@ export default function LivestreamPage() {
 
   const fetchTopics = useCallback(async () => {
     const startedAt = performance.now();
-    const res = await fetch(`/api/livestream?date=${requestedDate}`);
-    const data: LivestreamResponse = await res.json();
-    setTopics(data.topics);
-    setDate(data.resolvedDate);
-    setAvailableDates(data.availableDates);
-    setIsFallback(data.isFallback);
-    setLoading(false);
-    logClientPerf("livestream_board_fetch_topics", {
-      requestedDate,
-      resolvedDate: data.resolvedDate,
-      topicCount: data.topics.length,
-      durationMs: Number((performance.now() - startedAt).toFixed(2)),
-      isFallback: data.isFallback,
-    });
+    setError(null);
+    try {
+      const res = await fetch(`/api/livestream?date=${requestedDate}`);
+      const data = (await res.json()) as LivestreamListResponse | { error: string };
+      if (!res.ok || isErrorResponse(data)) {
+        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+      }
+      setTopics(data.topics);
+      setDate(data.resolvedDate);
+      setAvailableDates(data.availableDates);
+      setIsFallback(data.isFallback);
+      logClientPerf("livestream_board_fetch_topics", {
+        requestedDate,
+        resolvedDate: data.resolvedDate,
+        topicCount: data.topics.length,
+        durationMs: Number((performance.now() - startedAt).toFixed(2)),
+        isFallback: data.isFallback,
+      });
+    } catch (fetchError) {
+      setTopics([]);
+      setAvailableDates([]);
+      setIsFallback(false);
+      setError(fetchError instanceof Error ? fetchError.message : "Failed to load topics");
+    } finally {
+      setLoading(false);
+    }
   }, [requestedDate]);
 
   useEffect(() => {
@@ -98,6 +104,11 @@ export default function LivestreamPage() {
       <AppHeader subtitle="Livestream" activeHref="/livestream" />
 
       <main className="p-8 space-y-6">
+        {error ? (
+          <div className="rounded-xl border border-accent-red/20 bg-accent-red/5 p-4">
+            <p className="text-sm text-accent-red">{error}</p>
+          </div>
+        ) : null}
         <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
           <div>
             <p className="text-sm font-medium text-text-primary">

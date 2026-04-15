@@ -1,15 +1,11 @@
 import { NextResponse } from "next/server";
 import { hasYouTubeCredentials, getAccessToken, getChannelConfigs } from "@/lib/youtube/token";
 import { cachedFetch, TTL } from "@/lib/youtube/cache";
-import type { VideoStats } from "@/lib/types";
+import type { ErrorResponse } from "@/lib/api-types";
+import type { UnlistedVideo } from "@/lib/review-types";
+import type { YouTubeChannelItem, YouTubePlaylistItem, YouTubeVideoItem } from "@/lib/youtube/types";
 
 const DATA_API = "https://www.googleapis.com/youtube/v3";
-
-interface UnlistedVideo extends VideoStats {
-  description: string;
-  thumbnail_url: string;
-  privacy_status: string;
-}
 
 async function fetchUnlistedVideos(
   channelConfig: { id: string; label: string; refreshToken: string }
@@ -17,8 +13,7 @@ async function fetchUnlistedVideos(
   const token = await getAccessToken(channelConfig);
 
   return cachedFetch(`unlisted:${channelConfig.id}`, TTL.DAILY_METRICS, async () => {
-    // Get uploads playlist ID
-    const channelRes = await ytFetch(
+    const channelRes = await ytFetch<{ items?: YouTubeChannelItem[] }>(
       `${DATA_API}/channels?part=contentDetails&id=${channelConfig.id}`,
       token
     );
@@ -26,39 +21,35 @@ async function fetchUnlistedVideos(
       channelRes.items?.[0]?.contentDetails?.relatedPlaylists?.uploads;
     if (!uploadsPlaylistId) return [];
 
-    // Get all videos from uploads playlist (includes unlisted)
-    const playlistRes = await ytFetch(
+    const playlistRes = await ytFetch<{ items?: YouTubePlaylistItem[] }>(
       `${DATA_API}/playlistItems?part=snippet,status&playlistId=${uploadsPlaylistId}&maxResults=50`,
       token
     );
 
     const items = playlistRes.items ?? [];
-    // Filter to unlisted only
     const unlistedItems = items.filter(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      (item: any) => item.status?.privacyStatus === "unlisted"
+      (item) => item.status?.privacyStatus === "unlisted"
     );
 
     if (unlistedItems.length === 0) return [];
 
-    // Get full video details
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const videoIds = unlistedItems.map((item: any) => item.snippet.resourceId.videoId);
-    const videosRes = await ytFetch(
+    const videoIds = unlistedItems
+      .map((item) => item.snippet?.resourceId?.videoId)
+      .filter((videoId): videoId is string => typeof videoId === "string" && videoId.length > 0);
+    const videosRes = await ytFetch<{ items?: YouTubeVideoItem[] }>(
       `${DATA_API}/videos?part=snippet,statistics,contentDetails,status&id=${videoIds.join(",")}`,
       token
     );
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    return (videosRes.items ?? []).map((item: any): UnlistedVideo => {
+    return (videosRes.items ?? []).map((item): UnlistedVideo => {
       const durationSec = parseDuration(item.contentDetails?.duration);
       const isShort = durationSec > 0 && durationSec <= 60;
 
       return {
         video_id: item.id,
-        title: item.snippet.title,
-        published_at: item.snippet.publishedAt,
-        description: item.snippet.description || "",
+        title: item.snippet?.title ?? item.id,
+        published_at: item.snippet?.publishedAt ?? "",
+        description: item.snippet?.description ?? "",
         views: Number(item.statistics?.viewCount ?? 0),
         likes: Number(item.statistics?.likeCount ?? 0),
         comments: Number(item.statistics?.commentCount ?? 0),
@@ -70,16 +61,16 @@ async function fetchUnlistedVideos(
         channel_label: channelConfig.label,
         video_type: isShort ? "short" : "video",
         thumbnail_url:
-          item.snippet.thumbnails?.medium?.url ||
-          item.snippet.thumbnails?.default?.url ||
+          item.snippet?.thumbnails?.medium?.url ||
+          item.snippet?.thumbnails?.default?.url ||
           "",
-        privacy_status: item.status?.privacyStatus || "unlisted",
+        privacy_status: item.status?.privacyStatus ?? "unlisted",
       };
     });
   });
 }
 
-async function ytFetch(url: string, token: string) {
+async function ytFetch<T>(url: string, token: string): Promise<T> {
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -87,7 +78,7 @@ async function ytFetch(url: string, token: string) {
     const body = await res.text();
     throw new Error(`YouTube API ${res.status}: ${body}`);
   }
-  return res.json();
+  return (await res.json()) as T;
 }
 
 function parseDuration(iso: string | undefined): number {
@@ -120,7 +111,8 @@ export async function GET() {
       );
     return NextResponse.json(all);
   } catch (error) {
-    console.error("Failed to fetch unlisted videos:", error);
-    return NextResponse.json([]);
+    const message = error instanceof Error ? error.message : "Failed to fetch unlisted videos";
+    const response: ErrorResponse = { error: message };
+    return NextResponse.json(response, { status: 500 });
   }
 }

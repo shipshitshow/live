@@ -1,25 +1,9 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
-import path from "path";
 import { todayLocalDate } from "@/lib/date";
+import { findTopicFile } from "@/lib/livestream-files";
 import type { TopicUpdate, ContentField } from "@/lib/livestream-types";
 import { CONTENT_FIELDS } from "@/lib/livestream-types";
-
-const DATA_DIR = path.join(process.cwd(), "data", "livestream");
-
-function findTopicFile(slug: string, date: string): string | null {
-  const dir = path.join(DATA_DIR, date);
-  if (!fs.existsSync(dir)) return null;
-
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
-  for (const file of files) {
-    const raw = fs.readFileSync(path.join(dir, file), "utf-8");
-    if (raw.includes(`slug: "${slug}"`)) {
-      return path.join(dir, file);
-    }
-  }
-  return null;
-}
 
 function updateFrontmatterField(raw: string, key: string, value: string | null): string {
   const valStr = value === null ? "null" : `"${value}"`;

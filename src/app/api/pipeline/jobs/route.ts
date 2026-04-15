@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import type { ErrorResponse } from "@/lib/api-types";
 
 const PIPELINE_BASE = process.env.PIPELINE_API_URL ?? "http://localhost:8001";
 
@@ -19,6 +20,7 @@ export async function GET(request: Request) {
     const data = await res.json();
     return NextResponse.json(data);
   } catch {
-    return NextResponse.json([]);
+    const response: ErrorResponse = { error: "Pipeline API unavailable" };
+    return NextResponse.json(response, { status: 503 });
   }
 }

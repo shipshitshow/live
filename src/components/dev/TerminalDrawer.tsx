@@ -1,20 +1,13 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type { TerminalSessionCreateResponse, TerminalSnapshot } from "@/lib/dev-terminal-types";
 import type { TerminalPromptEventDetail } from "@/lib/dev-terminal-events";
 
 const TERMINAL_OPEN_KEY = "shipshitshow.devTerminal.open";
 const TERMINAL_AGENT_KEY = "shipshitshow.devTerminal.agent";
 
 type AgentMode = "shell" | "codex" | "claude";
-
-interface TerminalSnapshot {
-  output: string;
-  cursor: number;
-  mode: "append" | "reset";
-  status: "ready" | "running" | "closed";
-  exitCode: number | null;
-}
 
 function shellQuote(value: string) {
   return `'${value.replace(/'/g, `'\"'\"'`)}'`;
@@ -62,7 +55,7 @@ export function TerminalDrawer() {
       return;
     }
 
-    const data = await res.json() as TerminalSnapshot;
+    const data = (await res.json()) as TerminalSnapshot;
     const terminal = terminalRef.current;
     if (!terminal) return;
 
@@ -102,7 +95,7 @@ export function TerminalDrawer() {
       return null;
     }
 
-    const data = await res.json() as { id: string; output: string; cursor: number; status: "ready" | "running" | "closed" };
+    const data = (await res.json()) as TerminalSessionCreateResponse;
     setSessionId(data.id);
     setCursor(data.cursor);
     setStatus(data.status);

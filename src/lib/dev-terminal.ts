@@ -3,9 +3,8 @@ import { execSync, spawn } from "child_process";
 import fs from "fs";
 import os from "os";
 import path from "path";
+import type { TerminalSessionCreateResponse, TerminalSessionStatus, TerminalSnapshot } from "@/lib/dev-terminal-types";
 import { isDevToolsEnabled } from "@/lib/dev-tools";
-
-type TerminalSessionStatus = "ready" | "running" | "closed";
 
 interface TerminalSession {
   id: string;
@@ -19,15 +18,10 @@ interface TerminalSession {
   exitCode: number | null;
 }
 
-interface SessionSnapshot {
+interface SessionSnapshot extends TerminalSnapshot {
   id: string;
   shell: string;
   cwd: string;
-  output: string;
-  cursor: number;
-  mode: "append" | "reset";
-  status: TerminalSessionStatus;
-  exitCode: number | null;
 }
 
 const MAX_BUFFER_SIZE = 200_000;
@@ -173,14 +167,18 @@ class DevTerminalManager {
 
     writeSession(session);
 
-    return {
+    const response: TerminalSessionCreateResponse = {
       id,
       shell,
       cwd,
       cursor: 0,
       output: session.buffer,
+      mode: "append",
+      exitCode: null,
       status: session.status,
     };
+
+    return response;
   }
 
   readSession(id: string, cursor: number): SessionSnapshot {

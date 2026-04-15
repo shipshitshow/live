@@ -3,12 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
-
-interface YouTubeAuthStatusResponse {
-  connected: boolean;
-  status: "connected" | "missing_credentials" | "reauth_required";
-  channelLabelsNeedingAuth: string[];
-}
+import type { YouTubeAuthStatus } from "@/lib/youtube/types";
 
 interface YouTubeAuthConfigResponse {
   redirectUri: string;
@@ -19,13 +14,13 @@ export default function YouTubeAuthPage() {
   const router = useRouter();
   const next = searchParams.get("next") || "/";
   const error = searchParams.get("error");
-  const [status, setStatus] = useState<YouTubeAuthStatusResponse | null>(null);
+  const [status, setStatus] = useState<YouTubeAuthStatus | null>(null);
   const [redirectUri, setRedirectUri] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     fetch("/api/auth/youtube/status", { cache: "no-store" })
-      .then((res) => res.json() as Promise<YouTubeAuthStatusResponse>)
+      .then((res) => res.json() as Promise<YouTubeAuthStatus>)
       .then((data) => {
         setStatus(data);
         if (data.connected) {

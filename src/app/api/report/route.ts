@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import type { ErrorResponse, ReauthRequiredResponse } from "@/lib/api-types";
 import {
   hasYouTubeCredentials,
   getAccessToken,
@@ -156,16 +157,19 @@ export async function GET(req: NextRequest) {
     });
   } catch (error) {
     if (isYouTubeReauthError(error)) {
+      const response: ReauthRequiredResponse = {
+        error: "YouTube authentication expired. Reconnect YouTube to continue.",
+        reauthRequired: true,
+        channelLabel: error.channelLabel ?? null,
+      };
       return NextResponse.json(
-        {
-          error: "YouTube authentication expired. Reconnect YouTube to continue.",
-          reauthRequired: true,
-          channelLabel: error.channelLabel ?? null,
-        },
+        response,
         { status: 401 }
       );
     }
-    console.error("YouTube API error, returning empty analytics report:", error);
-    return NextResponse.json(getEmptyReport());
+    const response: ErrorResponse = {
+      error: error instanceof Error ? error.message : "Failed to load analytics report",
+    };
+    return NextResponse.json(response, { status: 503 });
   }
 }

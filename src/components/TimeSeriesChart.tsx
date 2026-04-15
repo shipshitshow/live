@@ -17,14 +17,12 @@ export interface ChartLine {
   label: string;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-interface TimeSeriesChartProps {
-  data: any[];
+interface TimeSeriesChartProps<T extends { day: string }> {
+  data: T[];
   dataKey: string;
   color?: string;
   formatValue?: (v: number) => string;
   formatTick?: (v: number) => string;
-  /** Additional lines to overlay (for multi-channel "All" view) */
   lines?: ChartLine[];
 }
 
@@ -67,8 +65,7 @@ export function TimeSeriesChart({
   formatValue,
   formatTick,
   lines,
-}: TimeSeriesChartProps) {
-  // If lines are provided, render multiple lines; otherwise single line
+}: TimeSeriesChartProps<{ day: string }>) {
   const renderLines = lines && lines.length > 0;
 
   return (

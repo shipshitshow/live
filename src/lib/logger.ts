@@ -36,7 +36,7 @@ function createAppLogger() {
   });
 }
 
-export const logger = global.__shipShitLogger__ ?? createAppLogger();
+const logger = global.__shipShitLogger__ ?? createAppLogger();
 
 if (!global.__shipShitLogger__) {
   global.__shipShitLogger__ = logger;
@@ -64,9 +64,4 @@ export function logError(
     ...payload,
     error: err,
   });
-}
-
-export function getLogFilePath() {
-  ensureLogDir();
-  return LOG_FILE;
 }

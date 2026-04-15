@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
-import path from "path";
 import { todayLocalDate } from "@/lib/date";
+import { findTopicFile } from "@/lib/livestream-files";
 import {
   getAccessToken,
   getChannelConfigs,
@@ -10,22 +10,7 @@ import {
 } from "@/lib/youtube/token";
 import { logError, logEvent } from "@/lib/logger";
 
-const DATA_DIR = path.join(process.cwd(), "data", "livestream");
 const DATA_API = "https://www.googleapis.com/youtube/v3";
-
-function findTopicFile(slug: string, date: string): string | null {
-  const dir = path.join(DATA_DIR, date);
-  if (!fs.existsSync(dir)) return null;
-
-  const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md"));
-  for (const file of files) {
-    const raw = fs.readFileSync(path.join(dir, file), "utf-8");
-    if (raw.includes(`slug: "${slug}"`)) {
-      return path.join(dir, file);
-    }
-  }
-  return null;
-}
 
 function extractYouTubeUrl(raw: string): string | null {
   const match = raw.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/);

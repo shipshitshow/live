@@ -34,15 +34,6 @@ export interface DailyMetric {
   avg_view_percentage: number;
   likes: number;
 }
-
-// Legacy single-channel report
-export interface AnalyticsReport {
-  channel: ChannelStats;
-  videos: VideoStats[];
-  daily_metrics: DailyMetric[];
-}
-
-// Multi-channel report
 export interface MultiChannelReport {
   channels: ChannelStats[];
   videos: VideoStats[];

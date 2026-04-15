@@ -1,4 +1,5 @@
 import type { TrendItem } from "@/lib/trends-types";
+import type { YouTubeSearchItem, YouTubeVideoItem } from "@/lib/youtube/types";
 import { hasYouTubeCredentials, getAccessToken, getChannelConfigs } from "@/lib/youtube/token";
 
 const YT_API = "https://www.googleapis.com/youtube/v3";
@@ -8,40 +9,18 @@ const AI_TREND_QUERIES = [
   "\"local llm\" OR llama.cpp OR Ollama OR Qwen OR DeepSeek OR Cursor OR Codex",
 ];
 
-interface YTVideo {
-  id: string;
-  snippet: {
-    title: string;
-    channelTitle: string;
-    publishedAt: string;
-    description: string;
-    thumbnails: { medium?: { url: string } };
-  };
-  statistics: {
-    viewCount: string;
-    likeCount: string;
-    commentCount: string;
-  };
-}
-
-interface YTSearchItem {
-  id: {
-    videoId: string;
-  };
-}
-
-function toTrendItem(video: YTVideo): TrendItem {
+function toTrendItem(video: YouTubeVideoItem): TrendItem {
   return {
     id: `yt-${video.id}`,
-    title: video.snippet.title,
+    title: video.snippet?.title ?? video.id,
     url: `https://www.youtube.com/watch?v=${video.id}`,
     source: "youtube",
-    score: Number.parseInt(video.statistics.viewCount, 10) || 0,
-    commentCount: Number.parseInt(video.statistics.commentCount, 10) || 0,
-    timestamp: video.snippet.publishedAt,
-    summary: video.snippet.description?.slice(0, 200) || undefined,
-    author: video.snippet.channelTitle,
-    thumbnail: video.snippet.thumbnails?.medium?.url,
+    score: Number.parseInt(video.statistics?.viewCount ?? "0", 10) || 0,
+    commentCount: Number.parseInt(video.statistics?.commentCount ?? "0", 10) || 0,
+    timestamp: video.snippet?.publishedAt ?? "",
+    summary: video.snippet?.description?.slice(0, 200) || undefined,
+    author: video.snippet?.channelTitle,
+    thumbnail: video.snippet?.thumbnails?.medium?.url,
   };
 }
 
@@ -56,7 +35,7 @@ async function fetchVideoDetails(videoIds: string[], token: string): Promise<Tre
   if (!detailRes.ok) throw new Error(`YouTube detail error: ${detailRes.status}`);
 
   const detailData = await detailRes.json();
-  return (detailData.items as YTVideo[]).map(toTrendItem);
+  return ((detailData.items ?? []) as YouTubeVideoItem[]).map(toTrendItem);
 }
 
 async function searchVideoIds(query: string, token: string, maxResults: number, order: "date" | "relevance" | "viewCount") {
@@ -68,7 +47,9 @@ async function searchVideoIds(query: string, token: string, maxResults: number, 
   if (!searchRes.ok) throw new Error(`YouTube search error: ${searchRes.status}`);
 
   const searchData = await searchRes.json();
-  return (searchData.items as YTSearchItem[]).map((item) => item.id.videoId).filter(Boolean);
+  return ((searchData.items ?? []) as YouTubeSearchItem[])
+    .map((item) => item.id?.videoId)
+    .filter((videoId): videoId is string => typeof videoId === "string" && videoId.length > 0);
 }
 
 export async function fetchYouTubeTrending(): Promise<TrendItem[]> {
