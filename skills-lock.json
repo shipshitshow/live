@@ -1,730 +1,730 @@
 {
-  "version": 1,
   "skills": {
     "ab-test-framework-ml": {
+      "computedHash": "44feababc210afaba0fe3886a5dacf2dfbf94a8ec002b3f4bf3861147a091c91",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "44feababc210afaba0fe3886a5dacf2dfbf94a8ec002b3f4bf3861147a091c91"
+      "sourceType": "github"
     },
     "ab-test-setup": {
+      "computedHash": "1312ab5ad54674a4cc14df9106161239573e7837641ccf4ea55e4dfc3c8a0a6c",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "1312ab5ad54674a4cc14df9106161239573e7837641ccf4ea55e4dfc3c8a0a6c"
+      "sourceType": "github"
     },
     "abm-specialist": {
+      "computedHash": "df3cd2e9cb2d357788ed1630cc86669d506812d82439ced585dd73d75ae7cedb",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "df3cd2e9cb2d357788ed1630cc86669d506812d82439ced585dd73d75ae7cedb"
+      "sourceType": "github"
     },
     "accessibility-design-checklist": {
+      "computedHash": "e2daa8e738135c85e7c763a6d3574b00643ea60cabd09b9d9bfc565f9fc12f56",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "e2daa8e738135c85e7c763a6d3574b00643ea60cabd09b9d9bfc565f9fc12f56"
+      "sourceType": "github"
     },
     "accessibility-test-axe": {
+      "computedHash": "f02a3498bb118cd41cf20be94eab38e09abab7c99b699d280c70e21236e6731b",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f02a3498bb118cd41cf20be94eab38e09abab7c99b699d280c70e21236e6731b"
+      "sourceType": "github"
     },
     "account-based-marketing-agent": {
+      "computedHash": "503d90f6e816379db1017b37c239775e79fcec5b5eadd3f580d55eeb29003cad",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "503d90f6e816379db1017b37c239775e79fcec5b5eadd3f580d55eeb29003cad"
+      "sourceType": "github"
     },
     "account-delete": {
+      "computedHash": "8b065773910859572f3c6c49005e03f1438a42c1545fb9281e803f5c24ced881",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "8b065773910859572f3c6c49005e03f1438a42c1545fb9281e803f5c24ced881"
+      "sourceType": "github"
     },
     "account-executive": {
+      "computedHash": "ad47dec0569abdeddf88a64f29e4737cae5947aa4dcc38ea3562d35d11d8818d",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ad47dec0569abdeddf88a64f29e4737cae5947aa4dcc38ea3562d35d11d8818d"
+      "sourceType": "github"
     },
     "account-onboarding": {
+      "computedHash": "118fddf9c73b9f7342fb5967072e9514ff8202b31c000aaf8cfd5e36db0bd2e9",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "118fddf9c73b9f7342fb5967072e9514ff8202b31c000aaf8cfd5e36db0bd2e9"
+      "sourceType": "github"
     },
     "accounts-payable-workflow": {
+      "computedHash": "63c62d72607f747e6bb1c51ffaba070209b879a4e9b50de8d7fc77a0b34a97eb",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "63c62d72607f747e6bb1c51ffaba070209b879a4e9b50de8d7fc77a0b34a97eb"
+      "sourceType": "github"
     },
     "active-learning-system": {
+      "computedHash": "0882f7c5f284d04c26487628b49d4d3e090291d47054c7dc63862def5459cba6",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "0882f7c5f284d04c26487628b49d4d3e090291d47054c7dc63862def5459cba6"
+      "sourceType": "github"
     },
     "ad-creative": {
+      "computedHash": "5d8f869c7e683e4d4fc7aa7a2b0d370b0ad54a81d9cffb48736ffc47759b3f4d",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "5d8f869c7e683e4d4fc7aa7a2b0d370b0ad54a81d9cffb48736ffc47759b3f4d"
+      "sourceType": "github"
     },
     "ads-agent": {
+      "computedHash": "800418c49bfd0e1dae4f8f8b1c06e129cdca48b0d48c2b0df976be39a90e454e",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "800418c49bfd0e1dae4f8f8b1c06e129cdca48b0d48c2b0df976be39a90e454e"
+      "sourceType": "github"
     },
     "ads-optimizer": {
+      "computedHash": "8d99039382a9f1f44f9981c2d3cc576032ef04aa5f89fcac7d2ff2a5826de121",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "8d99039382a9f1f44f9981c2d3cc576032ef04aa5f89fcac7d2ff2a5826de121"
+      "sourceType": "github"
     },
     "ads-reporter": {
+      "computedHash": "dfed7742ab3700e7b058fba2116a11b6ef4401d02fb50cc2832681b04ea8432d",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "dfed7742ab3700e7b058fba2116a11b6ef4401d02fb50cc2832681b04ea8432d"
+      "sourceType": "github"
     },
     "ai-agent-orchestrator": {
+      "computedHash": "94a02500ae77a17dbc080000147bd4dcde24a5b07f35abee2e8b68b248c7c62b",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "94a02500ae77a17dbc080000147bd4dcde24a5b07f35abee2e8b68b248c7c62b"
+      "sourceType": "github"
     },
     "ai-annotation-workflow": {
+      "computedHash": "99c040a8a4694ce85663d4f8bc3d5cd511811c57337cef8bf7d14349ec1b0855",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "99c040a8a4694ce85663d4f8bc3d5cd511811c57337cef8bf7d14349ec1b0855"
+      "sourceType": "github"
     },
     "ai-seo": {
+      "computedHash": "0bda4a0839dbb8ecb19b40707299c2558ddc7b63164d1d8008209ce6d03772b7",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "0bda4a0839dbb8ecb19b40707299c2558ddc7b63164d1d8008209ce6d03772b7"
+      "sourceType": "github"
     },
     "airbyte-connection-setup": {
+      "computedHash": "4df853ecf3bd2a7e3896a5a4ed27c243aa1e9ec5cfbd1dd768604eff8705f556",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "4df853ecf3bd2a7e3896a5a4ed27c243aa1e9ec5cfbd1dd768604eff8705f556"
+      "sourceType": "github"
     },
     "analytics-tracking": {
+      "computedHash": "1ad3893d31e5df78cb4b4e16801f49acbdf82daed5f775748859ca7dc638d6d0",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "1ad3893d31e5df78cb4b4e16801f49acbdf82daed5f775748859ca7dc638d6d0"
+      "sourceType": "github"
     },
     "android-notification-builder": {
+      "computedHash": "06560fb7dbb89c7050821e40dba1ae1af55aaf93d8eee5afbe5d0307c9b82bbc",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "06560fb7dbb89c7050821e40dba1ae1af55aaf93d8eee5afbe5d0307c9b82bbc"
+      "sourceType": "github"
     },
     "android-unit-test": {
+      "computedHash": "b73fb1b0741c63e4836087b96fe804ece9036b55ccda6f19d0af1f4cb724e934",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b73fb1b0741c63e4836087b96fe804ece9036b55ccda6f19d0af1f4cb724e934"
+      "sourceType": "github"
     },
     "api-authentication": {
+      "computedHash": "efabeda4f01830e5849887e87277c3e9b1d825c61e15f6b2f39ec20712f62098",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "efabeda4f01830e5849887e87277c3e9b1d825c61e15f6b2f39ec20712f62098"
+      "sourceType": "github"
     },
     "api-reference-guide": {
+      "computedHash": "ea0fbf1124025c7dcd15a075b231f9d70f151e07a65c5b8eaeba7ad87600b04e",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ea0fbf1124025c7dcd15a075b231f9d70f151e07a65c5b8eaeba7ad87600b04e"
+      "sourceType": "github"
     },
     "api-tutorial-writer": {
+      "computedHash": "08706d2bcbfbb972d475738041b2030069bc0bcf6b69f3be1f2a3aef826be5d9",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "08706d2bcbfbb972d475738041b2030069bc0bcf6b69f3be1f2a3aef826be5d9"
+      "sourceType": "github"
     },
     "aso-audit": {
+      "computedHash": "96bda37445a17eee85f5db77d136ce1cf9989f09e85a8abafbdcda0d48db8fbe",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "96bda37445a17eee85f5db77d136ce1cf9989f09e85a8abafbdcda0d48db8fbe"
+      "sourceType": "github"
     },
     "audit-log-generator": {
+      "computedHash": "7a1e4cac40b82bb56737c3fdb97236822d39d5ccd9822d2d149250e3b0f1528a",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "7a1e4cac40b82bb56737c3fdb97236822d39d5ccd9822d2d149250e3b0f1528a"
+      "sourceType": "github"
     },
     "automl-pipeline-setup": {
+      "computedHash": "b2fa253c9781bcdc74047db7402ed1d0fe5ac087fdf92a1969633d007382e4e8",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b2fa253c9781bcdc74047db7402ed1d0fe5ac087fdf92a1969633d007382e4e8"
+      "sourceType": "github"
     },
     "b2b-saas-marketing": {
+      "computedHash": "f272c35d48a3f0dc16066216dc75a290d89c4eea65a981a4a5a312aef60cdaad",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f272c35d48a3f0dc16066216dc75a290d89c4eea65a981a4a5a312aef60cdaad"
+      "sourceType": "github"
     },
     "backlog-refinement-guide": {
+      "computedHash": "abfa5408093b037cfd94601cfd4720357e7b2b514cef5783e6cac0d2357acf66",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "abfa5408093b037cfd94601cfd4720357e7b2b514cef5783e6cac0d2357acf66"
+      "sourceType": "github"
     },
     "backup-retention-policy": {
+      "computedHash": "95b158e98d642465d6db377c81003dbf479207604542d318b8c672d66918a7a5",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "95b158e98d642465d6db377c81003dbf479207604542d318b8c672d66918a7a5"
+      "sourceType": "github"
     },
     "brand-guidelines-doc": {
+      "computedHash": "97834981e42887c6f2369072d059452814c0371bc1fa86a68603b5af660e87a1",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "97834981e42887c6f2369072d059452814c0371bc1fa86a68603b5af660e87a1"
+      "sourceType": "github"
     },
     "brand-marketing": {
+      "computedHash": "30f6e3a91f137a910a4a1903969c117de7cf170c48098185722656c71979c967",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "30f6e3a91f137a910a4a1903969c117de7cf170c48098185722656c71979c967"
+      "sourceType": "github"
     },
     "bug-bounty-program": {
+      "computedHash": "ce42328efde2d1a5cace2f4bd5ed81c443580835ad60a25e77aec1af4f1c2823",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ce42328efde2d1a5cace2f4bd5ed81c443580835ad60a25e77aec1af4f1c2823"
+      "sourceType": "github"
     },
     "campaign-manager": {
+      "computedHash": "6c810c20e2cc48d2fa65e06b0a07e8df4d9aa34d1b789881961478619924f6c7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "6c810c20e2cc48d2fa65e06b0a07e8df4d9aa34d1b789881961478619924f6c7"
+      "sourceType": "github"
     },
     "categorical-encoder": {
+      "computedHash": "2e6688f7cc8ab19d2930f3a6248d356394cd95508c2cf450afe3ebba92c82cdf",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "2e6688f7cc8ab19d2930f3a6248d356394cd95508c2cf450afe3ebba92c82cdf"
+      "sourceType": "github"
     },
     "change-request-form": {
+      "computedHash": "7fb6aaf037281a48963248e220b29776706935cb6027fbaa5cec69f6ada42217",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "7fb6aaf037281a48963248e220b29776706935cb6027fbaa5cec69f6ada42217"
+      "sourceType": "github"
     },
     "churn-prevention": {
+      "computedHash": "ce389baf7e32cc942143503ecba7068784ca2c790460824c1e5a306d83d1283f",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "ce389baf7e32cc942143503ecba7068784ca2c790460824c1e5a306d83d1283f"
+      "sourceType": "github"
     },
     "cloudwatch-alarm-creator": {
+      "computedHash": "6e1ad549a70bd4cebe8d159476f7b86b4cf76c4884f5aa97ebef20a1d0d64f66",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "6e1ad549a70bd4cebe8d159476f7b86b4cf76c4884f5aa97ebef20a1d0d64f66"
+      "sourceType": "github"
     },
     "code-documentation-generator": {
+      "computedHash": "ef2979ca780f1bebe7ade4d215acf62d7d9f39752d941163289dd31a82f32cc9",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ef2979ca780f1bebe7ade4d215acf62d7d9f39752d941163289dd31a82f32cc9"
+      "sourceType": "github"
     },
     "cold-email": {
+      "computedHash": "6b2c73ca8ee9f2104958476078f50f92ac61ab1b63880762b52816c968a6fea6",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "6b2c73ca8ee9f2104958476078f50f92ac61ab1b63880762b52816c968a6fea6"
+      "sourceType": "github"
     },
     "community-marketing": {
+      "computedHash": "9def3052bd231425bd4b00924d64ac5eb5ba3c7c72b889ba01c391e70cee0896",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "9def3052bd231425bd4b00924d64ac5eb5ba3c7c72b889ba01c391e70cee0896"
+      "sourceType": "github"
     },
     "competitor-alternatives": {
+      "computedHash": "bbaf0d378114c7f1581ec63218c9061da983afc1e30887af69ba6ce7ce9cd4c1",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "bbaf0d378114c7f1581ec63218c9061da983afc1e30887af69ba6ce7ce9cd4c1"
+      "sourceType": "github"
     },
     "compliance-report-builder": {
+      "computedHash": "ac44c2d63e65a9b827b9645d48b419962a80b62447d6db648cd9a3e8c0103029",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ac44c2d63e65a9b827b9645d48b419962a80b62447d6db648cd9a3e8c0103029"
+      "sourceType": "github"
     },
     "container-registry-setup": {
+      "computedHash": "61acdf36eeb48f19e536cf09a4fdaf5fa2da75afd32088b8e441841a7d70471a",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "61acdf36eeb48f19e536cf09a4fdaf5fa2da75afd32088b8e441841a7d70471a"
+      "sourceType": "github"
     },
     "content-marketing": {
+      "computedHash": "574a71f2083ab54c043d87232a6a1c01b5bd4b319d2caa1e108f741ca1467bfd",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "574a71f2083ab54c043d87232a6a1c01b5bd4b319d2caa1e108f741ca1467bfd"
+      "sourceType": "github"
     },
     "content-strategy": {
+      "computedHash": "be124f3733b037fb8d859f275454ecd1c590759ef9ab184bea35ba1a0a38e14c",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "be124f3733b037fb8d859f275454ecd1c590759ef9ab184bea35ba1a0a38e14c"
+      "sourceType": "github"
     },
     "contributing-guide": {
+      "computedHash": "79db62c43451f39f49b79ba1b06ed4100ad25c41fbafda3a1de22e11261c6a37",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "79db62c43451f39f49b79ba1b06ed4100ad25c41fbafda3a1de22e11261c6a37"
+      "sourceType": "github"
     },
     "conversational-ai-flow": {
+      "computedHash": "2599e2dd186cbc18919f0848c1e755d9626704362fbd0b52fa1d742bb07f1d4c",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "2599e2dd186cbc18919f0848c1e755d9626704362fbd0b52fa1d742bb07f1d4c"
+      "sourceType": "github"
     },
     "copy-editing": {
+      "computedHash": "f1a31dc20a44b62d9a8b0e2c976e4cfaf12dd87e1c8a4ee8344bbf5aa8a73f63",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "f1a31dc20a44b62d9a8b0e2c976e4cfaf12dd87e1c8a4ee8344bbf5aa8a73f63"
+      "sourceType": "github"
     },
     "copywriting": {
+      "computedHash": "f85470d78857df7892af99784257203c532208d934c3dd8f64e71601eeb219dd",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f85470d78857df7892af99784257203c532208d934c3dd8f64e71601eeb219dd"
+      "sourceType": "github"
     },
     "creative-analyzer": {
+      "computedHash": "78fa1ce28cfe2891e907812909e4d49acc3da29b0cb6e955b4ddba07d8ee0425",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "78fa1ce28cfe2891e907812909e4d49acc3da29b0cb6e955b4ddba07d8ee0425"
+      "sourceType": "github"
     },
     "creative-copywriter": {
+      "computedHash": "51010721c40c3b6b8fe051c6a8a3c489e409ca4ce99f72dbaac44a5969ce488d",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "51010721c40c3b6b8fe051c6a8a3c489e409ca4ce99f72dbaac44a5969ce488d"
+      "sourceType": "github"
     },
     "creative-image-generator": {
+      "computedHash": "203a8b55b69b48ffc5235d86267b51d020924281e36f94d0bdfc6cfddf0a590e",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "203a8b55b69b48ffc5235d86267b51d020924281e36f94d0bdfc6cfddf0a590e"
+      "sourceType": "github"
     },
     "customer-journey-map": {
+      "computedHash": "4927e040ae2073708dcc6afdaa8e22a3e48fe8d56ab4ab5dcf877057061894a4",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "4927e040ae2073708dcc6afdaa8e22a3e48fe8d56ab4ab5dcf877057061894a4"
+      "sourceType": "github"
     },
     "customer-research": {
+      "computedHash": "62fa7be6f387c021c2ced299b9b37b6a5dbfb938fd9325de461e31abd067ccbf",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "62fa7be6f387c021c2ced299b9b37b6a5dbfb938fd9325de461e31abd067ccbf"
+      "sourceType": "github"
     },
     "customer-success": {
+      "computedHash": "b17651779294cbb90c6dc044a446b2968c09b52394fa83790faa1e2bab27695a",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b17651779294cbb90c6dc044a446b2968c09b52394fa83790faa1e2bab27695a"
+      "sourceType": "github"
     },
     "customer-training-curriculum": {
+      "computedHash": "eaaee4f104967b9763c7324eebe3a2b226893777461ac0531ecb2e3c5be5bb52",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "eaaee4f104967b9763c7324eebe3a2b226893777461ac0531ecb2e3c5be5bb52"
+      "sourceType": "github"
     },
     "cve-tracking-system": {
+      "computedHash": "224e2ddd158cfd2c278cc16ce4fe8f14d0b67fee4e3bc83a4c70cb96b758f0b5",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "224e2ddd158cfd2c278cc16ce4fe8f14d0b67fee4e3bc83a4c70cb96b758f0b5"
+      "sourceType": "github"
     },
     "dashboard": {
+      "computedHash": "302fe49da4e07adf5120500f973c0f47b3a9b7dff9c0994477d4c4ac65ed3efa",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "302fe49da4e07adf5120500f973c0f47b3a9b7dff9c0994477d4c4ac65ed3efa"
+      "sourceType": "github"
     },
     "database-replication-setup": {
+      "computedHash": "b34115abaada96b98eeb9928c3f1a6250cf963ecdd28bad060e2f15d3ac2c814",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b34115abaada96b98eeb9928c3f1a6250cf963ecdd28bad060e2f15d3ac2c814"
+      "sourceType": "github"
     },
     "demand-generation": {
+      "computedHash": "517b26fb60ee3fb9ee2fd4384e3782ddfa8c71023fcb596cbd948786beffa9f0",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "517b26fb60ee3fb9ee2fd4384e3782ddfa8c71023fcb596cbd948786beffa9f0"
+      "sourceType": "github"
     },
     "deployment-guide": {
+      "computedHash": "75a0c5890bd0b00cf489bf358c9a62463b28a656031232d204b6d2b3c622af69",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "75a0c5890bd0b00cf489bf358c9a62463b28a656031232d204b6d2b3c622af69"
+      "sourceType": "github"
     },
     "design-handoff-spec": {
+      "computedHash": "a99ad2460f25bb806a2eed8fde4188efc165c83ce9d9566fa7e9e4bd230daecd",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "a99ad2460f25bb806a2eed8fde4188efc165c83ce9d9566fa7e9e4bd230daecd"
+      "sourceType": "github"
     },
     "detox-mobile-test": {
+      "computedHash": "d18ed048231c658a9a8def1e1255b1a7e17ca41f89dc0ca3f8b40adf9c0ef365",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "d18ed048231c658a9a8def1e1255b1a7e17ca41f89dc0ca3f8b40adf9c0ef365"
+      "sourceType": "github"
     },
     "distribution-analyzer": {
+      "computedHash": "fd734a72d7b68a471cd329c3e0d29dead8d0b3815511e90d475598ffca7d1fb0",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "fd734a72d7b68a471cd329c3e0d29dead8d0b3815511e90d475598ffca7d1fb0"
+      "sourceType": "github"
     },
     "email-marketing": {
+      "computedHash": "9f0add60a8631834c29cfa12ffe3301131242d044f49c8e55581af6a5f84864f",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "9f0add60a8631834c29cfa12ffe3301131242d044f49c8e55581af6a5f84864f"
+      "sourceType": "github"
     },
     "email-sequence": {
+      "computedHash": "49c9d1795813eec119a1fd9344e763fc911c05616411a68117b30d77204fa399",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "49c9d1795813eec119a1fd9344e763fc911c05616411a68117b30d77204fa399"
+      "sourceType": "github"
     },
     "enterprise-sales": {
+      "computedHash": "6cf44602fdc09420b0c99b762220d4b85575de64c3a8365c9c8574861179b571",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "6cf44602fdc09420b0c99b762220d4b85575de64c3a8365c9c8574861179b571"
+      "sourceType": "github"
     },
     "executive-dashboard": {
+      "computedHash": "83a5bf55e1e0504404a9571908f86cb9c98b05b72ada2b4c8848b7f552d987a7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "83a5bf55e1e0504404a9571908f86cb9c98b05b72ada2b4c8848b7f552d987a7"
+      "sourceType": "github"
     },
     "expo-config-setup": {
+      "computedHash": "8533d5021c94b187b0ec896eb83eff73594b5b12233310b22060f896bbb96021",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "8533d5021c94b187b0ec896eb83eff73594b5b12233310b22060f896bbb96021"
+      "sourceType": "github"
     },
     "feature-documentation": {
+      "computedHash": "f96a67b6a2873df18f116beeaaaa68ca285fd6da8eff9a0b76dee052a1c28dc4",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f96a67b6a2873df18f116beeaaaa68ca285fd6da8eff9a0b76dee052a1c28dc4"
+      "sourceType": "github"
     },
     "finding-channel-fit-trends": {
+      "computedHash": "f16570c26156b4500c3de850f2a10a9e3a5484c7423040f46ea2bab172c2dd02",
       "source": "shipshitshow/skills",
-      "sourceType": "github",
-      "computedHash": "f16570c26156b4500c3de850f2a10a9e3a5484c7423040f46ea2bab172c2dd02"
+      "sourceType": "github"
     },
     "form-cro": {
+      "computedHash": "d6d5dcc076f4042b333a34bb707b3bde22bf1a67f9acfb598cb4d4bf1199f3d5",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "d6d5dcc076f4042b333a34bb707b3bde22bf1a67f9acfb598cb4d4bf1199f3d5"
+      "sourceType": "github"
     },
     "free-tool-strategy": {
+      "computedHash": "de49a0fd426d4710fc05b2759244588c6f5b5014d9cd9331a0d54dc655f023bc",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "de49a0fd426d4710fc05b2759244588c6f5b5014d9cd9331a0d54dc655f023bc"
+      "sourceType": "github"
     },
     "frontend-design": {
+      "computedHash": "f9b2132650bce6a6e4e7f8dc2cb8637e6561e08234cb2128ad0b40343d2ca667",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f9b2132650bce6a6e4e7f8dc2cb8637e6561e08234cb2128ad0b40343d2ca667"
+      "sourceType": "github"
     },
     "generating-thumbnail-prompt-variations": {
+      "computedHash": "6c164e966a26b3890cdf1b84d2727c85ad302d2a78e99f3dd4e4b5377d34c30e",
       "source": "shipshitshow/skills",
-      "sourceType": "github",
-      "computedHash": "6c164e966a26b3890cdf1b84d2727c85ad302d2a78e99f3dd4e4b5377d34c30e"
+      "sourceType": "github"
     },
     "generating-youtube-metadata": {
+      "computedHash": "c8ba0a5b7bc0d832146b5fc79ebcd4edaa0a5e3395f2656b670a6dc522e373f8",
       "source": "shipshitshow/skills",
-      "sourceType": "github",
-      "computedHash": "c8ba0a5b7bc0d832146b5fc79ebcd4edaa0a5e3395f2656b670a6dc522e373f8"
+      "sourceType": "github"
     },
     "growth-marketing": {
+      "computedHash": "c0bf72c4afc74bf61016404824512804cb11f24e406d25dfdf077b3d7b8a8d97",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "c0bf72c4afc74bf61016404824512804cb11f24e406d25dfdf077b3d7b8a8d97"
+      "sourceType": "github"
     },
     "influencer-marketing": {
+      "computedHash": "7dfb7b2a34eb66721330ddeb3c376c7b985ce9b4d1415c4ecae3406275dc5e7e",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "7dfb7b2a34eb66721330ddeb3c376c7b985ce9b4d1415c4ecae3406275dc5e7e"
+      "sourceType": "github"
     },
     "influencer-outreach-template": {
+      "computedHash": "30bb757487c0b77cc2c0ea2c9b621f80c7b7cd2b3323a5fa08808658ade09447",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "30bb757487c0b77cc2c0ea2c9b621f80c7b7cd2b3323a5fa08808658ade09447"
+      "sourceType": "github"
     },
     "input-sanitization": {
+      "computedHash": "b9c3092921fea42d5fbaa5e76052c193888d029091434ca5eac3837040732abd",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b9c3092921fea42d5fbaa5e76052c193888d029091434ca5eac3837040732abd"
+      "sourceType": "github"
     },
     "integration-spec": {
+      "computedHash": "7a8e601e43b51b85019473761c3ffa6c308015decbbeb9b0cf292b68871e701e",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "7a8e601e43b51b85019473761c3ffa6c308015decbbeb9b0cf292b68871e701e"
+      "sourceType": "github"
     },
     "interview-scorecard-builder": {
+      "computedHash": "e8413e84c8b9e59ec30bb257572968a95bc443b3296c26d4ccd84d1718b40ff7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "e8413e84c8b9e59ec30bb257572968a95bc443b3296c26d4ccd84d1718b40ff7"
+      "sourceType": "github"
     },
     "ios-unit-test": {
+      "computedHash": "a13e15295e3acb1e28ccb5dd8d7a7bd98dcf9b9b4cccdd6d0fcac7e8133c7d25",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "a13e15295e3acb1e28ccb5dd8d7a7bd98dcf9b9b4cccdd6d0fcac7e8133c7d25"
+      "sourceType": "github"
     },
     "iso27001-controls": {
+      "computedHash": "42473ca52f6f544daf8fd6ee7fe4f377c6a5eb61f2c9fe1f0375bb09900ed8fb",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "42473ca52f6f544daf8fd6ee7fe4f377c6a5eb61f2c9fe1f0375bb09900ed8fb"
+      "sourceType": "github"
     },
     "job-description-generator": {
+      "computedHash": "a84747669b1f96bddf6faf25acdf6c187eec4efe392800bee1ed67424f68baa7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "a84747669b1f96bddf6faf25acdf6c187eec4efe392800bee1ed67424f68baa7"
+      "sourceType": "github"
     },
     "k6-load-test": {
+      "computedHash": "6046239a04a1defdb187036e6639a321f29e2140dad0e1b7d5e086e3538a656b",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "6046239a04a1defdb187036e6639a321f29e2140dad0e1b7d5e086e3538a656b"
+      "sourceType": "github"
     },
     "kinesis-stream-processor": {
+      "computedHash": "c2c84815bd0629acfb695efe48284142cd7d3662aecb547ee9cf2ff8f0466ff3",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "c2c84815bd0629acfb695efe48284142cd7d3662aecb547ee9cf2ff8f0466ff3"
+      "sourceType": "github"
     },
     "launch-strategy": {
+      "computedHash": "7f4783f7dd813e76684185f397c148b362147267c370331a7a9cf6e778189d8c",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "7f4783f7dd813e76684185f397c148b362147267c370331a7a9cf6e778189d8c"
+      "sourceType": "github"
     },
     "lead-magnets": {
+      "computedHash": "b71ffc7be2d96e4887ccedf457d02c395f78e68723dab59bd8d6a2a9959ec6c4",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "b71ffc7be2d96e4887ccedf457d02c395f78e68723dab59bd8d6a2a9959ec6c4"
+      "sourceType": "github"
     },
     "learning-development-plan": {
+      "computedHash": "ecada48ef62d4fe276e43507b79224a6f1f29ec6413631a8f13c6be774c9d8c7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ecada48ef62d4fe276e43507b79224a6f1f29ec6413631a8f13c6be774c9d8c7"
+      "sourceType": "github"
     },
     "local-marketing": {
+      "computedHash": "525d1335c59b39ff33fbf19e4ea4a1f868f7ae009ecdc8336de7a5a7d7ee3991",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "525d1335c59b39ff33fbf19e4ea4a1f868f7ae009ecdc8336de7a5a7d7ee3991"
+      "sourceType": "github"
     },
     "marketing-automation": {
+      "computedHash": "f6972a3a4b32d0ceaea5bdd9d84b63ea7c670805694fc9535dbc96ea6664bd97",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f6972a3a4b32d0ceaea5bdd9d84b63ea7c670805694fc9535dbc96ea6664bd97"
+      "sourceType": "github"
     },
     "marketing-ideas": {
+      "computedHash": "6463f11419704994d58248c398b99c6b097eac24f72f4c86bea1565e435e222e",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "6463f11419704994d58248c398b99c6b097eac24f72f4c86bea1565e435e222e"
+      "sourceType": "github"
     },
     "marketing-psychology": {
+      "computedHash": "ddec844d01d102687f89749e1d3a9f7a9019010dce1039a7d442189f39726ad4",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "ddec844d01d102687f89749e1d3a9f7a9019010dce1039a7d442189f39726ad4"
+      "sourceType": "github"
     },
     "milestone-tracker": {
+      "computedHash": "abe563785b92da1c028a85583342fb0ed65e3ed55f6402e483fb5333ad482be2",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "abe563785b92da1c028a85583342fb0ed65e3ed55f6402e483fb5333ad482be2"
+      "sourceType": "github"
     },
     "ml-api-endpoint": {
+      "computedHash": "27827f9b858def8ba8a71babff03035ffdc70ab1c9a7924a4b11f158b6e9089f",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "27827f9b858def8ba8a71babff03035ffdc70ab1c9a7924a4b11f158b6e9089f"
+      "sourceType": "github"
     },
     "naming-rules": {
+      "computedHash": "35bb2319cc97bb1e565df13066bddf3f5d09685ed47b25e7bbecf2d370bc18c2",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "35bb2319cc97bb1e565df13066bddf3f5d09685ed47b25e7bbecf2d370bc18c2"
+      "sourceType": "github"
     },
     "onboarding-cro": {
+      "computedHash": "9d935c024e0768c8b805852fbf9419c2e8c56be2b9e62e89d43a390008bd1229",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "9d935c024e0768c8b805852fbf9419c2e8c56be2b9e62e89d43a390008bd1229"
+      "sourceType": "github"
     },
     "openapi-documentation": {
+      "computedHash": "fc16d86250ef2c4d9d709d88cfe9b0c9a09ab1b47f5045fa2416a49a65b036ee",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "fc16d86250ef2c4d9d709d88cfe9b0c9a09ab1b47f5045fa2416a49a65b036ee"
+      "sourceType": "github"
     },
     "page-cro": {
+      "computedHash": "9505748dba2319487b285f8ab8c1e5417fce38a512d596e1c9e2e87b34b196e1",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "9505748dba2319487b285f8ab8c1e5417fce38a512d596e1c9e2e87b34b196e1"
+      "sourceType": "github"
     },
     "paid-ads": {
+      "computedHash": "74be53d9e279bafaf1f53e2612cbba0d9e4750df4116496732d877782f0c3a48",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "74be53d9e279bafaf1f53e2612cbba0d9e4750df4116496732d877782f0c3a48"
+      "sourceType": "github"
     },
     "paywall-upgrade-cro": {
+      "computedHash": "f3955bea72dc22cf5b8e2387ee310a519302ab02518498e045055b1b9bd62a0f",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "f3955bea72dc22cf5b8e2387ee310a519302ab02518498e045055b1b9bd62a0f"
+      "sourceType": "github"
     },
     "podcast-production-guide": {
+      "computedHash": "c044b9cfffecba18787cdee273703e59841d428134f8ff756ca360c032348b0d",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "c044b9cfffecba18787cdee273703e59841d428134f8ff756ca360c032348b0d"
+      "sourceType": "github"
     },
     "popup-cro": {
+      "computedHash": "5b97d79f11192e1fff0b6797629ccdd7515c82f57d1502b761e58679df2b56e5",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "5b97d79f11192e1fff0b6797629ccdd7515c82f57d1502b761e58679df2b56e5"
+      "sourceType": "github"
     },
     "pricing-strategy": {
+      "computedHash": "5d976bfb41bca7b7102ae571960bb2038166e569103fa6e279d0b16548dd474f",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "5d976bfb41bca7b7102ae571960bb2038166e569103fa6e279d0b16548dd474f"
+      "sourceType": "github"
     },
     "product-marketing": {
+      "computedHash": "93000f2110862e9e1169197134894b34e0f7fd2fe1f6bb51f26b38e16bd158ed",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "93000f2110862e9e1169197134894b34e0f7fd2fe1f6bb51f26b38e16bd158ed"
+      "sourceType": "github"
     },
     "product-marketing-context": {
+      "computedHash": "21dd05f970ba54406d7405f92240853f809d0fed09ef6ca2a9204abcdd21548a",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "21dd05f970ba54406d7405f92240853f809d0fed09ef6ca2a9204abcdd21548a"
+      "sourceType": "github"
     },
     "programmatic-seo": {
+      "computedHash": "40b8fe29a6c9cb0606e6fa77aff227cf275e3808adf66e5ef69e02dcf60a7303",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "40b8fe29a6c9cb0606e6fa77aff227cf275e3808adf66e5ef69e02dcf60a7303"
+      "sourceType": "github"
     },
     "project-schedule-template": {
+      "computedHash": "8e0cd72505f0358b3c24dfb2758c9d7399e19d34a45677af2b73772309b02868",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "8e0cd72505f0358b3c24dfb2758c9d7399e19d34a45677af2b73772309b02868"
+      "sourceType": "github"
     },
     "python-developer": {
+      "computedHash": "b898bc2ca92790a75667bbf78f5142e353633d2de3438538d89d364b8366ed6c",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b898bc2ca92790a75667bbf78f5142e353633d2de3438538d89d364b8366ed6c"
+      "sourceType": "github"
     },
     "quick-start-guide": {
+      "computedHash": "f6caaa54bec392b5daace571fee4d978dc9a7bc775a63d482bf4edc9ebec9acc",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "f6caaa54bec392b5daace571fee4d978dc9a7bc775a63d482bf4edc9ebec9acc"
+      "sourceType": "github"
     },
     "rails-developer": {
+      "computedHash": "0ff77ebd779460376b8a9238d2ec2c3742de0eac8c5f5f8badbc1c821af6ab48",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "0ff77ebd779460376b8a9238d2ec2c3742de0eac8c5f5f8badbc1c821af6ab48"
+      "sourceType": "github"
     },
     "readme-generator": {
+      "computedHash": "988d9c9964171f8507f3aaa8dbe23609fae0b8a50206601804f26e9990623818",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "988d9c9964171f8507f3aaa8dbe23609fae0b8a50206601804f26e9990623818"
+      "sourceType": "github"
     },
     "recognition-program-builder": {
+      "computedHash": "c14f869a0bbaebd7ec65335187d407aa38302cd971e5560a548668fbaed574bf",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "c14f869a0bbaebd7ec65335187d407aa38302cd971e5560a548668fbaed574bf"
+      "sourceType": "github"
     },
     "referral-program": {
+      "computedHash": "baefa6ed79c591d16e3056f3d8544fa2d60b896a618b931f37bf89da7af518d3",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "baefa6ed79c591d16e3056f3d8544fa2d60b896a618b931f37bf89da7af518d3"
+      "sourceType": "github"
     },
     "revenue-operations": {
+      "computedHash": "6c15d88f0e2b0234129f51e1d2121bdbbb0772cec33b69c656319b04fe022a02",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "6c15d88f0e2b0234129f51e1d2121bdbbb0772cec33b69c656319b04fe022a02"
+      "sourceType": "github"
     },
     "revops": {
+      "computedHash": "3d80242e14a9824d2c33b9b5e957fc47c190f522f8f5f13c7cd9612784053a58",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "3d80242e14a9824d2c33b9b5e957fc47c190f522f8f5f13c7cd9612784053a58"
+      "sourceType": "github"
     },
     "runbook-generator": {
+      "computedHash": "26a39da864a3ed9b8e889a0d8393479543009e8f7b5dc21a95433ba96d26c628",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "26a39da864a3ed9b8e889a0d8393479543009e8f7b5dc21a95433ba96d26c628"
+      "sourceType": "github"
     },
     "s3-bucket-policy": {
+      "computedHash": "5c178842b6c554b7206cbffcd15f6ad6153d8d49a682a2940da58892b57a6343",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "5c178842b6c554b7206cbffcd15f6ad6153d8d49a682a2940da58892b57a6343"
+      "sourceType": "github"
     },
     "sales-development-rep": {
+      "computedHash": "d03663644eda83fc604aead8dbadd513676c81015494e06805d8909546681646",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "d03663644eda83fc604aead8dbadd513676c81015494e06805d8909546681646"
+      "sourceType": "github"
     },
     "sales-enablement": {
+      "computedHash": "7447155639ac2677bc23ef826b079bbf8e415ec35900f6a3c7b25c33e6ad856a",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "7447155639ac2677bc23ef826b079bbf8e415ec35900f6a3c7b25c33e6ad856a"
+      "sourceType": "github"
     },
     "sales-negotiation": {
+      "computedHash": "9c3914b72ed39541d8ac8a393b17ce88651e91cc49a2f1facb3591c94678a74f",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "9c3914b72ed39541d8ac8a393b17ce88651e91cc49a2f1facb3591c94678a74f"
+      "sourceType": "github"
     },
     "sales-operations": {
+      "computedHash": "5f852d92213e214d6dc945a872dca56c603780269e651e9dbc49f8eaaeec3832",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "5f852d92213e214d6dc945a872dca56c603780269e651e9dbc49f8eaaeec3832"
+      "sourceType": "github"
     },
     "schema-markup": {
+      "computedHash": "6319ded25235292939050de1c51a98c6633d79f793396506eda2fa8265343758",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "6319ded25235292939050de1c51a98c6633d79f793396506eda2fa8265343758"
+      "sourceType": "github"
     },
     "secrets-detection-rules": {
+      "computedHash": "a33532aacb1aa4221ef9dfbd01821453336f4d0546da3e9ea678527f29a0daaa",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "a33532aacb1aa4221ef9dfbd01821453336f4d0546da3e9ea678527f29a0daaa"
+      "sourceType": "github"
     },
     "seo-audit": {
+      "computedHash": "1eef04180a5278a6869fab117c75fa2acf512bfda0a4b16569409b88b7bcb343",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "1eef04180a5278a6869fab117c75fa2acf512bfda0a4b16569409b88b7bcb343"
+      "sourceType": "github"
     },
     "seo-expert": {
+      "computedHash": "34688d0fdea788218c3e5936e26d97ba9cd546bcd75d6de4d0b606f7f1e503c7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "34688d0fdea788218c3e5936e26d97ba9cd546bcd75d6de4d0b606f7f1e503c7"
+      "sourceType": "github"
     },
     "signup-flow-cro": {
+      "computedHash": "8c4b9ce342ccb721eed9a4c1eb0d1ea647e5f1a77db8609509181c62636acf61",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "8c4b9ce342ccb721eed9a4c1eb0d1ea647e5f1a77db8609509181c62636acf61"
+      "sourceType": "github"
     },
     "site-architecture": {
+      "computedHash": "4cdfd1ba49925184462a7524586a5ec0b127668498e7bf2972ef0d4c112e9585",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "4cdfd1ba49925184462a7524586a5ec0b127668498e7bf2972ef0d4c112e9585"
+      "sourceType": "github"
     },
     "social-content": {
+      "computedHash": "252f58c9993ea38761a6b6cc6f0bbe83fb13f94387a925a57049ca3ca3793b6b",
       "source": "coreyhaines31/marketingskills",
-      "sourceType": "github",
-      "computedHash": "252f58c9993ea38761a6b6cc6f0bbe83fb13f94387a925a57049ca3ca3793b6b"
+      "sourceType": "github"
     },
     "social-media-marketing": {
+      "computedHash": "1b248a7a12c2f91ad0a20a058d6b37d43e47c32c230a35f3f27855a4f752e10b",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "1b248a7a12c2f91ad0a20a058d6b37d43e47c32c230a35f3f27855a4f752e10b"
+      "sourceType": "github"
     },
     "sql-injection-prevention": {
+      "computedHash": "07ff5cf93e54e100243a968fd2407a15d76213218065d984d30d4cfe9aeae7a6",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "07ff5cf93e54e100243a968fd2407a15d76213218065d984d30d4cfe9aeae7a6"
+      "sourceType": "github"
     },
     "status-report-template": {
+      "computedHash": "420efd60004689be68fbc32b1798b628a6a6bea3d582b62c607f50636e7c2bcf",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "420efd60004689be68fbc32b1798b628a6a6bea3d582b62c607f50636e7c2bcf"
+      "sourceType": "github"
     },
     "talking-points": {
+      "computedHash": "b3af754f137c6ec57d7e20ca2a0227ccebb7972846ad61d1e89676cf7312c008",
       "source": "shipshitshow/skills",
-      "sourceType": "github",
-      "computedHash": "b3af754f137c6ec57d7e20ca2a0227ccebb7972846ad61d1e89676cf7312c008"
+      "sourceType": "github"
     },
     "targeting-expert": {
+      "computedHash": "aca72505a77ad5de4d9797480c8f0a243858434ed546ef36e0acf25af6daa2e9",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "aca72505a77ad5de4d9797480c8f0a243858434ed546ef36e0acf25af6daa2e9"
+      "sourceType": "github"
     },
     "terraform-module-writer": {
+      "computedHash": "0d13872c2db452b9f89bccdd0869c76e45c7d64492f757c67ee5a121961ad8a7",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "0d13872c2db452b9f89bccdd0869c76e45c7d64492f757c67ee5a121961ad8a7"
+      "sourceType": "github"
     },
     "terraform-state-manager": {
+      "computedHash": "8c708586b677720613203c7e107da4b4305c7de3c21a7066557d6578540e2cbd",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "8c708586b677720613203c7e107da4b4305c7de3c21a7066557d6578540e2cbd"
+      "sourceType": "github"
     },
     "thumbnail-prompt-variations": {
+      "computedHash": "0170469bdb3c108e7babf6b418b1029be205acf566ea1d8a53bf2e08b3c7062c",
       "source": "shipshitshow/skills",
-      "sourceType": "github",
-      "computedHash": "0170469bdb3c108e7babf6b418b1029be205acf566ea1d8a53bf2e08b3c7062c"
+      "sourceType": "github"
     },
     "troubleshooting-guide": {
+      "computedHash": "beb2878e7d520178a59705bd87791f686fbd301838cf91fdd599c8e05acaf9e3",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "beb2878e7d520178a59705bd87791f686fbd301838cf91fdd599c8e05acaf9e3"
+      "sourceType": "github"
     },
     "typescript-expert": {
+      "computedHash": "ffd7cfe79d6603a768eb19b1f4cbe4c8b5cc433d3a28ea896abc5febcc289a23",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "ffd7cfe79d6603a768eb19b1f4cbe4c8b5cc433d3a28ea896abc5febcc289a23"
+      "sourceType": "github"
     },
     "video-marketing": {
+      "computedHash": "23ab77afbe18e103811f589c2a8efb9650500e082343561b468b02ea803644b6",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "23ab77afbe18e103811f589c2a8efb9650500e082343561b468b02ea803644b6"
+      "sourceType": "github"
     },
     "window-function-builder": {
+      "computedHash": "b0e4077b7abe4014f46124e9de4e9b0545c38435d1f7a097e8ed69ef331edbb8",
       "source": "dengineproblem/agents-monorepo",
-      "sourceType": "github",
-      "computedHash": "b0e4077b7abe4014f46124e9de4e9b0545c38435d1f7a097e8ed69ef331edbb8"
+      "sourceType": "github"
     },
     "youtube-metadata": {
+      "computedHash": "ed1cf149a71920ccd8a0fe05cd27f86828cf54c78610317d726db99b8be66b52",
       "source": "shipshitshow/skills",
-      "sourceType": "github",
-      "computedHash": "ed1cf149a71920ccd8a0fe05cd27f86828cf54c78610317d726db99b8be66b52"
+      "sourceType": "github"
     }
-  }
+  },
+  "version": 1
 }
