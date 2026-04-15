@@ -1,5 +1,7 @@
 'use client';
 
+import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -13,8 +15,6 @@ import type {
   TerminalSnapshot,
 } from '@/lib/dev-terminal-types';
 import { parseJsonResponse } from '@/lib/parse-json-response';
-import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const TERMINAL_OPEN_KEY = 'shipshitshow.devTerminal.open';
 const TERMINAL_AGENT_KEY = 'shipshitshow.devTerminal.agent';

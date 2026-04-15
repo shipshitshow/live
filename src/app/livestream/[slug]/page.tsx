@@ -1,14 +1,14 @@
 'use client';
 
+import Link from 'next/link';
+import { useParams, useSearchParams } from 'next/navigation';
+import { Profiler, useCallback, useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
 import { isErrorResponse } from '@/lib/api-types';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
 import type { LivestreamListResponse, Topic } from '@/lib/livestream-types';
 import type { TrendItem, TrendsSearchResponse } from '@/lib/trends-types';
-import Link from 'next/link';
-import { useParams, useSearchParams } from 'next/navigation';
-import { Profiler, useCallback, useEffect, useRef, useState } from 'react';
 
 const SHOULD_PROFILE_RENDER = false;
 

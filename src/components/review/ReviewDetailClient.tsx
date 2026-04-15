@@ -1,5 +1,8 @@
 'use client';
 
+import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 import { PipelineSidebar } from '@/components/review/PipelineSidebar';
 import { ReviewChecklist } from '@/components/review/ReviewChecklist';
 import { VideoPlayer } from '@/components/review/VideoPlayer';
@@ -7,9 +10,6 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { PipelineJob } from '@/lib/pipeline-types';
-import { formatDistanceToNow } from 'date-fns';
-import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useState } from 'react';
 
 interface ReviewDetailClientProps {
   jobId: string;
