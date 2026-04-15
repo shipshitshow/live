@@ -4,9 +4,11 @@ import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
+import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { isErrorResponse } from '@/lib/api-types';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { LivestreamListResponse, Topic } from '@/lib/livestream-types';
 import type { TrendItem, TrendsSearchResponse } from '@/lib/trends-types';
 
@@ -54,17 +56,6 @@ interface LivestreamMeta {
     | 'invalid'
     | 'unauthorized'
     | 'error';
-}
-
-async function parseJsonResponse<T>(res: Response): Promise<T> {
-  const text = await res.text();
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new Error(
-      `Unexpected ${res.status} response from ${new URL(res.url).pathname}`,
-    );
-  }
 }
 
 function parseMarkdownSections(content: string): ParsedSection[] {
@@ -691,8 +682,9 @@ export default function TopicDetailPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface p-8 flex items-center justify-center">
-        <p className="text-text-muted text-sm animate-pulse">Loading...</p>
+      <div className="min-h-screen bg-surface text-text-primary">
+        <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
+        <LivestreamTopicContentSkeleton />
       </div>
     );
   }

@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import { YouTubeAuthContentSkeleton } from '@/components/PageSkeletons';
 import { YouTubeAuthPageClient } from '@/components/YouTubeAuthPageClient';
 import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
 
@@ -9,7 +10,7 @@ export default function YouTubeAuthPage() {
   }
 
   return (
-    <Suspense fallback={null}>
+    <Suspense fallback={<YouTubeAuthContentSkeleton />}>
       <YouTubeAuthPageClient />
     </Suspense>
   );

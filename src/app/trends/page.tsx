@@ -1,4 +1,6 @@
+import { Suspense } from 'react';
 import { AppHeader } from '@/components/AppHeader';
+import { TrendsContentSkeleton } from '@/components/PageSkeletons';
 import { TrendsClient } from '@/components/trends/TrendsClient';
 
 export default function TrendsPage() {
@@ -7,7 +9,9 @@ export default function TrendsPage() {
       <AppHeader subtitle="Trends" activeHref="/trends" />
 
       <main className="mx-auto w-full max-w-[1800px] px-6 py-6">
-        <TrendsClient />
+        <Suspense fallback={<TrendsContentSkeleton />}>
+          <TrendsClient />
+        </Suspense>
       </main>
     </div>
   );

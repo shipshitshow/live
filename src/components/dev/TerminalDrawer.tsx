@@ -1,5 +1,6 @@
 'use client';
 
+import 'xterm/css/xterm.css';
 import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';

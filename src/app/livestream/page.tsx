@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
+import { LivestreamBoardContentSkeleton } from '@/components/PageSkeletons';
 import { KanbanColumn } from '@/components/livestream/KanbanColumn';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,6 +15,7 @@ import {
 import { isErrorResponse } from '@/lib/api-types';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import type {
   LivestreamListResponse,
   Topic,
@@ -21,17 +23,6 @@ import type {
 } from '@/lib/livestream-types';
 
 const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
-
-async function parseJsonResponse<T>(res: Response): Promise<T> {
-  const text = await res.text();
-  try {
-    return JSON.parse(text) as T;
-  } catch {
-    throw new Error(
-      `Unexpected ${res.status} response from ${new URL(res.url).pathname}`,
-    );
-  }
-}
 
 export default function LivestreamPage() {
   const [topics, setTopics] = useState<Topic[]>([]);
@@ -107,10 +98,9 @@ export default function LivestreamPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-surface p-8 flex items-center justify-center">
-        <p className="text-text-muted text-sm animate-pulse">
-          Loading topics...
-        </p>
+      <div className="min-h-screen bg-surface text-text-primary">
+        <AppHeader subtitle="Livestream" activeHref="/livestream" />
+        <LivestreamBoardContentSkeleton />
       </div>
     );
   }

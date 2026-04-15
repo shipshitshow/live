@@ -1,7 +1,12 @@
 'use client';
 
+import dynamic from 'next/dynamic';
 import { usePathname } from 'next/navigation';
-import { TerminalDrawer } from '@/components/dev/TerminalDrawer';
+
+const TerminalDrawer = dynamic(
+  async () => (await import('@/components/dev/TerminalDrawer')).TerminalDrawer,
+  { ssr: false },
+);
 
 function shouldHideTerminal(pathname: string | null): boolean {
   if (!pathname) return false;

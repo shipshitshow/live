@@ -53,10 +53,11 @@
     "check:types": "tsc --noEmit",
     "check:unused": "knip",
     "deps:update": "bunx npm-check-updates -u --deep && bun install",
-    "dev": "turbo run dev",
-    "lint": "turbo run lint",
+    "dev": "next dev -p 3001",
+    "lint": "biome check .",
     "prepare": "bunx husky",
     "start": "next start -p 3001"
   },
+  "type": "module",
   "version": "0.1.0"
 }

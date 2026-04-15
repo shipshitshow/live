@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import Link from "next/link";
 import { ReviewDetailClient } from "@/components/review/ReviewDetailClient";
 import { AppHeader } from "@/components/AppHeader";
+import { ReviewDetailContentSkeleton } from "@/components/PageSkeletons";
 
 export const metadata = {
   title: "Ship Shit Show — Review",
@@ -31,22 +32,10 @@ export default function ReviewDetailPage({ params }: { params: { jobId: string }
             Back to queue
           </Link>
         </div>
-        <Suspense fallback={<DetailSkeleton />}>
+        <Suspense fallback={<ReviewDetailContentSkeleton />}>
           <ReviewDetailClient jobId={params.jobId} />
         </Suspense>
       </main>
-    </div>
-  );
-}
-
-function DetailSkeleton() {
-  return (
-    <div className="animate-pulse grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
-      <div className="space-y-4">
-        <div className="bg-surface-card border border-surface-border rounded-xl aspect-video" />
-        <div className="bg-surface-card border border-surface-border rounded-xl h-48" />
-      </div>
-      <div className="bg-surface-card border border-surface-border rounded-xl h-96" />
     </div>
   );
 }

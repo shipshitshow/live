@@ -1,9 +1,6 @@
 import type { Metadata } from 'next';
-import { Suspense } from 'react';
-import 'xterm/css/xterm.css';
 import './globals.scss';
-import { TerminalDrawerGate } from '@/components/dev/TerminalDrawerGate';
-import { YouTubeAuthGate } from '@/components/YouTubeAuthGate';
+import { DevOverlays } from '@/components/DevOverlays';
 import { isDevToolsEnabled, isYouTubeAuthEnabled } from '@/lib/dev-tools';
 
 export const metadata: Metadata = {
@@ -22,15 +19,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        {youtubeAuthEnabled ? (
-          <Suspense fallback={null}>
-            <YouTubeAuthGate />
-          </Suspense>
-        ) : null}
         <div id="app-content-shell" className="app-content-shell">
           {children}
         </div>
-        {devToolsEnabled ? <TerminalDrawerGate /> : null}
+        <DevOverlays
+          devToolsEnabled={devToolsEnabled}
+          youtubeAuthEnabled={youtubeAuthEnabled}
+        />
       </body>
     </html>
   );
