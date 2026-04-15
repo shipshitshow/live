@@ -1,26 +1,26 @@
-import { NextRequest, NextResponse } from "next/server";
-import type { ErrorResponse, ReauthRequiredResponse } from "@/lib/api-types";
-import {
-  hasYouTubeCredentials,
-  getAccessToken,
-  getChannelConfigs,
-  isYouTubeReauthError,
-} from "@/lib/youtube/token";
+import { NextRequest, NextResponse } from 'next/server';
+import type { ErrorResponse, ReauthRequiredResponse } from '@/lib/api-types';
+import { formatLocalDate, todayLocalDate } from '@/lib/date';
+import type { DailyMetric, MultiChannelReport, VideoStats } from '@/lib/types';
 import {
   fetchChannelStats,
   fetchChannelVideos,
   fetchDailyMetrics,
   fetchVideoAnalytics,
-} from "@/lib/youtube/client";
-import { formatLocalDate, todayLocalDate } from "@/lib/date";
-import type { MultiChannelReport, DailyMetric, VideoStats } from "@/lib/types";
+} from '@/lib/youtube/client';
+import {
+  getAccessToken,
+  getChannelConfigs,
+  hasYouTubeCredentials,
+  isYouTubeReauthError,
+} from '@/lib/youtube/token';
 
 function getEmptyReport(): MultiChannelReport {
   return {
     channels: [],
-    videos: [],
     daily_metrics: [],
     per_channel: {},
+    videos: [],
   };
 }
 
@@ -49,12 +49,18 @@ function combineDailyMetrics(...metricSets: DailyMetric[][]): DailyMetric[] {
         existing.subscribers_gained += m.subscribers_gained;
         existing.likes += m.likes;
         // Weighted averages
-        existing.avg_view_duration_seconds = totalViews > 0
-          ? (existing.avg_view_duration_seconds * existingViews + m.avg_view_duration_seconds * m.views) / totalViews
-          : 0;
-        existing.avg_view_percentage = totalViews > 0
-          ? (existing.avg_view_percentage * existingViews + m.avg_view_percentage * m.views) / totalViews
-          : 0;
+        existing.avg_view_duration_seconds =
+          totalViews > 0
+            ? (existing.avg_view_duration_seconds * existingViews +
+                m.avg_view_duration_seconds * m.views) /
+              totalViews
+            : 0;
+        existing.avg_view_percentage =
+          totalViews > 0
+            ? (existing.avg_view_percentage * existingViews +
+                m.avg_view_percentage * m.views) /
+              totalViews
+            : 0;
       } else {
         byDay.set(m.day, { ...m });
       }
@@ -67,7 +73,7 @@ function combineDailyMetrics(...metricSets: DailyMetric[][]): DailyMetric[] {
 async function fetchChannelData(
   channelConfig: { id: string; label: string; refreshToken: string },
   startDate: string,
-  endDate: string
+  endDate: string,
 ) {
   const token = await getAccessToken(channelConfig);
 
@@ -87,26 +93,26 @@ async function fetchChannelData(
       channelConfig.id,
       videoIds,
       startDate,
-      endDate
+      endDate,
     );
 
     enrichedVideos = videos.map((v) => {
       const a = analytics.get(v.video_id);
       return {
         ...v,
-        impressions: a?.impressions ?? v.impressions,
-        ctr: a?.ctr ?? v.ctr,
-        watch_time_minutes: a?.watch_time_minutes ?? v.watch_time_minutes,
         channel_label: channelConfig.label,
+        ctr: a?.ctr ?? v.ctr,
+        impressions: a?.impressions ?? v.impressions,
+        watch_time_minutes: a?.watch_time_minutes ?? v.watch_time_minutes,
       };
     });
   }
 
-  return { stats, videos: enrichedVideos, daily };
+  return { daily, stats, videos: enrichedVideos };
 }
 
 export async function GET(req: NextRequest) {
-  const days = Number(req.nextUrl.searchParams.get("days") ?? "30");
+  const days = Number(req.nextUrl.searchParams.get('days') ?? '30');
   const channels = await getChannelConfigs();
 
   if (!hasYouTubeCredentials() || channels.length === 0) {
@@ -119,10 +125,10 @@ export async function GET(req: NextRequest) {
 
     // Fetch all channels in parallel (each with its own token)
     const results = await Promise.all(
-      channels.map((ch) => fetchChannelData(ch, startDate, endDate))
+      channels.map((ch) => fetchChannelData(ch, startDate, endDate)),
     );
 
-    const perChannel: MultiChannelReport["per_channel"] = {};
+    const perChannel: MultiChannelReport['per_channel'] = {};
     const allVideos: VideoStats[] = [];
     const allDailyMetrics: DailyMetric[][] = [];
     const allChannelStats = [];
@@ -132,8 +138,8 @@ export async function GET(req: NextRequest) {
       const data = results[i];
       perChannel[ch.id] = {
         channel: data.stats,
-        videos: data.videos,
         daily_metrics: data.daily,
+        videos: data.videos,
       };
       allVideos.push(...data.videos);
       allDailyMetrics.push(data.daily);
@@ -142,30 +148,27 @@ export async function GET(req: NextRequest) {
 
     allVideos.sort(
       (a, b) =>
-        new Date(b.published_at).getTime() - new Date(a.published_at).getTime()
+        new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
     );
 
     const report: MultiChannelReport = {
       channels: allChannelStats,
-      videos: allVideos,
       daily_metrics: combineDailyMetrics(...allDailyMetrics),
       per_channel: perChannel,
+      videos: allVideos,
     };
 
     return NextResponse.json(report, {
-      headers: { "Cache-Control": "s-maxage=300, stale-while-revalidate=60" },
+      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=60' },
     });
   } catch (error) {
     if (isYouTubeReauthError(error)) {
       const response: ReauthRequiredResponse = {
-        error: "YouTube authentication expired. Reconnect YouTube to continue.",
-        reauthRequired: true,
         channelLabel: error.channelLabel ?? null,
+        error: 'YouTube authentication expired. Reconnect YouTube to continue.',
+        reauthRequired: true,
       };
-      return NextResponse.json(
-        response,
-        { status: 401 }
-      );
+      return NextResponse.json(response, { status: 401 });
     }
     const response: ErrorResponse =
       error instanceof Error
@@ -181,7 +184,7 @@ export async function GET(req: NextRequest) {
                 : undefined,
           }
         : {
-            error: "Failed to load analytics report",
+            error: 'Failed to load analytics report',
           };
     return NextResponse.json(response, { status: 503 });
   }
