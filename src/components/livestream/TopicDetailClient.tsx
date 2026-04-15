@@ -772,7 +772,9 @@ export function TopicDetailClient() {
                   <span className="text-sm font-medium text-text-primary">
                     {seg.label}
                   </span>
-                  <span className="text-xs text-text-muted">{seg.duration}</span>
+                  <span className="text-xs text-text-muted">
+                    {seg.duration}
+                  </span>
                 </div>
 
                 {seg.rawText && (
@@ -785,7 +787,10 @@ export function TopicDetailClient() {
 
                 <div className="space-y-4">
                   {seg.points.map((point, pointIndex) => (
-                    <div key={`${seg.number}-${pointIndex}`} className="flex gap-4">
+                    <div
+                      key={`${seg.number}-${pointIndex}`}
+                      className="flex gap-4"
+                    >
                       <div className="mt-1 flex flex-col items-center">
                         <span
                           className={`h-2.5 w-2.5 rounded-full ${SEGMENT_COLORS[seg.type].dot}`}
@@ -804,7 +809,12 @@ export function TopicDetailClient() {
 
                         {point.sources.length > 0 ? (
                           <div className="mt-3 flex flex-wrap gap-2">
-                            {[...point.sources.filter((s) => isTweetUrl(s.url)), ...point.sources.filter((s) => !isTweetUrl(s.url))].map((source, sourceIndex) => {
+                            {[
+                              ...point.sources.filter((s) => isTweetUrl(s.url)),
+                              ...point.sources.filter(
+                                (s) => !isTweetUrl(s.url),
+                              ),
+                            ].map((source, sourceIndex) => {
                               const { badge, cls } = getBadgeForUrl(source.url);
                               return (
                                 <a

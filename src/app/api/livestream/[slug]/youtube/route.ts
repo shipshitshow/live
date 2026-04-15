@@ -1,3 +1,5 @@
+import fs from 'node:fs';
+import { NextResponse } from 'next/server';
 import { todayLocalDate } from '@/lib/date';
 import { findTopicFile } from '@/lib/livestream-files';
 import { extractVideoId, extractYouTubeUrl } from '@/lib/livestream-youtube';
@@ -8,8 +10,6 @@ import {
   hasYouTubeCredentials,
   isYouTubeReauthError,
 } from '@/lib/youtube/token';
-import fs from 'fs';
-import { NextResponse } from 'next/server';
 
 const DATA_API = 'https://www.googleapis.com/youtube/v3';
 

@@ -18,7 +18,11 @@ function extractSummary(content: string): string | null {
   return summary.length > 0 ? summary : null;
 }
 
-function buildTopicImageUrl(slug: string, date: string, content: string): string {
+function buildTopicImageUrl(
+  slug: string,
+  date: string,
+  content: string,
+): string {
   const youtubeUrl = extractYouTubeUrl(content);
   const videoId = youtubeUrl ? extractVideoId(youtubeUrl) : null;
 
