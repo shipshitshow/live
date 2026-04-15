@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface ChecklistItem {
   id: string;
@@ -39,10 +40,11 @@ export function ReviewChecklist({ onChange }: ReviewChecklistProps) {
         {ITEMS.map((item) => {
           const isChecked = !!checked[item.id];
           return (
-            <button
+            <Button
               key={item.id}
               onClick={() => toggle(item.id)}
-              className="w-full px-5 py-4 flex items-start gap-3 text-left hover:bg-surface-elevated transition-colors group"
+              variant="ghost"
+              className="h-auto w-full items-start justify-start gap-3 whitespace-normal px-5 py-4 text-left hover:bg-surface-elevated group"
             >
               <div
                 className={`mt-0.5 w-4 h-4 rounded flex-shrink-0 border transition-all ${
@@ -63,7 +65,7 @@ export function ReviewChecklist({ onChange }: ReviewChecklistProps) {
                 </p>
                 <p className="text-xs text-text-muted mt-0.5">{item.description}</p>
               </div>
-            </button>
+            </Button>
           );
         })}
       </div>

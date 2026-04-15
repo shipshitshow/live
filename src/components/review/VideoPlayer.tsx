@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface VideoPlayerProps {
   src: string;
@@ -52,9 +53,11 @@ export function VideoPlayer({ src, thumbnailUrl }: VideoPlayerProps) {
         }`}
         onClick={togglePlay}
       >
-        <button
+        <Button
           aria-label={playing ? "Pause" : "Play"}
-          className="w-14 h-14 rounded-full bg-black/60 border border-white/20 flex items-center justify-center hover:bg-black/80 hover:scale-105 transition-all backdrop-blur-sm"
+          variant="ghost"
+          size="icon"
+          className="size-14 rounded-full border-white/20 bg-black/60 text-white hover:scale-105 hover:bg-black/80 hover:text-white backdrop-blur-sm"
         >
           {playing ? (
             <svg width="20" height="20" viewBox="0 0 20 20" fill="white">
@@ -66,7 +69,7 @@ export function VideoPlayer({ src, thumbnailUrl }: VideoPlayerProps) {
               <path d="M6 3.5L16.5 10L6 16.5V3.5Z" />
             </svg>
           )}
-        </button>
+        </Button>
       </div>
     </div>
   );

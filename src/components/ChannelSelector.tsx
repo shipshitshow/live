@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import type { ChannelStats, ChannelFilter } from "@/lib/types";
 
 interface ChannelSelectorProps {
@@ -30,17 +31,19 @@ export function ChannelSelector({ channels, selected, onChange }: ChannelSelecto
   return (
     <div className="flex items-center gap-1 bg-surface-card border border-surface-border rounded-lg p-1">
       {options.map((opt) => (
-        <button
+        <Button
           key={opt.value}
           onClick={() => onChange(opt.value)}
-          className={`text-xs font-medium px-3 py-1.5 rounded-md transition-colors ${
+          size="sm"
+          variant={selected === opt.value ? "accent" : "ghost"}
+          className={`rounded-md text-xs transition-colors ${
             selected === opt.value
-              ? "bg-accent-red/10 text-accent-red"
-              : "text-text-muted hover:text-text-secondary"
+              ? "bg-accent-red/10 text-accent-red hover:bg-accent-red/10 hover:text-accent-red"
+              : "text-text-muted hover:bg-transparent hover:text-text-secondary"
           }`}
         >
           {opt.label}
-        </button>
+        </Button>
       ))}
     </div>
   );

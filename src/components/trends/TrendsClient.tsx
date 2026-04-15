@@ -8,6 +8,7 @@ import { TrendCard } from "./TrendCard";
 import { TrendFilters, type FilterValue } from "./TrendFilters";
 import { DeepDivePanel } from "./DeepDivePanel";
 import { TrendActionBar } from "./TrendActionBar";
+import { Button } from "@/components/ui/button";
 
 const STOP_WORDS = new Set([
   "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
@@ -227,12 +228,9 @@ export function TrendsClient() {
       <div className="flex flex-col items-center justify-center py-24 gap-4">
         <div className="text-accent-red text-4xl">⚠</div>
         <p className="text-text-secondary text-sm">{error}</p>
-        <button
-          onClick={handleRefresh}
-          className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-        >
+        <Button onClick={handleRefresh} className="text-xs hover:border-accent-red">
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -251,12 +249,9 @@ export function TrendsClient() {
               </p>
             )}
           </div>
-          <button
-            onClick={handleRefresh}
-            className="text-xs font-medium px-3 py-1.5 rounded-md bg-surface-card border border-surface-border text-text-secondary hover:text-text-primary transition-colors shrink-0"
-          >
+          <Button onClick={handleRefresh} className="text-xs text-text-secondary hover:text-text-primary shrink-0">
             Refresh
-          </button>
+          </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-2">

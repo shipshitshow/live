@@ -1,6 +1,14 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { TerminalSessionCreateResponse, TerminalSnapshot } from "@/lib/dev-terminal-types";
 import type { TerminalPromptEventDetail } from "@/lib/dev-terminal-events";
 
@@ -307,30 +315,35 @@ export function TerminalDrawer() {
 
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen((prev) => !prev)}
-        className="fixed bottom-4 right-4 z-50 flex items-center gap-2 rounded-lg border border-surface-border bg-surface-card/95 px-3 py-2 text-xs font-medium text-text-secondary shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur hover:text-text-primary"
-      >
-        <svg
-          width="14"
-          height="14"
-          viewBox="0 0 16 16"
-          fill="none"
-          aria-hidden="true"
-          className="shrink-0"
+      {!open ? (
+        <Button
+          type="button"
+          onClick={() => setOpen(true)}
+          className="fixed bottom-4 right-4 z-50 bg-surface-card/95 text-xs text-text-secondary shadow-[0_12px_40px_rgba(0,0,0,0.45)] backdrop-blur hover:text-text-primary"
+          aria-expanded={false}
+          aria-controls="dev-terminal-drawer"
         >
-          <rect x="1.5" y="2" width="13" height="11.5" rx="2" stroke="currentColor" strokeWidth="1.25" />
-          <path d="M4.5 5.5L6.75 7.75L4.5 10" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
-          <path d="M8.25 10H11.25" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
-        </svg>
-        Terminal
-        <span className="rounded border border-surface-border px-1.5 py-0.5 text-[10px] text-text-muted">
-          ⌘J
-        </span>
-      </button>
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            aria-hidden="true"
+            className="shrink-0"
+          >
+            <rect x="1.5" y="2" width="13" height="11.5" rx="2" stroke="currentColor" strokeWidth="1.25" />
+            <path d="M4.5 5.5L6.75 7.75L4.5 10" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M8.25 10H11.25" stroke="currentColor" strokeWidth="1.25" strokeLinecap="round" />
+          </svg>
+          Terminal
+          <span className="rounded border border-surface-border px-1.5 py-0.5 text-[10px] text-text-muted">
+            ⌘J
+          </span>
+        </Button>
+      ) : null}
 
       <div
+        id="dev-terminal-drawer"
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-surface-border bg-[#0b0b0c] shadow-[0_-20px_60px_rgba(0,0,0,0.55)] transition-transform duration-200 ${
           open ? "translate-y-0" : "translate-y-[calc(100%-1px)]"
         }`}
@@ -345,36 +358,28 @@ export function TerminalDrawer() {
           </div>
 
           <div className="flex items-center gap-2">
-            <select
+            <Select
               value={agentMode}
-              onChange={(event) => setAgentMode(event.target.value as AgentMode)}
-              className="rounded-md border border-surface-border bg-surface-card px-2 py-1 text-[10px] text-text-secondary"
+              onValueChange={(value) => setAgentMode(value as AgentMode)}
             >
-              <option value="codex">Codex</option>
-              <option value="claude">Claude</option>
-              <option value="shell">Shell</option>
-            </select>
-            <button
-              type="button"
-              onClick={handleNewSession}
-              className="rounded-md border border-surface-border bg-surface-card px-2 py-1 text-[10px] text-text-secondary hover:text-text-primary"
-            >
+              <SelectTrigger className="h-7 rounded-md px-2 py-1 text-[10px] text-text-secondary">
+                <SelectValue placeholder="Agent" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="codex">Codex</SelectItem>
+                <SelectItem value="claude">Claude</SelectItem>
+                <SelectItem value="shell">Shell</SelectItem>
+              </SelectContent>
+            </Select>
+            <Button type="button" size="sm" onClick={handleNewSession} className="rounded-md text-[10px]">
               New
-            </button>
-            <button
-              type="button"
-              onClick={handleClear}
-              className="rounded-md border border-surface-border bg-surface-card px-2 py-1 text-[10px] text-text-secondary hover:text-text-primary"
-            >
+            </Button>
+            <Button type="button" size="sm" onClick={handleClear} className="rounded-md text-[10px]">
               Clear
-            </button>
-            <button
-              type="button"
-              onClick={handleClose}
-              className="rounded-md border border-surface-border bg-surface-card px-2 py-1 text-[10px] text-text-secondary hover:text-text-primary"
-            >
+            </Button>
+            <Button type="button" size="sm" onClick={handleClose} className="rounded-md text-[10px]">
               Hide
-            </button>
+            </Button>
           </div>
         </div>
 

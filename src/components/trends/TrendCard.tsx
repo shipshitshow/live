@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
 import type { TrendItem, TrendSource } from "@/lib/trends-types";
 
 const SOURCE_COLORS: Record<TrendSource, string> = {
@@ -48,10 +49,12 @@ export function TrendCard({
       <div className="flex items-start gap-3">
         {!compact && (
           <div className="pt-0.5">
-            <button
+            <Button
               type="button"
               aria-label={selected ? "Deselect trend" : "Select trend"}
-              className={`w-4 h-4 rounded border flex items-center justify-center transition-colors ${
+              variant="ghost"
+              size="icon"
+              className={`size-4 rounded border p-0 transition-colors ${
                 selected ? "bg-accent-red border-accent-red" : "border-surface-border"
               }`}
               onClick={(e) => {
@@ -64,7 +67,7 @@ export function TrendCard({
                   <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               )}
-            </button>
+            </Button>
           </div>
         )}
 
@@ -102,15 +105,16 @@ export function TrendCard({
           </div>
 
           {compact && onAddToLivestream && (
-            <button
+            <Button
               onClick={(e) => {
                 e.stopPropagation();
                 onAddToLivestream(item);
               }}
-              className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors mt-2"
+              size="sm"
+              className="mt-2 rounded-md bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
             >
               + Livestream
-            </button>
+            </Button>
           )}
         </div>
 

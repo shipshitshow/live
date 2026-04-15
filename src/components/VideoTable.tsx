@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 import { formatNumber, formatWatchTime } from "@/lib/format";
 import type { VideoStats } from "@/lib/types";
 
@@ -115,33 +116,36 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
             {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
           </span>
           <div className="flex items-center gap-1">
-            <button
+            <Button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="text-xs px-2.5 py-1 rounded bg-surface-elevated border border-surface-border text-text-secondary hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              size="sm"
+              className="rounded bg-surface-elevated text-xs text-text-secondary hover:text-text-primary"
             >
               Prev
-            </button>
+            </Button>
             {Array.from({ length: totalPages }, (_, i) => (
-              <button
+              <Button
                 key={i}
                 onClick={() => setPage(i)}
-                className={`text-xs w-7 h-7 rounded transition-colors ${
+                size="icon"
+                className={`size-7 rounded text-xs transition-colors ${
                   page === i
                     ? "bg-accent-red/10 text-accent-red border border-accent-red/30"
-                    : "text-text-muted hover:text-text-secondary"
+                    : "border-transparent text-text-muted hover:text-text-secondary"
                 }`}
               >
                 {i + 1}
-              </button>
+              </Button>
             ))}
-            <button
+            <Button
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page === totalPages - 1}
-              className="text-xs px-2.5 py-1 rounded bg-surface-elevated border border-surface-border text-text-secondary hover:text-text-primary disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              size="sm"
+              className="rounded bg-surface-elevated text-xs text-text-secondary hover:text-text-primary"
             >
               Next
-            </button>
+            </Button>
           </div>
         </div>
       )}

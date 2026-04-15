@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { AppHeader } from "@/components/AppHeader";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { YouTubeAuthStatus } from "@/lib/youtube/types";
 
 interface YouTubeAuthConfigResponse {
@@ -17,12 +25,16 @@ export default function YouTubeAuthPage() {
   const [status, setStatus] = useState<YouTubeAuthStatus | null>(null);
   const [redirectUri, setRedirectUri] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
+  const [selectedChannel, setSelectedChannel] = useState("main");
 
   useEffect(() => {
     fetch("/api/auth/youtube/status", { cache: "no-store" })
       .then((res) => res.json() as Promise<YouTubeAuthStatus>)
       .then((data) => {
         setStatus(data);
+        if (data.channelLabelsNeedingAuth.length > 0) {
+          setSelectedChannel(data.channelLabelsNeedingAuth[0]);
+        }
         if (data.connected) {
           router.replace(next);
         }
@@ -43,10 +55,15 @@ export default function YouTubeAuthPage() {
       .catch(() => setRedirectUri(null));
   }, []);
 
-  const channelToReconnect = useMemo(
-    () => status?.channelLabelsNeedingAuth[0] || "main",
-    [status]
-  );
+  const channelOptions = useMemo(() => {
+    const options = new Set(["main", "clips"]);
+    for (const label of status?.channelLabelsNeedingAuth ?? []) {
+      options.add(label);
+    }
+    return Array.from(options);
+  }, [status]);
+
+  const channelToReconnect = selectedChannel;
 
   return (
     <div className="min-h-screen bg-surface text-text-primary">
@@ -82,7 +99,21 @@ export default function YouTubeAuthPage() {
 
           <div className="mt-6 rounded-xl border border-surface-border bg-surface-elevated/40 p-4">
             <p className="text-[10px] font-medium uppercase tracking-widest text-text-muted">Channel</p>
-            <p className="mt-2 text-sm font-semibold text-text-primary">{channelToReconnect}</p>
+            <Select
+              value={selectedChannel}
+              onValueChange={setSelectedChannel}
+            >
+              <SelectTrigger className="mt-2 w-full text-sm font-semibold text-text-primary">
+                <SelectValue placeholder="Select channel" />
+              </SelectTrigger>
+              <SelectContent>
+                {channelOptions.map((channel) => (
+                  <SelectItem key={channel} value={channel}>
+                    {channel}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="mt-4 rounded-xl border border-surface-border bg-surface-elevated/40 p-4">
@@ -91,16 +122,17 @@ export default function YouTubeAuthPage() {
           </div>
 
           <div className="mt-6 flex items-center gap-3">
-            <button
+            <Button
               type="button"
               onClick={() => {
                 setStarting(true);
                 window.location.href = `/api/auth/youtube/start?channel=${encodeURIComponent(channelToReconnect)}&next=${encodeURIComponent(next)}`;
               }}
-              className="rounded-lg bg-accent-red px-4 py-2.5 text-sm font-semibold text-white hover:opacity-90 transition-opacity"
+              variant="accent"
+              size="lg"
             >
               {starting ? "Opening Google OAuth…" : "Reconnect YouTube"}
-            </button>
+            </Button>
             <span className="text-xs text-text-muted">You’ll come back here automatically after consent.</span>
           </div>
         </div>

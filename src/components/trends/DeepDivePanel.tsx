@@ -1,6 +1,7 @@
 "use client";
 
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
 import type { TrendItem, TrendSource } from "@/lib/trends-types";
 import { dispatchTrendPrompt } from "@/lib/dev-terminal-events";
 import { TrendCard } from "./TrendCard";
@@ -75,17 +76,18 @@ export function DeepDivePanel({
               </div>
               <h3 className="text-sm font-semibold text-text-primary line-clamp-2">{activeItem.title}</h3>
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => onToggleActive(activeItem)}
-              className={`text-[10px] font-medium px-2.5 py-1 rounded-md transition-colors shrink-0 ${
+              size="sm"
+              className={`shrink-0 rounded-md text-[10px] transition-colors ${
                 activeSelected
-                  ? "bg-accent-red text-white"
-                  : "bg-accent-red/10 text-accent-red hover:bg-accent-red/20"
+                  ? "bg-accent-red text-white hover:bg-accent-red hover:text-white"
+                  : "bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
               }`}
             >
               {activeSelected ? "Selected" : "Select"}
-            </button>
+            </Button>
           </div>
 
           {activeItem.thumbnail && (
@@ -119,20 +121,22 @@ export function DeepDivePanel({
               >
                 Open Source
               </a>
-              <button
+              <Button
                 type="button"
                 onClick={() => onAddToLivestream(activeItem)}
-                className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+                size="sm"
+                className="rounded-md bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
               >
                 + Livestream
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
                 onClick={() => dispatchTrendPrompt(activeItem)}
-                className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-surface-elevated border border-surface-border text-text-primary hover:border-accent-red/40 transition-colors"
+                size="sm"
+                className="rounded-md text-[10px] text-text-primary hover:border-accent-red/40 hover:text-text-primary"
               >
                 Terminal
-              </button>
+              </Button>
             </div>
           </div>
         </div>

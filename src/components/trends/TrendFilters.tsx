@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import type { TrendSource } from "@/lib/trends-types";
 
 type FilterValue = "all" | TrendSource;
@@ -22,18 +23,20 @@ export function TrendFilters({ active, onChange, counts }: TrendFiltersProps) {
   return (
     <div className="flex gap-1.5">
       {FILTERS.map((f) => (
-        <button
+        <Button
           key={f.value}
           onClick={() => onChange(f.value)}
-          className={`text-[11px] font-medium px-2.5 py-1 rounded-md transition-colors ${
+          size="sm"
+          variant={active === f.value ? "accent" : "ghost"}
+          className={`rounded-md text-[11px] transition-colors ${
             active === f.value
-              ? "bg-accent-red/10 text-accent-red"
-              : "text-text-muted hover:text-text-secondary"
+              ? "bg-accent-red/10 text-accent-red hover:bg-accent-red/10 hover:text-accent-red"
+              : "text-text-muted hover:bg-transparent hover:text-text-secondary"
           }`}
         >
           {f.label}
           <span className="ml-1 opacity-60">{counts[f.value]}</span>
-        </button>
+        </Button>
       ))}
     </div>
   );

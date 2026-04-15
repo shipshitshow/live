@@ -2,6 +2,14 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { CopyButton } from "@/components/CopyButton";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
 import type {
   CommentReplyDraftResponse,
@@ -200,36 +208,41 @@ export function CommentsClient() {
             </p>
           </div>
           <div className="flex items-center gap-3 flex-wrap">
-            <select
+            <Select
               value={channelFilter}
-              onChange={(event) => setChannelFilter(event.target.value)}
-              className="text-xs px-3 py-2 bg-surface-card border border-surface-border rounded-lg text-text-primary"
+              onValueChange={setChannelFilter}
             >
-              <option value="all">All channels</option>
-              {channelOptions.map((channel) => (
-                <option key={channel} value={channel}>
-                  {channel}
-                </option>
-              ))}
-            </select>
-            <select
+              <SelectTrigger className="h-9 text-xs text-text-primary">
+                <SelectValue placeholder="All channels" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All channels</SelectItem>
+                {channelOptions.map((channel) => (
+                  <SelectItem key={channel} value={channel}>
+                    {channel}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select
               value={videoFilter}
-              onChange={(event) => setVideoFilter(event.target.value)}
-              className="max-w-[320px] text-xs px-3 py-2 bg-surface-card border border-surface-border rounded-lg text-text-primary"
+              onValueChange={setVideoFilter}
             >
-              <option value="all">All videos</option>
-              {videoOptions.map(([videoId, videoTitle]) => (
-                <option key={videoId} value={videoId}>
-                  {videoTitle}
-                </option>
-              ))}
-            </select>
-            <button
-              onClick={loadComments}
-              className="text-xs px-3 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-            >
+              <SelectTrigger className="h-9 max-w-[320px] text-xs text-text-primary">
+                <SelectValue placeholder="All videos" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All videos</SelectItem>
+                {videoOptions.map(([videoId, videoTitle]) => (
+                  <SelectItem key={videoId} value={videoId}>
+                    {videoTitle}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Button onClick={loadComments} className="text-xs hover:border-accent-red">
               Refresh
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -237,12 +250,9 @@ export function CommentsClient() {
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-accent-red text-4xl">⚠</div>
             <p className="text-text-secondary text-sm">{error}</p>
-            <button
-              onClick={loadComments}
-              className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-            >
+            <Button onClick={loadComments} className="text-xs hover:border-accent-red">
               Retry
-            </button>
+            </Button>
           </div>
         ) : loading ? (
           <div className="space-y-3 animate-pulse">
@@ -264,13 +274,14 @@ export function CommentsClient() {
               const isSelected = selectedComment?.commentId === comment.commentId;
 
               return (
-                <button
+                <Button
                   key={comment.commentId}
                   onClick={() => setSelectedId(comment.commentId)}
-                  className={`w-full text-left p-4 rounded-xl border transition-colors ${
+                  variant="ghost"
+                  className={`h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-xl border p-4 text-left transition-colors ${
                     isSelected
-                      ? "bg-accent-red/5 border-accent-red/30"
-                      : "bg-surface-card border-surface-border hover:border-surface-border/80"
+                      ? "bg-accent-red/5 border-accent-red/30 hover:bg-accent-red/5"
+                      : "bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card"
                   }`}
                 >
                   <div className="flex items-center gap-2 mb-2 flex-wrap">
@@ -292,7 +303,7 @@ export function CommentsClient() {
                     <span>{comment.likeCount} likes</span>
                     <span>{comment.totalReplyCount} replies</span>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -329,13 +340,13 @@ export function CommentsClient() {
                 <div className="text-[10px] text-text-muted">
                   {selectedComment.authorDisplayName} · {formatPublishedAt(selectedComment.publishedAt)}
                 </div>
-                <button
+                <Button
                   onClick={() => handleGenerateDrafts(selectedComment)}
                   disabled={draftLoadingId === selectedComment.commentId}
-                  className="text-xs font-medium px-3 py-2 rounded-lg bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors disabled:opacity-60"
+                  className="text-xs bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
                 >
                   {draftLoadingId === selectedComment.commentId ? "Generating..." : "Generate drafts"}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -364,13 +375,14 @@ export function CommentsClient() {
                         {draft}
                       </p>
                       <div className="mt-4">
-                        <button
+                        <Button
                           onClick={() => handleSendReply(selectedComment, draft, index)}
                           disabled={sendingIndex === index}
-                          className="w-full text-xs font-medium px-3 py-2 rounded-lg bg-accent-red text-white hover:opacity-90 transition-opacity disabled:opacity-60"
+                          variant="accent"
+                          className="w-full text-xs"
                         >
                           {sendingIndex === index ? "Sending..." : "Send this reply"}
-                        </button>
+                        </Button>
                       </div>
                     </div>
                   );

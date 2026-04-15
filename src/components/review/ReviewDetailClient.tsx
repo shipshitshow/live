@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
+import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
 import { VideoPlayer } from "@/components/review/VideoPlayer";
 import { ReviewChecklist } from "@/components/review/ReviewChecklist";
 import { PipelineSidebar } from "@/components/review/PipelineSidebar";
@@ -86,12 +88,9 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
       <div className="flex flex-col items-center justify-center py-24 gap-4">
         <div className="text-accent-red text-4xl">⚠</div>
         <p className="text-text-secondary text-sm">{error}</p>
-        <button
-          onClick={load}
-          className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-        >
+        <Button onClick={load} className="text-xs hover:border-accent-red">
           Retry
-        </button>
+        </Button>
       </div>
     );
   }
@@ -163,47 +162,48 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
 
             {rejectMode ? (
               <div className="space-y-3">
-                <textarea
+                <Textarea
                   value={rejectReason}
                   onChange={(e) => setRejectReason(e.target.value)}
                   placeholder="Describe what needs to be fixed before re-review…"
-                  className="w-full bg-surface-elevated border border-surface-border rounded-lg px-3 py-2.5 text-sm text-text-primary placeholder:text-text-muted resize-none focus:outline-none focus:border-accent-red/50 transition-colors min-h-[80px]"
+                  className="min-h-[80px] resize-none bg-surface-elevated"
                   disabled={submitting}
                 />
                 <div className="flex gap-2">
-                  <button
+                  <Button
                     onClick={handleReject}
                     disabled={!rejectReason.trim() || submitting}
-                    className="flex-1 px-4 py-2.5 bg-accent-red text-white text-sm font-medium rounded-lg hover:bg-accent-red/90 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                    variant="accent"
+                    className="flex-1"
                   >
                     {submitting ? "Sending back…" : "Send back for fixes"}
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => { setRejectMode(false); setRejectReason(""); }}
                     disabled={submitting}
-                    className="px-4 py-2.5 bg-surface-elevated border border-surface-border text-sm text-text-secondary rounded-lg hover:border-text-muted transition-colors disabled:opacity-40"
+                    className="bg-surface-elevated hover:border-text-muted"
                   >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={handleApprove}
                   disabled={!checklistPassed || submitting}
                   title={!checklistPassed ? "Complete all checklist items first" : undefined}
-                  className="flex-1 px-4 py-2.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-500 transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 border-green-500/30 bg-green-600 text-white hover:bg-green-500 hover:text-white"
                 >
                   {submitting ? "Approving…" : "Approve — send to YouTube upload"}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setRejectMode(true)}
                   disabled={submitting}
-                  className="px-4 py-2.5 bg-surface-elevated border border-surface-border text-sm text-text-secondary rounded-lg hover:border-accent-red/50 hover:text-accent-red transition-colors disabled:opacity-40"
+                  className="bg-surface-elevated hover:border-accent-red/50 hover:text-accent-red"
                 >
                   Reject
-                </button>
+                </Button>
               </div>
             )}
 

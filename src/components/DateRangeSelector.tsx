@@ -1,6 +1,7 @@
 "use client";
 
 import clsx from "clsx";
+import { Button } from "@/components/ui/button";
 import type { DateRange } from "@/lib/types";
 
 interface DateRangeSelectorProps {
@@ -18,18 +19,20 @@ export function DateRangeSelector({ value, onChange }: DateRangeSelectorProps) {
   return (
     <div className="flex gap-1 bg-surface-elevated border border-surface-border rounded-lg p-1">
       {OPTIONS.map((opt) => (
-        <button
+        <Button
           key={opt.value}
           onClick={() => onChange(opt.value)}
+          size="sm"
+          variant={value === opt.value ? "accent" : "ghost"}
           className={clsx(
-            "px-3 py-1.5 rounded-md text-xs font-medium transition-all",
+            "rounded-md text-xs transition-all",
             value === opt.value
-              ? "bg-accent-red text-white"
-              : "text-text-secondary hover:text-text-primary"
+              ? "hover:bg-accent-red"
+              : "text-text-secondary hover:bg-transparent hover:text-text-primary"
           )}
         >
           {opt.label}
-        </button>
+        </Button>
       ))}
     </div>
   );

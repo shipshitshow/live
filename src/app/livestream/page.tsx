@@ -7,6 +7,14 @@ import { KanbanColumn } from "@/components/livestream/KanbanColumn";
 import { todayLocalDate } from "@/lib/date";
 import { logClientEvent, logClientPerf } from "@/lib/client-logger";
 import { AppHeader } from "@/components/AppHeader";
+import { Button } from "@/components/ui/button";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const COLUMNS: TopicStatus[] = ["backlog", "in_progress", "done"];
 
@@ -122,27 +130,28 @@ export default function LivestreamPage() {
           </div>
           <div className="flex items-center gap-3">
             {availableDates.length > 0 && (
-              <select
+              <Select
                 value={date}
-                onChange={(e) => {
+                onValueChange={(value) => {
                   setLoading(true);
-                  setRequestedDate(e.target.value);
+                  setRequestedDate(value);
                 }}
-                className="text-xs font-medium px-3 py-1.5 rounded-md bg-surface-card border border-surface-border text-text-secondary"
               >
-                {availableDates.map((availableDate) => (
-                  <option key={availableDate} value={availableDate}>
-                    {availableDate}
-                  </option>
-                ))}
-              </select>
+                <SelectTrigger className="h-8 text-xs font-medium text-text-secondary">
+                  <SelectValue placeholder="Select date" />
+                </SelectTrigger>
+                <SelectContent>
+                  {availableDates.map((availableDate) => (
+                    <SelectItem key={availableDate} value={availableDate}>
+                      {availableDate}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             )}
-            <button
-              onClick={fetchTopics}
-              className="text-xs font-medium px-3 py-1.5 rounded-md bg-surface-card border border-surface-border text-text-secondary hover:text-text-primary transition-colors"
-            >
+            <Button onClick={fetchTopics} className="h-8 text-xs text-text-secondary">
               Refresh
-            </button>
+            </Button>
           </div>
         </div>
         {availableDates.length === 0 ? (

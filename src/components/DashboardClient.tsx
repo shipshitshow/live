@@ -8,6 +8,7 @@ import { TopVideos } from "@/components/TopVideos";
 import { DateRangeSelector } from "@/components/DateRangeSelector";
 import { ChannelSelector } from "@/components/ChannelSelector";
 import { AuthStatus } from "@/components/AuthStatus";
+import { Button } from "@/components/ui/button";
 import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
 import { formatNumber, formatWatchTime } from "@/lib/format";
 import type { MultiChannelReport, DateRange, ChannelFilter, DailyMetric, VideoStats, ChannelStats } from "@/lib/types";
@@ -145,12 +146,9 @@ export function DashboardClient() {
       <div className="flex flex-col items-center justify-center py-24 gap-4">
         <div className="text-accent-red text-4xl">⚠</div>
         <p className="text-text-secondary text-sm">{error}</p>
-        <button
-          onClick={load}
-          className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-        >
+        <Button onClick={load} className="text-xs hover:border-accent-red">
           Retry
-        </button>
+        </Button>
       </div>
     );
   }

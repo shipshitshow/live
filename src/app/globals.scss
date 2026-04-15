@@ -14,16 +14,11 @@ body {
 
 #app-content-shell {
   min-height: 100dvh;
-  transition: height 0.2s ease;
-}
-
-body.terminal-open {
-  overflow: hidden;
+  transition: padding-bottom 0.2s ease;
 }
 
 body.terminal-open #app-content-shell {
-  height: calc(100dvh - var(--dev-terminal-height, 360px));
-  overflow-y: auto;
+  padding-bottom: var(--dev-terminal-height, 360px);
 }
 
 ::-webkit-scrollbar {

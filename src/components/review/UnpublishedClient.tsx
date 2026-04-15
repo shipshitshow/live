@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { CopyButton } from "@/components/CopyButton";
+import { Button } from "@/components/ui/button";
 import { isErrorResponse } from "@/lib/api-types";
 import { formatNumber } from "@/lib/format";
 import { generateVideoContent, regenerateField, type VideoGeneratedContent } from "@/lib/video-content-generator";
@@ -28,12 +29,13 @@ function ContentBlock({
           {label}
         </span>
         <div className="flex gap-1.5">
-          <button
+          <Button
             onClick={onRegen}
-            className="text-[10px] font-medium px-2 py-1 rounded bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+            size="sm"
+            className="rounded bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
           >
             Regen
-          </button>
+          </Button>
           <CopyButton text={content} />
         </div>
       </div>
@@ -125,24 +127,18 @@ export function UnpublishedClient() {
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-accent-red text-4xl">⚠</div>
             <p className="text-text-secondary text-sm">{error}</p>
-            <button
-              onClick={fetchVideos}
-              className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-            >
+            <Button onClick={fetchVideos} className="text-xs hover:border-accent-red">
               Retry
-            </button>
+            </Button>
           </div>
         ) : videos.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-text-muted text-4xl">📭</div>
             <p className="text-text-secondary text-sm">No unlisted videos found</p>
             <p className="text-text-muted text-xs">Upload a video as unlisted from Premiere, then refresh</p>
-            <button
-              onClick={fetchVideos}
-              className="text-xs px-4 py-2 bg-surface-card border border-surface-border rounded-lg hover:border-accent-red transition-colors"
-            >
+            <Button onClick={fetchVideos} className="text-xs hover:border-accent-red">
               Refresh
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="space-y-3">
@@ -150,12 +146,9 @@ export function UnpublishedClient() {
               <p className="text-xs text-text-muted">
                 {videos.length} unlisted video{videos.length !== 1 ? "s" : ""} ready for content
               </p>
-              <button
-                onClick={fetchVideos}
-                className="text-xs px-3 py-1.5 bg-surface-card border border-surface-border rounded-lg text-text-muted hover:text-text-primary transition-colors"
-              >
+              <Button onClick={fetchVideos} className="text-xs text-text-muted hover:text-text-primary">
                 Refresh
-              </button>
+              </Button>
             </div>
 
             {videos.map((video) => {
@@ -165,13 +158,14 @@ export function UnpublishedClient() {
               const isSelected = selected?.video_id === video.video_id;
 
               return (
-                <button
+                <Button
                   key={video.video_id}
                   onClick={() => handleSelect(video)}
-                  className={`w-full text-left flex gap-4 p-4 rounded-xl border transition-colors ${
+                  variant="ghost"
+                  className={`h-auto w-full justify-start gap-4 whitespace-normal rounded-xl border p-4 text-left transition-colors ${
                     isSelected
-                      ? "bg-accent-red/5 border-accent-red/30"
-                      : "bg-surface-card border-surface-border hover:border-surface-border/80"
+                      ? "bg-accent-red/5 border-accent-red/30 hover:bg-accent-red/5"
+                      : "bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card"
                   }`}
                 >
                   {/* Thumbnail */}
@@ -211,7 +205,7 @@ export function UnpublishedClient() {
                       <span>{new Date(video.published_at).toLocaleDateString()}</span>
                     </div>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -237,12 +231,9 @@ export function UnpublishedClient() {
                 {formatDuration(selected.avg_view_duration_seconds)} · {selected.video_type}
               </p>
               <div className="mt-3">
-                <button
-                  onClick={handleGenerate}
-                  className="w-full text-xs font-medium px-3 py-2 rounded-lg bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
-                >
+                <Button onClick={handleGenerate} className="w-full text-xs bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red">
                   {content ? "Regenerate All" : "Generate Content"}
-                </button>
+                </Button>
               </div>
             </div>
 
@@ -254,12 +245,13 @@ export function UnpublishedClient() {
                     <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
                       Title Variants
                     </span>
-                    <button
+                    <Button
                       onClick={() => handleRegenField("titles")}
-                      className="text-[10px] font-medium px-2 py-1 rounded bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+                      size="sm"
+                      className="rounded bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
                     >
                       Regen
-                    </button>
+                    </Button>
                   </div>
                   <div className="p-3 space-y-2">
                     {content.titles.map((t, i) => (

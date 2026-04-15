@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 interface CopyButtonProps {
   text: string;
@@ -12,18 +13,20 @@ export function CopyButton({ text, className, timeoutMs = 1500 }: CopyButtonProp
   const [copied, setCopied] = useState(false);
 
   return (
-    <button
+    <Button
       onClick={() => {
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), timeoutMs);
       }}
+      size="sm"
+      variant="ghost"
       className={
         className ??
-        "text-[10px] font-medium px-2 py-1 rounded bg-surface-border text-text-muted hover:text-text-primary transition-colors"
+        "rounded bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-primary"
       }
     >
       {copied ? "Copied!" : "Copy"}
-    </button>
+    </Button>
   );
 }

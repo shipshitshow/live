@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import type { Topic, TopicStatus } from "@/lib/livestream-types";
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -65,48 +66,52 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
 
       <div className="flex gap-2">
         {topic.status === "backlog" && (
-          <button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               onStatusChange(topic.slug, "in_progress");
             }}
-            className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-accent-red/10 text-accent-red hover:bg-accent-red/20 transition-colors"
+            size="sm"
+            className="rounded-md bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
           >
             Select for tonight
-          </button>
+          </Button>
         )}
         {topic.status === "in_progress" && (
           <>
-            <button
+            <Button
               onClick={(e) => {
                 e.stopPropagation();
                 onStatusChange(topic.slug, "done");
               }}
-              className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-green-500/10 text-green-400 hover:bg-green-500/20 transition-colors"
+              size="sm"
+              className="rounded-md border-green-500/20 bg-green-500/10 text-[10px] text-green-400 hover:bg-green-500/20 hover:text-green-300"
             >
               Mark covered
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={(e) => {
                 e.stopPropagation();
                 onStatusChange(topic.slug, "backlog");
               }}
-              className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-surface-border text-text-muted hover:text-text-secondary transition-colors"
+              size="sm"
+              className="rounded-md bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-secondary"
             >
               Drop
-            </button>
+            </Button>
           </>
         )}
         {topic.status === "done" && (
-          <button
+          <Button
             onClick={(e) => {
               e.stopPropagation();
               onStatusChange(topic.slug, "in_progress");
             }}
-            className="text-[10px] font-medium px-2.5 py-1 rounded-md bg-surface-border text-text-muted hover:text-text-secondary transition-colors"
+            size="sm"
+            className="rounded-md bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-secondary"
           >
             Reopen
-          </button>
+          </Button>
         )}
       </div>
     </div>
