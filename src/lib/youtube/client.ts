@@ -1,6 +1,8 @@
+import type { ErrorResponse } from '@/lib/api-types';
 import type { ChannelStats, VideoStats, DailyMetric } from "@/lib/types";
 import type { YouTubeAnalyticsResponse, YouTubeChannelItem, YouTubeSearchItem, YouTubeVideoItem } from "@/lib/youtube/types";
 import { cachedFetch, TTL } from "./cache";
+import { normalizeYouTubeError } from './error';
 
 const DATA_API = "https://www.googleapis.com/youtube/v3";
 const ANALYTICS_API = "https://youtubeanalytics.googleapis.com/v2/reports";
@@ -147,7 +149,11 @@ async function ytFetch<T>(url: string, token: string): Promise<T> {
   });
   if (!res.ok) {
     const body = await res.text();
-    throw new Error(`YouTube API ${res.status}: ${body}`);
+    const normalized = normalizeYouTubeError(res.status, body);
+    const error = new Error(normalized.error) as Error & ErrorResponse;
+    error.code = normalized.code;
+    error.hint = normalized.hint;
+    throw error;
   }
   return (await res.json()) as T;
 }

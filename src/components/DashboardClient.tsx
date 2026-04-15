@@ -9,7 +9,9 @@ import { type ChartLine, TimeSeriesChart } from '@/components/TimeSeriesChart';
 import { TopVideos } from '@/components/TopVideos';
 import { Button } from '@/components/ui/button';
 import { VideoTable } from '@/components/VideoTable';
+import type { ErrorResponse } from '@/lib/api-types';
 import { isErrorResponse, isReauthRequiredResponse } from '@/lib/api-types';
+import { readCachedSnapshot, writeCachedSnapshot } from '@/lib/client-cache';
 import { formatNumber, formatWatchTime } from '@/lib/format';
 import { parseJsonResponse } from '@/lib/parse-json-response';
 import type {
@@ -37,36 +39,65 @@ export function DashboardClient() {
   const [days, setDays] = useState<DateRange>(30);
   const [report, setReport] = useState<MultiChannelReport | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorResponse | null>(null);
   const [channelFilter, setChannelFilter] = useState<ChannelFilter>('all');
+  const [cachedAt, setCachedAt] = useState<string | null>(null);
 
-  const load = useCallback(async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const res = await fetch(`/api/report?days=${days}`);
-      const data = await parseJsonResponse<
-        MultiChannelReport | { error: string }
-      >(res);
-      if (!res.ok) {
-        if (isReauthRequiredResponse(data)) {
-          window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+  const load = useCallback(
+    async (options?: { force?: boolean }) => {
+      const cacheKey = `analytics-report:${days}`;
+
+      setLoading(true);
+      setError(null);
+
+      if (!options?.force) {
+        const cached = readCachedSnapshot<MultiChannelReport>(cacheKey);
+        if (cached) {
+          setReport(cached.data);
+          setCachedAt(cached.savedAt);
+          setLoading(false);
           return;
         }
-        throw new Error(
-          isErrorResponse(data) ? data.error : `API error ${res.status}`,
+      }
+
+      try {
+        const res = await fetch(`/api/report?days=${days}`);
+        const data = await parseJsonResponse<
+          MultiChannelReport | { error: string }
+        >(res);
+        if (!res.ok) {
+          if (isReauthRequiredResponse(data)) {
+            window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
+            return;
+          }
+          setReport(null);
+          setError(
+            isErrorResponse(data) ? data : { error: `API error ${res.status}` },
+          );
+          return;
+        }
+        if (isErrorResponse(data)) {
+          setReport(null);
+          setError(data);
+          return;
+        }
+        const nextReport = data as MultiChannelReport;
+        setReport(nextReport);
+        writeCachedSnapshot(cacheKey, nextReport);
+        setCachedAt(new Date().toISOString());
+      } catch (e) {
+        setReport(null);
+        setError(
+          e instanceof Error
+            ? { error: e.message }
+            : { error: 'Failed to load analytics' },
         );
+      } finally {
+        setLoading(false);
       }
-      if (isErrorResponse(data)) {
-        throw new Error(data.error);
-      }
-      setReport(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : 'Failed to load analytics');
-    } finally {
-      setLoading(false);
-    }
-  }, [days]);
+    },
+    [days],
+  );
 
   useEffect(() => {
     load();
@@ -178,8 +209,18 @@ export function DashboardClient() {
     return (
       <div className="flex flex-col items-center justify-center py-24 gap-4">
         <div className="text-accent-red text-4xl">⚠</div>
-        <p className="text-text-secondary text-sm">{error}</p>
-        <Button onClick={load} className="text-xs hover:border-accent-red">
+        <div className="max-w-xl text-center space-y-2">
+          <p className="text-text-primary text-sm font-medium">{error.error}</p>
+          {error.hint ? (
+            <p className="text-text-muted text-xs leading-relaxed">
+              {error.hint}
+            </p>
+          ) : null}
+        </div>
+        <Button
+          onClick={() => load({ force: true })}
+          className="text-xs hover:border-accent-red"
+        >
           Retry
         </Button>
       </div>
@@ -205,7 +246,12 @@ export function DashboardClient() {
             </h2>
             <AuthStatus />
           </div>
-          <p className="text-text-muted text-sm mt-0.5">{headerSub}</p>
+          <p className="text-text-muted text-sm mt-0.5">
+            {headerSub}
+            {cachedAt
+              ? ` · cached ${new Date(cachedAt).toLocaleTimeString()}`
+              : ''}
+          </p>
         </div>
         <div className="flex items-center gap-3">
           {channels.length > 1 && (
@@ -216,6 +262,12 @@ export function DashboardClient() {
             />
           )}
           <DateRangeSelector value={days} onChange={setDays} />
+          <Button
+            onClick={() => load({ force: true })}
+            className="text-xs hover:border-accent-red"
+          >
+            Refresh
+          </Button>
         </div>
       </div>
 

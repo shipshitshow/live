@@ -1,5 +1,5 @@
 import { AnalyticsPage } from '@/components/AnalyticsPage';
 
-export default function Home() {
+export default function AnalyticsRoutePage() {
   return <AnalyticsPage />;
 }

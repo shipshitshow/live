@@ -8,6 +8,8 @@ import {
   WelcomeScreen,
 } from '@excalidraw/excalidraw';
 import type {
+  AppState,
+  BinaryFiles,
   ExcalidrawImperativeAPI,
   ExcalidrawInitialDataState,
 } from '@excalidraw/excalidraw/types';
@@ -44,6 +46,9 @@ interface ParsedSection {
 }
 
 type SaveStatus = 'idle' | 'saving' | 'saved' | 'error';
+type SerializedSceneElements = Parameters<typeof serializeAsJSON>[0];
+type SerializedSceneAppState = Parameters<typeof serializeAsJSON>[1];
+type SerializedSceneFiles = Parameters<typeof serializeAsJSON>[2];
 
 function parseMarkdownSections(content: string): ParsedSection[] {
   const sections: ParsedSection[] = [];
@@ -114,10 +119,27 @@ function downloadBlob(blob: Blob, fileName: string) {
   URL.revokeObjectURL(url);
 }
 
+function serializePersistedScene(
+  elements: SerializedSceneElements,
+  appState: SerializedSceneAppState,
+  files: SerializedSceneFiles,
+): string {
+  return serializeAsJSON(
+    elements,
+    {
+      viewBackgroundColor: appState.viewBackgroundColor,
+    } as AppState,
+    files,
+    'database',
+  );
+}
+
 export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
   const apiRef = useRef<ExcalidrawImperativeAPI | null>(null);
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const pendingContentRef = useRef<string | null>(null);
+  const lastSavedContentRef = useRef<string | null>(null);
+  const savingRef = useRef(false);
 
   const [topic, setTopic] = useState<Topic | null>(null);
   const [initialScene, setInitialScene] =
@@ -137,10 +159,16 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
   );
 
   const saveDrawing = useCallback(async () => {
-    if (!pendingContentRef.current) return;
+    if (!pendingContentRef.current || savingRef.current) return;
 
     const content = pendingContentRef.current;
+    if (content === lastSavedContentRef.current) {
+      pendingContentRef.current = null;
+      return;
+    }
+
     pendingContentRef.current = null;
+    savingRef.current = true;
     setSaveStatus('saving');
 
     try {
@@ -154,16 +182,24 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
         throw new Error(data.error || `Save failed with ${res.status}`);
       }
 
+      lastSavedContentRef.current = content;
       setLastSavedAt(data.updatedAt || new Date().toISOString());
       setSaveStatus('saved');
     } catch {
       pendingContentRef.current = content;
       setSaveStatus('error');
+    } finally {
+      savingRef.current = false;
     }
   }, [date, slug]);
 
   const scheduleSave = useCallback(
     (content: string) => {
+      if (content === lastSavedContentRef.current) {
+        pendingContentRef.current = null;
+        return;
+      }
+
       pendingContentRef.current = content;
       setSaveStatus((current) => (current === 'saving' ? current : 'idle'));
 
@@ -175,7 +211,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
         saveDrawing().catch(() => {
           setSaveStatus('error');
         });
-      }, 1200);
+      }, 3000);
     },
     [saveDrawing],
   );
@@ -205,26 +241,47 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
           );
         }
 
-        if (!drawingRes.ok && !isErrorResponse(drawingData)) {
+        if (!drawingRes.ok) {
+          throw new Error(
+            isErrorResponse(drawingData)
+              ? drawingData.error
+              : `Failed to load drawing ${drawingRes.status}`,
+          );
+        }
+
+        if (isErrorResponse(drawingData)) {
           throw new Error(`Failed to load drawing ${drawingRes.status}`);
         }
 
         if (cancelled) return;
 
-        setTopic(topicsData.topics.find((item) => item.slug === slug) || null);
+        const livestreamData = topicsData as LivestreamListResponse;
+        const topicDrawingData = drawingData as TopicDrawingResponse;
+
+        setTopic(
+          livestreamData.topics.find((item) => item.slug === slug) || null,
+        );
         setInitialScene(
-          !isErrorResponse(drawingData) && drawingData.scene
-            ? (drawingData.scene as ExcalidrawInitialDataState)
+          topicDrawingData.scene
+            ? (topicDrawingData.scene as ExcalidrawInitialDataState)
             : EMPTY_SCENE,
         );
-        setLastSavedAt(
-          !isErrorResponse(drawingData) ? drawingData.updatedAt : null,
-        );
-        setSaveStatus(
-          !isErrorResponse(drawingData) && drawingData.updatedAt
-            ? 'saved'
-            : 'idle',
-        );
+        if (topicDrawingData.scene) {
+          lastSavedContentRef.current = serializePersistedScene(
+            (topicDrawingData.scene.elements ?? []) as SerializedSceneElements,
+            (topicDrawingData.scene.appState ??
+              EMPTY_SCENE.appState) as AppState,
+            (topicDrawingData.scene.files ?? {}) as BinaryFiles,
+          );
+        } else {
+          lastSavedContentRef.current = serializePersistedScene(
+            [] as SerializedSceneElements,
+            EMPTY_SCENE.appState as AppState,
+            {} as BinaryFiles,
+          );
+        }
+        setLastSavedAt(topicDrawingData.updatedAt);
+        setSaveStatus(topicDrawingData.updatedAt ? 'saved' : 'idle');
       } finally {
         if (!cancelled) {
           setLoading(false);
@@ -244,7 +301,21 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
   }, [date, slug]);
 
   useEffect(() => {
+    const flushPendingSave = () => {
+      if (!pendingContentRef.current) return;
+      if (saveTimerRef.current) {
+        clearTimeout(saveTimerRef.current);
+        saveTimerRef.current = null;
+      }
+      saveDrawing().catch(() => {
+        setSaveStatus('error');
+      });
+    };
+
+    window.addEventListener('pointerup', flushPendingSave);
+
     return () => {
+      window.removeEventListener('pointerup', flushPendingSave);
       if (saveTimerRef.current) {
         clearTimeout(saveTimerRef.current);
       }
@@ -253,11 +324,11 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
 
   const handleChange = useCallback(
     (
-      elements: Parameters<typeof serializeAsJSON>[0],
-      appState: Parameters<typeof serializeAsJSON>[1],
-      files: Parameters<typeof serializeAsJSON>[2],
+      elements: SerializedSceneElements,
+      appState: SerializedSceneAppState,
+      files: SerializedSceneFiles,
     ) => {
-      scheduleSave(serializeAsJSON(elements, appState, files, 'database'));
+      scheduleSave(serializePersistedScene(elements, appState, files));
     },
     [scheduleSave],
   );

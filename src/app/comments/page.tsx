@@ -1,10 +1,10 @@
-import { Suspense } from "react";
-import { AppHeader } from "@/components/AppHeader";
-import { CommentsClient } from "@/components/comments/CommentsClient";
-import { CommentsContentSkeleton } from "@/components/PageSkeletons";
+import { Suspense } from 'react';
+import { AppHeader } from '@/components/AppHeader';
+import { CommentsClient } from '@/components/comments/CommentsClient';
+import { CommentsContentSkeleton } from '@/components/PageSkeletons';
 
 export const metadata = {
-  title: "Ship Shit Show — Comments",
+  title: 'Ship Shit Show — Comments',
 };
 
 export default function CommentsPage() {

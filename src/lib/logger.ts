@@ -1,17 +1,24 @@
 import fs from 'node:fs';
+import os from 'node:os';
 import path from 'node:path';
 import winston from 'winston';
 
 type LogLevel = 'info' | 'warn' | 'error';
 
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const DEV_RUNTIME_DIR = path.join(
+  process.env.SHIPSHIT_RUNTIME_DIR ?? os.tmpdir(),
+  'shipshitshow-live',
+);
+const LOG_DIR = IS_PRODUCTION
+  ? path.join(process.cwd(), 'logs')
+  : path.join(DEV_RUNTIME_DIR, 'logs');
+const LOG_FILE = path.join(LOG_DIR, 'events.log');
+
 declare global {
   // eslint-disable-next-line no-var
   var __shipShitLogger__: winston.Logger | undefined;
 }
-
-const LOG_DIR = path.join(process.cwd(), 'logs');
-const LOG_FILE = path.join(LOG_DIR, 'events.log');
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 
 function ensureLogDir() {
   if (!fs.existsSync(LOG_DIR)) {

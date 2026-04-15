@@ -54,7 +54,7 @@ export interface TopicDrawingResponse {
 
 export interface TopicUpdate {
   status?: TopicStatus;
-  thumbnail_prompt?: string;
+  thumbnail_prompt?: string | null;
   generated?: Partial<TopicGeneratedContent>;
 }
 

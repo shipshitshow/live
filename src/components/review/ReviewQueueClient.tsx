@@ -3,7 +3,9 @@
 import { useCallback, useEffect, useState } from 'react';
 import { CopyButton } from '@/components/CopyButton';
 import { Button } from '@/components/ui/button';
+import type { ErrorResponse } from '@/lib/api-types';
 import { isErrorResponse } from '@/lib/api-types';
+import { readCachedSnapshot, writeCachedSnapshot } from '@/lib/client-cache';
 import { formatNumber } from '@/lib/format';
 import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { UnlistedVideo } from '@/lib/review-types';
@@ -62,33 +64,51 @@ function formatDuration(seconds: number): string {
   return `${m}:${String(s).padStart(2, '0')}`;
 }
 
-export function UnpublishedClient() {
+export function ReviewQueueClient() {
   const [videos, setVideos] = useState<UnlistedVideo[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorResponse | null>(null);
   const [selected, setSelected] = useState<UnlistedVideo | null>(null);
   const [content, setContent] = useState<VideoGeneratedContent | null>(null);
+  const [cachedAt, setCachedAt] = useState<string | null>(null);
 
-  const fetchVideos = useCallback(async () => {
+  const fetchVideos = useCallback(async (options?: { force?: boolean }) => {
+    const cacheKey = 'review-queue-v1';
+
     setLoading(true);
     setError(null);
+
+    if (!options?.force) {
+      const cached = readCachedSnapshot<UnlistedVideo[]>(cacheKey);
+      if (cached) {
+        setVideos(cached.data);
+        setCachedAt(cached.savedAt);
+        setLoading(false);
+        return;
+      }
+    }
+
     try {
-      const res = await fetch('/api/unpublished');
-      const data = await parseJsonResponse<UnlistedVideo[] | { error: string }>(
+      const res = await fetch('/api/review');
+      const data = await parseJsonResponse<UnlistedVideo[] | ErrorResponse>(
         res,
       );
       if (!res.ok || isErrorResponse(data)) {
-        throw new Error(
-          isErrorResponse(data) ? data.error : `API error ${res.status}`,
+        setVideos([]);
+        setError(
+          isErrorResponse(data) ? data : { error: `API error ${res.status}` },
         );
+        return;
       }
       setVideos(data);
+      writeCachedSnapshot(cacheKey, data);
+      setCachedAt(new Date().toISOString());
     } catch (fetchError) {
       setVideos([]);
       setError(
         fetchError instanceof Error
-          ? fetchError.message
-          : 'Failed to load unpublished videos',
+          ? { error: fetchError.message }
+          : { error: 'Failed to load review queue videos' },
       );
     } finally {
       setLoading(false);
@@ -134,7 +154,6 @@ export function UnpublishedClient() {
       className="mx-auto flex w-full max-w-[1800px]"
       style={{ height: 'calc(100vh - 65px)' }}
     >
-      {/* Left: Video list */}
       <div className="flex-1 overflow-y-auto p-6">
         {loading ? (
           <div className="space-y-3 animate-pulse">
@@ -148,9 +167,18 @@ export function UnpublishedClient() {
         ) : error ? (
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-accent-red text-4xl">⚠</div>
-            <p className="text-text-secondary text-sm">{error}</p>
+            <div className="max-w-xl text-center space-y-2">
+              <p className="text-text-primary text-sm font-medium">
+                {error.error}
+              </p>
+              {error.hint ? (
+                <p className="text-text-muted text-xs leading-relaxed">
+                  {error.hint}
+                </p>
+              ) : null}
+            </div>
             <Button
-              onClick={fetchVideos}
+              onClick={() => fetchVideos({ force: true })}
               className="text-xs hover:border-accent-red"
             >
               Retry
@@ -160,13 +188,13 @@ export function UnpublishedClient() {
           <div className="flex flex-col items-center justify-center py-24 gap-4">
             <div className="text-text-muted text-4xl">📭</div>
             <p className="text-text-secondary text-sm">
-              No unlisted videos found
+              No videos in the review queue
             </p>
             <p className="text-text-muted text-xs">
               Upload a video as unlisted from Premiere, then refresh
             </p>
             <Button
-              onClick={fetchVideos}
+              onClick={() => fetchVideos({ force: true })}
               className="text-xs hover:border-accent-red"
             >
               Refresh
@@ -176,11 +204,14 @@ export function UnpublishedClient() {
           <div className="space-y-3">
             <div className="flex items-center justify-between mb-2">
               <p className="text-xs text-text-muted">
-                {videos.length} unlisted video{videos.length !== 1 ? 's' : ''}{' '}
-                ready for content
+                {videos.length} review queue video
+                {videos.length !== 1 ? 's' : ''} ready for content
+                {cachedAt
+                  ? ` · cached ${new Date(cachedAt).toLocaleTimeString()}`
+                  : ''}
               </p>
               <Button
-                onClick={fetchVideos}
+                onClick={() => fetchVideos({ force: true })}
                 className="text-xs text-text-muted hover:text-text-primary"
               >
                 Refresh
@@ -204,7 +235,6 @@ export function UnpublishedClient() {
                       : 'bg-surface-card border-surface-border hover:border-surface-border/80 hover:bg-surface-card'
                   }`}
                 >
-                  {/* Thumbnail */}
                   {video.thumbnail_url && (
                     <div className="w-32 h-[72px] rounded-lg overflow-hidden shrink-0 bg-surface-elevated">
                       <img
@@ -215,7 +245,6 @@ export function UnpublishedClient() {
                     </div>
                   )}
 
-                  {/* Info */}
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       {ch && (
@@ -254,19 +283,17 @@ export function UnpublishedClient() {
         )}
       </div>
 
-      {/* Right sidebar: Content generator */}
       <aside className="w-[420px] shrink-0 border-l border-surface-border overflow-y-auto p-4">
         {!selected ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-xs text-text-muted text-center">
-              Select a video to generate
+              Select a review queue video to generate
               <br />
               title, description &amp; social copy
             </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {/* Selected video header */}
             <div className="bg-surface-card border border-surface-border rounded-xl p-4">
               <p className="text-sm font-semibold text-text-primary line-clamp-2">
                 {selected.title}
@@ -287,7 +314,6 @@ export function UnpublishedClient() {
 
             {content && (
               <>
-                {/* Title variants */}
                 <div className="bg-surface-elevated rounded-lg border border-surface-border overflow-hidden">
                   <div className="flex items-center justify-between px-3 py-2 border-b border-surface-border">
                     <span className="text-[10px] font-semibold text-text-muted uppercase tracking-wider">
@@ -325,16 +351,19 @@ export function UnpublishedClient() {
                   content={content.youtubeDescription}
                   onRegen={() => handleRegenField('youtubeDescription')}
                 />
+
                 <ContentBlock
                   label="LinkedIn Post"
                   content={content.linkedinPost}
                   onRegen={() => handleRegenField('linkedinPost')}
                 />
+
                 <ContentBlock
                   label="Tweet — Announcement"
                   content={content.announcementTweet}
                   onRegen={() => handleRegenField('announcementTweet')}
                 />
+
                 <ContentBlock
                   label="Tweet — Recap"
                   content={content.recapTweet}

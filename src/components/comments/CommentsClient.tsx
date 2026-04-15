@@ -11,6 +11,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { isErrorResponse, isReauthRequiredResponse } from '@/lib/api-types';
+import { readCachedSnapshot, writeCachedSnapshot } from '@/lib/client-cache';
 import { parseJsonResponse } from '@/lib/parse-json-response';
 import type {
   CommentReplyDraftResponse,
@@ -46,10 +47,33 @@ export function CommentsClient() {
   const [sendingByComment, setSendingByComment] = useState<SendingState>({});
   const [actionError, setActionError] = useState<string | null>(null);
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
+  const [cachedAt, setCachedAt] = useState<string | null>(null);
 
-  const loadComments = useCallback(async () => {
+  const loadComments = useCallback(async (options?: { force?: boolean }) => {
+    const cacheKey = 'comments:maxResults=100';
+
     setLoading(true);
     setError(null);
+
+    if (!options?.force) {
+      const cached = readCachedSnapshot<YouTubeCommentListResponse>(cacheKey);
+      if (cached) {
+        setComments(cached.data.items);
+        setFetchedAt(cached.data.fetchedAt);
+        setCachedAt(cached.savedAt);
+        setSelectedId((prev) => {
+          if (
+            prev &&
+            cached.data.items.some((item) => item.commentId === prev)
+          ) {
+            return prev;
+          }
+          return cached.data.items[0]?.commentId ?? null;
+        });
+        setLoading(false);
+        return;
+      }
+    }
 
     try {
       const res = await fetch('/api/youtube/comments?maxResults=100', {
@@ -72,6 +96,8 @@ export function CommentsClient() {
 
       setComments(data.items);
       setFetchedAt(data.fetchedAt);
+      writeCachedSnapshot(cacheKey, data);
+      setCachedAt(new Date().toISOString());
       setSelectedId((prev) => {
         if (prev && data.items.some((item) => item.commentId === prev))
           return prev;
@@ -249,6 +275,9 @@ export function CommentsClient() {
               {loading
                 ? 'Loading comments...'
                 : `${visibleComments.length} comments loaded`}
+              {cachedAt
+                ? ` · cached ${new Date(cachedAt).toLocaleTimeString()}`
+                : ''}
               {fetchedAt
                 ? ` · updated ${new Date(fetchedAt).toLocaleTimeString()}`
                 : ''}
@@ -282,7 +311,7 @@ export function CommentsClient() {
               </SelectContent>
             </Select>
             <Button
-              onClick={loadComments}
+              onClick={() => loadComments({ force: true })}
               className="text-xs hover:border-accent-red"
             >
               Refresh
@@ -295,7 +324,7 @@ export function CommentsClient() {
             <div className="text-accent-red text-4xl">⚠</div>
             <p className="text-text-secondary text-sm">{error}</p>
             <Button
-              onClick={loadComments}
+              onClick={() => loadComments({ force: true })}
               className="text-xs hover:border-accent-red"
             >
               Retry
@@ -316,6 +345,12 @@ export function CommentsClient() {
             <p className="text-text-secondary text-sm">
               No comments found for this filter
             </p>
+            <Button
+              onClick={() => loadComments({ force: true })}
+              className="text-xs hover:border-accent-red"
+            >
+              Refresh
+            </Button>
           </div>
         ) : (
           <div className="space-y-3">

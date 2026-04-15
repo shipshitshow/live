@@ -1,0 +1,594 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { get, list, put } from '@vercel/blob';
+import { findTopicFile, getTopicDrawingFile } from '@/lib/livestream-files';
+import type {
+  ContentField,
+  Topic,
+  TopicDrawingResponse,
+  TopicFrontmatter,
+  TopicGeneratedContent,
+  TopicStatus,
+  TopicUpdate,
+} from '@/lib/livestream-types';
+import { CONTENT_FIELDS } from '@/lib/livestream-types';
+
+const DATA_DIR = path.join(process.cwd(), 'data', 'livestream');
+const BLOB_TOPICS_PREFIX = 'livestream/topics';
+const BLOB_TOPIC_OVERRIDES_PREFIX = 'livestream/topic-overrides';
+const BLOB_DRAWINGS_PREFIX = 'livestream/drawings';
+
+const EMPTY_GENERATED: TopicGeneratedContent = {
+  linkedin_post: null,
+  livestream_tweet: null,
+  recap_tweet: null,
+  thumbnail_v1: null,
+  thumbnail_v2: null,
+  thumbnail_v3: null,
+  youtube_description: null,
+  youtube_title: null,
+};
+
+interface StoredTopicOverride {
+  generated?: Partial<TopicGeneratedContent>;
+  status?: TopicStatus;
+  thumbnail_prompt?: string | null;
+}
+
+function isBlobPersistenceEnabled(): boolean {
+  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+}
+
+function isReadOnlyVercelRuntime(): boolean {
+  return Boolean(process.env.VERCEL) && !isBlobPersistenceEnabled();
+}
+
+function createWritableStorageError(): Error {
+  return new Error(
+    'Writable livestream storage requires BLOB_READ_WRITE_TOKEN on Vercel',
+  );
+}
+
+function getBlobTopicPath(date: string, slug: string): string {
+  return `${BLOB_TOPICS_PREFIX}/${date}/${slug}.json`;
+}
+
+function getBlobTopicOverridePath(date: string, slug: string): string {
+  return `${BLOB_TOPIC_OVERRIDES_PREFIX}/${date}/${slug}.json`;
+}
+
+function getBlobDrawingPath(date: string, slug: string): string {
+  return `${BLOB_DRAWINGS_PREFIX}/${date}/${slug}.json`;
+}
+
+function updateFrontmatterField(
+  raw: string,
+  key: string,
+  value: string | null,
+): string {
+  const valStr = value === null ? 'null' : `"${value}"`;
+  const regex = new RegExp(`^(${key}:).*$`, 'm');
+  if (regex.test(raw)) {
+    return raw.replace(regex, `$1 ${valStr}`);
+  }
+  return raw.replace(/\n---\n/, `\n${key}: ${valStr}\n---\n`);
+}
+
+function updateGeneratedField(
+  raw: string,
+  field: ContentField,
+  value: string,
+): string {
+  const marker = '## Generated Content';
+  const tag = `<!-- ${field} -->`;
+  const endTag = `<!-- /${field} -->`;
+
+  if (!raw.includes(marker)) {
+    raw = `${raw.trimEnd()}\n\n${marker}\n\n`;
+  }
+
+  const tagIdx = raw.indexOf(tag);
+  const endTagIdx = raw.indexOf(endTag);
+  if (tagIdx !== -1 && endTagIdx !== -1) {
+    return `${raw.slice(0, tagIdx + tag.length)}\n${value}\n${raw.slice(endTagIdx)}`;
+  }
+
+  return `${raw.trimEnd()}\n${tag}\n${value}\n${endTag}\n`;
+}
+
+function parseGeneratedContent(raw: string): TopicGeneratedContent {
+  const marker = '## Generated Content';
+  const idx = raw.indexOf(marker);
+  if (idx === -1) return { ...EMPTY_GENERATED };
+
+  const section = raw.slice(idx + marker.length);
+  const result: TopicGeneratedContent = { ...EMPTY_GENERATED };
+
+  for (const field of CONTENT_FIELDS) {
+    const tag = `<!-- ${field} -->`;
+    const endTag = `<!-- /${field} -->`;
+    const start = section.indexOf(tag);
+    const end = section.indexOf(endTag);
+    if (start !== -1 && end !== -1) {
+      result[field] = section.slice(start + tag.length, end).trim() || null;
+    }
+  }
+
+  return result;
+}
+
+export function isTopicStatus(value: string | null): value is TopicStatus {
+  return value === 'backlog' || value === 'in_progress' || value === 'done';
+}
+
+function parseFrontmatter(raw: string): {
+  frontmatter: TopicFrontmatter;
+  content: string;
+  generated: TopicGeneratedContent;
+} {
+  const match = raw.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
+  if (!match) throw new Error('Invalid frontmatter');
+
+  const fm: Record<string, string | null> = {};
+  for (const line of match[1].split('\n')) {
+    const idx = line.indexOf(':');
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim();
+    let val: string | null = line.slice(idx + 1).trim();
+    if (val === 'null') val = null;
+    if (typeof val === 'string') val = val.replace(/^["']|["']$/g, '');
+    fm[key] = val;
+  }
+
+  const body = match[2].trim();
+  const genMarker = '## Generated Content';
+  const genIdx = body.indexOf(genMarker);
+  const content = genIdx !== -1 ? body.slice(0, genIdx).trim() : body;
+  const generated = parseGeneratedContent(raw);
+  const title = fm.title;
+  const slug = fm.slug;
+  const source = fm.source;
+  const status = fm.status;
+  const date = fm.date;
+
+  if (
+    typeof title !== 'string' ||
+    typeof slug !== 'string' ||
+    typeof source !== 'string' ||
+    !isTopicStatus(status) ||
+    typeof date !== 'string'
+  ) {
+    throw new Error('Invalid topic frontmatter');
+  }
+
+  return {
+    content,
+    frontmatter: {
+      date,
+      slug,
+      source,
+      status,
+      thumbnail_prompt: fm.thumbnail_prompt,
+      title,
+    },
+    generated,
+  };
+}
+
+function topicToMarkdown(topic: Topic): string {
+  let markdown = `---
+title: "${topic.title}"
+slug: "${topic.slug}"
+source: "${topic.source}"
+status: "${topic.status}"
+date: "${topic.date}"
+thumbnail_prompt: ${topic.thumbnail_prompt === null ? 'null' : `"${topic.thumbnail_prompt}"`}
+---
+
+${topic.content}
+
+## Generated Content
+`;
+
+  for (const field of CONTENT_FIELDS) {
+    const value = topic.generated[field];
+    if (!value) continue;
+    markdown = `${markdown}\n<!-- ${field} -->\n${value}\n<!-- /${field} -->\n`;
+  }
+
+  return markdown.trimEnd();
+}
+
+function getFilesystemTopicsForDate(dateStr: string): Topic[] {
+  const dir = path.join(DATA_DIR, dateStr);
+  if (!fs.existsSync(dir)) return [];
+
+  return fs
+    .readdirSync(dir)
+    .filter((file) => file.endsWith('.md'))
+    .sort()
+    .map((fileName) => {
+      const raw = fs.readFileSync(path.join(dir, fileName), 'utf-8');
+      const { frontmatter, content, generated } = parseFrontmatter(raw);
+      return { ...frontmatter, content, fileName, generated };
+    });
+}
+
+function listFilesystemDates(): string[] {
+  if (!fs.existsSync(DATA_DIR)) return [];
+
+  return fs
+    .readdirSync(DATA_DIR, { withFileTypes: true })
+    .filter(
+      (entry) => entry.isDirectory() && /^\d{4}-\d{2}-\d{2}$/.test(entry.name),
+    )
+    .map((entry) => entry.name)
+    .sort((a, b) => b.localeCompare(a));
+}
+
+async function readBlobJson<T>(
+  pathname: string,
+): Promise<{ data: T; updatedAt: string } | null> {
+  if (!isBlobPersistenceEnabled()) return null;
+
+  try {
+    const result = await get(pathname, { access: 'private', useCache: false });
+    if (!result || result.statusCode !== 200) return null;
+
+    const text = await new Response(result.stream).text();
+    return {
+      data: JSON.parse(text) as T,
+      updatedAt: result.blob.uploadedAt.toISOString(),
+    };
+  } catch {
+    return null;
+  }
+}
+
+async function putBlobJson(pathname: string, data: unknown): Promise<void> {
+  await put(pathname, JSON.stringify(data), {
+    access: 'private',
+    addRandomSuffix: false,
+    allowOverwrite: true,
+    contentType: 'application/json',
+  });
+}
+
+async function listAllBlobs(
+  prefix: string,
+): Promise<Array<{ pathname: string }>> {
+  if (!isBlobPersistenceEnabled()) return [];
+
+  const blobs: Array<{ pathname: string }> = [];
+  let cursor: string | undefined;
+
+  do {
+    const result = await list({ cursor, prefix });
+    blobs.push(...result.blobs.map((blob) => ({ pathname: blob.pathname })));
+    cursor = result.hasMore ? result.cursor : undefined;
+  } while (cursor);
+
+  return blobs;
+}
+
+async function listBlobDates(prefix: string): Promise<string[]> {
+  if (!isBlobPersistenceEnabled()) return [];
+
+  const folders = new Set<string>();
+  let cursor: string | undefined;
+
+  do {
+    const result = await list({ cursor, mode: 'folded', prefix: `${prefix}/` });
+    for (const folder of result.folders) {
+      const parts = folder.split('/').filter(Boolean);
+      const date = parts.at(-1);
+      if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+        folders.add(date);
+      }
+    }
+    cursor = result.hasMore ? result.cursor : undefined;
+  } while (cursor);
+
+  return Array.from(folders);
+}
+
+function applyTopicUpdate(topic: Topic, updates: TopicUpdate): Topic {
+  const nextTopic: Topic = {
+    ...topic,
+    generated: { ...topic.generated },
+  };
+
+  if (updates.status) {
+    nextTopic.status = updates.status;
+  }
+
+  if (updates.thumbnail_prompt !== undefined) {
+    nextTopic.thumbnail_prompt = updates.thumbnail_prompt;
+  }
+
+  if (updates.generated) {
+    for (const field of CONTENT_FIELDS) {
+      const value = updates.generated[field];
+      if (value !== undefined && value !== null) {
+        nextTopic.generated[field] = value;
+      }
+    }
+  }
+
+  return nextTopic;
+}
+
+async function getBlobTopicOverridesForDate(
+  date: string,
+): Promise<Map<string, TopicUpdate>> {
+  const overrides = new Map<string, TopicUpdate>();
+  const blobs = await listAllBlobs(`${BLOB_TOPIC_OVERRIDES_PREFIX}/${date}/`);
+
+  await Promise.all(
+    blobs.map(async ({ pathname }) => {
+      const result = await readBlobJson<StoredTopicOverride>(pathname);
+      if (!result) return;
+
+      const slug = pathname
+        .split('/')
+        .pop()
+        ?.replace(/\.json$/, '');
+      if (!slug) return;
+
+      overrides.set(slug, result.data);
+    }),
+  );
+
+  return overrides;
+}
+
+async function getBlobTopicsForDate(date: string): Promise<Topic[]> {
+  const blobs = await listAllBlobs(`${BLOB_TOPICS_PREFIX}/${date}/`);
+  const topics = await Promise.all(
+    blobs.map(async ({ pathname }) => {
+      const result = await readBlobJson<Topic>(pathname);
+      return result?.data ?? null;
+    }),
+  );
+
+  return topics.filter((topic): topic is Topic => topic !== null);
+}
+
+export async function listAvailableLivestreamDates(): Promise<string[]> {
+  const dates = new Set<string>(listFilesystemDates());
+
+  for (const date of await listBlobDates(BLOB_TOPICS_PREFIX)) {
+    dates.add(date);
+  }
+  for (const date of await listBlobDates(BLOB_TOPIC_OVERRIDES_PREFIX)) {
+    dates.add(date);
+  }
+
+  return Array.from(dates).sort((a, b) => b.localeCompare(a));
+}
+
+export async function resolveLivestreamDate(
+  requestedDate: string,
+): Promise<string> {
+  const availableDates = await listAvailableLivestreamDates();
+  if (availableDates.includes(requestedDate)) return requestedDate;
+  return availableDates[0] || requestedDate;
+}
+
+export async function getTopicsForDate(date: string): Promise<Topic[]> {
+  const merged = new Map<string, Topic>();
+
+  for (const topic of getFilesystemTopicsForDate(date)) {
+    merged.set(topic.slug, topic);
+  }
+
+  for (const topic of await getBlobTopicsForDate(date)) {
+    merged.set(topic.slug, topic);
+  }
+
+  const overrides = await getBlobTopicOverridesForDate(date);
+  for (const [slug, updates] of overrides) {
+    const topic = merged.get(slug);
+    if (!topic) continue;
+    merged.set(slug, applyTopicUpdate(topic, updates));
+  }
+
+  return Array.from(merged.values()).sort((a, b) =>
+    a.fileName.localeCompare(b.fileName),
+  );
+}
+
+export async function getTopicBySlug(
+  date: string,
+  slug: string,
+): Promise<Topic | null> {
+  const topics = await getTopicsForDate(date);
+  return topics.find((topic) => topic.slug === slug) ?? null;
+}
+
+export async function readTopicRaw(
+  date: string,
+  slug: string,
+): Promise<string | null> {
+  if (!isBlobPersistenceEnabled()) {
+    const filePath = findTopicFile(slug, date);
+    if (!filePath) return null;
+    return fs.readFileSync(filePath, 'utf-8');
+  }
+
+  const topic = await getTopicBySlug(date, slug);
+  return topic ? topicToMarkdown(topic) : null;
+}
+
+export async function saveTopicUpdate(
+  date: string,
+  slug: string,
+  updates: TopicUpdate,
+): Promise<boolean> {
+  if (isReadOnlyVercelRuntime()) {
+    throw createWritableStorageError();
+  }
+
+  if (!isBlobPersistenceEnabled()) {
+    const filePath = findTopicFile(slug, date);
+    if (!filePath) return false;
+
+    let raw = fs.readFileSync(filePath, 'utf-8');
+
+    if (updates.status) {
+      raw = updateFrontmatterField(raw, 'status', updates.status);
+    }
+    if (updates.thumbnail_prompt !== undefined) {
+      raw = updateFrontmatterField(
+        raw,
+        'thumbnail_prompt',
+        updates.thumbnail_prompt,
+      );
+    }
+
+    if (updates.generated) {
+      for (const field of CONTENT_FIELDS) {
+        const value = updates.generated[field];
+        if (value !== undefined && value !== null) {
+          raw = updateGeneratedField(raw, field, value);
+        }
+      }
+    }
+
+    fs.writeFileSync(filePath, raw, 'utf-8');
+    return true;
+  }
+
+  const topic = await getTopicBySlug(date, slug);
+  if (!topic) return false;
+
+  const current =
+    (
+      await readBlobJson<StoredTopicOverride>(
+        getBlobTopicOverridePath(date, slug),
+      )
+    )?.data ?? {};
+
+  await putBlobJson(getBlobTopicOverridePath(date, slug), {
+    ...current,
+    ...updates,
+    generated: {
+      ...(current.generated ?? {}),
+      ...(updates.generated ?? {}),
+    },
+  } satisfies StoredTopicOverride);
+
+  return true;
+}
+
+export async function createTopic(input: {
+  content: string;
+  date: string;
+  slug: string;
+  source: string;
+  title: string;
+}): Promise<{ fileName: string; slug: string; status: TopicStatus }> {
+  if (isReadOnlyVercelRuntime()) {
+    throw createWritableStorageError();
+  }
+
+  const topics = await getTopicsForDate(input.date);
+  const nextNum = topics.length + 1;
+  const padded = String(nextNum).padStart(2, '0');
+  const fileName = `topic-${padded}-${input.slug}.md`;
+
+  if (!isBlobPersistenceEnabled()) {
+    const dir = path.join(DATA_DIR, input.date);
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
+    }
+
+    const markdown = `---
+title: "${input.title}"
+slug: "${input.slug}"
+source: "${input.source}"
+status: "backlog"
+date: "${input.date}"
+thumbnail_prompt: null
+---
+
+${input.content}
+
+## Generated Content
+`;
+
+    fs.writeFileSync(path.join(dir, fileName), markdown, 'utf-8');
+    return { fileName, slug: input.slug, status: 'backlog' };
+  }
+
+  const topic: Topic = {
+    content: input.content,
+    date: input.date,
+    fileName,
+    generated: { ...EMPTY_GENERATED },
+    slug: input.slug,
+    source: input.source,
+    status: 'backlog',
+    thumbnail_prompt: null,
+    title: input.title,
+  };
+
+  await putBlobJson(getBlobTopicPath(input.date, input.slug), topic);
+  return { fileName, slug: input.slug, status: 'backlog' };
+}
+
+export async function readTopicDrawing(
+  date: string,
+  slug: string,
+): Promise<TopicDrawingResponse> {
+  if (!isBlobPersistenceEnabled()) {
+    const drawingFile = getTopicDrawingFile(slug, date);
+    if (!drawingFile || !fs.existsSync(drawingFile)) {
+      return { scene: null, updatedAt: null };
+    }
+
+    const raw = fs.readFileSync(drawingFile, 'utf-8');
+    const stat = fs.statSync(drawingFile);
+
+    return {
+      scene: JSON.parse(raw) as Record<string, unknown>,
+      updatedAt: stat.mtime.toISOString(),
+    };
+  }
+
+  const drawing = await readBlobJson<Record<string, unknown>>(
+    getBlobDrawingPath(date, slug),
+  );
+  if (!drawing) {
+    return { scene: null, updatedAt: null };
+  }
+
+  return {
+    scene: drawing.data,
+    updatedAt: drawing.updatedAt,
+  };
+}
+
+export async function saveTopicDrawing(
+  date: string,
+  slug: string,
+  content: string,
+): Promise<string> {
+  if (isReadOnlyVercelRuntime()) {
+    throw createWritableStorageError();
+  }
+
+  if (!isBlobPersistenceEnabled()) {
+    const drawingFile = getTopicDrawingFile(slug, date);
+    if (!drawingFile) {
+      throw new Error('Topic not found');
+    }
+
+    fs.mkdirSync(path.dirname(drawingFile), { recursive: true });
+    fs.writeFileSync(drawingFile, content, 'utf-8');
+    return new Date().toISOString();
+  }
+
+  await putBlobJson(getBlobDrawingPath(date, slug), JSON.parse(content));
+  return new Date().toISOString();
+}

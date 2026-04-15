@@ -68,7 +68,7 @@ export function YouTubeAuthPageClient() {
 
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Reconnect YouTube" activeHref="/" />
+      <AppHeader subtitle="Reconnect YouTube" activeHref="/analytics" />
       <main className="mx-auto max-w-2xl px-6 py-10">
         <div className="rounded-2xl border border-surface-border bg-surface-card p-8 shadow-[0_24px_80px_rgba(0,0,0,0.25)]">
           <p className="text-[10px] font-medium uppercase tracking-[0.22em] text-text-muted">

@@ -167,9 +167,22 @@ export async function GET(req: NextRequest) {
         { status: 401 }
       );
     }
-    const response: ErrorResponse = {
-      error: error instanceof Error ? error.message : "Failed to load analytics report",
-    };
+    const response: ErrorResponse =
+      error instanceof Error
+        ? {
+            code:
+              'code' in error && typeof error.code === 'string'
+                ? error.code
+                : undefined,
+            error: error.message,
+            hint:
+              'hint' in error && typeof error.hint === 'string'
+                ? error.hint
+                : undefined,
+          }
+        : {
+            error: "Failed to load analytics report",
+          };
     return NextResponse.json(response, { status: 503 });
   }
 }

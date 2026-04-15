@@ -1,11 +1,10 @@
-import fs from 'node:fs';
 import { NextResponse } from 'next/server';
 import { todayLocalDate } from '@/lib/date';
 import {
-  ensureTopicDrawingDir,
-  findTopicFile,
-  getTopicDrawingFile,
-} from '@/lib/livestream-files';
+  getTopicBySlug,
+  readTopicDrawing,
+  saveTopicDrawing,
+} from '@/lib/livestream-store';
 
 interface DrawingUpdateRequest {
   content?: string;
@@ -19,23 +18,12 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date') || todayLocalDate();
 
-  if (!findTopicFile(slug, date)) {
+  if (!(await getTopicBySlug(date, slug))) {
     return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
   }
 
-  const drawingFile = getTopicDrawingFile(slug, date);
-  if (!drawingFile || !fs.existsSync(drawingFile)) {
-    return NextResponse.json({ scene: null, updatedAt: null });
-  }
-
   try {
-    const raw = fs.readFileSync(drawingFile, 'utf-8');
-    const stat = fs.statSync(drawingFile);
-
-    return NextResponse.json({
-      scene: JSON.parse(raw) as Record<string, unknown>,
-      updatedAt: stat.mtime.toISOString(),
-    });
+    return NextResponse.json(await readTopicDrawing(date, slug));
   } catch {
     return NextResponse.json(
       { error: 'Drawing file is invalid' },
@@ -52,7 +40,7 @@ export async function PATCH(
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date') || todayLocalDate();
 
-  if (!findTopicFile(slug, date)) {
+  if (!(await getTopicBySlug(date, slug))) {
     return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
   }
 
@@ -73,12 +61,16 @@ export async function PATCH(
     );
   }
 
-  ensureTopicDrawingDir(slug, date);
-  const drawingFile = getTopicDrawingFile(slug, date);
-  if (!drawingFile) {
-    return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
+  try {
+    const updatedAt = await saveTopicDrawing(date, slug, content);
+    return NextResponse.json({ ok: true, updatedAt });
+  } catch (error) {
+    return NextResponse.json(
+      {
+        error:
+          error instanceof Error ? error.message : 'Failed to save drawing',
+      },
+      { status: 503 },
+    );
   }
-
-  fs.writeFileSync(drawingFile, content, 'utf-8');
-  return NextResponse.json({ ok: true, updatedAt: new Date().toISOString() });
 }

@@ -7,6 +7,20 @@ const nextConfig = {
     ANALYTICS_API_URL: process.env.ANALYTICS_API_URL ?? "http://localhost:8000",
     PIPELINE_API_URL: process.env.PIPELINE_API_URL ?? "http://localhost:8001",
   },
+  experimental: isProduction
+    ? {}
+    : {
+        cpus: 2,
+      },
+  async redirects() {
+    return [
+      {
+        destination: "/analytics",
+        permanent: false,
+        source: "/",
+      },
+    ];
+  },
   ...(isProduction
     ? {
         outputFileTracingIncludes: {

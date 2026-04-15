@@ -216,7 +216,7 @@ export function YouTubeAuthContentSkeleton() {
 export function AnalyticsPageSkeleton() {
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Analytics Dashboard" activeHref="/" />
+      <AppHeader subtitle="Analytics Dashboard" activeHref="/analytics" />
       <main className="mx-auto max-w-7xl px-6 py-8">
         <AnalyticsContentSkeleton />
       </main>
@@ -236,7 +236,7 @@ export function CommentsPageSkeleton() {
 export function ReviewQueuePageSkeleton() {
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Unpublished Videos" activeHref="/review" />
+      <AppHeader subtitle="Review Queue" activeHref="/review" />
       <ReviewQueueContentSkeleton />
     </div>
   );
@@ -292,7 +292,7 @@ export function LivestreamTopicPageSkeleton() {
 export function YouTubeAuthPageSkeleton() {
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Reconnect YouTube" activeHref="/" />
+      <AppHeader subtitle="Reconnect YouTube" activeHref="/analytics" />
       <YouTubeAuthContentSkeleton />
     </div>
   );

@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
-import { LivestreamBoardContentSkeleton } from '@/components/PageSkeletons';
 import { KanbanColumn } from '@/components/livestream/KanbanColumn';
+import { LivestreamBoardContentSkeleton } from '@/components/PageSkeletons';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -15,12 +15,12 @@ import {
 import { isErrorResponse } from '@/lib/api-types';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
-import { parseJsonResponse } from '@/lib/parse-json-response';
 import type {
   LivestreamListResponse,
   Topic,
   TopicStatus,
 } from '@/lib/livestream-types';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 
 const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
 
@@ -41,21 +41,25 @@ export default function LivestreamPage() {
       const data = await parseJsonResponse<
         LivestreamListResponse | { error: string }
       >(res);
-      if (!res.ok || isErrorResponse(data)) {
+      if (!res.ok) {
         throw new Error(
           isErrorResponse(data) ? data.error : `API error ${res.status}`,
         );
       }
-      setTopics(data.topics);
-      setDate(data.resolvedDate);
-      setAvailableDates(data.availableDates);
-      setIsFallback(data.isFallback);
+      if (isErrorResponse(data)) {
+        throw new Error(data.error);
+      }
+      const livestreamData = data as LivestreamListResponse;
+      setTopics(livestreamData.topics);
+      setDate(livestreamData.resolvedDate);
+      setAvailableDates(livestreamData.availableDates);
+      setIsFallback(livestreamData.isFallback);
       logClientPerf('livestream_board_fetch_topics', {
         durationMs: Number((performance.now() - startedAt).toFixed(2)),
-        isFallback: data.isFallback,
+        isFallback: livestreamData.isFallback,
         requestedDate,
-        resolvedDate: data.resolvedDate,
-        topicCount: data.topics.length,
+        resolvedDate: livestreamData.resolvedDate,
+        topicCount: livestreamData.topics.length,
       });
     } catch (fetchError) {
       setTopics([]);

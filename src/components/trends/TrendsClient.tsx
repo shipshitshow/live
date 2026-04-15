@@ -370,9 +370,9 @@ export function TrendsClient() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-[calc(100vh-80px)]">
+    <div className="flex min-h-0 flex-col gap-6 lg:h-[calc(100dvh-120px)] lg:flex-row">
       {/* Left Panel — Trend Feed */}
-      <div className="w-full lg:w-3/5 flex flex-col min-w-0">
+      <div className="flex min-h-0 w-full min-w-0 flex-col lg:w-3/5">
         <div className="flex items-center justify-between mb-4">
           <div className="min-w-0">
             <TrendFilters
@@ -397,7 +397,7 @@ export function TrendsClient() {
           </Button>
         </div>
 
-        <div className="flex-1 overflow-y-auto space-y-2 pr-2">
+        <div className="flex-1 space-y-2 overflow-y-auto pr-2 pb-4">
           {loading
             ? Array.from({ length: 8 }, (_, i) => (
                 <div
@@ -428,7 +428,7 @@ export function TrendsClient() {
       </div>
 
       {/* Right Panel — Deep Dive */}
-      <div className="w-full lg:w-2/5 overflow-y-auto lg:border-l border-surface-border lg:pl-6">
+      <div className="w-full min-h-0 overflow-y-auto lg:w-2/5 lg:border-l lg:border-surface-border lg:pl-6">
         <DeepDivePanel
           activeItem={activeItem}
           activeSelected={!!activeItem && selectedIds.has(activeItem.id)}

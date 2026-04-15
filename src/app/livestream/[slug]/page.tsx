@@ -8,8 +8,8 @@ import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { isErrorResponse } from '@/lib/api-types';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
-import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { LivestreamListResponse, Topic } from '@/lib/livestream-types';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import type { TrendItem, TrendsSearchResponse } from '@/lib/trends-types';
 
 const SOURCE_COLORS: Record<string, string> = {
@@ -463,19 +463,23 @@ export default function TopicDetailPage() {
       const data = await parseJsonResponse<
         LivestreamListResponse | { error: string }
       >(res);
-      if (!res.ok || isErrorResponse(data)) {
+      if (!res.ok) {
         throw new Error(
           isErrorResponse(data) ? data.error : `API error ${res.status}`,
         );
       }
-      setTopics(data.topics);
-      setResolvedDate(data.resolvedDate);
+      if (isErrorResponse(data)) {
+        throw new Error(data.error);
+      }
+      const livestreamData = data as LivestreamListResponse;
+      setTopics(livestreamData.topics);
+      setResolvedDate(livestreamData.resolvedDate);
       logClientPerf('livestream_topic_fetch_topics', {
         durationMs: Number((performance.now() - startedAt).toFixed(2)),
         requestedDate: date,
-        resolvedDate: data.resolvedDate,
+        resolvedDate: livestreamData.resolvedDate,
         slug,
-        topicCount: data.topics.length,
+        topicCount: livestreamData.topics.length,
       });
     } finally {
       setLoading(false);
@@ -592,13 +596,17 @@ export default function TopicDetailPage() {
       TrendsSearchResponse | { error: string }
     >(res);
 
-    if (!res.ok || isErrorResponse(data)) {
+    if (!res.ok) {
       throw new Error(
         isErrorResponse(data) ? data.error : `API error ${res.status}`,
       );
     }
+    if (isErrorResponse(data)) {
+      throw new Error(data.error);
+    }
+    const searchData = data as TrendsSearchResponse;
 
-    const tweets = data.items
+    const tweets = searchData.items
       .filter((item) => item.source === 'x' && isTweetUrl(item.url))
       .slice(0, 12);
 
