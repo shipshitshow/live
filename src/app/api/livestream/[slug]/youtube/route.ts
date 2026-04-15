@@ -1,28 +1,17 @@
-import { NextResponse } from "next/server";
-import fs from "fs";
-import { todayLocalDate } from "@/lib/date";
-import { findTopicFile } from "@/lib/livestream-files";
+import { todayLocalDate } from '@/lib/date';
+import { findTopicFile } from '@/lib/livestream-files';
+import { extractVideoId, extractYouTubeUrl } from '@/lib/livestream-youtube';
+import { logError, logEvent } from '@/lib/logger';
 import {
   getAccessToken,
   getChannelConfigs,
   hasYouTubeCredentials,
   isYouTubeReauthError,
-} from "@/lib/youtube/token";
-import { logError, logEvent } from "@/lib/logger";
+} from '@/lib/youtube/token';
+import fs from 'fs';
+import { NextResponse } from 'next/server';
 
-const DATA_API = "https://www.googleapis.com/youtube/v3";
-
-function extractYouTubeUrl(raw: string): string | null {
-  const match = raw.match(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/);
-  return match?.[0] ?? null;
-}
-
-function extractVideoId(url: string): string | null {
-  const watchMatch = url.match(/[?&]v=([\w-]+)/);
-  if (watchMatch) return watchMatch[1];
-  const shortMatch = url.match(/youtu\.be\/([\w-]+)/);
-  return shortMatch?.[1] ?? null;
-}
+const DATA_API = 'https://www.googleapis.com/youtube/v3';
 
 async function ytFetch(url: string, token: string) {
   const res = await fetch(url, {
@@ -37,92 +26,111 @@ async function ytFetch(url: string, token: string) {
 
 export async function GET(
   request: Request,
-  { params }: { params: Promise<{ slug: string }> }
+  { params }: { params: Promise<{ slug: string }> },
 ) {
   const { slug } = await params;
   const { searchParams } = new URL(request.url);
-  const date = searchParams.get("date") || todayLocalDate();
+  const date = searchParams.get('date') || todayLocalDate();
   const filePath = findTopicFile(slug, date);
 
   if (!filePath) {
-    return NextResponse.json({ error: "Topic not found" }, { status: 404 });
+    return NextResponse.json({ error: 'Topic not found' }, { status: 404 });
   }
 
-  const raw = fs.readFileSync(filePath, "utf-8");
+  const raw = fs.readFileSync(filePath, 'utf-8');
   const youtubeUrl = extractYouTubeUrl(raw);
   if (!youtubeUrl) {
-    return NextResponse.json({ youtubeUrl: null, liveStatus: "missing" });
+    return NextResponse.json({ liveStatus: 'missing', youtubeUrl: null });
   }
 
   const videoId = extractVideoId(youtubeUrl);
   if (!videoId) {
-    return NextResponse.json({ youtubeUrl, liveStatus: "invalid" });
+    return NextResponse.json({ liveStatus: 'invalid', youtubeUrl });
   }
 
   if (!hasYouTubeCredentials()) {
-    return NextResponse.json({ youtubeUrl, videoId, liveStatus: "unauthorized" });
+    return NextResponse.json({
+      liveStatus: 'unauthorized',
+      videoId,
+      youtubeUrl,
+    });
   }
 
   try {
     const channelConfig = (await getChannelConfigs())[0];
     if (!channelConfig) {
-      return NextResponse.json({ youtubeUrl, videoId, liveStatus: "unauthorized" });
+      return NextResponse.json({
+        liveStatus: 'unauthorized',
+        videoId,
+        youtubeUrl,
+      });
     }
     const token = await getAccessToken(channelConfig);
     const res = await ytFetch(
       `${DATA_API}/videos?part=snippet,statistics,liveStreamingDetails&id=${videoId}`,
-      token
+      token,
     );
 
     const item = res.items?.[0];
     if (!item) {
-      return NextResponse.json({ youtubeUrl, videoId, liveStatus: "missing" });
+      return NextResponse.json({ liveStatus: 'missing', videoId, youtubeUrl });
     }
 
     const live = item.liveStreamingDetails;
     const isLiveNow = !!live?.actualStartTime && !live?.actualEndTime;
-    const liveStatus = isLiveNow ? "live" : live?.actualEndTime ? "ended" : "scheduled";
+    const liveStatus = isLiveNow
+      ? 'live'
+      : live?.actualEndTime
+        ? 'ended'
+        : 'scheduled';
 
-    logEvent("api.livestream.youtube", {
-      slug,
+    logEvent('api.livestream.youtube', {
+      concurrentViewers: live?.concurrentViewers
+        ? Number(live.concurrentViewers)
+        : null,
       date,
-      videoId,
       liveStatus,
-      concurrentViewers: live?.concurrentViewers ? Number(live.concurrentViewers) : null,
+      slug,
+      videoId,
       viewCount: Number(item.statistics?.viewCount ?? 0),
     });
 
     return NextResponse.json({
-      youtubeUrl,
-      videoId,
-      title: item.snippet?.title ?? null,
+      actualEndTime: live?.actualEndTime ?? null,
+      actualStartTime: live?.actualStartTime ?? null,
       channelTitle: item.snippet?.channelTitle ?? null,
+      concurrentViewers: live?.concurrentViewers
+        ? Number(live.concurrentViewers)
+        : null,
+      liveStatus,
+      publishedAt: item.snippet?.publishedAt ?? null,
+      scheduledStartTime: live?.scheduledStartTime ?? null,
       thumbnailUrl:
         item.snippet?.thumbnails?.medium?.url ||
         item.snippet?.thumbnails?.default?.url ||
         null,
-      publishedAt: item.snippet?.publishedAt ?? null,
+      title: item.snippet?.title ?? null,
+      videoId,
       viewCount: Number(item.statistics?.viewCount ?? 0),
-      concurrentViewers: live?.concurrentViewers ? Number(live.concurrentViewers) : null,
-      scheduledStartTime: live?.scheduledStartTime ?? null,
-      actualStartTime: live?.actualStartTime ?? null,
-      actualEndTime: live?.actualEndTime ?? null,
-      liveStatus,
+      youtubeUrl,
     });
   } catch (error) {
     if (isYouTubeReauthError(error)) {
       return NextResponse.json(
         {
-          youtubeUrl,
-          videoId,
-          liveStatus: "unauthorized",
-          reauthRequired: true,
           channelLabel: error.channelLabel ?? null,
+          liveStatus: 'unauthorized',
+          reauthRequired: true,
+          videoId,
+          youtubeUrl,
         },
-        { status: 401 }
+        { status: 401 },
       );
     }
-    logError("api.livestream.youtube_failed", error, { slug, date, videoId });
-    return NextResponse.json({ youtubeUrl, videoId, liveStatus: "error" }, { status: 500 });
+    logError('api.livestream.youtube_failed', error, { date, slug, videoId });
+    return NextResponse.json(
+      { liveStatus: 'error', videoId, youtubeUrl },
+      { status: 500 },
+    );
   }
 }
