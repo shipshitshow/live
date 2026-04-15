@@ -22,6 +22,7 @@ export const CONTENT_FIELDS: ContentField[] = [
 ];
 
 export interface TopicFrontmatter {
+  announcement_tweet: string | null;
   title: string;
   slug: string;
   source: string;

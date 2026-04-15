@@ -1,10 +1,7 @@
 {
-  "appState": {
-    "gridModeEnabled": false,
-    "gridSize": 20,
-    "gridStep": 5,
-    "viewBackgroundColor": "#101010"
-  },
+  "type": "excalidraw",
+  "version": 2,
+  "source": "http://localhost:3001",
   "elements": [
     {
       "angle": 0,
@@ -95,16 +92,16 @@
       "text": "fsfssfsdfsdf",
       "textAlign": "left",
       "type": "text",
-      "updated": 1776274911689,
-      "version": 32,
-      "versionNonce": 272753001,
+      "updated": 1776279424575,
+      "version": 50,
+      "versionNonce": 62638775,
       "verticalAlign": "top",
       "width": 297.80078125,
-      "x": 453.76953125,
-      "y": 350.6875
+      "x": 567.15234375,
+      "y": 404.44921875
     }
   ],
-  "source": "http://localhost:3001",
-  "type": "excalidraw",
-  "version": 2
+  "appState": {
+    "viewBackgroundColor": "#101010"
+  }
 }

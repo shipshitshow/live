@@ -98,8 +98,8 @@ function formatCompactNumber(value: number | null | undefined): string {
   return String(value);
 }
 
-function renderInlineLinks(text: string) {
-  const parts = text.split(/(\[.*?\]\(.*?\))/g);
+function renderInlineMarkdown(text: string) {
+  const parts = text.split(/(\[.*?\]\(.*?\)|\*\*.*?\*\*|`.*?`)/g);
   return parts.map((part, j) => {
     const linkMatch = part.match(/\[(.*?)\]\((.*?)\)/);
     if (linkMatch) {
@@ -115,6 +115,21 @@ function renderInlineLinks(text: string) {
         </a>
       );
     }
+
+    const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
+    if (boldMatch) {
+      return <strong key={j}>{boldMatch[1]}</strong>;
+    }
+
+    const codeMatch = part.match(/^`(.*?)`$/);
+    if (codeMatch) {
+      return (
+        <code key={j} className="rounded bg-surface-elevated px-1.5 py-0.5">
+          {codeMatch[1]}
+        </code>
+      );
+    }
+
     return <span key={j}>{part}</span>;
   });
 }
@@ -133,6 +148,8 @@ function extractMarkdownLinks(text: string): MarkdownLink[] {
 function stripMarkdown(text: string): string {
   return text
     .replace(/\[(.*?)\]\((.*?)\)/g, '$1')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/`(.*?)`/g, '$1')
     .replace(/^\s*-\s+/gm, '')
     .replace(/\s+/g, ' ')
     .trim();
@@ -304,6 +321,9 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   const talkingSections = sections.filter((s) =>
     isTalkingPointSection(s.heading),
   );
+  const coldOpen = sections.find((s) =>
+    /^(cold open|intro)$/i.test(s.heading.trim()),
+  );
   const summary = sections.find((s) => s.heading === 'Summary');
   const hotTake = sections.find((s) => s.heading === 'Hot Take');
 
@@ -311,15 +331,25 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   let segNum = 0;
   let currentSeconds = 0;
 
-  // Intro — one clean opener, timed from the actual prompt size.
+  // Intro prefers an explicit cold-open block when present.
+  const introPoints = coldOpen ? parseTalkingPoints(coldOpen.body) : [];
+  const introRawText =
+    coldOpen && introPoints.length === 0 ? coldOpen.body.trim() : undefined;
   const introHook = buildColdOpenHook(summary);
-  const introPoints = [{ sources: [], text: introHook }];
-  const introSeconds = estimateSegmentSeconds('intro', introPoints);
+  const fallbackIntroPoints = [{ sources: [], text: introHook }];
+  const resolvedIntroPoints =
+    introPoints.length > 0 ? introPoints : fallbackIntroPoints;
+  const introSeconds = estimateSegmentSeconds(
+    'intro',
+    resolvedIntroPoints,
+    introRawText,
+  );
   segments.push({
     duration: formatSegmentDuration(introSeconds),
     label: 'Cold Open',
     number: segNum++,
-    points: introPoints,
+    points: resolvedIntroPoints,
+    rawText: introRawText,
     time: formatSegmentTime(currentSeconds),
     type: 'intro',
   });
@@ -524,6 +554,12 @@ export default function TopicDetailPage() {
   const livestreamNoteLinks = extractMarkdownLinks(
     livestreamNotesSection?.body ?? '',
   );
+  const announcementTweetLink = topic?.announcement_tweet
+    ? {
+        text: 'Announcement Tweet',
+        url: topic.announcement_tweet,
+      }
+    : null;
   const restreamLink =
     livestreamNoteLinks.find((link) => isRestreamUrl(link.url)) ?? null;
   const segments = buildShowRundown(sections);
@@ -554,6 +590,10 @@ export default function TopicDetailPage() {
         text: streamMeta.liveStatus === 'live' ? 'Livestream' : 'Replay',
         url: streamMeta.youtubeUrl,
       });
+    }
+
+    if (announcementTweetLink) {
+      links.push(announcementTweetLink);
     }
 
     for (const link of livestreamNoteLinks) {
@@ -830,7 +870,7 @@ export default function TopicDetailPage() {
                       {seg.rawText && (
                         <div className="bg-yellow-500/5 border-l-2 border-yellow-500/40 pl-4 py-3 mb-4">
                           <p className="text-[20px] text-text-primary leading-[1.7]">
-                            {seg.rawText}
+                            {renderInlineMarkdown(seg.rawText)}
                           </p>
                         </div>
                       )}
@@ -848,7 +888,7 @@ export default function TopicDetailPage() {
 
                                 <div className="flex-1 min-w-0">
                                   <p className="text-[20px] text-text-primary leading-[1.7] font-medium">
-                                    {renderInlineLinks(point.text)}
+                                    {renderInlineMarkdown(point.text)}
                                   </p>
 
                                   {point.sources.length > 0 &&
@@ -935,6 +975,17 @@ export default function TopicDetailPage() {
                     className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary hover:border-accent-red/30 hover:text-accent-red transition-colors"
                   >
                     <span>Open Restream Studio</span>
+                  </a>
+                )}
+
+                {announcementTweetLink && (
+                  <a
+                    href={announcementTweetLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary hover:border-accent-red/30 hover:text-accent-red transition-colors"
+                  >
+                    <span>Open Announcement Tweet</span>
                   </a>
                 )}
 

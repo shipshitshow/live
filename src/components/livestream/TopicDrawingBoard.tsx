@@ -16,6 +16,7 @@ import type {
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { isErrorResponse } from '@/lib/api-types';
 import type {
   LivestreamListResponse,
@@ -28,9 +29,11 @@ const Excalidraw = dynamic(
   { ssr: false },
 );
 
+const DRAWING_BACKGROUND = '#000000';
+
 const EMPTY_SCENE: ExcalidrawInitialDataState = {
   appState: {
-    viewBackgroundColor: '#101010',
+    viewBackgroundColor: DRAWING_BACKGROUND,
   },
   elements: [],
 };
@@ -148,6 +151,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
   const [saveStatus, setSaveStatus] = useState<SaveStatus>('idle');
   const [lastSavedAt, setLastSavedAt] = useState<string | null>(null);
   const [exporting, setExporting] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   const sections = useMemo(
     () => parseMarkdownSections(topic?.content ?? ''),
@@ -257,20 +261,26 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
 
         const livestreamData = topicsData as LivestreamListResponse;
         const topicDrawingData = drawingData as TopicDrawingResponse;
+        const sceneAppState = {
+          ...(topicDrawingData.scene?.appState ?? EMPTY_SCENE.appState),
+          viewBackgroundColor: DRAWING_BACKGROUND,
+        };
 
         setTopic(
           livestreamData.topics.find((item) => item.slug === slug) || null,
         );
         setInitialScene(
           topicDrawingData.scene
-            ? (topicDrawingData.scene as ExcalidrawInitialDataState)
+            ? ({
+                ...topicDrawingData.scene,
+                appState: sceneAppState,
+              } as ExcalidrawInitialDataState)
             : EMPTY_SCENE,
         );
         if (topicDrawingData.scene) {
           lastSavedContentRef.current = serializePersistedScene(
             (topicDrawingData.scene.elements ?? []) as SerializedSceneElements,
-            (topicDrawingData.scene.appState ??
-              EMPTY_SCENE.appState) as AppState,
+            sceneAppState as AppState,
             (topicDrawingData.scene.files ?? {}) as BinaryFiles,
           );
         } else {
@@ -334,6 +344,17 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
   );
 
   const handleSaveNow = useCallback(async () => {
+    const api = apiRef.current;
+    if (api) {
+      pendingContentRef.current = serializePersistedScene(
+        api.getSceneElements() as SerializedSceneElements,
+        {
+          ...api.getAppState(),
+          viewBackgroundColor: DRAWING_BACKGROUND,
+        } as AppState,
+        api.getFiles() as SerializedSceneFiles,
+      );
+    }
     if (saveTimerRef.current) {
       clearTimeout(saveTimerRef.current);
       saveTimerRef.current = null;
@@ -365,7 +386,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
 
   if (loading || !initialScene) {
     return (
-      <div className="flex min-h-[calc(100vh-65px)] items-center justify-center bg-surface">
+      <div className="flex min-h-[calc(100vh-65px)] items-center justify-center bg-black">
         <p className="text-sm text-text-muted animate-pulse">
           Loading drawing board…
         </p>
@@ -381,85 +402,134 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
         : `Saved ${formatSavedAt(lastSavedAt)}`;
 
   return (
-    <div className="flex h-[calc(100vh-65px)] bg-surface">
-      <aside className="w-[360px] shrink-0 overflow-y-auto border-r border-surface-border bg-surface-card/60 p-5">
-        <div className="space-y-3">
-          <Link
-            href={`/livestream/${slug}?date=${date}`}
-            className="inline-flex items-center gap-2 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary"
-          >
-            <span aria-hidden="true">←</span>
-            Back to rundown
-          </Link>
+    <div className="flex h-[calc(100vh-65px)] bg-black">
+      <aside
+        id="talking-points-sidebar"
+        className="shrink-0 overflow-hidden border-r border-surface-border bg-[#050505] transition-[width] duration-200 ease-out"
+        style={{ width: isSidebarOpen ? 'min(360px, 85vw)' : '4.5rem' }}
+      >
+        {isSidebarOpen ? (
+          <div className="h-full overflow-y-auto p-5">
+            <div className="space-y-3">
+              <div className="flex items-start justify-between gap-3">
+                <Link
+                  href={`/livestream/${slug}?date=${date}`}
+                  className="inline-flex items-center gap-2 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary"
+                >
+                  <span aria-hidden="true">←</span>
+                  Back to rundown
+                </Link>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setIsSidebarOpen(false)}
+                  aria-expanded={true}
+                  aria-controls="talking-points-sidebar"
+                >
+                  Hide
+                </Button>
+              </div>
 
-          <div>
-            <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-text-muted">
-              Topic Drawing Board
-            </p>
-            <h1 className="mt-2 text-xl font-semibold leading-tight text-text-primary">
-              {topic?.title || slug}
-            </h1>
-            <p className="mt-2 text-sm leading-relaxed text-text-secondary">
-              {summary
-                ? stripMarkdown(summary.body)
-                : 'Use this board to sketch key ideas live.'}
-            </p>
-          </div>
-        </div>
+              <div>
+                <p className="text-[10px] font-mono uppercase tracking-[0.22em] text-text-muted">
+                  Topic Drawing Board
+                </p>
+                <h1 className="mt-2 text-xl font-semibold leading-tight text-text-primary">
+                  {topic?.title || slug}
+                </h1>
+                <p className="mt-2 text-sm leading-relaxed text-text-secondary">
+                  {summary
+                    ? stripMarkdown(summary.body)
+                    : 'Use this board to sketch key ideas live.'}
+                </p>
+              </div>
+            </div>
 
-        <div className="mt-6 grid gap-2">
-          <button
-            type="button"
-            onClick={handleSaveNow}
-            className="rounded-lg bg-accent-red px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-          >
-            Save Board
-          </button>
-          <button
-            type="button"
-            onClick={handleExportPng}
-            disabled={exporting}
-            className="rounded-lg border border-surface-border bg-surface px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {exporting ? 'Exporting PNG…' : 'Download PNG'}
-          </button>
-          <p
-            className={`text-xs ${
-              saveStatus === 'error' ? 'text-red-400' : 'text-text-muted'
-            }`}
-          >
-            {saveLabel}
-          </p>
-        </div>
-
-        <div className="mt-8 space-y-6">
-          {talkingPointSections.map((section) => {
-            const points = parseTalkingPoints(section.body);
-
-            return (
-              <section
-                key={section.heading}
-                className="rounded-xl border border-surface-border bg-surface/60 p-4"
+            <div className="mt-6 grid gap-2">
+              <button
+                type="button"
+                onClick={handleSaveNow}
+                className="rounded-lg bg-accent-red px-4 py-3 text-sm font-semibold text-white transition-opacity hover:opacity-90"
               >
-                <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary">
-                  {section.heading}
-                </h2>
-                <div className="mt-3 space-y-3">
-                  {points.map((point, index) => (
-                    <div
-                      key={`${section.heading}-${index}`}
-                      className="rounded-lg border border-surface-border/70 bg-surface-card px-3 py-2"
-                    >
-                      <p className="text-sm leading-relaxed text-text-primary">
-                        {stripMarkdown(point)}
-                      </p>
+                Save Board
+              </button>
+              <button
+                type="button"
+                onClick={handleExportPng}
+                disabled={exporting}
+                className="rounded-lg border border-surface-border bg-black px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {exporting ? 'Exporting PNG…' : 'Download PNG'}
+              </button>
+              <p
+                className={`text-xs ${
+                  saveStatus === 'error' ? 'text-red-400' : 'text-text-muted'
+                }`}
+              >
+                {saveLabel}
+              </p>
+            </div>
+
+            <div className="mt-8 space-y-6">
+              {talkingPointSections.map((section) => {
+                const points = parseTalkingPoints(section.body);
+
+                return (
+                  <section
+                    key={section.heading}
+                    className="rounded-xl border border-surface-border bg-[#0a0a0a] p-4"
+                  >
+                    <h2 className="text-xs font-semibold uppercase tracking-[0.16em] text-text-secondary">
+                      {section.heading}
+                    </h2>
+                    <div className="mt-3 space-y-3">
+                      {points.map((point, index) => (
+                        <div
+                          key={`${section.heading}-${index}`}
+                          className="rounded-lg border border-surface-border/70 bg-[#111111] px-3 py-2"
+                        >
+                          <p className="text-sm leading-relaxed text-text-primary">
+                            {stripMarkdown(point)}
+                          </p>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
-              </section>
-            );
-          })}
-        </div>
+                  </section>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <div className="flex h-full flex-col items-center gap-3 p-3">
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen(true)}
+              className="flex w-full flex-col items-center gap-1 rounded-xl border border-surface-border bg-[#0c0c0c] px-2 py-3 text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+              aria-expanded={false}
+              aria-controls="talking-points-sidebar"
+            >
+              <span aria-hidden="true" className="text-sm">
+                ☰
+              </span>
+              <span className="text-[9px] font-semibold uppercase tracking-[0.16em]">
+                Points
+              </span>
+            </button>
+
+            <Link
+              href={`/livestream/${slug}?date=${date}`}
+              className="flex w-full flex-col items-center gap-1 rounded-xl border border-surface-border bg-[#0c0c0c] px-2 py-3 text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+            >
+              <span aria-hidden="true" className="text-sm">
+                ←
+              </span>
+              <span className="text-[9px] font-semibold uppercase tracking-[0.16em]">
+                Back
+              </span>
+            </Link>
+          </div>
+        )}
       </aside>
 
       <main className="flex-1">
@@ -471,7 +541,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
             initialData={initialScene}
             onChange={handleChange}
             renderTopRightUI={() => (
-              <div className="flex items-center gap-2 rounded-lg border border-surface-border bg-surface-card/90 px-3 py-2 text-xs text-text-secondary shadow-sm">
+              <div className="flex items-center gap-2 rounded-lg border border-surface-border bg-black/90 px-3 py-2 text-xs text-text-secondary shadow-sm">
                 <span>{topic?.title || slug}</span>
                 <span className="text-text-muted">•</span>
                 <span>{date}</span>

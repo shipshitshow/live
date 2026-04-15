@@ -164,6 +164,7 @@ function parseFrontmatter(raw: string): {
   return {
     content,
     frontmatter: {
+      announcement_tweet: fm.announcement_tweet ?? null,
       date,
       slug,
       source,
@@ -176,12 +177,14 @@ function parseFrontmatter(raw: string): {
 }
 
 function topicToMarkdown(topic: Topic): string {
+  const announcementTweet = topic.announcement_tweet ?? null;
   let markdown = `---
 title: "${topic.title}"
 slug: "${topic.slug}"
 source: "${topic.source}"
 status: "${topic.status}"
 date: "${topic.date}"
+announcement_tweet: ${announcementTweet === null ? 'null' : `"${announcementTweet}"`}
 thumbnail_prompt: ${topic.thumbnail_prompt === null ? 'null' : `"${topic.thumbnail_prompt}"`}
 ---
 
@@ -509,6 +512,7 @@ slug: "${input.slug}"
 source: "${input.source}"
 status: "backlog"
 date: "${input.date}"
+announcement_tweet: null
 thumbnail_prompt: null
 ---
 
@@ -522,6 +526,7 @@ ${input.content}
   }
 
   const topic: Topic = {
+    announcement_tweet: null,
     content: input.content,
     date: input.date,
     fileName,
