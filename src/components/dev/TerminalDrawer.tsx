@@ -1,7 +1,5 @@
 'use client';
 
-import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Select,
@@ -15,9 +13,14 @@ import type {
   TerminalSnapshot,
 } from '@/lib/dev-terminal-types';
 import { parseJsonResponse } from '@/lib/parse-json-response';
+import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const TERMINAL_OPEN_KEY = 'shipshitshow.devTerminal.open';
 const TERMINAL_AGENT_KEY = 'shipshitshow.devTerminal.agent';
+const TERMINAL_POLL_IDLE_MS = 1000;
+const TERMINAL_POLL_RUNNING_MS = 250;
+const TERMINAL_POLL_HIDDEN_MS = 2000;
 
 type AgentMode = 'shell' | 'codex' | 'claude';
 
@@ -282,7 +285,22 @@ export function TerminalDrawer() {
   useEffect(() => {
     if (!open || !sessionId) return;
 
-    const poll = window.setInterval(async () => {
+    let cancelled = false;
+    let timer: number | null = null;
+
+    const scheduleNextPoll = (delayMs: number) => {
+      if (cancelled) return;
+      timer = window.setTimeout(runPoll, delayMs);
+    };
+
+    const runPoll = async () => {
+      if (cancelled) return;
+
+      if (document.visibilityState === 'hidden') {
+        scheduleNextPoll(TERMINAL_POLL_HIDDEN_MS);
+        return;
+      }
+
       const res = await fetch(
         `/api/dev/terminal?sessionId=${sessionId}&cursor=${cursorRef.current}`,
         {
@@ -308,9 +326,21 @@ export function TerminalDrawer() {
 
       setCursor(data.cursor);
       setStatus(data.status);
-    }, 120);
+      scheduleNextPoll(
+        data.status === 'running'
+          ? TERMINAL_POLL_RUNNING_MS
+          : TERMINAL_POLL_IDLE_MS,
+      );
+    };
 
-    return () => window.clearInterval(poll);
+    void runPoll();
+
+    return () => {
+      cancelled = true;
+      if (timer !== null) {
+        window.clearTimeout(timer);
+      }
+    };
   }, [open, sessionId]);
 
   useEffect(() => {

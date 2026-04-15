@@ -1,6 +1,6 @@
 'use client';
 
-import { Profiler, useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
 import { KanbanColumn } from '@/components/livestream/KanbanColumn';
 import { Button } from '@/components/ui/button';
@@ -21,7 +21,6 @@ import type {
 } from '@/lib/livestream-types';
 
 const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
-const SHOULD_PROFILE_RENDER = process.env.NODE_ENV === 'production';
 
 async function parseJsonResponse<T>(res: Response): Promise<T> {
   const text = await res.text();
@@ -88,25 +87,6 @@ export default function LivestreamPage() {
   useEffect(() => {
     logClientEvent('livestream_board_view', { requestedDate });
   }, [requestedDate]);
-
-  const handleProfilerRender = useCallback(
-    (
-      id: string,
-      phase: 'mount' | 'update' | 'nested-update',
-      actualDuration: number,
-      baseDuration: number,
-    ) => {
-      logClientPerf('react_render', {
-        actualDuration: Number(actualDuration.toFixed(2)),
-        baseDuration: Number(baseDuration.toFixed(2)),
-        component: id,
-        page: 'livestream_board',
-        phase,
-        topicCount: topics.length,
-      });
-    },
-    [topics.length],
-  );
 
   async function handleStatusChange(slug: string, status: TopicStatus) {
     // Optimistic update
@@ -198,20 +178,6 @@ export default function LivestreamPage() {
               <code>data/livestream/YYYY-MM-DD/</code>.
             </p>
           </div>
-        ) : SHOULD_PROFILE_RENDER ? (
-          <Profiler id="LivestreamBoardColumns" onRender={handleProfilerRender}>
-            <div className="flex gap-6 overflow-x-auto">
-              {COLUMNS.map((status) => (
-                <KanbanColumn
-                  key={status}
-                  status={status}
-                  topics={topics.filter((t) => t.status === status)}
-                  onStatusChange={handleStatusChange}
-                  onSelect={handleSelect}
-                />
-              ))}
-            </div>
-          </Profiler>
         ) : (
           <div className="flex gap-6 overflow-x-auto">
             {COLUMNS.map((status) => (

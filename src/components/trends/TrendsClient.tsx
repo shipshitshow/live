@@ -1,36 +1,146 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import type { TrendItem, TrendsResponse, TrendsSearchResponse, TrendSource } from "@/lib/trends-types";
-import { todayLocalDate } from "@/lib/date";
-import { dispatchTerminalPrompt } from "@/lib/dev-terminal-events";
-import { parseJsonResponse } from "@/lib/parse-json-response";
-import { TrendCard } from "./TrendCard";
-import { TrendFilters, type FilterValue } from "./TrendFilters";
-import { DeepDivePanel } from "./DeepDivePanel";
-import { TrendActionBar } from "./TrendActionBar";
-import { Button } from "@/components/ui/button";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { todayLocalDate } from '@/lib/date';
+import { dispatchTerminalPrompt } from '@/lib/dev-terminal-events';
+import { parseJsonResponse } from '@/lib/parse-json-response';
+import type {
+  TrendItem,
+  TrendSource,
+  TrendsResponse,
+  TrendsSearchResponse,
+} from '@/lib/trends-types';
+import { DeepDivePanel } from './DeepDivePanel';
+import { TrendActionBar } from './TrendActionBar';
+import { TrendCard } from './TrendCard';
+import { type FilterValue, TrendFilters } from './TrendFilters';
 
 const STOP_WORDS = new Set([
-  "the", "a", "an", "is", "are", "was", "were", "be", "been", "being",
-  "have", "has", "had", "do", "does", "did", "will", "would", "could",
-  "should", "may", "might", "can", "shall", "to", "of", "in", "for",
-  "on", "with", "at", "by", "from", "as", "into", "through", "during",
-  "before", "after", "above", "below", "between", "out", "off", "over",
-  "under", "again", "further", "then", "once", "here", "there", "when",
-  "where", "why", "how", "all", "each", "every", "both", "few", "more",
-  "most", "other", "some", "such", "no", "nor", "not", "only", "own",
-  "same", "so", "than", "too", "very", "just", "because", "but", "and",
-  "or", "if", "while", "about", "up", "its", "it", "this", "that",
-  "these", "those", "i", "me", "my", "we", "our", "you", "your", "he",
-  "him", "his", "she", "her", "they", "them", "their", "what", "which",
-  "who", "whom", "new", "like", "get", "got", "also",
+  'the',
+  'a',
+  'an',
+  'is',
+  'are',
+  'was',
+  'were',
+  'be',
+  'been',
+  'being',
+  'have',
+  'has',
+  'had',
+  'do',
+  'does',
+  'did',
+  'will',
+  'would',
+  'could',
+  'should',
+  'may',
+  'might',
+  'can',
+  'shall',
+  'to',
+  'of',
+  'in',
+  'for',
+  'on',
+  'with',
+  'at',
+  'by',
+  'from',
+  'as',
+  'into',
+  'through',
+  'during',
+  'before',
+  'after',
+  'above',
+  'below',
+  'between',
+  'out',
+  'off',
+  'over',
+  'under',
+  'again',
+  'further',
+  'then',
+  'once',
+  'here',
+  'there',
+  'when',
+  'where',
+  'why',
+  'how',
+  'all',
+  'each',
+  'every',
+  'both',
+  'few',
+  'more',
+  'most',
+  'other',
+  'some',
+  'such',
+  'no',
+  'nor',
+  'not',
+  'only',
+  'own',
+  'same',
+  'so',
+  'than',
+  'too',
+  'very',
+  'just',
+  'because',
+  'but',
+  'and',
+  'or',
+  'if',
+  'while',
+  'about',
+  'up',
+  'its',
+  'it',
+  'this',
+  'that',
+  'these',
+  'those',
+  'i',
+  'me',
+  'my',
+  'we',
+  'our',
+  'you',
+  'your',
+  'he',
+  'him',
+  'his',
+  'she',
+  'her',
+  'they',
+  'them',
+  'their',
+  'what',
+  'which',
+  'who',
+  'whom',
+  'new',
+  'like',
+  'get',
+  'got',
+  'also',
 ]);
 
 function extractKeywords(titles: string[]): string {
   const wordFreq = new Map<string, number>();
   for (const title of titles) {
-    const words = title.toLowerCase().replace(/[^a-z0-9\s]/g, "").split(/\s+/);
+    const words = title
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .split(/\s+/);
     for (const word of words) {
       if (word.length < 3 || STOP_WORDS.has(word)) continue;
       wordFreq.set(word, (wordFreq.get(word) || 0) + 1);
@@ -40,7 +150,7 @@ function extractKeywords(titles: string[]): string {
     .sort((a, b) => b[1] - a[1])
     .slice(0, 5)
     .map(([word]) => word)
-    .join(" ");
+    .join(' ');
 }
 
 export function TrendsClient() {
@@ -49,8 +159,10 @@ export function TrendsClient() {
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sources, setSources] = useState<TrendsResponse["sources"] | null>(null);
-  const [sourceFilter, setSourceFilter] = useState<FilterValue>("all");
+  const [sources, setSources] = useState<TrendsResponse['sources'] | null>(
+    null,
+  );
+  const [sourceFilter, setSourceFilter] = useState<FilterValue>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deepDiveItems, setDeepDiveItems] = useState<TrendItem[]>([]);
   const [deepDiveQuery, setDeepDiveQuery] = useState<string | null>(null);
@@ -62,15 +174,19 @@ export function TrendsClient() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/trends");
+      const res = await fetch('/api/trends');
       if (!res.ok) throw new Error(`API error ${res.status}`);
       const data = await parseJsonResponse<TrendsResponse>(res);
       setItems(data.items);
-      setActiveItemId((prev) => prev && data.items.some((item) => item.id === prev) ? prev : (data.items[0]?.id ?? null));
+      setActiveItemId((prev) =>
+        prev && data.items.some((item) => item.id === prev)
+          ? prev
+          : (data.items[0]?.id ?? null),
+      );
       setFetchedAt(data.fetchedAt);
       setSources(data.sources);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load trends");
+      setError(e instanceof Error ? e.message : 'Failed to load trends');
     } finally {
       setLoading(false);
     }
@@ -81,12 +197,18 @@ export function TrendsClient() {
   }, [fetchTrends]);
 
   const filteredItems = useMemo(() => {
-    if (sourceFilter === "all") return items;
+    if (sourceFilter === 'all') return items;
     return items.filter((item) => item.source === sourceFilter);
   }, [items, sourceFilter]);
 
   const counts = useMemo(() => {
-    const c: Record<FilterValue, number> = { all: items.length, hackernews: 0, reddit: 0, youtube: 0, x: 0 };
+    const c: Record<FilterValue, number> = {
+      all: items.length,
+      hackernews: 0,
+      reddit: 0,
+      x: 0,
+      youtube: 0,
+    };
     for (const item of items) c[item.source]++;
     return c;
   }, [items]);
@@ -95,18 +217,18 @@ export function TrendsClient() {
     if (!sources) return null;
 
     const labels: Record<TrendSource, string> = {
-      hackernews: "HN",
-      reddit: "Reddit",
-      youtube: "YouTube",
-      x: "X",
+      hackernews: 'HN',
+      reddit: 'Reddit',
+      x: 'X',
+      youtube: 'YouTube',
     };
 
     const failed = Object.entries(sources)
-      .filter(([, status]) => status === "error")
+      .filter(([, status]) => status === 'error')
       .map(([source]) => labels[source as TrendSource]);
 
-    if (failed.length === 0) return "All sources live";
-    return `${failed.join(", ")} unavailable`;
+    if (failed.length === 0) return 'All sources live';
+    return `${failed.join(', ')} unavailable`;
   }, [sources]);
 
   function toggleSelection(id: string) {
@@ -120,18 +242,22 @@ export function TrendsClient() {
 
   const activeItem = useMemo(
     () => items.find((item) => item.id === activeItemId) || null,
-    [items, activeItemId]
+    [items, activeItemId],
   );
 
   async function handleGoDeeper() {
-    const selectedTitles = items.filter((i) => selectedIds.has(i.id)).map((i) => i.title);
+    const selectedTitles = items
+      .filter((i) => selectedIds.has(i.id))
+      .map((i) => i.title);
     const query = extractKeywords(selectedTitles);
     if (!query) return;
 
     setDeepDiveLoading(true);
     setDeepDiveQuery(query);
     try {
-      const res = await fetch(`/api/trends/search?q=${encodeURIComponent(query)}`);
+      const res = await fetch(
+        `/api/trends/search?q=${encodeURIComponent(query)}`,
+      );
       if (!res.ok) throw new Error(`Search error ${res.status}`);
       const data = await parseJsonResponse<TrendsSearchResponse>(res);
       const mainIds = new Set(items.map((i) => i.id));
@@ -147,32 +273,32 @@ export function TrendsClient() {
     setAddingToLivestream(true);
     const date = todayLocalDate();
     const sourceMap: Record<TrendSource, string> = {
-      hackernews: "HN",
-      reddit: "Reddit",
-      youtube: "YouTube",
-      x: "X",
+      hackernews: 'HN',
+      reddit: 'Reddit',
+      x: 'X',
+      youtube: 'YouTube',
     };
 
     try {
       for (const item of trendsToAdd) {
         const slug = item.title
           .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-|-$/g, "")
+          .replace(/[^a-z0-9]+/g, '-')
+          .replace(/^-|-$/g, '')
           .slice(0, 60);
 
-        const content = `## Source\n\n- [${sourceMap[item.source]}](${item.url}) — ${item.score.toLocaleString()} ${item.source === "youtube" ? "views" : "points"}, ${item.commentCount.toLocaleString()} comments\n\n## Summary\n\n${item.summary || item.title}`;
+        const content = `## Source\n\n- [${sourceMap[item.source]}](${item.url}) — ${item.score.toLocaleString()} ${item.source === 'youtube' ? 'views' : 'points'}, ${item.commentCount.toLocaleString()} comments\n\n## Summary\n\n${item.summary || item.title}`;
 
-        await fetch("/api/livestream", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
+        await fetch('/api/livestream', {
           body: JSON.stringify({
-            title: item.title,
+            content,
+            date,
             slug,
             source: sourceMap[item.source],
-            date,
-            content,
+            title: item.title,
           }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
         });
 
         setAddedIds((prev) => new Set([...prev, item.id]));
@@ -183,7 +309,9 @@ export function TrendsClient() {
   }
 
   function handleAddSelectedToLivestream() {
-    const selected = items.filter((i) => selectedIds.has(i.id) && !addedIds.has(i.id));
+    const selected = items.filter(
+      (i) => selectedIds.has(i.id) && !addedIds.has(i.id),
+    );
     if (selected.length > 0) addToLivestream(selected);
   }
 
@@ -196,22 +324,24 @@ export function TrendsClient() {
     if (selected.length === 0) return;
 
     const prompt = [
-      "Research these selected trends for Ship Shit Show and turn them into livestream prep.",
-      "",
-      ...selected.flatMap((item, index) => [
-        `${index + 1}. ${item.title}`,
-        `Source: ${item.source}`,
-        `URL: ${item.url}`,
-        item.summary ? `Summary: ${item.summary}` : null,
-        "",
-      ]).filter(Boolean),
-      "Return:",
-      "- which trends are strongest",
-      "- how they connect",
-      "- a recommended segment order",
-      "- talking points per segment",
-      "- one hot take per segment",
-    ].join("\n");
+      'Research these selected trends for Ship Shit Show and turn them into livestream prep.',
+      '',
+      ...selected
+        .flatMap((item, index) => [
+          `${index + 1}. ${item.title}`,
+          `Source: ${item.source}`,
+          `URL: ${item.url}`,
+          item.summary ? `Summary: ${item.summary}` : null,
+          '',
+        ])
+        .filter(Boolean),
+      'Return:',
+      '- which trends are strongest',
+      '- how they connect',
+      '- a recommended segment order',
+      '- talking points per segment',
+      '- one hot take per segment',
+    ].join('\n');
 
     dispatchTerminalPrompt(prompt);
   }
@@ -229,7 +359,10 @@ export function TrendsClient() {
       <div className="flex flex-col items-center justify-center py-24 gap-4">
         <div className="text-accent-red text-4xl">⚠</div>
         <p className="text-text-secondary text-sm">{error}</p>
-        <Button onClick={handleRefresh} className="text-xs hover:border-accent-red">
+        <Button
+          onClick={handleRefresh}
+          className="text-xs hover:border-accent-red"
+        >
           Retry
         </Button>
       </div>
@@ -242,36 +375,46 @@ export function TrendsClient() {
       <div className="w-full lg:w-3/5 flex flex-col min-w-0">
         <div className="flex items-center justify-between mb-4">
           <div className="min-w-0">
-            <TrendFilters active={sourceFilter} onChange={setSourceFilter} counts={counts} />
+            <TrendFilters
+              active={sourceFilter}
+              onChange={setSourceFilter}
+              counts={counts}
+            />
             {(fetchedAt || sourceSummary) && (
               <p className="text-[10px] text-text-muted mt-2">
-                {fetchedAt ? `Updated ${new Date(fetchedAt).toLocaleTimeString()}` : "Not fetched yet"}
-                {sourceSummary ? ` · ${sourceSummary}` : ""}
+                {fetchedAt
+                  ? `Updated ${new Date(fetchedAt).toLocaleTimeString()}`
+                  : 'Not fetched yet'}
+                {sourceSummary ? ` · ${sourceSummary}` : ''}
               </p>
             )}
           </div>
-          <Button onClick={handleRefresh} className="text-xs text-text-secondary hover:text-text-primary shrink-0">
+          <Button
+            onClick={handleRefresh}
+            className="text-xs text-text-secondary hover:text-text-primary shrink-0"
+          >
             Refresh
           </Button>
         </div>
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-2">
-          {loading ? (
-            Array.from({ length: 8 }, (_, i) => (
-              <div key={i} className="bg-surface-card border border-surface-border rounded-xl h-24 animate-pulse" />
-            ))
-          ) : (
-            filteredItems.map((item) => (
-              <TrendCard
-                key={item.id}
-                item={item}
-                selected={selectedIds.has(item.id)}
-                onToggle={toggleSelection}
-                onPreview={setActiveItemId}
-                previewed={activeItemId === item.id}
-              />
-            ))
-          )}
+          {loading
+            ? Array.from({ length: 8 }, (_, i) => (
+                <div
+                  key={i}
+                  className="bg-surface-card border border-surface-border rounded-xl h-24 animate-pulse"
+                />
+              ))
+            : filteredItems.map((item) => (
+                <TrendCard
+                  key={item.id}
+                  item={item}
+                  selected={selectedIds.has(item.id)}
+                  onToggle={toggleSelection}
+                  onPreview={setActiveItemId}
+                  previewed={activeItemId === item.id}
+                />
+              ))}
         </div>
 
         <TrendActionBar

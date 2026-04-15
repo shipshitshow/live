@@ -1,8 +1,5 @@
+import { type ChildProcessWithoutNullStreams, spawn } from 'node:child_process';
 import { randomUUID } from 'node:crypto';
-import {
-  type ChildProcessWithoutNullStreams,
-  spawn,
-} from 'node:child_process';
 import type {
   TerminalSessionCreateResponse,
   TerminalSessionStatus,

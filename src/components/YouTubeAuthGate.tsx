@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { parseJsonResponse } from "@/lib/parse-json-response";
-import type { YouTubeAuthStatus } from "@/lib/youtube/types";
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { parseJsonResponse } from '@/lib/parse-json-response';
+import type { YouTubeAuthStatus } from '@/lib/youtube/types';
 
-const AUTH_ROUTE = "/auth/youtube";
+const AUTH_ROUTE = '/auth/youtube';
 
 export function YouTubeAuthGate() {
   const pathname = usePathname();
@@ -20,15 +20,17 @@ export function YouTubeAuthGate() {
     }
 
     let cancelled = false;
-    const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
+    const currentUrl = `${pathname}${searchParams.toString() ? `?${searchParams.toString()}` : ''}`;
 
-    fetch("/api/auth/youtube/status", { cache: "no-store" })
+    fetch('/api/auth/youtube/status', { cache: 'no-store' })
       .then((res) => parseJsonResponse<YouTubeAuthStatus>(res))
       .then((status) => {
         if (cancelled) return;
-        if (status.status === "reauth_required") {
+        if (status.status === 'reauth_required') {
           setBlocking(true);
-          router.replace(`${AUTH_ROUTE}?next=${encodeURIComponent(currentUrl)}`);
+          router.replace(
+            `${AUTH_ROUTE}?next=${encodeURIComponent(currentUrl)}`,
+          );
           return;
         }
         setBlocking(false);
@@ -47,8 +49,12 @@ export function YouTubeAuthGate() {
   return (
     <div className="fixed inset-0 z-[200] flex items-center justify-center bg-surface/92 backdrop-blur">
       <div className="rounded-xl border border-surface-border bg-surface-card px-6 py-5 text-center shadow-[0_20px_60px_rgba(0,0,0,0.35)]">
-        <p className="text-sm font-semibold text-text-primary">YouTube auth expired</p>
-        <p className="mt-2 text-sm text-text-secondary">Redirecting to Google OAuth…</p>
+        <p className="text-sm font-semibold text-text-primary">
+          YouTube auth expired
+        </p>
+        <p className="mt-2 text-sm text-text-secondary">
+          Redirecting to Google OAuth…
+        </p>
       </div>
     </div>
   );

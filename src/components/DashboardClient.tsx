@@ -1,18 +1,25 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { StatCard } from "@/components/StatCard";
-import { TimeSeriesChart, type ChartLine } from "@/components/TimeSeriesChart";
-import { VideoTable } from "@/components/VideoTable";
-import { TopVideos } from "@/components/TopVideos";
-import { DateRangeSelector } from "@/components/DateRangeSelector";
-import { ChannelSelector } from "@/components/ChannelSelector";
-import { AuthStatus } from "@/components/AuthStatus";
-import { Button } from "@/components/ui/button";
-import { isErrorResponse, isReauthRequiredResponse } from "@/lib/api-types";
-import { formatNumber, formatWatchTime } from "@/lib/format";
-import { parseJsonResponse } from "@/lib/parse-json-response";
-import type { MultiChannelReport, DateRange, ChannelFilter, DailyMetric, VideoStats, ChannelStats } from "@/lib/types";
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { AuthStatus } from '@/components/AuthStatus';
+import { ChannelSelector } from '@/components/ChannelSelector';
+import { DateRangeSelector } from '@/components/DateRangeSelector';
+import { StatCard } from '@/components/StatCard';
+import { type ChartLine, TimeSeriesChart } from '@/components/TimeSeriesChart';
+import { TopVideos } from '@/components/TopVideos';
+import { Button } from '@/components/ui/button';
+import { VideoTable } from '@/components/VideoTable';
+import { isErrorResponse, isReauthRequiredResponse } from '@/lib/api-types';
+import { formatNumber, formatWatchTime } from '@/lib/format';
+import { parseJsonResponse } from '@/lib/parse-json-response';
+import type {
+  ChannelFilter,
+  ChannelStats,
+  DailyMetric,
+  DateRange,
+  MultiChannelReport,
+  VideoStats,
+} from '@/lib/types';
 
 interface MultiChannelMetricPoint {
   day: string;
@@ -31,61 +38,82 @@ export function DashboardClient() {
   const [report, setReport] = useState<MultiChannelReport | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [channelFilter, setChannelFilter] = useState<ChannelFilter>("all");
+  const [channelFilter, setChannelFilter] = useState<ChannelFilter>('all');
 
   const load = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(`/api/report?days=${days}`);
-      const data = await parseJsonResponse<MultiChannelReport | { error: string }>(res);
+      const data = await parseJsonResponse<
+        MultiChannelReport | { error: string }
+      >(res);
       if (!res.ok) {
         if (isReauthRequiredResponse(data)) {
           window.location.href = `/auth/youtube?next=${encodeURIComponent(window.location.pathname + window.location.search)}`;
           return;
         }
-        throw new Error(isErrorResponse(data) ? data.error : `API error ${res.status}`);
+        throw new Error(
+          isErrorResponse(data) ? data.error : `API error ${res.status}`,
+        );
       }
       if (isErrorResponse(data)) {
         throw new Error(data.error);
       }
       setReport(data);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Failed to load analytics");
+      setError(e instanceof Error ? e.message : 'Failed to load analytics');
     } finally {
       setLoading(false);
     }
   }, [days]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   const CHANNEL_COLORS: Record<string, string> = {
-    main: "#ff2d20",
-    clips: "#ff7b72",
+    clips: '#ff7b72',
+    main: '#ff2d20',
   };
 
-  const { channels, daily, videos, headerTitle, headerSub, multiChartData, isMulti } = useMemo(() => {
+  const {
+    channels,
+    daily,
+    videos,
+    headerTitle,
+    headerSub,
+    multiChartData,
+    isMulti,
+  } = useMemo(() => {
     if (!report) {
       return {
         channels: [] as ChannelStats[],
         daily: [] as DailyMetric[],
-        videos: [] as VideoStats[],
-        headerTitle: "Channel Analytics",
-        headerSub: "Loading channel data…",
-        multiChartData: null as null | MultiChannelMetricPoint[],
+        headerSub: 'Loading channel data…',
+        headerTitle: 'Channel Analytics',
         isMulti: false,
+        multiChartData: null as null | MultiChannelMetricPoint[],
+        videos: [] as VideoStats[],
       };
     }
 
-    if (channelFilter === "all") {
-      const totalSubs = report.channels.reduce((s, c) => s + c.subscriber_count, 0);
+    if (channelFilter === 'all') {
+      const totalSubs = report.channels.reduce(
+        (s, c) => s + c.subscriber_count,
+        0,
+      );
       const totalVids = report.channels.reduce((s, c) => s + c.total_videos, 0);
 
       const perChannelEntries = Object.entries(report.per_channel);
       const dayMap = new Map<string, MultiChannelMetricPoint>();
 
       for (const [, chData] of perChannelEntries) {
-        const label = chData.channel.channel_title.toLowerCase().includes("clip") ? "clips" : "main";
+        const label = chData.channel.channel_title
+          .toLowerCase()
+          .includes('clip')
+          ? 'clips'
+          : 'main';
         for (const m of chData.daily_metrics) {
           const existing = dayMap.get(m.day) ?? { day: m.day };
           existing[`views_${label}`] = m.views;
@@ -97,17 +125,17 @@ export function DashboardClient() {
       }
 
       const merged = Array.from(dayMap.values()).sort((a, b) =>
-        a.day.localeCompare(b.day)
+        a.day.localeCompare(b.day),
       );
 
       return {
         channels: report.channels,
         daily: report.daily_metrics,
-        videos: report.videos,
-        headerTitle: "All",
         headerSub: `${formatNumber(totalVids)} videos · ${formatNumber(totalSubs)} subscribers`,
-        multiChartData: merged,
+        headerTitle: 'All',
         isMulti: perChannelEntries.length > 1,
+        multiChartData: merged,
+        videos: report.videos,
       };
     }
 
@@ -116,29 +144,33 @@ export function DashboardClient() {
       return {
         channels: report.channels,
         daily: report.daily_metrics,
-        videos: report.videos,
-        headerTitle: "All Channels",
-        headerSub: "",
-        multiChartData: null,
+        headerSub: '',
+        headerTitle: 'All Channels',
         isMulti: false,
+        multiChartData: null,
+        videos: report.videos,
       };
     }
 
     return {
       channels: report.channels,
       daily: chData.daily_metrics,
-      videos: chData.videos,
-      headerTitle: chData.channel.channel_title,
       headerSub: `${formatNumber(chData.channel.total_videos)} videos · ${formatNumber(chData.channel.subscriber_count)} subscribers`,
-      multiChartData: null,
+      headerTitle: chData.channel.channel_title,
       isMulti: false,
+      multiChartData: null,
+      videos: chData.videos,
     };
   }, [report, channelFilter]);
 
   function makeLines(metric: string): ChartLine[] {
     return [
-      { dataKey: `${metric}_main`, color: CHANNEL_COLORS.main, label: "Main" },
-      { dataKey: `${metric}_clips`, color: CHANNEL_COLORS.clips, label: "Clips" },
+      { color: CHANNEL_COLORS.main, dataKey: `${metric}_main`, label: 'Main' },
+      {
+        color: CHANNEL_COLORS.clips,
+        dataKey: `${metric}_clips`,
+        label: 'Clips',
+      },
     ];
   }
 
@@ -217,12 +249,39 @@ export function DashboardClient() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {[
-          { label: "Views over time", key: "views", color: undefined, fmtVal: formatNumber, fmtTick: (v: number) => formatNumber(v) },
-          { label: "Subscriber growth", key: "subscribers_gained", color: "#22c55e", fmtVal: (v: number) => `+${formatNumber(v)}`, fmtTick: (v: number) => formatNumber(v) },
-          { label: "Watch time (minutes)", key: "watch_time_minutes", color: "#f59e0b", fmtVal: formatWatchTime, fmtTick: (v: number) => formatWatchTime(v) },
-          { label: "Avg view %", key: "avg_view_percentage", color: "#8b5cf6", fmtVal: (v: number) => `${v.toFixed(1)}%`, fmtTick: (v: number) => `${v.toFixed(0)}%` },
+          {
+            color: undefined,
+            fmtTick: (v: number) => formatNumber(v),
+            fmtVal: formatNumber,
+            key: 'views',
+            label: 'Views over time',
+          },
+          {
+            color: '#22c55e',
+            fmtTick: (v: number) => formatNumber(v),
+            fmtVal: (v: number) => `+${formatNumber(v)}`,
+            key: 'subscribers_gained',
+            label: 'Subscriber growth',
+          },
+          {
+            color: '#f59e0b',
+            fmtTick: (v: number) => formatWatchTime(v),
+            fmtVal: formatWatchTime,
+            key: 'watch_time_minutes',
+            label: 'Watch time (minutes)',
+          },
+          {
+            color: '#8b5cf6',
+            fmtTick: (v: number) => `${v.toFixed(0)}%`,
+            fmtVal: (v: number) => `${v.toFixed(1)}%`,
+            key: 'avg_view_percentage',
+            label: 'Avg view %',
+          },
         ].map((chart) => (
-          <div key={chart.key} className="bg-surface-card border border-surface-border rounded-xl p-5">
+          <div
+            key={chart.key}
+            className="bg-surface-card border border-surface-border rounded-xl p-5"
+          >
             <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest mb-4">
               {chart.label}
             </h3>
@@ -243,11 +302,7 @@ export function DashboardClient() {
       </div>
 
       {/* Best performers */}
-      {loading ? (
-        <TopVideosSkeleton />
-      ) : (
-        <TopVideos videos={videos} />
-      )}
+      {loading ? <TopVideosSkeleton /> : <TopVideos videos={videos} />}
 
       {/* Videos table */}
       {loading ? (
@@ -259,14 +314,19 @@ export function DashboardClient() {
               Videos — {videos.length} total
             </h3>
           </div>
-          <VideoTable videos={videos} showChannel={channelFilter === "all" && channels.length > 1} />
+          <VideoTable
+            videos={videos}
+            showChannel={channelFilter === 'all' && channels.length > 1}
+          />
         </div>
       )}
     </div>
   );
 }
 
-const SKELETON_HEIGHTS = [43, 50, 62, 52, 47, 28, 15, 19, 27, 48, 45, 52, 71, 41, 26, 14, 9, 14, 30, 54];
+const SKELETON_HEIGHTS = [
+  43, 50, 62, 52, 47, 28, 15, 19, 27, 48, 45, 52, 71, 41, 26, 14, 9, 14, 30, 54,
+];
 
 function ChartSkeleton() {
   return (

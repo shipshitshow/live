@@ -1,4 +1,4 @@
-type ClientLogType = "event" | "perf";
+type ClientLogType = 'event' | 'perf';
 
 interface ClientLogPayload {
   event: string;
@@ -6,21 +6,21 @@ interface ClientLogPayload {
   payload?: Record<string, unknown>;
 }
 
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
+const IS_PRODUCTION = process.env.NODE_ENV === 'production';
 const THROTTLE_WINDOW_MS = 2000;
 const recentLogTimestamps = new Map<string, number>();
 
 function shouldThrottleLog(body: ClientLogPayload) {
-  if (body.event !== "react_render") return false;
+  if (body.event !== 'react_render') return false;
 
   const payload = body.payload ?? {};
   const throttleKey = [
     body.type,
     body.event,
-    String(payload.page ?? ""),
-    String(payload.component ?? ""),
-    String(payload.phase ?? ""),
-  ].join(":");
+    String(payload.page ?? ''),
+    String(payload.component ?? ''),
+    String(payload.phase ?? ''),
+  ].join(':');
   const now = Date.now();
   const lastLoggedAt = recentLogTimestamps.get(throttleKey) ?? 0;
 
@@ -33,7 +33,7 @@ function shouldThrottleLog(body: ClientLogPayload) {
 }
 
 function sendClientLog(body: ClientLogPayload) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return;
   if (shouldThrottleLog(body)) return;
 
   const serialized = JSON.stringify(body);
@@ -42,27 +42,33 @@ function sendClientLog(body: ClientLogPayload) {
   // silently refuse high-volume calls and we were dropping logs with no fallback.
   if (
     IS_PRODUCTION &&
-    document.visibilityState === "hidden" &&
-    typeof navigator.sendBeacon === "function"
+    document.visibilityState === 'hidden' &&
+    typeof navigator.sendBeacon === 'function'
   ) {
-    const blob = new Blob([serialized], { type: "application/json" });
-    if (navigator.sendBeacon("/api/logs/events", blob)) {
+    const blob = new Blob([serialized], { type: 'application/json' });
+    if (navigator.sendBeacon('/api/logs/events', blob)) {
       return;
     }
   }
 
-  void fetch("/api/logs/events", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
+  void fetch('/api/logs/events', {
     body: serialized,
+    headers: { 'Content-Type': 'application/json' },
     keepalive: true,
+    method: 'POST',
   });
 }
 
-export function logClientEvent(event: string, payload: Record<string, unknown> = {}) {
-  sendClientLog({ type: "event", event, payload });
+export function logClientEvent(
+  event: string,
+  payload: Record<string, unknown> = {},
+) {
+  sendClientLog({ event, payload, type: 'event' });
 }
 
-export function logClientPerf(event: string, payload: Record<string, unknown> = {}) {
-  sendClientLog({ type: "perf", event, payload });
+export function logClientPerf(
+  event: string,
+  payload: Record<string, unknown> = {},
+) {
+  sendClientLog({ event, payload, type: 'perf' });
 }

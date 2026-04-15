@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
-import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { VideoPlayer } from "@/components/review/VideoPlayer";
-import { ReviewChecklist } from "@/components/review/ReviewChecklist";
-import { PipelineSidebar } from "@/components/review/PipelineSidebar";
-import { parseJsonResponse } from "@/lib/parse-json-response";
-import type { PipelineJob } from "@/lib/pipeline-types";
+import { PipelineSidebar } from '@/components/review/PipelineSidebar';
+import { ReviewChecklist } from '@/components/review/ReviewChecklist';
+import { VideoPlayer } from '@/components/review/VideoPlayer';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
+import { parseJsonResponse } from '@/lib/parse-json-response';
+import type { PipelineJob } from '@/lib/pipeline-types';
+import { formatDistanceToNow } from 'date-fns';
+import { useRouter } from 'next/navigation';
+import { useCallback, useEffect, useState } from 'react';
 
 interface ReviewDetailClientProps {
   jobId: string;
@@ -23,7 +23,7 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
   const [checklistPassed, setChecklistPassed] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [rejectMode, setRejectMode] = useState(false);
-  const [rejectReason, setRejectReason] = useState("");
+  const [rejectReason, setRejectReason] = useState('');
   const [submitError, setSubmitError] = useState<string | null>(null);
 
   const load = useCallback(async () => {
@@ -38,15 +38,17 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
       const data = await parseJsonResponse<PipelineJob>(res);
       setJob(data);
     } catch (e) {
-      if (e instanceof Error && e.name === "AbortError") return;
-      setError(e instanceof Error ? e.message : "Failed to load job");
+      if (e instanceof Error && e.name === 'AbortError') return;
+      setError(e instanceof Error ? e.message : 'Failed to load job');
     } finally {
       setLoading(false);
     }
     return () => controller.abort();
   }, [jobId]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   async function handleApprove() {
     if (!checklistPassed || submitting) return;
@@ -54,14 +56,14 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
     setSubmitError(null);
     try {
       const res = await fetch(`/api/pipeline/jobs/${jobId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "approve" }),
+        body: JSON.stringify({ action: 'approve' }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
       });
       if (!res.ok) throw new Error(`API error ${res.status}`);
-      router.push("/review");
+      router.push('/review');
     } catch (e) {
-      setSubmitError(e instanceof Error ? e.message : "Failed to approve");
+      setSubmitError(e instanceof Error ? e.message : 'Failed to approve');
       setSubmitting(false);
     }
   }
@@ -72,14 +74,14 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
     setSubmitError(null);
     try {
       const res = await fetch(`/api/pipeline/jobs/${jobId}`, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "reject", reason: rejectReason.trim() }),
+        body: JSON.stringify({ action: 'reject', reason: rejectReason.trim() }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
       });
       if (!res.ok) throw new Error(`API error ${res.status}`);
-      router.push("/review");
+      router.push('/review');
     } catch (e) {
-      setSubmitError(e instanceof Error ? e.message : "Failed to reject");
+      setSubmitError(e instanceof Error ? e.message : 'Failed to reject');
       setSubmitting(false);
     }
   }
@@ -109,7 +111,8 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
     );
   }
 
-  const isAlreadyReviewed = job.status === "approved" || job.status === "rejected";
+  const isAlreadyReviewed =
+    job.status === 'approved' || job.status === 'rejected';
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
@@ -124,7 +127,10 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
               </span>
               <span className="w-1 h-1 rounded-full bg-surface-border" />
               <span className="text-[10px] text-text-muted">
-                Updated {formatDistanceToNow(new Date(job.updated_at), { addSuffix: true })}
+                Updated{' '}
+                {formatDistanceToNow(new Date(job.updated_at), {
+                  addSuffix: true,
+                })}
               </span>
             </div>
             <h2 className="text-lg font-bold text-text-primary">{job.title}</h2>
@@ -177,10 +183,13 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
                     variant="accent"
                     className="flex-1"
                   >
-                    {submitting ? "Sending back…" : "Send back for fixes"}
+                    {submitting ? 'Sending back…' : 'Send back for fixes'}
                   </Button>
                   <Button
-                    onClick={() => { setRejectMode(false); setRejectReason(""); }}
+                    onClick={() => {
+                      setRejectMode(false);
+                      setRejectReason('');
+                    }}
                     disabled={submitting}
                     className="bg-surface-elevated hover:border-text-muted"
                   >
@@ -193,10 +202,16 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
                 <Button
                   onClick={handleApprove}
                   disabled={!checklistPassed || submitting}
-                  title={!checklistPassed ? "Complete all checklist items first" : undefined}
+                  title={
+                    !checklistPassed
+                      ? 'Complete all checklist items first'
+                      : undefined
+                  }
                   className="flex-1 border-green-500/30 bg-green-600 text-white hover:bg-green-500 hover:text-white"
                 >
-                  {submitting ? "Approving…" : "Approve — send to YouTube upload"}
+                  {submitting
+                    ? 'Approving…'
+                    : 'Approve — send to YouTube upload'}
                 </Button>
                 <Button
                   onClick={() => setRejectMode(true)}
@@ -217,18 +232,26 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
         )}
 
         {isAlreadyReviewed && (
-          <div className={`rounded-xl px-5 py-4 border ${
-            job.status === "approved"
-              ? "bg-green-500/10 border-green-500/30"
-              : "bg-accent-red/10 border-accent-red/30"
-          }`}>
-            <p className={`text-sm font-medium ${
-              job.status === "approved" ? "text-green-400" : "text-accent-red"
-            }`}>
-              {job.status === "approved" ? "✓ Approved — queued for YouTube upload" : "✗ Rejected"}
+          <div
+            className={`rounded-xl px-5 py-4 border ${
+              job.status === 'approved'
+                ? 'bg-green-500/10 border-green-500/30'
+                : 'bg-accent-red/10 border-accent-red/30'
+            }`}
+          >
+            <p
+              className={`text-sm font-medium ${
+                job.status === 'approved' ? 'text-green-400' : 'text-accent-red'
+              }`}
+            >
+              {job.status === 'approved'
+                ? '✓ Approved — queued for YouTube upload'
+                : '✗ Rejected'}
             </p>
             {job.rejection_reason && (
-              <p className="text-xs text-text-secondary mt-1">{job.rejection_reason}</p>
+              <p className="text-xs text-text-secondary mt-1">
+                {job.rejection_reason}
+              </p>
             )}
           </div>
         )}
@@ -236,36 +259,42 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
 
       {/* Sidebar */}
       <div>
-        <PipelineSidebar stages={job.stages} rejectionReason={job.rejection_reason} />
+        <PipelineSidebar
+          stages={job.stages}
+          rejectionReason={job.rejection_reason}
+        />
       </div>
     </div>
   );
 }
 
-function StatusBadge({ status }: { status: PipelineJob["status"] }) {
-  const styles: Partial<Record<PipelineJob["status"], string>> = {
-    ready_for_review: "bg-amber-500/15 text-amber-400 border-amber-500/30",
-    approved: "bg-green-500/15 text-green-400 border-green-500/30",
-    rejected: "bg-accent-red/15 text-accent-red border-accent-red/30",
-    uploading: "bg-blue-500/15 text-blue-400 border-blue-500/30",
-    done: "bg-green-500/15 text-green-400 border-green-500/30",
-    failed: "bg-red-500/15 text-red-400 border-red-500/30",
+function StatusBadge({ status }: { status: PipelineJob['status'] }) {
+  const styles: Partial<Record<PipelineJob['status'], string>> = {
+    approved: 'bg-green-500/15 text-green-400 border-green-500/30',
+    done: 'bg-green-500/15 text-green-400 border-green-500/30',
+    failed: 'bg-red-500/15 text-red-400 border-red-500/30',
+    ready_for_review: 'bg-amber-500/15 text-amber-400 border-amber-500/30',
+    rejected: 'bg-accent-red/15 text-accent-red border-accent-red/30',
+    uploading: 'bg-blue-500/15 text-blue-400 border-blue-500/30',
   };
 
-  const labels: Partial<Record<PipelineJob["status"], string>> = {
-    ready_for_review: "Ready for Review",
-    approved: "Approved",
-    rejected: "Rejected",
-    uploading: "Uploading",
-    done: "Done",
-    failed: "Failed",
-    running: "Running",
-    pending: "Pending",
+  const labels: Partial<Record<PipelineJob['status'], string>> = {
+    approved: 'Approved',
+    done: 'Done',
+    failed: 'Failed',
+    pending: 'Pending',
+    ready_for_review: 'Ready for Review',
+    rejected: 'Rejected',
+    running: 'Running',
+    uploading: 'Uploading',
   };
 
-  const cls = styles[status] ?? "bg-surface-card text-text-muted border-surface-border";
+  const cls =
+    styles[status] ?? 'bg-surface-card text-text-muted border-surface-border';
   return (
-    <span className={`text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border flex-shrink-0 ${cls}`}>
+    <span
+      className={`text-[10px] font-mono uppercase tracking-widest px-2 py-1 rounded border flex-shrink-0 ${cls}`}
+    >
       {labels[status] ?? status}
     </span>
   );
