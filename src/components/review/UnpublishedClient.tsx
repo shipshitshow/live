@@ -114,7 +114,10 @@ export function UnpublishedClient() {
   }
 
   return (
-    <div className="flex" style={{ height: "calc(100vh - 65px)" }}>
+    <div
+      className="mx-auto flex w-full max-w-[1800px]"
+      style={{ height: "calc(100vh - 65px)" }}
+    >
       {/* Left: Video list */}
       <div className="flex-1 overflow-y-auto p-6">
         {loading ? (

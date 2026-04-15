@@ -11,6 +11,7 @@ declare global {
 
 const LOG_DIR = path.join(process.cwd(), "logs");
 const LOG_FILE = path.join(LOG_DIR, "events.log");
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 function ensureLogDir() {
   if (!fs.existsSync(LOG_DIR)) {
@@ -18,9 +19,7 @@ function ensureLogDir() {
   }
 }
 
-function createAppLogger() {
-  ensureLogDir();
-
+function createConsoleLogger() {
   return winston.createLogger({
     level: "info",
     format: winston.format.combine(
@@ -28,12 +27,34 @@ function createAppLogger() {
       winston.format.errors({ stack: true }),
       winston.format.json()
     ),
-    transports: [
-      new winston.transports.File({
-        filename: LOG_FILE,
-      }),
-    ],
+    transports: [new winston.transports.Console()],
   });
+}
+
+function createAppLogger() {
+  if (IS_PRODUCTION) {
+    return createConsoleLogger();
+  }
+
+  try {
+    ensureLogDir();
+
+    return winston.createLogger({
+      level: "info",
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
+      ),
+      transports: [
+        new winston.transports.File({
+          filename: LOG_FILE,
+        }),
+      ],
+    });
+  } catch {
+    return createConsoleLogger();
+  }
 }
 
 const logger = global.__shipShitLogger__ ?? createAppLogger();
