@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+
+bunx biome check --write --unsafe --staged --no-errors-on-unmatched
