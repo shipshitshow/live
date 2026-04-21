@@ -15,6 +15,8 @@ import { findTopicFile, getTopicDrawingFile } from '@/lib/livestream-files';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
+const TRANSCRIPTS_DIR = path.join(process.cwd(), 'data', 'transcripts');
+const CLEAN_TRANSCRIPTS_DIR = path.join(TRANSCRIPTS_DIR, 'clean');
 const BLOB_TOPICS_PREFIX = 'livestream/topics';
 const BLOB_TOPIC_OVERRIDES_PREFIX = 'livestream/topic-overrides';
 const BLOB_DRAWINGS_PREFIX = 'livestream/drawings';
@@ -34,6 +36,14 @@ interface StoredTopicOverride {
   generated?: Partial<TopicGeneratedContent>;
   status?: TopicStatus;
   thumbnail_prompt?: string | null;
+}
+
+export interface LivestreamHistoryItem {
+  date: string;
+  title: string;
+  transcriptPath: string;
+  videoId: string | null;
+  youtubeUrl: string | null;
 }
 
 function isBlobPersistenceEnabled(): boolean {
@@ -116,6 +126,23 @@ function parseGeneratedContent(raw: string): TopicGeneratedContent {
   }
 
   return result;
+}
+
+function normalizeHistoryKey(value: string): string {
+  return value
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function titleFromSlug(value: string): string {
+  return value
+    .split('-')
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(' ');
 }
 
 export function isTopicStatus(value: string | null): value is TopicStatus {
@@ -228,6 +255,50 @@ function listFilesystemDates(): string[] {
     )
     .map((entry) => entry.name)
     .sort((a, b) => b.localeCompare(a));
+}
+
+function listFilesystemLivestreamHistory(): LivestreamHistoryItem[] {
+  if (!fs.existsSync(CLEAN_TRANSCRIPTS_DIR) || !fs.existsSync(TRANSCRIPTS_DIR)) {
+    return [];
+  }
+
+  const videoMap = new Map<string, { title: string; videoId: string }>();
+
+  for (const fileName of fs.readdirSync(TRANSCRIPTS_DIR)) {
+    const match = fileName.match(/^([\w-]{11})-(.+)\.en\.vtt$/);
+    if (!match) continue;
+
+    const [, videoId, rawTitle] = match;
+    const title = rawTitle.replace(/^\[LIVE\]\s*/i, '');
+    videoMap.set(normalizeHistoryKey(title), { title, videoId });
+  }
+
+  return fs
+    .readdirSync(CLEAN_TRANSCRIPTS_DIR)
+    .filter((fileName) => /^\d{4}-\d{2}-\d{2}-livestream-.+\.txt$/.test(fileName))
+    .map((fileName) => {
+      const match = fileName.match(
+        /^(\d{4}-\d{2}-\d{2})-livestream-(.+)\.txt$/,
+      );
+      if (!match) return null;
+
+      const [, date, rawTitleSlug] = match;
+      const mapped = videoMap.get(normalizeHistoryKey(rawTitleSlug));
+      const title = mapped?.title ?? titleFromSlug(rawTitleSlug);
+      const videoId = mapped?.videoId ?? null;
+
+      return {
+        date,
+        title,
+        transcriptPath: path.join(CLEAN_TRANSCRIPTS_DIR, fileName),
+        videoId,
+        youtubeUrl: videoId
+          ? `https://www.youtube.com/watch?v=${videoId}`
+          : null,
+      } satisfies LivestreamHistoryItem;
+    })
+    .filter((item): item is LivestreamHistoryItem => item !== null)
+    .sort((a, b) => b.date.localeCompare(a.date));
 }
 
 async function readBlobJson<T>(
@@ -389,6 +460,10 @@ export async function resolveLivestreamDate(
   const availableDates = await listAvailableLivestreamDates();
   if (availableDates.includes(requestedDate)) return requestedDate;
   return availableDates[0] || requestedDate;
+}
+
+export async function listLivestreamHistory(): Promise<LivestreamHistoryItem[]> {
+  return listFilesystemLivestreamHistory();
 }
 
 export async function getTopicsForDate(date: string): Promise<Topic[]> {

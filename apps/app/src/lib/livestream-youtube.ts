@@ -1,4 +1,15 @@
 export function extractYouTubeUrl(raw: string): string | null {
+  const livestreamNotesMatch = raw.match(
+    /## Livestream Notes\s*([\s\S]*?)(?:\n## |\n?$)/,
+  );
+
+  const preferredMatch = livestreamNotesMatch?.[1]?.match(
+    /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/,
+  );
+  if (preferredMatch?.[0]) {
+    return preferredMatch[0];
+  }
+
   const match = raw.match(
     /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/,
   );

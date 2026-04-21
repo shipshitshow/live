@@ -2,7 +2,7 @@
 title: "Claude Design for Devs — One-Hour Show Rundown"
 slug: "claude-design-for-devs"
 source: "Anthropic, YouTube, X"
-status: "in_progress"
+status: "backlog"
 date: "2026-04-21"
 thumbnail_prompt: null
 ---

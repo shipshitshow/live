@@ -12,6 +12,7 @@ import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
+import { CopyButton } from '@/components/CopyButton';
 import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
@@ -93,8 +94,17 @@ function parseMarkdownSections(content: string): ParsedSection[] {
   return sections;
 }
 
-function isTalkingPointSection(heading: string): boolean {
-  return heading.toLowerCase().includes('talking point');
+function shouldIncludeSectionInRundown(heading: string): boolean {
+  const normalized = heading.trim().toLowerCase();
+
+  return ![
+    'summary',
+    'sources',
+    'livestream notes',
+    'hot take',
+    'cold open',
+    'intro',
+  ].includes(normalized);
 }
 
 function formatCompactNumber(value: number | null | undefined): string {
@@ -169,15 +179,29 @@ function parseTalkingPoints(body: string): TalkingPoint[] {
   const points: TalkingPoint[] = [];
   let current: TalkingPoint | null = null;
 
-  for (const line of lines) {
-    if (line.startsWith('- ') && !line.startsWith('  - ')) {
+  for (const rawLine of lines) {
+    const line = rawLine.trimEnd();
+    if (!line.trim()) continue;
+
+    if (line.startsWith('- ') && !rawLine.startsWith('  - ')) {
       if (current) points.push(current);
       current = { sources: [], text: line.slice(2) };
-    } else if (line.startsWith('  - ') && current) {
-      const linkMatch = line.match(/\[(.*?)\]\((.*?)\)/);
-      if (linkMatch) {
-        current.sources.push({ text: linkMatch[1], url: linkMatch[2] });
+    } else if (rawLine.startsWith('  - ') && current) {
+      const nestedText = rawLine.slice(rawLine.indexOf('- ') + 2).trim();
+      const links = extractMarkdownLinks(nestedText);
+
+      if (links.length > 0) {
+        current.sources.push(
+          ...links.map((link) => ({ text: link.text, url: link.url })),
+        );
       }
+
+      const textWithoutLinks = stripMarkdown(nestedText);
+      if (textWithoutLinks.length > 0 && links.length === 0) {
+        current.text = `${current.text} ${textWithoutLinks}`.trim();
+      }
+    } else if (current) {
+      current.text = `${current.text} ${line.trim()}`.trim();
     }
   }
   if (current) points.push(current);
@@ -271,8 +295,8 @@ function estimateSegmentSeconds(
 }
 
 function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
-  const talkingSections = sections.filter((s) =>
-    isTalkingPointSection(s.heading),
+  const rundownSections = sections.filter((s) =>
+    shouldIncludeSectionInRundown(s.heading),
   );
   const coldOpen = sections.find((s) =>
     /^(cold open|intro)$/i.test(s.heading.trim()),
@@ -307,18 +331,20 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   });
   currentSeconds += introSeconds;
 
-  for (const section of talkingSections) {
+  for (const section of rundownSections) {
     const points = parseTalkingPoints(section.body);
+    const rawText = points.length === 0 ? section.body.trim() : undefined;
     const shortLabel = section.heading
       .replace(/^Talking Points?\s*—?\s*/i, '')
       .replace(/^—\s*/, '');
-    const segmentSeconds = estimateSegmentSeconds('segment', points);
+    const segmentSeconds = estimateSegmentSeconds('segment', points, rawText);
 
     segments.push({
       duration: formatSegmentDuration(segmentSeconds),
       label: shortLabel || section.heading,
       number: segNum++,
       points,
+      rawText,
       time: formatSegmentTime(currentSeconds),
       type: 'segment',
     });
@@ -359,6 +385,40 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   });
 
   return segments;
+}
+
+interface RichTextBlock {
+  type: 'code' | 'heading' | 'paragraph';
+  value: string;
+}
+
+function parseRichTextBlocks(rawText: string): RichTextBlock[] {
+  const blocks: RichTextBlock[] = [];
+  const normalized = rawText.replace(/\r\n/g, '\n');
+  const parts = normalized.split(/(```[\s\S]*?```)/g).filter(Boolean);
+
+  for (const part of parts) {
+    if (part.startsWith('```') && part.endsWith('```')) {
+      const code = part.replace(/^```[^\n]*\n?/, '').replace(/\n?```$/, '');
+      blocks.push({ type: 'code', value: code.trimEnd() });
+      continue;
+    }
+
+    const textBlocks = part
+      .split(/\n{2,}/)
+      .map((block) => block.trim())
+      .filter(Boolean);
+
+    for (const textBlock of textBlocks) {
+      if (textBlock.startsWith('### ')) {
+        blocks.push({ type: 'heading', value: textBlock.slice(4).trim() });
+      } else {
+        blocks.push({ type: 'paragraph', value: textBlock });
+      }
+    }
+  }
+
+  return blocks;
 }
 
 function getBadgeForUrl(url: string): { badge: string; cls: string } {
@@ -748,10 +808,47 @@ export function TopicDetailClient() {
                 </div>
 
                 {seg.rawText && (
-                  <div className="mb-4 border-l-2 border-yellow-500/40 bg-yellow-500/5 py-3 pl-4">
-                    <p className="text-[20px] leading-[1.7] text-text-primary">
-                      {renderInlineMarkdown(seg.rawText)}
-                    </p>
+                  <div className="mb-4 space-y-4 border-l-2 border-yellow-500/40 bg-yellow-500/5 py-3 pl-4">
+                    {parseRichTextBlocks(seg.rawText).map((block, blockIndex) => {
+                      if (block.type === 'heading') {
+                        return (
+                          <h4
+                            key={`${seg.number}-raw-${blockIndex}`}
+                            className="text-lg font-semibold text-text-primary"
+                          >
+                            {renderInlineMarkdown(block.value)}
+                          </h4>
+                        );
+                      }
+
+                      if (block.type === 'code') {
+                        return (
+                          <div
+                            key={`${seg.number}-raw-${blockIndex}`}
+                            className="overflow-hidden rounded-xl border border-surface-border bg-surface"
+                          >
+                            <div className="flex items-center justify-between border-b border-surface-border px-3 py-2">
+                              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
+                                Prompt
+                              </span>
+                              <CopyButton text={block.value} />
+                            </div>
+                            <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-text-primary">
+                              <code>{block.value}</code>
+                            </pre>
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <p
+                          key={`${seg.number}-raw-${blockIndex}`}
+                          className="text-[20px] leading-[1.7] text-text-primary"
+                        >
+                          {renderInlineMarkdown(block.value)}
+                        </p>
+                      );
+                    })}
                   </div>
                 )}
 
