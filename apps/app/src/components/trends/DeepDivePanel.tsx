@@ -1,23 +1,23 @@
-"use client";
+'use client';
 
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@shipshitshow/ui";
-import type { TrendItem, TrendSource } from "@shipshitshow/types";
-import { dispatchTrendPrompt } from "@/lib/dev-terminal-events";
-import { TrendCard } from "./TrendCard";
+import type { TrendItem, TrendSource } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
+import { formatDistanceToNow } from 'date-fns';
+import { dispatchTrendPrompt } from '@/lib/dev-terminal-events';
+import { TrendCard } from './TrendCard';
 
-const SOURCE_ORDER: TrendSource[] = ["hackernews", "reddit", "youtube", "x"];
+const SOURCE_ORDER: TrendSource[] = ['hackernews', 'reddit', 'youtube', 'x'];
 const SOURCE_LABELS: Record<TrendSource, string> = {
-  hackernews: "Hacker News",
-  reddit: "Reddit",
-  youtube: "YouTube",
-  x: "X",
+  hackernews: 'Hacker News',
+  reddit: 'Reddit',
+  x: 'X',
+  youtube: 'YouTube',
 };
 const SOURCE_BADGES: Record<TrendSource, string> = {
-  hackernews: "bg-orange-500/20 text-orange-400",
-  reddit: "bg-orange-600/20 text-orange-300",
-  youtube: "bg-red-500/20 text-red-400",
-  x: "bg-blue-400/20 text-blue-400",
+  hackernews: 'bg-orange-500/20 text-orange-400',
+  reddit: 'bg-orange-600/20 text-orange-300',
+  x: 'bg-blue-400/20 text-blue-400',
+  youtube: 'bg-red-500/20 text-red-400',
 };
 
 interface DeepDivePanelProps {
@@ -42,9 +42,14 @@ export function DeepDivePanel({
   if (loading) {
     return (
       <div className="space-y-3">
-        <div className="text-xs text-text-muted font-mono mb-3">Searching for &ldquo;{query}&rdquo;...</div>
+        <div className="text-xs text-text-muted font-mono mb-3">
+          Searching for &ldquo;{query}&rdquo;...
+        </div>
         {Array.from({ length: 6 }, (_, i) => (
-          <div key={i} className="bg-surface-card border border-surface-border rounded-xl h-20 animate-pulse" />
+          <div
+            key={i}
+            className="bg-surface-card border border-surface-border rounded-xl h-20 animate-pulse"
+          />
         ))}
       </div>
     );
@@ -64,17 +69,25 @@ export function DeepDivePanel({
           <div className="flex items-center justify-between gap-3 p-4 border-b border-surface-border">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1.5">
-                <span className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_BADGES[activeItem.source]}`}>
+                <span
+                  className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_BADGES[activeItem.source]}`}
+                >
                   {SOURCE_LABELS[activeItem.source]}
                 </span>
                 {activeItem.subreddit && (
-                  <span className="text-[10px] font-mono text-text-muted">r/{activeItem.subreddit}</span>
+                  <span className="text-[10px] font-mono text-text-muted">
+                    r/{activeItem.subreddit}
+                  </span>
                 )}
                 <span className="text-[10px] text-text-muted">
-                  {formatDistanceToNow(new Date(activeItem.timestamp), { addSuffix: true })}
+                  {formatDistanceToNow(new Date(activeItem.timestamp), {
+                    addSuffix: true,
+                  })}
                 </span>
               </div>
-              <h3 className="text-sm font-semibold text-text-primary line-clamp-2">{activeItem.title}</h3>
+              <h3 className="text-sm font-semibold text-text-primary line-clamp-2">
+                {activeItem.title}
+              </h3>
             </div>
             <Button
               type="button"
@@ -82,11 +95,11 @@ export function DeepDivePanel({
               size="sm"
               className={`shrink-0 rounded-md text-[10px] transition-colors ${
                 activeSelected
-                  ? "bg-accent-red text-white hover:bg-accent-red hover:text-white"
-                  : "bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
+                  ? 'bg-accent-red text-white hover:bg-accent-red hover:text-white'
+                  : 'bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red'
               }`}
             >
-              {activeSelected ? "Selected" : "Select"}
+              {activeSelected ? 'Selected' : 'Select'}
             </Button>
           </div>
 
@@ -100,15 +113,21 @@ export function DeepDivePanel({
 
           <div className="p-4 space-y-4">
             <div className="flex items-center gap-3 text-[10px] text-text-muted font-mono">
-              <span>{activeItem.score.toLocaleString()} {activeItem.source === "youtube" ? "views" : "pts"}</span>
+              <span>
+                {activeItem.score.toLocaleString()}{' '}
+                {activeItem.source === 'youtube' ? 'views' : 'pts'}
+              </span>
               <span>{activeItem.commentCount.toLocaleString()} comments</span>
               {activeItem.author && <span>by {activeItem.author}</span>}
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-[10px] font-medium text-text-secondary uppercase tracking-widest">Preview</h4>
+              <h4 className="text-[10px] font-medium text-text-secondary uppercase tracking-widest">
+                Preview
+              </h4>
               <p className="text-sm text-text-secondary leading-relaxed">
-                {activeItem.summary || "No inline preview for this source. Open the original content to read the full post."}
+                {activeItem.summary ||
+                  'No inline preview for this source. Open the original content to read the full post.'}
               </p>
             </div>
 
@@ -142,11 +161,13 @@ export function DeepDivePanel({
         </div>
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center py-24">
-          <p className="text-sm text-text-muted">Click a trend to preview it here</p>
+          <p className="text-sm text-text-muted">
+            Click a trend to preview it here
+          </p>
           <p className="text-xs text-text-muted mt-1">
             {query
-              ? "Then add it to the livestream if it is worth keeping"
-              : "Select from the feed to read the story"}
+              ? 'Then add it to the livestream if it is worth keeping'
+              : 'Select from the feed to read the story'}
           </p>
         </div>
       )}
@@ -154,7 +175,8 @@ export function DeepDivePanel({
       {query && items.length > 0 && (
         <div className="space-y-6">
           <div className="text-xs text-text-muted font-mono">
-            Related content: &ldquo;{query}&rdquo; &mdash; {items.length} results
+            Related content: &ldquo;{query}&rdquo; &mdash; {items.length}{' '}
+            results
           </div>
           {SOURCE_ORDER.filter((s) => grouped.has(s)).map((source) => (
             <div key={source}>
@@ -180,7 +202,9 @@ export function DeepDivePanel({
 
       {query && items.length === 0 && (
         <div className="flex flex-col items-center justify-center h-full text-center py-12">
-          <p className="text-sm text-text-muted">No related results for &ldquo;{query}&rdquo;</p>
+          <p className="text-sm text-text-muted">
+            No related results for &ldquo;{query}&rdquo;
+          </p>
         </div>
       )}
     </div>

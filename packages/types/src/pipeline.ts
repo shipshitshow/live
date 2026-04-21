@@ -1,16 +1,26 @@
 export type PipelineJobStatus =
-  | "pending"
-  | "running"
-  | "ready_for_review"
-  | "approved"
-  | "rejected"
-  | "uploading"
-  | "done"
-  | "failed";
+  | 'pending'
+  | 'running'
+  | 'ready_for_review'
+  | 'approved'
+  | 'rejected'
+  | 'uploading'
+  | 'done'
+  | 'failed';
 
-export type PipelineStageStatus = "pending" | "running" | "done" | "failed" | "skipped";
+export type PipelineStageStatus =
+  | 'pending'
+  | 'running'
+  | 'done'
+  | 'failed'
+  | 'skipped';
 
-export type PipelineStageName = "script" | "audio" | "video" | "thumbnail" | "upload";
+export type PipelineStageName =
+  | 'script'
+  | 'audio'
+  | 'video'
+  | 'thumbnail'
+  | 'upload';
 
 export interface PipelineStage {
   name: PipelineStageName;
@@ -37,6 +47,6 @@ export interface PipelineJob {
 }
 
 export interface ReviewAction {
-  action: "approve" | "reject";
+  action: 'approve' | 'reject';
   reason?: string;
 }

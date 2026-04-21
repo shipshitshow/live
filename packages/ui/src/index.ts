@@ -1,5 +1,5 @@
-export { cn } from './cn';
 export { Button, buttonVariants } from './button';
+export { cn } from './cn';
 export {
   Select,
   SelectContent,

@@ -1,17 +1,21 @@
 'use client';
 
+import type {
+  LivestreamListResponse,
+  Topic,
+  TrendItem,
+  TrendsSearchResponse,
+} from '@shipshitshow/types';
+import { isErrorResponse } from '@shipshitshow/types';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { AppHeader } from '@/components/AppHeader';
 import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
-import { isErrorResponse } from '@shipshitshow/types';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
-import type { LivestreamListResponse, Topic } from '@shipshitshow/types';
 import { parseJsonResponse } from '@/lib/parse-json-response';
 import { clampText, stripMarkdown } from '@/lib/text';
-import type { TrendItem, TrendsSearchResponse } from '@shipshitshow/types';
 
 const SOURCE_COLORS: Record<string, string> = {
   GitHub: 'bg-purple-500/20 text-purple-400',

@@ -1,7 +1,5 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { get, list, put } from '@vercel/blob';
-import { findTopicFile, getTopicDrawingFile } from '@/lib/livestream-files';
 import type {
   ContentField,
   Topic,
@@ -12,8 +10,11 @@ import type {
   TopicUpdate,
 } from '@shipshitshow/types';
 import { CONTENT_FIELDS } from '@shipshitshow/types';
+import { get, list, put } from '@vercel/blob';
+import { findTopicFile, getTopicDrawingFile } from '@/lib/livestream-files';
 
-const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
+const DATA_DIR =
+  process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
 const BLOB_TOPICS_PREFIX = 'livestream/topics';
 const BLOB_TOPIC_OVERRIDES_PREFIX = 'livestream/topic-overrides';
 const BLOB_DRAWINGS_PREFIX = 'livestream/drawings';

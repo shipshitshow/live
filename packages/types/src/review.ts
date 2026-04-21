@@ -1,4 +1,4 @@
-import type { VideoStats } from "./youtube";
+import type { VideoStats } from './youtube';
 
 export interface UnlistedVideo extends VideoStats {
   description: string;

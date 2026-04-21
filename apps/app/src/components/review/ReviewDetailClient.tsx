@@ -1,15 +1,14 @@
 'use client';
 
+import type { PipelineJob } from '@shipshitshow/types';
+import { Button, Textarea } from '@shipshitshow/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import { PipelineSidebar } from '@/components/review/PipelineSidebar';
 import { ReviewChecklist } from '@/components/review/ReviewChecklist';
 import { VideoPlayer } from '@/components/review/VideoPlayer';
-import { Button } from '@shipshitshow/ui';
-import { Textarea } from '@shipshitshow/ui';
 import { parseJsonResponse } from '@/lib/parse-json-response';
-import type { PipelineJob } from '@shipshitshow/types';
 
 interface ReviewDetailClientProps {
   jobId: string;
@@ -171,7 +170,9 @@ export function ReviewDetailClient({ jobId }: ReviewDetailClientProps) {
               <div className="space-y-3">
                 <Textarea
                   value={rejectReason}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setRejectReason(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                    setRejectReason(e.target.value)
+                  }
                   placeholder="Describe what needs to be fixed before re-review…"
                   className="min-h-[80px] resize-none bg-surface-elevated"
                   disabled={submitting}

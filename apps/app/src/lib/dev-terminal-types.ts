@@ -1,9 +1,9 @@
-export type TerminalSessionStatus = "ready" | "running" | "closed";
+export type TerminalSessionStatus = 'ready' | 'running' | 'closed';
 
 export interface TerminalSnapshot {
   output: string;
   cursor: number;
-  mode: "append" | "reset";
+  mode: 'append' | 'reset';
   status: TerminalSessionStatus;
   exitCode: number | null;
 }

@@ -1,15 +1,15 @@
-"use client";
+'use client';
 
+import { format, parseISO } from 'date-fns';
 import {
-  LineChart,
+  CartesianGrid,
   Line,
+  LineChart,
+  ResponsiveContainer,
+  Tooltip,
   XAxis,
   YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { format, parseISO } from "date-fns";
+} from 'recharts';
 
 export interface ChartLine {
   dataKey: string;
@@ -41,7 +41,7 @@ function CustomTooltip({
   return (
     <div className="bg-surface-elevated border border-surface-border rounded-lg px-3 py-2 text-sm shadow-xl">
       <div className="text-text-secondary mb-1">
-        {label ? format(parseISO(label), "MMM d") : ""}
+        {label ? format(parseISO(label), 'MMM d') : ''}
       </div>
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2">
@@ -50,7 +50,9 @@ function CustomTooltip({
             style={{ backgroundColor: entry.stroke }}
           />
           <span className="text-text-primary font-semibold">
-            {formatValue ? formatValue(entry.value) : entry.value.toLocaleString()}
+            {formatValue
+              ? formatValue(entry.value)
+              : entry.value.toLocaleString()}
           </span>
         </div>
       ))}
@@ -61,7 +63,7 @@ function CustomTooltip({
 export function TimeSeriesChart({
   data,
   dataKey,
-  color = "#ff2d20",
+  color = '#ff2d20',
   formatValue,
   formatTick,
   lines,
@@ -70,18 +72,25 @@ export function TimeSeriesChart({
 
   return (
     <ResponsiveContainer width="100%" height={180}>
-      <LineChart data={data} margin={{ top: 4, right: 4, left: -16, bottom: 0 }}>
-        <CartesianGrid strokeDasharray="3 3" stroke="#1f1f1f" vertical={false} />
+      <LineChart
+        data={data}
+        margin={{ bottom: 0, left: -16, right: 4, top: 4 }}
+      >
+        <CartesianGrid
+          strokeDasharray="3 3"
+          stroke="#1f1f1f"
+          vertical={false}
+        />
         <XAxis
           dataKey="day"
-          tickFormatter={(v: string) => format(parseISO(v), "MMM d")}
-          tick={{ fill: "#606060", fontSize: 11 }}
+          tickFormatter={(v: string) => format(parseISO(v), 'MMM d')}
+          tick={{ fill: '#606060', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           interval="preserveStartEnd"
         />
         <YAxis
-          tick={{ fill: "#606060", fontSize: 11 }}
+          tick={{ fill: '#606060', fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           tickFormatter={formatTick ?? ((v: number) => v.toLocaleString())}
@@ -89,7 +98,7 @@ export function TimeSeriesChart({
         />
         <Tooltip
           content={<CustomTooltip formatValue={formatValue} />}
-          cursor={{ stroke: "#2a2a2a", strokeWidth: 1 }}
+          cursor={{ stroke: '#2a2a2a', strokeWidth: 1 }}
         />
         {renderLines ? (
           lines.map((line) => (
@@ -101,7 +110,7 @@ export function TimeSeriesChart({
               stroke={line.color}
               strokeWidth={2}
               dot={false}
-              activeDot={{ r: 4, fill: line.color, strokeWidth: 0 }}
+              activeDot={{ fill: line.color, r: 4, strokeWidth: 0 }}
             />
           ))
         ) : (
@@ -111,7 +120,7 @@ export function TimeSeriesChart({
             stroke={color}
             strokeWidth={2}
             dot={false}
-            activeDot={{ r: 4, fill: color, strokeWidth: 0 }}
+            activeDot={{ fill: color, r: 4, strokeWidth: 0 }}
           />
         )}
       </LineChart>

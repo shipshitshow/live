@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@shipshitshow/ui";
+import { Button } from '@shipshitshow/ui';
+import { useState } from 'react';
 
 interface CopyButtonProps {
   text: string;
@@ -9,7 +9,11 @@ interface CopyButtonProps {
   timeoutMs?: number;
 }
 
-export function CopyButton({ text, className, timeoutMs = 1500 }: CopyButtonProps) {
+export function CopyButton({
+  text,
+  className,
+  timeoutMs = 1500,
+}: CopyButtonProps) {
   const [copied, setCopied] = useState(false);
 
   return (
@@ -23,10 +27,10 @@ export function CopyButton({ text, className, timeoutMs = 1500 }: CopyButtonProp
       variant="ghost"
       className={
         className ??
-        "rounded bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-primary"
+        'rounded bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-primary'
       }
     >
-      {copied ? "Copied!" : "Copy"}
+      {copied ? 'Copied!' : 'Copy'}
     </Button>
   );
 }

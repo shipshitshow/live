@@ -2,7 +2,8 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { ipcMain } from 'electron';
 
-const APP_DATA_DIR = process.env.APP_DATA_DIR || path.resolve(__dirname, '../../../../app/data');
+const APP_DATA_DIR =
+  process.env.APP_DATA_DIR || path.resolve(__dirname, '../../../../app/data');
 const LIVESTREAM_DIR = path.join(APP_DATA_DIR, 'livestream');
 
 export function registerTopicsHandlers() {
@@ -39,9 +40,12 @@ export function registerTopicsHandlers() {
       });
   });
 
-  ipcMain.handle('topics:read', (_event, { date, fileName }: { date: string; fileName: string }) => {
-    const filePath = path.join(LIVESTREAM_DIR, date, fileName);
-    if (!fs.existsSync(filePath)) return null;
-    return fs.readFileSync(filePath, 'utf-8');
-  });
+  ipcMain.handle(
+    'topics:read',
+    (_event, { date, fileName }: { date: string; fileName: string }) => {
+      const filePath = path.join(LIVESTREAM_DIR, date, fileName);
+      if (!fs.existsSync(filePath)) return null;
+      return fs.readFileSync(filePath, 'utf-8');
+    },
+  );
 }

@@ -1,5 +1,9 @@
-import type { ErrorResponse } from '@shipshitshow/types';
-import type { ChannelStats, DailyMetric, VideoStats } from '@shipshitshow/types';
+import type {
+  ChannelStats,
+  DailyMetric,
+  ErrorResponse,
+  VideoStats,
+} from '@shipshitshow/types';
 import type {
   YouTubeAnalyticsResponse,
   YouTubeChannelItem,

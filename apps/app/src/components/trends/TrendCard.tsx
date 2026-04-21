@@ -1,21 +1,21 @@
-"use client";
+'use client';
 
-import { formatDistanceToNow } from "date-fns";
-import { Button } from "@shipshitshow/ui";
-import type { TrendItem, TrendSource } from "@shipshitshow/types";
+import type { TrendItem, TrendSource } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
+import { formatDistanceToNow } from 'date-fns';
 
 const SOURCE_COLORS: Record<TrendSource, string> = {
-  hackernews: "bg-orange-500/20 text-orange-400",
-  reddit: "bg-orange-600/20 text-orange-300",
-  youtube: "bg-red-500/20 text-red-400",
-  x: "bg-blue-400/20 text-blue-400",
+  hackernews: 'bg-orange-500/20 text-orange-400',
+  reddit: 'bg-orange-600/20 text-orange-300',
+  x: 'bg-blue-400/20 text-blue-400',
+  youtube: 'bg-red-500/20 text-red-400',
 };
 
 const SOURCE_LABELS: Record<TrendSource, string> = {
-  hackernews: "HN",
-  reddit: "Reddit",
-  youtube: "YouTube",
-  x: "X",
+  hackernews: 'HN',
+  reddit: 'Reddit',
+  x: 'X',
+  youtube: 'YouTube',
 };
 
 interface TrendCardProps {
@@ -37,12 +37,16 @@ export function TrendCard({
   onPreview,
   previewed,
 }: TrendCardProps) {
-  const timeAgo = formatDistanceToNow(new Date(item.timestamp), { addSuffix: true });
+  const timeAgo = formatDistanceToNow(new Date(item.timestamp), {
+    addSuffix: true,
+  });
 
   return (
     <div
-      className={`bg-surface-card border rounded-xl ${compact ? "p-3" : "p-4"} transition-colors cursor-pointer ${
-        selected || previewed ? "border-accent-red" : "border-surface-border hover:border-accent-red/40"
+      className={`bg-surface-card border rounded-xl ${compact ? 'p-3' : 'p-4'} transition-colors cursor-pointer ${
+        selected || previewed
+          ? 'border-accent-red'
+          : 'border-surface-border hover:border-accent-red/40'
       }`}
       onClick={() => (onPreview ? onPreview(item.id) : onToggle(item.id))}
     >
@@ -51,11 +55,13 @@ export function TrendCard({
           <div className="pt-0.5">
             <Button
               type="button"
-              aria-label={selected ? "Deselect trend" : "Select trend"}
+              aria-label={selected ? 'Deselect trend' : 'Select trend'}
               variant="ghost"
               size="icon"
               className={`size-4 rounded border p-0 transition-colors ${
-                selected ? "bg-accent-red border-accent-red" : "border-surface-border"
+                selected
+                  ? 'bg-accent-red border-accent-red'
+                  : 'border-surface-border'
               }`}
               onClick={(e) => {
                 e.stopPropagation();
@@ -64,7 +70,13 @@ export function TrendCard({
             >
               {selected && (
                 <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                  <path d="M2 5L4 7L8 3" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  <path
+                    d="M2 5L4 7L8 3"
+                    stroke="white"
+                    strokeWidth="1.5"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
                 </svg>
               )}
             </Button>
@@ -73,13 +85,19 @@ export function TrendCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <span className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[item.source]}`}>
+            <span
+              className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[item.source]}`}
+            >
               {SOURCE_LABELS[item.source]}
             </span>
             {item.subreddit && (
-              <span className="text-[10px] font-mono text-text-muted">r/{item.subreddit}</span>
+              <span className="text-[10px] font-mono text-text-muted">
+                r/{item.subreddit}
+              </span>
             )}
-            <span className="text-[10px] text-text-muted ml-auto">{timeAgo}</span>
+            <span className="text-[10px] text-text-muted ml-auto">
+              {timeAgo}
+            </span>
           </div>
 
           <a
@@ -99,7 +117,10 @@ export function TrendCard({
           )}
 
           <div className="flex items-center gap-3 mt-2 text-[10px] text-text-muted font-mono">
-            <span>{item.score.toLocaleString()} {item.source === "youtube" ? "views" : "pts"}</span>
+            <span>
+              {item.score.toLocaleString()}{' '}
+              {item.source === 'youtube' ? 'views' : 'pts'}
+            </span>
             <span>{item.commentCount.toLocaleString()} comments</span>
             {item.author && <span className="ml-auto">by {item.author}</span>}
           </div>

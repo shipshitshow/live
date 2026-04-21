@@ -6,7 +6,7 @@ export interface ChannelStats {
   total_videos: number;
 }
 
-export type VideoType = "video" | "short" | "livestream";
+export type VideoType = 'video' | 'short' | 'livestream';
 
 export interface VideoStats {
   video_id: string;
@@ -48,7 +48,7 @@ export interface MultiChannelReport {
   >;
 }
 
-export type ChannelFilter = "all" | string;
+export type ChannelFilter = 'all' | string;
 
 export type DateRange = 7 | 30 | 90;
 

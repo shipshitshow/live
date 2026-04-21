@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@shipshitshow/ui";
+import { Button } from '@shipshitshow/ui';
+import { useState } from 'react';
 
 interface ChecklistItem {
   id: string;
@@ -10,10 +10,26 @@ interface ChecklistItem {
 }
 
 const ITEMS: ChecklistItem[] = [
-  { id: "visuals", label: "Visuals OK", description: "No glitches, correct pacing, transitions look good" },
-  { id: "audio", label: "Audio OK", description: "Clear narration, no clipping, music levels balanced" },
-  { id: "script", label: "Script Accuracy", description: "Facts are correct, tone matches brand, no errors" },
-  { id: "thumbnail", label: "Thumbnail OK", description: "Eye-catching, readable title, correct aspect ratio" },
+  {
+    description: 'No glitches, correct pacing, transitions look good',
+    id: 'visuals',
+    label: 'Visuals OK',
+  },
+  {
+    description: 'Clear narration, no clipping, music levels balanced',
+    id: 'audio',
+    label: 'Audio OK',
+  },
+  {
+    description: 'Facts are correct, tone matches brand, no errors',
+    id: 'script',
+    label: 'Script Accuracy',
+  },
+  {
+    description: 'Eye-catching, readable title, correct aspect ratio',
+    id: 'thumbnail',
+    label: 'Thumbnail OK',
+  },
 ];
 
 interface ReviewChecklistProps {
@@ -49,21 +65,31 @@ export function ReviewChecklist({ onChange }: ReviewChecklistProps) {
               <div
                 className={`mt-0.5 w-4 h-4 rounded flex-shrink-0 border transition-all ${
                   isChecked
-                    ? "bg-accent-red border-accent-red"
-                    : "bg-transparent border-surface-border group-hover:border-text-muted"
+                    ? 'bg-accent-red border-accent-red'
+                    : 'bg-transparent border-surface-border group-hover:border-text-muted'
                 } flex items-center justify-center`}
               >
                 {isChecked && (
                   <svg width="8" height="6" viewBox="0 0 8 6" fill="none">
-                    <path d="M1 3L3 5L7 1" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                    <path
+                      d="M1 3L3 5L7 1"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
                   </svg>
                 )}
               </div>
               <div className="flex-1 min-w-0">
-                <p className={`text-sm font-medium transition-colors ${isChecked ? "text-text-primary" : "text-text-secondary"}`}>
+                <p
+                  className={`text-sm font-medium transition-colors ${isChecked ? 'text-text-primary' : 'text-text-secondary'}`}
+                >
                   {item.label}
                 </p>
-                <p className="text-xs text-text-muted mt-0.5">{item.description}</p>
+                <p className="text-xs text-text-muted mt-0.5">
+                  {item.description}
+                </p>
               </div>
             </Button>
           );
@@ -74,7 +100,9 @@ export function ReviewChecklist({ onChange }: ReviewChecklistProps) {
           <div className="flex-1 h-1 bg-surface-border rounded-full overflow-hidden">
             <div
               className="h-full bg-accent-red rounded-full transition-all duration-300"
-              style={{ width: `${(Object.values(checked).filter(Boolean).length / ITEMS.length) * 100}%` }}
+              style={{
+                width: `${(Object.values(checked).filter(Boolean).length / ITEMS.length) * 100}%`,
+              }}
             />
           </div>
           <span className="text-xs font-mono text-text-muted">

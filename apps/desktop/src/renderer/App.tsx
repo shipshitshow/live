@@ -7,8 +7,25 @@ export function App() {
   const [activeTab, setActiveTab] = useState<Tab>('terminal');
 
   return (
-    <div style={{ background: '#0d0d0d', color: '#f0f0f0', fontFamily: 'system-ui', height: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <nav style={{ display: 'flex', gap: '1px', background: '#1a1a1a', padding: '8px 12px', borderBottom: '1px solid #2a2a2a' }}>
+    <div
+      style={{
+        background: '#0d0d0d',
+        color: '#f0f0f0',
+        display: 'flex',
+        flexDirection: 'column',
+        fontFamily: 'system-ui',
+        height: '100vh',
+      }}
+    >
+      <nav
+        style={{
+          background: '#1a1a1a',
+          borderBottom: '1px solid #2a2a2a',
+          display: 'flex',
+          gap: '1px',
+          padding: '8px 12px',
+        }}
+      >
         <button
           type="button"
           onClick={() => setActiveTab('terminal')}
@@ -43,7 +60,7 @@ export function App() {
       <div style={{ flex: 1, overflow: 'hidden' }}>
         {activeTab === 'terminal' && <TerminalView />}
         {activeTab === 'topics' && (
-          <div style={{ padding: '24px', color: '#a0a0a0' }}>
+          <div style={{ color: '#a0a0a0', padding: '24px' }}>
             Topics view — coming soon
           </div>
         )}

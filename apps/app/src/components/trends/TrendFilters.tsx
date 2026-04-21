@@ -1,16 +1,16 @@
-"use client";
+'use client';
 
-import { Button } from "@shipshitshow/ui";
-import type { TrendSource } from "@shipshitshow/types";
+import type { TrendSource } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
 
-type FilterValue = "all" | TrendSource;
+type FilterValue = 'all' | TrendSource;
 
 const FILTERS: { value: FilterValue; label: string }[] = [
-  { value: "all", label: "All" },
-  { value: "hackernews", label: "HN" },
-  { value: "reddit", label: "Reddit" },
-  { value: "youtube", label: "YouTube" },
-  { value: "x", label: "X" },
+  { label: 'All', value: 'all' },
+  { label: 'HN', value: 'hackernews' },
+  { label: 'Reddit', value: 'reddit' },
+  { label: 'YouTube', value: 'youtube' },
+  { label: 'X', value: 'x' },
 ];
 
 interface TrendFiltersProps {
@@ -27,11 +27,11 @@ export function TrendFilters({ active, onChange, counts }: TrendFiltersProps) {
           key={f.value}
           onClick={() => onChange(f.value)}
           size="sm"
-          variant={active === f.value ? "accent" : "ghost"}
+          variant={active === f.value ? 'accent' : 'ghost'}
           className={`rounded-md text-[11px] transition-colors ${
             active === f.value
-              ? "bg-accent-red/10 text-accent-red hover:bg-accent-red/10 hover:text-accent-red"
-              : "text-text-muted hover:bg-transparent hover:text-text-secondary"
+              ? 'bg-accent-red/10 text-accent-red hover:bg-accent-red/10 hover:text-accent-red'
+              : 'text-text-muted hover:bg-transparent hover:text-text-secondary'
           }`}
         >
           {f.label}

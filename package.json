@@ -11,10 +11,10 @@
   "scripts": {
     "build": "turbo build",
     "check:types": "turbo check:types",
+    "deps:update": "bunx npm-check-updates -u --deep && bun install",
     "dev": "turbo dev",
     "dev:app": "turbo dev --filter=@shipshitshow/app",
     "dev:desktop": "turbo dev --filter=@shipshitshow/desktop",
-    "deps:update": "bunx npm-check-updates -u --deep && bun install",
     "dev:web": "turbo dev --filter=@shipshitshow/web",
     "lint": "biome check .",
     "lint:write": "biome check --write .",

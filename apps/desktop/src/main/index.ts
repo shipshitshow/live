@@ -10,9 +10,9 @@ function createWindow() {
     height: 800,
     title: 'Ship Shit Show',
     webPreferences: {
-      preload: path.join(__dirname, '../preload/index.js'),
       contextIsolation: true,
       nodeIntegration: false,
+      preload: path.join(__dirname, '../preload/index.js'),
     },
     width: 1400,
   });

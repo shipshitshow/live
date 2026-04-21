@@ -1,7 +1,8 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
-const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://show.shipshit.dev';
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || 'https://show.shipshit.dev';
 
 export const metadata: Metadata = {
   description: 'Live coding, hot takes, and shipping in public — every week.',

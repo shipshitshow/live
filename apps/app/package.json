@@ -1,8 +1,8 @@
 {
   "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.1",
     "@shipshitshow/types": "workspace:*",
     "@shipshitshow/ui": "workspace:*",
-    "@excalidraw/excalidraw": "^0.18.1",
     "@tailwindcss/postcss": "4.2.4",
     "@vercel/blob": "^2.3.3",
     "@vercel/kv": "3.0.0",

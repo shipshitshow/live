@@ -1,20 +1,20 @@
-"use client";
+'use client';
 
-import { useMemo } from "react";
-import { formatNumber, formatWatchTime } from "@/lib/format";
-import type { VideoStats, VideoType } from "@shipshitshow/types";
+import type { VideoStats, VideoType } from '@shipshitshow/types';
+import { useMemo } from 'react';
+import { formatNumber, formatWatchTime } from '@/lib/format';
 
 interface TopVideosProps {
   videos: VideoStats[];
 }
 
 const TYPE_CONFIG: Record<VideoType, { label: string; badge: string }> = {
-  video: { label: "Videos", badge: "bg-accent-red/20 text-accent-red" },
-  short: { label: "Shorts", badge: "bg-purple-500/20 text-purple-400" },
-  livestream: { label: "Livestreams", badge: "bg-blue-500/20 text-blue-400" },
+  livestream: { badge: 'bg-blue-500/20 text-blue-400', label: 'Livestreams' },
+  short: { badge: 'bg-purple-500/20 text-purple-400', label: 'Shorts' },
+  video: { badge: 'bg-accent-red/20 text-accent-red', label: 'Videos' },
 };
 
-const TYPES_ORDER: VideoType[] = ["video", "short", "livestream"];
+const TYPES_ORDER: VideoType[] = ['video', 'short', 'livestream'];
 
 function TopVideoCard({ video, rank }: { video: VideoStats; rank: number }) {
   return (
@@ -63,7 +63,12 @@ function TopVideoCard({ video, rank }: { video: VideoStats; rank: number }) {
 
 export function TopVideos({ videos }: TopVideosProps) {
   const sections = useMemo(() => {
-    const result: { type: VideoType; label: string; badge: string; videos: VideoStats[] }[] = [];
+    const result: {
+      type: VideoType;
+      label: string;
+      badge: string;
+      videos: VideoStats[];
+    }[] = [];
 
     for (const type of TYPES_ORDER) {
       const filtered = videos
@@ -92,10 +97,14 @@ export function TopVideos({ videos }: TopVideosProps) {
         {sections.map((section) => (
           <div key={section.type} className="p-5">
             <div className="flex items-center gap-2 mb-4">
-              <span className={`text-[9px] font-bold px-2 py-0.5 rounded ${section.badge}`}>
+              <span
+                className={`text-[9px] font-bold px-2 py-0.5 rounded ${section.badge}`}
+              >
                 {section.label.toUpperCase()}
               </span>
-              <span className="text-[10px] text-text-muted">Top {section.videos.length}</span>
+              <span className="text-[10px] text-text-muted">
+                Top {section.videos.length}
+              </span>
             </div>
             <div className="flex flex-col gap-4">
               {section.videos.map((v, i) => (

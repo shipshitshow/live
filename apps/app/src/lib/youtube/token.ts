@@ -5,7 +5,9 @@ import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
 import type { ChannelConfig, YouTubeAuthStatus } from '@/lib/youtube/types';
 
 const TOKEN_TTL_SECONDS = 3000; // 50 min (tokens last 60 min)
-const TOKEN_FILE_PATH = process.env.TOKEN_FILE_PATH || path.join(process.cwd(), 'data', 'youtube-tokens.json');
+const TOKEN_FILE_PATH =
+  process.env.TOKEN_FILE_PATH ||
+  path.join(process.cwd(), 'data', 'youtube-tokens.json');
 const OAUTH_SCOPES = [
   'https://www.googleapis.com/auth/youtube.force-ssl',
   'https://www.googleapis.com/auth/yt-analytics.readonly',

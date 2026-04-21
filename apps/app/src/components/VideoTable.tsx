@@ -1,26 +1,32 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { Button } from "@shipshitshow/ui";
-import { formatNumber, formatWatchTime } from "@/lib/format";
-import type { VideoStats } from "@shipshitshow/types";
+import type { VideoStats } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
+import { useState } from 'react';
+import { formatNumber, formatWatchTime } from '@/lib/format';
 
-type SortKey = "views" | "likes" | "comments" | "watch_time_minutes";
+type SortKey = 'views' | 'likes' | 'comments' | 'watch_time_minutes';
 
 const PAGE_SIZE = 10;
 
 const CHANNEL_HANDLES: Record<string, { handle: string; cls: string }> = {
-  main: { handle: "@shipshitshow", cls: "bg-accent-red/20 text-accent-red" },
-  clips: { handle: "@sssclips", cls: "bg-red-400/20 text-red-400" },
+  clips: { cls: 'bg-red-400/20 text-red-400', handle: '@sssclips' },
+  main: { cls: 'bg-accent-red/20 text-accent-red', handle: '@shipshitshow' },
 };
 
-export function VideoTable({ videos, showChannel = false }: { videos: VideoStats[]; showChannel?: boolean }) {
-  const [sortKey, setSortKey] = useState<SortKey>("views");
+export function VideoTable({
+  videos,
+  showChannel = false,
+}: {
+  videos: VideoStats[];
+  showChannel?: boolean;
+}) {
+  const [sortKey, setSortKey] = useState<SortKey>('views');
   const [desc, setDesc] = useState(true);
   const [page, setPage] = useState(0);
 
   const sorted = [...videos].sort((a, b) =>
-    desc ? b[sortKey] - a[sortKey] : a[sortKey] - b[sortKey]
+    desc ? b[sortKey] - a[sortKey] : a[sortKey] - b[sortKey],
   );
 
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
@@ -28,15 +34,18 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
 
   function handleSort(key: SortKey) {
     if (sortKey === key) setDesc((d) => !d);
-    else { setSortKey(key); setDesc(true); }
+    else {
+      setSortKey(key);
+      setDesc(true);
+    }
     setPage(0);
   }
 
   const cols: { key: SortKey; label: string }[] = [
-    { key: "views", label: "Views" },
-    { key: "likes", label: "Likes" },
-    { key: "comments", label: "Comments" },
-    { key: "watch_time_minutes", label: "Watch Time" },
+    { key: 'views', label: 'Views' },
+    { key: 'likes', label: 'Likes' },
+    { key: 'comments', label: 'Comments' },
+    { key: 'watch_time_minutes', label: 'Watch Time' },
   ];
 
   return (
@@ -56,7 +65,9 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
                 >
                   {col.label}
                   {sortKey === col.key && (
-                    <span className="ml-1 text-accent-red">{desc ? "↓" : "↑"}</span>
+                    <span className="ml-1 text-accent-red">
+                      {desc ? '↓' : '↑'}
+                    </span>
                   )}
                 </th>
               ))}
@@ -64,7 +75,9 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
           </thead>
           <tbody>
             {paged.map((v) => {
-              const chInfo = v.channel_label ? CHANNEL_HANDLES[v.channel_label] : null;
+              const chInfo = v.channel_label
+                ? CHANNEL_HANDLES[v.channel_label]
+                : null;
               return (
                 <tr
                   key={v.video_id}
@@ -73,7 +86,9 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
                   <td className="py-3 px-4">
                     <div className="flex items-center gap-2">
                       {showChannel && chInfo && (
-                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${chInfo.cls}`}>
+                        <span
+                          className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded shrink-0 ${chInfo.cls}`}
+                        >
                           {chInfo.handle}
                         </span>
                       )}
@@ -97,7 +112,9 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
                     {formatNumber(v.comments)}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
-                    {v.watch_time_minutes ? formatWatchTime(v.watch_time_minutes) : "—"}
+                    {v.watch_time_minutes
+                      ? formatWatchTime(v.watch_time_minutes)
+                      : '—'}
                   </td>
                 </tr>
               );
@@ -105,7 +122,9 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
           </tbody>
         </table>
         {sorted.length === 0 && (
-          <div className="text-center text-text-muted py-12 text-sm">No video data available</div>
+          <div className="text-center text-text-muted py-12 text-sm">
+            No video data available
+          </div>
         )}
       </div>
 
@@ -113,7 +132,8 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-5 py-3 border-t border-surface-border">
           <span className="text-[11px] text-text-muted">
-            {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
+            {page * PAGE_SIZE + 1}–
+            {Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
           </span>
           <div className="flex items-center gap-1">
             <Button
@@ -131,8 +151,8 @@ export function VideoTable({ videos, showChannel = false }: { videos: VideoStats
                 size="icon"
                 className={`size-7 rounded text-xs transition-colors ${
                   page === i
-                    ? "bg-accent-red/10 text-accent-red border border-accent-red/30"
-                    : "border-transparent text-text-muted hover:text-text-secondary"
+                    ? 'bg-accent-red/10 text-accent-red border border-accent-red/30'
+                    : 'border-transparent text-text-muted hover:text-text-secondary'
                 }`}
               >
                 {i + 1}

@@ -1,7 +1,7 @@
+import type { TopicUpdate } from '@shipshitshow/types';
 import { NextResponse } from 'next/server';
 import { todayLocalDate } from '@/lib/date';
 import { readTopicRaw, saveTopicUpdate } from '@/lib/livestream-store';
-import type { TopicUpdate } from '@shipshitshow/types';
 
 export async function GET(
   _request: Request,

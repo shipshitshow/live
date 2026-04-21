@@ -1,5 +1,8 @@
+import type {
+  ErrorResponse,
+  LivestreamListResponse,
+} from '@shipshitshow/types';
 import { NextResponse } from 'next/server';
-import type { ErrorResponse } from '@shipshitshow/types';
 import { todayLocalDate } from '@/lib/date';
 import {
   createTopic,
@@ -7,7 +10,6 @@ import {
   listAvailableLivestreamDates,
   resolveLivestreamDate,
 } from '@/lib/livestream-store';
-import type { LivestreamListResponse } from '@shipshitshow/types';
 import { logError, logEvent } from '@/lib/logger';
 
 export async function GET(request: Request) {

@@ -6,7 +6,7 @@ export interface ChannelConfig {
 
 export interface YouTubeAuthStatus {
   connected: boolean;
-  status: "connected" | "missing_credentials" | "reauth_required";
+  status: 'connected' | 'missing_credentials' | 'reauth_required';
   channelLabelsNeedingAuth: string[];
 }
 

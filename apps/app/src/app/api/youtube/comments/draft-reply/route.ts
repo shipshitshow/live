@@ -1,6 +1,6 @@
-import { NextResponse } from "next/server";
-import type { CommentReplyDraftResponse } from "@shipshitshow/types";
-import { generateCommentReplyDrafts } from "@/lib/ai/comment-reply-drafts";
+import type { CommentReplyDraftResponse } from '@shipshitshow/types';
+import { NextResponse } from 'next/server';
+import { generateCommentReplyDrafts } from '@/lib/ai/comment-reply-drafts';
 
 interface DraftReplyRequestBody {
   videoTitle?: unknown;
@@ -10,7 +10,7 @@ interface DraftReplyRequestBody {
 }
 
 const readString = (value: unknown, field: string) => {
-  if (typeof value !== "string") {
+  if (typeof value !== 'string') {
     throw new Error(`Invalid ${field}`);
   }
 
@@ -28,22 +28,31 @@ export async function POST(request: Request) {
   try {
     body = (await request.json()) as DraftReplyRequestBody;
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json(
+      { error: 'Invalid request body' },
+      { status: 400 },
+    );
   }
 
   try {
     const drafts = await generateCommentReplyDrafts({
-      videoTitle: readString(body.videoTitle, "videoTitle"),
-      commentText: readString(body.commentText, "commentText"),
-      channelLabel: readString(body.channelLabel, "channelLabel"),
-      authorDisplayName: readString(body.authorDisplayName, "authorDisplayName"),
+      authorDisplayName: readString(
+        body.authorDisplayName,
+        'authorDisplayName',
+      ),
+      channelLabel: readString(body.channelLabel, 'channelLabel'),
+      commentText: readString(body.commentText, 'commentText'),
+      videoTitle: readString(body.videoTitle, 'videoTitle'),
     });
 
     const response: CommentReplyDraftResponse = { drafts };
     return NextResponse.json(response);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Failed to generate reply drafts";
-    const status = message.includes("configured") ? 503 : 400;
+    const message =
+      error instanceof Error
+        ? error.message
+        : 'Failed to generate reply drafts';
+    const status = message.includes('configured') ? 503 : 400;
     return NextResponse.json({ error: message }, { status });
   }
 }

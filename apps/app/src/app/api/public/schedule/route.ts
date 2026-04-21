@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import type { Topic } from '@shipshitshow/types';
+import { NextResponse } from 'next/server';
 import {
   getTopicsForDate,
   listAvailableLivestreamDates,
@@ -12,7 +12,11 @@ export async function GET(request: Request) {
   const requestedDate = searchParams.get('date') ?? availableDates[0];
 
   if (!requestedDate) {
-    return NextResponse.json({ availableDates, resolvedDate: null, topics: [] });
+    return NextResponse.json({
+      availableDates,
+      resolvedDate: null,
+      topics: [],
+    });
   }
 
   const resolvedDate = await resolveLivestreamDate(requestedDate);

@@ -1,14 +1,13 @@
 'use client';
 
+import type { ErrorResponse, UnlistedVideo } from '@shipshitshow/types';
+import { isErrorResponse } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useState } from 'react';
 import { CopyButton } from '@/components/CopyButton';
-import { Button } from '@shipshitshow/ui';
-import type { ErrorResponse } from '@shipshitshow/types';
-import { isErrorResponse } from '@shipshitshow/types';
 import { readCachedSnapshot, writeCachedSnapshot } from '@/lib/client-cache';
 import { formatNumber } from '@/lib/format';
 import { parseJsonResponse } from '@/lib/parse-json-response';
-import type { UnlistedVideo } from '@shipshitshow/types';
 import {
   generateVideoContent,
   regenerateField,

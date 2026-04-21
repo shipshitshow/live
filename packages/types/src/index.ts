@@ -1,3 +1,5 @@
+export type { ErrorResponse, ReauthRequiredResponse } from './api';
+export { isErrorResponse, isReauthRequiredResponse } from './api';
 export type {
   ContentField,
   LivestreamListResponse,
@@ -9,7 +11,6 @@ export type {
   TopicUpdate,
 } from './livestream';
 export { CONTENT_FIELDS } from './livestream';
-
 export type {
   PipelineJob,
   PipelineJobStatus,
@@ -18,7 +19,13 @@ export type {
   PipelineStageStatus,
   ReviewAction,
 } from './pipeline';
-
+export type { UnlistedVideo } from './review';
+export type {
+  TrendItem,
+  TrendSource,
+  TrendsResponse,
+  TrendsSearchResponse,
+} from './trends';
 export type {
   ChannelFilter,
   ChannelStats,
@@ -32,15 +39,3 @@ export type {
   YouTubeCommentReply,
   YouTubeCommentThread,
 } from './youtube';
-
-export type { ErrorResponse, ReauthRequiredResponse } from './api';
-export { isErrorResponse, isReauthRequiredResponse } from './api';
-
-export type { UnlistedVideo } from './review';
-
-export type {
-  TrendItem,
-  TrendSource,
-  TrendsResponse,
-  TrendsSearchResponse,
-} from './trends';

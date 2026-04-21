@@ -1,5 +1,16 @@
 'use client';
 
+import type {
+  ChannelFilter,
+  ChannelStats,
+  DailyMetric,
+  DateRange,
+  ErrorResponse,
+  MultiChannelReport,
+  VideoStats,
+} from '@shipshitshow/types';
+import { isErrorResponse, isReauthRequiredResponse } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { AuthStatus } from '@/components/AuthStatus';
 import { ChannelSelector } from '@/components/ChannelSelector';
@@ -7,21 +18,10 @@ import { DateRangeSelector } from '@/components/DateRangeSelector';
 import { StatCard } from '@/components/StatCard';
 import { type ChartLine, TimeSeriesChart } from '@/components/TimeSeriesChart';
 import { TopVideos } from '@/components/TopVideos';
-import { Button } from '@shipshitshow/ui';
 import { VideoTable } from '@/components/VideoTable';
-import type { ErrorResponse } from '@shipshitshow/types';
-import { isErrorResponse, isReauthRequiredResponse } from '@shipshitshow/types';
 import { readCachedSnapshot, writeCachedSnapshot } from '@/lib/client-cache';
 import { formatNumber, formatWatchTime } from '@/lib/format';
 import { parseJsonResponse } from '@/lib/parse-json-response';
-import type {
-  ChannelFilter,
-  ChannelStats,
-  DailyMetric,
-  DateRange,
-  MultiChannelReport,
-  VideoStats,
-} from '@shipshitshow/types';
 
 interface MultiChannelMetricPoint {
   day: string;

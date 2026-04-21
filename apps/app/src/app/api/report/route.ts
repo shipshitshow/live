@@ -1,7 +1,12 @@
+import type {
+  DailyMetric,
+  ErrorResponse,
+  MultiChannelReport,
+  ReauthRequiredResponse,
+  VideoStats,
+} from '@shipshitshow/types';
 import { NextRequest, NextResponse } from 'next/server';
-import type { ErrorResponse, ReauthRequiredResponse } from '@shipshitshow/types';
 import { formatLocalDate, todayLocalDate } from '@/lib/date';
-import type { DailyMetric, MultiChannelReport, VideoStats } from '@shipshitshow/types';
 import {
   fetchChannelStats,
   fetchChannelVideos,

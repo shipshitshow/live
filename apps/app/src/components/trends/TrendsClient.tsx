@@ -1,16 +1,16 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Button } from '@shipshitshow/ui';
-import { todayLocalDate } from '@/lib/date';
-import { dispatchTerminalPrompt } from '@/lib/dev-terminal-events';
-import { parseJsonResponse } from '@/lib/parse-json-response';
 import type {
   TrendItem,
   TrendSource,
   TrendsResponse,
   TrendsSearchResponse,
 } from '@shipshitshow/types';
+import { Button } from '@shipshitshow/ui';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { todayLocalDate } from '@/lib/date';
+import { dispatchTerminalPrompt } from '@/lib/dev-terminal-events';
+import { parseJsonResponse } from '@/lib/parse-json-response';
 import { DeepDivePanel } from './DeepDivePanel';
 import { TrendActionBar } from './TrendActionBar';
 import { TrendCard } from './TrendCard';

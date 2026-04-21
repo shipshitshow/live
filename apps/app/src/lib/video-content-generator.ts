@@ -1,6 +1,6 @@
 interface VideoContentInput {
   title: string;
-  videoType: "video" | "short";
+  videoType: 'video' | 'short';
   channelLabel: string;
   duration: number;
 }
@@ -24,26 +24,26 @@ function generateTitles(input: VideoContentInput): string[] {
   const variants: string[] = [base];
 
   const urgencyPrefixes = [
-    "BREAKING:",
-    "This Changes Everything —",
-    "Nobody Is Talking About",
-    "The Truth About",
-    "We Need to Talk About",
+    'BREAKING:',
+    'This Changes Everything —',
+    'Nobody Is Talking About',
+    'The Truth About',
+    'We Need to Talk About',
   ];
   variants.push(`${pickRandom(urgencyPrefixes)} ${base}`);
 
-  if (!base.includes("?")) {
+  if (!base.includes('?')) {
     const questionTemplates = [
       `Is ${base} Actually Real?`,
       `${base} — But Should You Care?`,
-      `${words.slice(0, 4).join(" ")}... Wait, What?`,
+      `${words.slice(0, 4).join(' ')}... Wait, What?`,
     ];
     variants.push(pickRandom(questionTemplates));
   } else {
-    variants.push(base.replace("?", "?!"));
+    variants.push(base.replace('?', '?!'));
   }
 
-  return variants.map((t) => (t.length > 100 ? t.slice(0, 97) + "..." : t));
+  return variants.map((t) => (t.length > 100 ? t.slice(0, 97) + '...' : t));
 }
 
 function formatDuration(seconds: number): string {
@@ -54,7 +54,7 @@ function formatDuration(seconds: number): string {
 }
 
 function generateYouTubeDescription(input: VideoContentInput): string {
-  const isShort = input.videoType === "short";
+  const isShort = input.videoType === 'short';
   const duration = formatDuration(input.duration);
 
   if (isShort) {
@@ -90,12 +90,10 @@ Full breakdown on the channel 👇
 }
 
 function generateAnnouncementTweet(input: VideoContentInput): string {
-  const isShort = input.videoType === "short";
-  const prefix = isShort ? "🎬 New short:" : "🔴 New video:";
+  const isShort = input.videoType === 'short';
+  const prefix = isShort ? '🎬 New short:' : '🔴 New video:';
   const title =
-    input.title.length > 120
-      ? input.title.slice(0, 117) + "..."
-      : input.title;
+    input.title.length > 120 ? input.title.slice(0, 117) + '...' : input.title;
 
   return `${prefix} ${title}
 
@@ -105,9 +103,7 @@ function generateAnnouncementTweet(input: VideoContentInput): string {
 
 function generateRecapTweet(input: VideoContentInput): string {
   const title =
-    input.title.length > 140
-      ? input.title.slice(0, 137) + "..."
-      : input.title;
+    input.title.length > 140 ? input.title.slice(0, 137) + '...' : input.title;
 
   return `${title}
 
@@ -116,20 +112,20 @@ Full video 👇
 }
 
 export function generateVideoContent(
-  input: VideoContentInput
+  input: VideoContentInput,
 ): VideoGeneratedContent {
   return {
+    announcementTweet: generateAnnouncementTweet(input),
+    linkedinPost: generateLinkedInPost(input),
+    recapTweet: generateRecapTweet(input),
     titles: generateTitles(input),
     youtubeDescription: generateYouTubeDescription(input),
-    linkedinPost: generateLinkedInPost(input),
-    announcementTweet: generateAnnouncementTweet(input),
-    recapTweet: generateRecapTweet(input),
   };
 }
 
 export function regenerateField(
   input: VideoContentInput,
-  field: keyof VideoGeneratedContent
+  field: keyof VideoGeneratedContent,
 ): string | string[] {
   const full = generateVideoContent(input);
   return full[field];

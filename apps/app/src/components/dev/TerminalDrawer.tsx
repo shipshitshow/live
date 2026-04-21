@@ -1,16 +1,16 @@
 'use client';
 
 import 'xterm/css/xterm.css';
-import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { Button } from '@shipshitshow/ui';
 import {
+  Button,
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
 } from '@shipshitshow/ui';
+import { Eraser, PanelBottomClose, SquarePlus } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type {
   TerminalSessionCreateResponse,
   TerminalSnapshot,
@@ -474,7 +474,9 @@ export function TerminalDrawer() {
             </span>
             <Select
               value={agentMode}
-              onValueChange={(value: string) => setAgentMode(value as AgentMode)}
+              onValueChange={(value: string) =>
+                setAgentMode(value as AgentMode)
+              }
             >
               <SelectTrigger className="ml-2 h-7 rounded-md px-2 py-1 text-[10px] text-text-secondary">
                 <SelectValue placeholder="Agent" />

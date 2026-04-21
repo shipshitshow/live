@@ -1,7 +1,8 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const DATA_DIR = process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
+const DATA_DIR =
+  process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
 const DRAWINGS_DIR = 'drawings';
 
 export function findTopicFile(slug: string, date: string): string | null {

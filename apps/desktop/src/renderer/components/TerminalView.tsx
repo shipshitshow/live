@@ -82,7 +82,7 @@ export function TerminalView() {
   return (
     <div
       ref={containerRef}
-      style={{ height: '100%', width: '100%', padding: '4px' }}
+      style={{ height: '100%', padding: '4px', width: '100%' }}
     />
   );
 }

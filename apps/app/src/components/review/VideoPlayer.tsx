@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import { useRef, useState } from "react";
-import { Button } from "@shipshitshow/ui";
+import { Button } from '@shipshitshow/ui';
+import { useRef, useState } from 'react';
 
 interface VideoPlayerProps {
   src: string;
@@ -49,12 +49,12 @@ export function VideoPlayer({ src, thumbnailUrl }: VideoPlayerProps) {
       {/* Overlay controls */}
       <div
         className={`absolute inset-0 flex items-center justify-center transition-opacity duration-200 ${
-          playing ? "opacity-0 group-hover:opacity-100" : "opacity-100"
+          playing ? 'opacity-0 group-hover:opacity-100' : 'opacity-100'
         }`}
         onClick={togglePlay}
       >
         <Button
-          aria-label={playing ? "Pause" : "Play"}
+          aria-label={playing ? 'Pause' : 'Play'}
           variant="ghost"
           size="icon"
           className="size-14 rounded-full border-white/20 bg-black/60 text-white hover:scale-105 hover:bg-black/80 hover:text-white backdrop-blur-sm"

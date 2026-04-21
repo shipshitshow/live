@@ -1,5 +1,5 @@
-import { NextResponse } from 'next/server';
 import type { ErrorResponse } from '@shipshitshow/types';
+import { NextResponse } from 'next/server';
 import { listReviewQueueVideos } from '@/lib/review-queue';
 
 export async function GET() {
