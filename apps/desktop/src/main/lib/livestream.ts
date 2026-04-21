@@ -19,10 +19,21 @@ function resolveDataDir(): string {
     path.join(process.cwd(), '..', 'app', 'data', 'livestream'),
     path.join(process.cwd(), 'apps', 'app', 'data', 'livestream'),
     path.resolve(__dirname, '..', '..', '..', 'app', 'data', 'livestream'),
-    path.resolve(__dirname, '..', '..', '..', '..', 'app', 'data', 'livestream'),
+    path.resolve(
+      __dirname,
+      '..',
+      '..',
+      '..',
+      '..',
+      'app',
+      'data',
+      'livestream',
+    ),
   ];
 
-  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
+  return (
+    candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0]
+  );
 }
 
 const DATA_DIR = resolveDataDir();

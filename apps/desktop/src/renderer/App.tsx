@@ -1,4 +1,10 @@
-import { LayoutGrid, MessageSquare, PlayCircle, Settings, TrendingUp } from 'lucide-react';
+import {
+  LayoutGrid,
+  MessageSquare,
+  PlayCircle,
+  Settings,
+  TrendingUp,
+} from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { YouTubeAuthView } from './components/auth/YouTubeAuthView';
 import { CommentsView } from './components/comments/CommentsView';
@@ -50,7 +56,8 @@ export function App() {
   const [terminalMaximized, setTerminalMaximized] = useState(false);
   const [terminalHeight, setTerminalHeight] = useState(280);
 
-  const activeViewLabel = ALL_VIEWS.find((item) => item.id === activeView)?.label ?? 'Topics';
+  const activeViewLabel =
+    ALL_VIEWS.find((item) => item.id === activeView)?.label ?? 'Topics';
   const isSettingsView = activeView === 'settings';
   const hideMainContent = terminalVisible && terminalMaximized;
 
@@ -146,7 +153,11 @@ export function App() {
         )}
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          <div className={hideMainContent ? 'hidden' : 'min-h-0 flex-1 overflow-hidden'}>
+          <div
+            className={
+              hideMainContent ? 'hidden' : 'min-h-0 flex-1 overflow-hidden'
+            }
+          >
             {content}
           </div>
           {terminalVisible && (

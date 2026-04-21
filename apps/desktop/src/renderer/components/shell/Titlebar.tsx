@@ -1,5 +1,11 @@
 import { Button, cn } from '@shipshitshow/ui';
-import { PanelLeftClose, PanelLeftOpen, Settings, Terminal, X } from 'lucide-react';
+import {
+  PanelLeftClose,
+  PanelLeftOpen,
+  Settings,
+  Terminal,
+  X,
+} from 'lucide-react';
 
 interface TitlebarProps {
   activeViewLabel: string;
@@ -31,11 +37,17 @@ export function Titlebar({
           onClick={onToggleSidebar}
           title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
         >
-          {sidebarCollapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
+          {sidebarCollapsed ? (
+            <PanelLeftOpen size={14} />
+          ) : (
+            <PanelLeftClose size={14} />
+          )}
         </Button>
         <span className="text-text-muted">Ship Shit Show</span>
         <span className="text-text-muted">/</span>
-        <span className="truncate font-medium text-text-primary">{activeViewLabel}</span>
+        <span className="truncate font-medium text-text-primary">
+          {activeViewLabel}
+        </span>
       </div>
 
       <div className="flex items-center gap-1">
@@ -49,9 +61,16 @@ export function Titlebar({
               terminalVisible && 'bg-surface-elevated text-text-primary',
             )}
             onClick={onToggleTerminal}
-            title={terminalVisible ? 'Hide terminal (⌘J)' : 'Show terminal (⌘J)'}
+            title={
+              terminalVisible ? 'Hide terminal (⌘J)' : 'Show terminal (⌘J)'
+            }
           >
-            <Terminal size={14} className={terminalVisible ? 'text-text-primary' : 'text-text-secondary'} />
+            <Terminal
+              size={14}
+              className={
+                terminalVisible ? 'text-text-primary' : 'text-text-secondary'
+              }
+            />
           </Button>
         )}
         <Button

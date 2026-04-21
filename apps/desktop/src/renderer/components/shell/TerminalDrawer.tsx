@@ -20,7 +20,9 @@ export function TerminalDrawer({
   onHeightChange,
   onToggleMaximize,
 }: TerminalDrawerProps) {
-  const dragStateRef = useRef<{ startHeight: number; startY: number } | null>(null);
+  const dragStateRef = useRef<{ startHeight: number; startY: number } | null>(
+    null,
+  );
 
   const handleResizeMouseDown = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement>) => {
@@ -79,7 +81,9 @@ export function TerminalDrawer({
       <div className="flex items-center justify-between gap-3 border-b border-surface-border px-3 py-1.5">
         <div className="flex items-center gap-2">
           <Terminal size={14} className="text-accent-red" />
-          <span className="text-[13px] font-medium text-text-primary">Terminal</span>
+          <span className="text-[13px] font-medium text-text-primary">
+            Terminal
+          </span>
         </div>
 
         <div className="flex items-center gap-1">
