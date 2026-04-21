@@ -1,5 +1,0 @@
-{
-  "buildCommand": "bun turbo build --filter=@shipshitshow/app",
-  "installCommand": "bun install",
-  "outputDirectory": "apps/app/.next"
-}

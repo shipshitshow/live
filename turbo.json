@@ -3,6 +3,26 @@
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
+      "env": [
+        "ANALYTICS_API_URL",
+        "BLOB_READ_WRITE_TOKEN",
+        "KV_REST_API_READ_ONLY_TOKEN",
+        "KV_REST_API_TOKEN",
+        "KV_REST_API_URL",
+        "KV_URL",
+        "NEXT_PUBLIC_SITE_URL",
+        "PIPELINE_API_URL",
+        "REDIS_URL",
+        "VERCEL",
+        "X_BEARER_TOKEN",
+        "YOUTUBE_CHANNEL_ID_CLIPS",
+        "YOUTUBE_CHANNEL_ID_MAIN",
+        "YOUTUBE_CLIENT_ID",
+        "YOUTUBE_CLIENT_SECRET",
+        "YOUTUBE_OAUTH_REDIRECT_URI",
+        "YOUTUBE_REFRESH_TOKEN_CLIPS",
+        "YOUTUBE_REFRESH_TOKEN_MAIN"
+      ],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "out/**"]
     },
     "check:types": {
