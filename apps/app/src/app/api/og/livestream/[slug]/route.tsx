@@ -1,1 +1,1 @@
-export { GET } from '../../../livestreams/[slug]/route';
+export { GET } from '../../livestreams/[slug]/route';
