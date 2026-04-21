@@ -7,6 +7,7 @@ out/
 
 # production
 build/
+dist/
 
 # misc
 .DS_Store
@@ -17,24 +18,23 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 logs/
-!src/app/api/logs/
-!src/app/api/logs/**
+!apps/app/src/app/api/logs/
+!apps/app/src/app/api/logs/**
 
 # local env files
 .env
 .env*.local
 
-# repo-local generated skill links
-.claude/skills/show-rundown
-.claude/skills/stream-content
-.claude/skills/trend-scout
-.codex/skills/
+# agent symlinks (tracked targets live in .agents/)
+.claude/memory
+.claude/skills
+.codex/
 .cursor/skills/
 .openclaw/skills/
 
 # youtube tokens & cache
-data/youtube-tokens.json
-data/youtube-cache/
+apps/app/data/youtube-tokens.json
+apps/app/data/youtube-cache/
 
 # vercel
 .vercel
@@ -45,3 +45,10 @@ next-env.d.ts
 
 # Turborepo
 .turbo
+
+# lockfiles we don't use
+package-lock.json
+yarn.lock
+
+# Added by code-review-graph
+.code-review-graph/

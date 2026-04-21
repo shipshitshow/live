@@ -1,0 +1,14 @@
+@import url("tailwindcss");
+@import "@shipshitshow/ui/theme.css";
+@source "../../../../packages/ui/src";
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
