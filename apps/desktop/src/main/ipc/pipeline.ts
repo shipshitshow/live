@@ -1,5 +1,5 @@
-import { ipcMain } from 'electron';
 import type { PipelineJob } from '@shipshitshow/types';
+import { ipcMain } from 'electron';
 
 const PIPELINE_API_URL =
   process.env.PIPELINE_API_URL || 'http://localhost:8001';
@@ -30,7 +30,11 @@ export function registerPipelineHandlers() {
     'pipeline:review-job',
     async (
       _event,
-      { jobId, action, reason }: { jobId: string; action: string; reason?: string },
+      {
+        jobId,
+        action,
+        reason,
+      }: { jobId: string; action: string; reason?: string },
     ) => {
       const res = await fetch(
         `${PIPELINE_API_URL}/pipeline/jobs/${jobId}/review`,

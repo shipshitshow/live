@@ -156,9 +156,7 @@ export function CommentsView() {
           ),
         );
       } catch (e) {
-        setActionError(
-          e instanceof Error ? e.message : 'Failed to send reply',
-        );
+        setActionError(e instanceof Error ? e.message : 'Failed to send reply');
       } finally {
         setSendingByComment((prev) => ({
           ...prev,

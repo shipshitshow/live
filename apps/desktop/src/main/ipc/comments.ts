@@ -1,8 +1,8 @@
-import { ipcMain } from 'electron';
 import type {
   YouTubeCommentReply,
   YouTubeCommentThread,
 } from '@shipshitshow/types';
+import { ipcMain } from 'electron';
 import { generateCommentReplyDrafts } from '../lib/ai/comment-reply-drafts';
 import { fetchCommentThreads, replyToComment } from '../lib/youtube/comments';
 import { getAccessToken, getChannelConfigs } from '../lib/youtube/token';
@@ -31,13 +31,12 @@ export function registerCommentsHandlers() {
 
       allItems.sort(
         (a, b) =>
-          new Date(b.publishedAt).getTime() -
-          new Date(a.publishedAt).getTime(),
+          new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
       );
 
       return {
-        items: allItems,
         fetchedAt: new Date().toISOString(),
+        items: allItems,
       };
     },
   );

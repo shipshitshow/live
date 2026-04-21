@@ -3,22 +3,22 @@ import type { TrendItem, TrendSource } from '@shipshitshow/types';
 const SCORE_UNITS: Record<TrendSource, number> = {
   hackernews: 30,
   reddit: 40,
-  youtube: 20000,
   x: 120,
+  youtube: 20000,
 };
 
 const COMMENT_UNITS: Record<TrendSource, number> = {
   hackernews: 12,
   reddit: 15,
-  youtube: 40,
   x: 8,
+  youtube: 40,
 };
 
 const MAX_AGE_HOURS: Record<TrendSource, number> = {
   hackernews: 48,
   reddit: 72,
-  youtube: 96,
   x: 24,
+  youtube: 96,
 };
 
 function getAgeHours(timestamp: string): number {

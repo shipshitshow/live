@@ -1,9 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { kv } from '@vercel/kv';
+
 function isYouTubeAuthEnabled(): boolean {
   return !process.env.VERCEL;
 }
+
 import type { ChannelConfig, YouTubeAuthStatus } from '@/lib/youtube/types';
 
 const TOKEN_TTL_SECONDS = 3000; // 50 min (tokens last 60 min)

@@ -1,9 +1,6 @@
 import { BrowserWindow, ipcMain } from 'electron';
+import { getYouTubeAuthStatus, saveRefreshToken } from '../lib/youtube/token';
 import type { YouTubeAuthStatus } from '../lib/youtube/types';
-import {
-  getYouTubeAuthStatus,
-  saveRefreshToken,
-} from '../lib/youtube/token';
 
 const OAUTH_SCOPES = [
   'https://www.googleapis.com/auth/youtube.force-ssl',

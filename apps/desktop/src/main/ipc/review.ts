@@ -1,5 +1,5 @@
-import { ipcMain } from 'electron';
 import type { UnlistedVideo } from '@shipshitshow/types';
+import { ipcMain } from 'electron';
 import { listReviewQueueVideos } from '../lib/review-queue';
 import {
   generateVideoContent,
@@ -8,12 +8,9 @@ import {
 } from '../lib/video-content-generator';
 
 export function registerReviewHandlers() {
-  ipcMain.handle(
-    'review:list-videos',
-    async (): Promise<UnlistedVideo[]> => {
-      return listReviewQueueVideos();
-    },
-  );
+  ipcMain.handle('review:list-videos', async (): Promise<UnlistedVideo[]> => {
+    return listReviewQueueVideos();
+  });
 
   ipcMain.handle(
     'review:generate-content',

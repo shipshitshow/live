@@ -1,16 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { YouTubeAuthView } from './components/auth/YouTubeAuthView';
+import { CommentsView } from './components/comments/CommentsView';
+import { ReviewQueueView } from './components/review/ReviewQueueView';
+import { type ShellNavItem, Sidebar } from './components/shell/Sidebar';
+import { TerminalDrawer } from './components/shell/TerminalDrawer';
+import { Titlebar } from './components/shell/Titlebar';
 import { TerminalView } from './components/TerminalView';
 import { KanbanBoard } from './components/topics/KanbanBoard';
 import { TrendsView } from './components/trends/TrendsView';
-import { ReviewQueueView } from './components/review/ReviewQueueView';
-import { CommentsView } from './components/comments/CommentsView';
-import { YouTubeAuthView } from './components/auth/YouTubeAuthView';
-import {
-  type ShellNavItem,
-  Sidebar,
-} from './components/shell/Sidebar';
-import { TerminalDrawer } from './components/shell/TerminalDrawer';
-import { Titlebar } from './components/shell/Titlebar';
 
 const PRIMARY_VIEWS = [
   {
@@ -48,7 +45,9 @@ const SECONDARY_VIEWS = [
   },
 ] as const satisfies readonly ShellNavItem[];
 
-type ViewId = (typeof PRIMARY_VIEWS)[number]['id'] | (typeof SECONDARY_VIEWS)[number]['id'];
+type ViewId =
+  | (typeof PRIMARY_VIEWS)[number]['id']
+  | (typeof SECONDARY_VIEWS)[number]['id'];
 
 function renderView(activeView: ViewId) {
   switch (activeView) {
@@ -75,8 +74,9 @@ export function App() {
   const [terminalHeight, setTerminalHeight] = useState(280);
 
   const activeViewLabel =
-    [...PRIMARY_VIEWS, ...SECONDARY_VIEWS].find((item) => item.id === activeView)?.label ??
-    'Topics';
+    [...PRIMARY_VIEWS, ...SECONDARY_VIEWS].find(
+      (item) => item.id === activeView,
+    )?.label ?? 'Topics';
 
   const hideMainContent = terminalVisible && terminalMaximized;
 

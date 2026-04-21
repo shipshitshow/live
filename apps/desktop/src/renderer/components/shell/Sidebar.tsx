@@ -52,8 +52,12 @@ function SidebarItem({
       </span>
       {!collapsed && (
         <span className="min-w-0 flex-1 text-left">
-          <span className="block text-sm font-medium text-inherit">{item.label}</span>
-          <span className="mt-0.5 block text-xs text-text-muted">{item.description}</span>
+          <span className="block text-sm font-medium text-inherit">
+            {item.label}
+          </span>
+          <span className="mt-0.5 block text-xs text-text-muted">
+            {item.description}
+          </span>
         </span>
       )}
     </Button>
@@ -80,7 +84,12 @@ export function Sidebar({
           collapsed ? 'px-3 py-3' : 'px-4 py-4',
         )}
       >
-        <div className={cn('flex items-center gap-3', collapsed && 'justify-center')}>
+        <div
+          className={cn(
+            'flex items-center gap-3',
+            collapsed && 'justify-center',
+          )}
+        >
           <div className="flex size-10 shrink-0 items-center justify-center rounded-xl border border-accent-red/20 bg-accent-red/10 text-[11px] font-semibold tracking-[0.18em] text-accent-red uppercase">
             SS
           </div>

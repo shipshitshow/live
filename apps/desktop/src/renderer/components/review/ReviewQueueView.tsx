@@ -1,8 +1,8 @@
 import type { UnlistedVideo } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useState } from 'react';
-import { CopyButton } from '../CopyButton';
 import { formatDuration, formatNumber } from '../../lib/format';
+import { CopyButton } from '../CopyButton';
 
 interface VideoGeneratedContent {
   titles: string[];

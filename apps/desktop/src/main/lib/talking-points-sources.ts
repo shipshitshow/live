@@ -1,4 +1,3 @@
-import type { TrendItem } from '@shipshitshow/types';
 import {
   fetchHNTrending,
   fetchRedditTrending,
@@ -8,6 +7,7 @@ import {
   searchX,
   searchYouTube,
 } from '@shipshitshow/talking-points';
+import type { TrendItem } from '@shipshitshow/types';
 import { cachedFetch, TTL } from './cache';
 
 function getXBearerToken(): string | null {
@@ -23,8 +23,10 @@ function normalizeQuery(query: string): string {
 }
 
 export async function fetchDesktopHNTrending(): Promise<TrendItem[]> {
-  return cachedFetch('desktop:trends:hackernews:feed', TTL.TREND_DISCOVERY, () =>
-    fetchHNTrending(),
+  return cachedFetch(
+    'desktop:trends:hackernews:feed',
+    TTL.TREND_DISCOVERY,
+    () => fetchHNTrending(),
   );
 }
 

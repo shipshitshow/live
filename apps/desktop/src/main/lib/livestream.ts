@@ -184,7 +184,11 @@ export function saveTopicUpdate(
     raw = updateFrontmatterField(raw, 'status', updates.status);
   }
   if (updates.thumbnail_prompt !== undefined) {
-    raw = updateFrontmatterField(raw, 'thumbnail_prompt', updates.thumbnail_prompt);
+    raw = updateFrontmatterField(
+      raw,
+      'thumbnail_prompt',
+      updates.thumbnail_prompt,
+    );
   }
 
   if (updates.generated) {

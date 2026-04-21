@@ -164,9 +164,7 @@ export function buildTopicSearchQuery(title: string, summary?: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9\s]/g, ' ')
     .split(/\s+/)
-    .filter(
-      (word) => word.length > 2 && !TOPIC_QUERY_STOP_WORDS.has(word),
-    );
+    .filter((word) => word.length > 2 && !TOPIC_QUERY_STOP_WORDS.has(word));
 
   const uniqueWords = Array.from(new Set(words)).slice(0, 6);
   if (uniqueWords.length === 0) return title;

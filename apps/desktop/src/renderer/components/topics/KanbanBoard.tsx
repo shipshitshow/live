@@ -91,7 +91,9 @@ export function KanbanBoard() {
       <div className="flex-1 overflow-auto p-6">
         {topics.length === 0 ? (
           <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/30 p-8 text-center">
-            <p className="text-sm text-text-primary">No livestream topics yet.</p>
+            <p className="text-sm text-text-primary">
+              No livestream topics yet.
+            </p>
             <p className="text-xs text-text-muted mt-2">
               Add topics via the Trends tab or create markdown files under{' '}
               <code>data/livestream/{date}/</code>.

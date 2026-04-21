@@ -1,11 +1,11 @@
 import path from 'node:path';
 import { app, BrowserWindow } from 'electron';
+import { registerCommentsHandlers } from './ipc/comments';
+import { registerPipelineHandlers } from './ipc/pipeline';
+import { registerReviewHandlers } from './ipc/review';
 import { registerTerminalHandlers } from './ipc/terminal';
 import { registerTopicsHandlers } from './ipc/topics';
 import { registerTrendsHandlers } from './ipc/trends';
-import { registerPipelineHandlers } from './ipc/pipeline';
-import { registerReviewHandlers } from './ipc/review';
-import { registerCommentsHandlers } from './ipc/comments';
 import { registerYouTubeAuthHandlers } from './ipc/youtube-auth';
 
 let mainWindow: BrowserWindow | null = null;

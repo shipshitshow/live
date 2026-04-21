@@ -1,4 +1,3 @@
-import type { TrendItem } from '@shipshitshow/types';
 import {
   fetchHNTrending,
   fetchRedditTrending,
@@ -9,6 +8,7 @@ import {
   searchX,
   searchYouTube,
 } from '@shipshitshow/talking-points';
+import type { TrendItem } from '@shipshitshow/types';
 import {
   getAccessToken,
   getChannelConfigs,

@@ -77,7 +77,10 @@ function createUserMap(data: {
   return userMap;
 }
 
-function toTweetTrendItem(tweet: XTweet, userMap: Map<string, XUser>): TrendItem {
+function toTweetTrendItem(
+  tweet: XTweet,
+  userMap: Map<string, XUser>,
+): TrendItem {
   const user = userMap.get(tweet.author_id);
 
   return {
@@ -161,9 +164,7 @@ async function hydrateTrendTopic(
   };
 }
 
-async function fetchFallbackAIItems(
-  bearerToken: string,
-): Promise<TrendItem[]> {
+async function fetchFallbackAIItems(bearerToken: string): Promise<TrendItem[]> {
   const results = await Promise.all(
     FALLBACK_AI_QUERIES.map(({ query, options }) =>
       fetchXQuery(bearerToken, query, options),
@@ -189,15 +190,17 @@ export async function fetchXTrending({
     if (result.status !== 'fulfilled') continue;
 
     for (const trend of result.value) {
-      if (!isAIRelevant({
-        commentCount: 0,
-        id: trend.trend_name,
-        score: trend.tweet_count ?? 0,
-        source: 'x',
-        timestamp: new Date().toISOString(),
-        title: trend.trend_name,
-        url: `https://x.com/search?q=${encodeURIComponent(trend.trend_name)}`,
-      })) {
+      if (
+        !isAIRelevant({
+          commentCount: 0,
+          id: trend.trend_name,
+          score: trend.tweet_count ?? 0,
+          source: 'x',
+          timestamp: new Date().toISOString(),
+          title: trend.trend_name,
+          url: `https://x.com/search?q=${encodeURIComponent(trend.trend_name)}`,
+        })
+      ) {
         continue;
       }
 

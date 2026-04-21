@@ -120,7 +120,6 @@ export async function listReviewQueueVideos(): Promise<UnlistedVideo[]> {
     .flat()
     .sort(
       (a, b) =>
-        new Date(b.published_at).getTime() -
-        new Date(a.published_at).getTime(),
+        new Date(b.published_at).getTime() - new Date(a.published_at).getTime(),
     );
 }

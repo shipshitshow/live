@@ -1,14 +1,14 @@
+import {
+  buildLivestreamTopicDraft,
+  dedupeTrendItems,
+  extractTrendKeywords,
+} from '@shipshitshow/talking-points';
 import type {
   TrendItem,
   TrendSource,
   TrendsResponse,
   TrendsSearchResponse,
 } from '@shipshitshow/types';
-import {
-  buildLivestreamTopicDraft,
-  dedupeTrendItems,
-  extractTrendKeywords,
-} from '@shipshitshow/talking-points';
 import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DeepDivePanel } from './DeepDivePanel';
@@ -27,8 +27,8 @@ function todayLocalDate(): string {
 const SOURCE_STATUS_LABELS: Record<TrendSource, string> = {
   hackernews: 'Hacker News',
   reddit: 'Reddit',
-  youtube: 'YouTube',
   x: 'X',
+  youtube: 'YouTube',
 };
 
 export function TrendsView() {
@@ -37,7 +37,9 @@ export function TrendsView() {
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sources, setSources] = useState<TrendsResponse['sources'] | null>(null);
+  const [sources, setSources] = useState<TrendsResponse['sources'] | null>(
+    null,
+  );
   const [sourceFilter, setSourceFilter] = useState<FilterValue>('all');
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [deepDiveItems, setDeepDiveItems] = useState<TrendItem[]>([]);

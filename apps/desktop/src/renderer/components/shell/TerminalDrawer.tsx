@@ -20,7 +20,9 @@ export function TerminalDrawer({
   onHeightChange,
   onToggleMaximize,
 }: TerminalDrawerProps) {
-  const dragStateRef = useRef<{ startHeight: number; startY: number } | null>(null);
+  const dragStateRef = useRef<{ startHeight: number; startY: number } | null>(
+    null,
+  );
 
   const handleResizeMouseDown = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement>) => {
@@ -80,10 +82,13 @@ export function TerminalDrawer({
         <div className="min-w-0">
           <div className="flex items-center gap-2">
             <Terminal size={14} className="text-accent-red" />
-            <span className="text-sm font-semibold text-text-primary">Terminal</span>
+            <span className="text-sm font-semibold text-text-primary">
+              Terminal
+            </span>
           </div>
           <p className="mt-0.5 text-xs text-text-muted">
-            Local shell drawer. Toggle with <span className="font-medium text-text-secondary">Cmd/Ctrl+J</span>.
+            Local shell drawer. Toggle with{' '}
+            <span className="font-medium text-text-secondary">Cmd/Ctrl+J</span>.
           </p>
         </div>
 
@@ -98,7 +103,13 @@ export function TerminalDrawer({
             {maximized ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
             {maximized ? 'Restore' : 'Maximize'}
           </Button>
-          <Button type="button" variant="ghost" size="sm" className="shrink-0" onClick={onClose}>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="shrink-0"
+            onClick={onClose}
+          >
             <X size={14} />
             Hide
           </Button>

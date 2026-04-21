@@ -78,10 +78,9 @@ function getShellEnv(): Record<string, string> {
 }
 
 function resolveShell(): string {
-  const candidates = [
-    process.env.SHELL?.trim(),
-    ...FALLBACK_SHELLS,
-  ].filter((value): value is string => Boolean(value));
+  const candidates = [process.env.SHELL?.trim(), ...FALLBACK_SHELLS].filter(
+    (value): value is string => Boolean(value),
+  );
 
   for (const candidate of candidates) {
     if (!candidate.startsWith('/')) {
@@ -97,11 +96,9 @@ function resolveShell(): string {
 }
 
 function resolveWorkingDirectory(): string {
-  const candidates = [
-    process.env.PWD,
-    process.cwd(),
-    os.homedir(),
-  ].filter((value): value is string => Boolean(value));
+  const candidates = [process.env.PWD, process.cwd(), os.homedir()].filter(
+    (value): value is string => Boolean(value),
+  );
 
   for (const candidate of candidates) {
     if (!existsSync(candidate)) {
@@ -133,8 +130,12 @@ export function registerTerminalHandlers() {
 
       const shell = resolveShell();
       const cwd = resolveWorkingDirectory();
-      const safeCols = Number.isFinite(cols) ? Math.max(1, Math.floor(cols)) : 120;
-      const safeRows = Number.isFinite(rows) ? Math.max(1, Math.floor(rows)) : 30;
+      const safeCols = Number.isFinite(cols)
+        ? Math.max(1, Math.floor(cols))
+        : 120;
+      const safeRows = Number.isFinite(rows)
+        ? Math.max(1, Math.floor(rows))
+        : 30;
 
       try {
         ptyProcess = pty.spawn(shell, [], {

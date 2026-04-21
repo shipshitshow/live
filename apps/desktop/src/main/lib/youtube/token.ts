@@ -131,8 +131,8 @@ export async function getAccessToken(
 
   const token = await refreshAccessToken(channelConfig.refreshToken);
   accessTokenCache.set(channelConfig.id, {
-    token,
     expiresAt: Date.now() + TOKEN_TTL_MS,
+    token,
   });
 
   return token;

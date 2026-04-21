@@ -46,7 +46,8 @@ function toTrendItem(video: YouTubeVideoItem): TrendItem {
     summary: video.snippet?.description?.slice(0, 200) || undefined,
     thumbnail: video.snippet?.thumbnails?.medium?.url,
     timestamp: video.snippet?.publishedAt ?? '',
-    title: video.snippet?.title ?? (typeof video.id === 'string' ? video.id : ''),
+    title:
+      video.snippet?.title ?? (typeof video.id === 'string' ? video.id : ''),
     url: `https://www.youtube.com/watch?v=${video.id}`,
   };
 }

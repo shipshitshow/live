@@ -1,9 +1,9 @@
-import { ipcMain } from 'electron';
-import type { TrendsResponse, TrendsSearchResponse } from '@shipshitshow/types';
 import {
   buildTrendsResponse,
   buildTrendsSearchResponse,
 } from '@shipshitshow/talking-points';
+import type { TrendsResponse, TrendsSearchResponse } from '@shipshitshow/types';
+import { ipcMain } from 'electron';
 import {
   fetchDesktopHNTrending,
   fetchDesktopRedditTrending,

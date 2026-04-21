@@ -84,10 +84,9 @@ async function fetchVideoDetails(
     `${YT_API}/videos?part=snippet,statistics&id=${videoIds.join(',')}`,
     auth.apiKey,
   );
-  const detailRes = await fetch(
-    url,
-    { headers: getAuthHeaders(auth.accessToken) },
-  );
+  const detailRes = await fetch(url, {
+    headers: getAuthHeaders(auth.accessToken),
+  });
 
   if (!detailRes.ok) {
     throw new Error(`YouTube detail error: ${detailRes.status}`);

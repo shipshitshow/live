@@ -1,5 +1,5 @@
-import { ipcMain } from 'electron';
 import type { TopicStatus } from '@shipshitshow/types';
+import { ipcMain } from 'electron';
 import {
   createTopic,
   getTopicsForDate,
@@ -39,7 +39,11 @@ export function registerTopicsHandlers() {
     'topics:update-status',
     (
       _event,
-      { date, slug, status }: { date: string; slug: string; status: TopicStatus },
+      {
+        date,
+        slug,
+        status,
+      }: { date: string; slug: string; status: TopicStatus },
     ) => saveTopicUpdate(date, slug, { status }),
   );
 

@@ -6,8 +6,8 @@ import type {
   TrendsSearchResponse,
 } from '@shipshitshow/types';
 import { dedupeTrendItems, sortTrendSearchItems } from './items';
-import { isAIRelevant } from './relevance';
 import { sortTrendItems } from './ranking';
+import { isAIRelevant } from './relevance';
 
 export type TrendFetcher = () => Promise<TrendItem[]>;
 export type TrendFetcherEntry = readonly [TrendSource, TrendFetcher];
@@ -18,8 +18,8 @@ export async function buildTrendsResponse(
   const sources: Record<TrendSource, TrendSourceStatus> = {
     hackernews: 'error',
     reddit: 'error',
-    youtube: 'error',
     x: 'error',
+    youtube: 'error',
   };
 
   const results = await Promise.allSettled(
@@ -56,7 +56,9 @@ export async function buildTrendsSearchResponse(
     };
   }
 
-  const results = await Promise.allSettled(searchers.map((searcher) => searcher()));
+  const results = await Promise.allSettled(
+    searchers.map((searcher) => searcher()),
+  );
 
   const items: TrendItem[] = [];
   for (const result of results) {

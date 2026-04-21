@@ -1,4 +1,4 @@
-import type { TrendItem } from "@shipshitshow/types";
+import type { TrendItem } from '@shipshitshow/types';
 
 const AI_PATTERNS = [
   /\bai\b/i,
@@ -31,6 +31,8 @@ const AI_PATTERNS = [
 ];
 
 export function isAIRelevant(item: TrendItem): boolean {
-  const haystack = [item.title, item.summary, item.url].filter(Boolean).join(" ");
+  const haystack = [item.title, item.summary, item.url]
+    .filter(Boolean)
+    .join(' ');
   return AI_PATTERNS.some((pattern) => pattern.test(haystack));
 }

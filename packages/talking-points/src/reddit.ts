@@ -66,7 +66,9 @@ function toOriginalRedditImage(value: string): string {
 }
 
 function pickThumbnail(post: RedditPost): string | undefined {
-  const previewSource = decodeHtmlEntities(post.preview?.images?.[0]?.source?.url);
+  const previewSource = decodeHtmlEntities(
+    post.preview?.images?.[0]?.source?.url,
+  );
   if (previewSource) return previewSource;
 
   const overridden = decodeHtmlEntities(post.url_overridden_by_dest);
@@ -98,9 +100,12 @@ async function fetchSubreddit(
   subreddit: string,
   { limit = 15, userAgent = DEFAULT_USER_AGENT }: RedditSourceOptions = {},
 ): Promise<RedditPost[]> {
-  const res = await fetch(`${REDDIT_BASE}/r/${subreddit}/hot.json?limit=${limit}`, {
-    headers: { 'User-Agent': userAgent },
-  });
+  const res = await fetch(
+    `${REDDIT_BASE}/r/${subreddit}/hot.json?limit=${limit}`,
+    {
+      headers: { 'User-Agent': userAgent },
+    },
+  );
   if (!res.ok) {
     throw new Error(`Reddit API error for r/${subreddit}: ${res.status}`);
   }
