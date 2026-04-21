@@ -101,6 +101,7 @@ OpenAI's `ChatGPT Images 2.0` launch matters because it is not just another "pre
 - [X: @OpenAI official livestream post](https://x.com/OpenAI/status/2046665696898412887)
 - [X: @btibor91 launch-day reference](https://x.com/btibor91/status/2046545878538961304?s=20)
 - [X: @VaibhavSpace image example](https://x.com/VaibhavSpace/status/2046678054706331845/photo/1)
+- [X: @yash_yk45 image example](https://x.com/yash_yk45/status/2046671618118955454)
 - Use these as timeline signal items alongside the official links.
 - If you want a cleaner structure live:
   - official OpenAI X post
@@ -108,6 +109,7 @@ OpenAI's `ChatGPT Images 2.0` launch matters because it is not just another "pre
   - live YouTube stream
   - `@btibor91`
   - `@VaibhavSpace`
+  - `@yash_yk45`
   - then HN and Reddit reactions
 
 ## Best Examples To Show Live
@@ -161,6 +163,10 @@ OpenAI's `ChatGPT Images 2.0` launch matters because it is not just another "pre
   - Good extra community proof point from the X timeline during launch night.
   - Use it as a live reaction/example slot after the official OpenAI samples and before the Reddit examples.
   - Source: [X: @VaibhavSpace image example](https://x.com/VaibhavSpace/status/2046678054706331845/photo/1)
+- `yash_yk45 community image example`
+  - Another strong launch-night X example to pull up during the community-reaction section.
+  - Good for showing how quickly people are stress-testing this on visually ambitious compositions.
+  - Source: [X: @yash_yk45 image example](https://x.com/yash_yk45/status/2046671618118955454)
 
 ## Prompt Blocks — Live Demo
 Built from the official launch themes OpenAI is pushing: posters, brochures, infographics, diagrams, text rendering, and multilingual layouts.
@@ -356,3 +362,4 @@ The most important thing about `ChatGPT Images 2.0` is not image beauty. It is r
 - [X: @OpenAI official livestream post](https://x.com/OpenAI/status/2046665696898412887)
 - [X: @btibor91 launch-day reference](https://x.com/btibor91/status/2046545878538961304?s=20)
 - [X: @VaibhavSpace image example](https://x.com/VaibhavSpace/status/2046678054706331845/photo/1)
+- [X: @yash_yk45 image example](https://x.com/yash_yk45/status/2046671618118955454)
