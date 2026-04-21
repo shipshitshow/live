@@ -1,5 +1,6 @@
 'use client';
 
+import { buildTopicSearchQuery } from '@shipshitshow/talking-points';
 import type {
   LivestreamListResponse,
   Topic,
@@ -156,40 +157,6 @@ function isTweetUrl(url: string): boolean {
 
 function isRestreamUrl(url: string): boolean {
   return /studio\.restream\.io/i.test(url);
-}
-
-const TOPIC_QUERY_STOP_WORDS = new Set([
-  'a',
-  'an',
-  'and',
-  'are',
-  'but',
-  'does',
-  'for',
-  'from',
-  'into',
-  'is',
-  'it',
-  'matter',
-  'real',
-  'still',
-  'that',
-  'the',
-  'this',
-  'with',
-]);
-
-function buildTopicSearchQuery(title: string, summary?: string): string {
-  const words = `${title} ${summary ?? ''}`
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, ' ')
-    .split(/\s+/)
-    .filter((word) => word.length > 2 && !TOPIC_QUERY_STOP_WORDS.has(word));
-
-  const uniqueWords = Array.from(new Set(words)).slice(0, 6);
-  if (uniqueWords.length === 0) return title;
-  if (!uniqueWords.includes('ai')) uniqueWords.unshift('ai');
-  return uniqueWords.join(' ');
 }
 
 interface TalkingPoint {
@@ -694,10 +661,10 @@ export function TopicDetailClient() {
             No topic with slug <code>{slug}</code> was found for {resolvedDate}.
           </p>
           <Link
-            href="/livestream"
+            href="/analytics"
             className="mt-6 rounded-lg border border-surface-border px-4 py-2 text-sm text-text-secondary transition-colors hover:border-accent-red/40 hover:text-text-primary"
           >
-            Back to livestream board
+            Back to dashboard
           </Link>
         </main>
       </div>

@@ -7,10 +7,7 @@ interface AppHeaderLink {
 
 const DEFAULT_HEADER_LINKS: AppHeaderLink[] = [
   { href: '/analytics', label: 'Analytics' },
-  { href: '/comments', label: 'Comments' },
-  { href: '/review', label: 'Review' },
   { href: '/livestream', label: 'Livestream' },
-  { href: '/trends', label: 'Trends' },
 ];
 
 interface AppHeaderProps {

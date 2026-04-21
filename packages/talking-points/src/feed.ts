@@ -1,0 +1,72 @@
+import type {
+  TrendItem,
+  TrendSource,
+  TrendSourceStatus,
+  TrendsResponse,
+  TrendsSearchResponse,
+} from '@shipshitshow/types';
+import { dedupeTrendItems, sortTrendSearchItems } from './items';
+import { isAIRelevant } from './relevance';
+import { sortTrendItems } from './ranking';
+
+export type TrendFetcher = () => Promise<TrendItem[]>;
+export type TrendFetcherEntry = readonly [TrendSource, TrendFetcher];
+
+export async function buildTrendsResponse(
+  fetchers: readonly TrendFetcherEntry[],
+): Promise<TrendsResponse> {
+  const sources: Record<TrendSource, TrendSourceStatus> = {
+    hackernews: 'error',
+    reddit: 'error',
+    youtube: 'error',
+    x: 'error',
+  };
+
+  const results = await Promise.allSettled(
+    fetchers.map(async ([source, fetcher]) => {
+      const items = await fetcher();
+      sources[source] = 'ok';
+      return items;
+    }),
+  );
+
+  const items: TrendItem[] = [];
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      items.push(...result.value);
+    }
+  }
+
+  return {
+    fetchedAt: new Date().toISOString(),
+    items: sortTrendItems(dedupeTrendItems(items).filter(isAIRelevant)),
+    sources,
+  };
+}
+
+export async function buildTrendsSearchResponse(
+  query: string,
+  searchers: TrendFetcher[],
+): Promise<TrendsSearchResponse> {
+  const trimmedQuery = query.trim();
+  if (!trimmedQuery) {
+    return {
+      items: [],
+      query: trimmedQuery,
+    };
+  }
+
+  const results = await Promise.allSettled(searchers.map((searcher) => searcher()));
+
+  const items: TrendItem[] = [];
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      items.push(...result.value);
+    }
+  }
+
+  return {
+    items: sortTrendSearchItems(dedupeTrendItems(items)),
+    query: trimmedQuery,
+  };
+}

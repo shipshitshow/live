@@ -23,6 +23,7 @@ export type { UnlistedVideo } from './review';
 export type {
   TrendItem,
   TrendSource,
+  TrendSourceStatus,
   TrendsResponse,
   TrendsSearchResponse,
 } from './trends';

@@ -1,190 +1,226 @@
-'use client';
-
-import type {
-  LivestreamListResponse,
-  Topic,
-  TopicStatus,
-} from '@shipshitshow/types';
-import { isErrorResponse } from '@shipshitshow/types';
-import {
-  Button,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@shipshitshow/ui';
-import { useCallback, useEffect, useState } from 'react';
+import type { Topic } from '@shipshitshow/types';
+import Link from 'next/link';
 import { AppHeader } from '@/components/AppHeader';
-import { KanbanColumn } from '@/components/livestream/KanbanColumn';
-import { LivestreamBoardContentSkeleton } from '@/components/PageSkeletons';
-import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
-import { parseJsonResponse } from '@/lib/parse-json-response';
+import {
+  getTopicsForDate,
+  listAvailableLivestreamDates,
+  resolveLivestreamDate,
+} from '@/lib/livestream-store';
+import {
+  buildYouTubeThumbnailUrl,
+  extractVideoId,
+  extractYouTubeUrl,
+} from '@/lib/livestream-youtube';
 
-const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
+const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: 'UTC',
+  year: 'numeric',
+});
 
-export default function LivestreamPage() {
-  const [topics, setTopics] = useState<Topic[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [requestedDate, setRequestedDate] = useState(() => todayLocalDate());
-  const [date, setDate] = useState(() => todayLocalDate());
-  const [availableDates, setAvailableDates] = useState<string[]>([]);
-  const [isFallback, setIsFallback] = useState(false);
+const STATUS_META = {
+  archived: {
+    badgeClass: 'bg-blue-500/10 text-blue-400 border-blue-500/20',
+    copy: 'Archived livestreams move here once a topic is done.',
+    empty: 'No archived livestreams yet.',
+    label: 'Archived',
+    title: 'Previous Livestreams',
+  },
+  selected: {
+    badgeClass: 'bg-green-500/10 text-green-400 border-green-500/20',
+    copy: 'Only selected topics stay here. Backlog remains in the desktop Kanban.',
+    empty: 'No topic is selected for the current livestream yet.',
+    label: 'Selected',
+    title: 'Selected Livestream',
+  },
+} as const;
 
-  const fetchTopics = useCallback(async () => {
-    const startedAt = performance.now();
-    setError(null);
-    try {
-      const res = await fetch(`/api/livestream?date=${requestedDate}`);
-      const data = await parseJsonResponse<
-        LivestreamListResponse | { error: string }
-      >(res);
-      if (!res.ok) {
-        throw new Error(
-          isErrorResponse(data) ? data.error : `API error ${res.status}`,
-        );
-      }
-      if (isErrorResponse(data)) {
-        throw new Error(data.error);
-      }
-      const livestreamData = data as LivestreamListResponse;
-      setTopics(livestreamData.topics);
-      setDate(livestreamData.resolvedDate);
-      setAvailableDates(livestreamData.availableDates);
-      setIsFallback(livestreamData.isFallback);
-      logClientPerf('livestream_board_fetch_topics', {
-        durationMs: Number((performance.now() - startedAt).toFixed(2)),
-        isFallback: livestreamData.isFallback,
-        requestedDate,
-        resolvedDate: livestreamData.resolvedDate,
-        topicCount: livestreamData.topics.length,
-      });
-    } catch (fetchError) {
-      setTopics([]);
-      setAvailableDates([]);
-      setIsFallback(false);
-      setError(
-        fetchError instanceof Error
-          ? fetchError.message
-          : 'Failed to load topics',
-      );
-    } finally {
-      setLoading(false);
-    }
-  }, [requestedDate]);
+interface LivestreamCard {
+  thumbnailUrl: string;
+  topic: Topic;
+}
 
-  useEffect(() => {
-    fetchTopics();
-  }, [fetchTopics]);
+function formatLivestreamDate(date: string): string {
+  const [year, month, day] = date.split('-').map(Number);
+  return DATE_FORMATTER.format(new Date(Date.UTC(year, month - 1, day)));
+}
 
-  useEffect(() => {
-    logClientEvent('livestream_board_view', { requestedDate });
-  }, [requestedDate]);
+function sortTopics(topics: Topic[]): Topic[] {
+  return [...topics].sort(
+    (a, b) =>
+      b.date.localeCompare(a.date) || a.fileName.localeCompare(b.fileName),
+  );
+}
 
-  async function handleStatusChange(slug: string, status: TopicStatus) {
-    // Optimistic update
-    setTopics((prev) =>
-      prev.map((t) => (t.slug === slug ? { ...t, status } : t)),
-    );
+async function getTopicThumbnailUrl(topic: Topic): Promise<string> {
+  const youtubeUrl = extractYouTubeUrl(topic.content);
+  const videoId = youtubeUrl ? extractVideoId(youtubeUrl) : null;
 
-    await fetch(`/api/livestream/${slug}?date=${date}`, {
-      body: JSON.stringify({ status }),
-      headers: { 'Content-Type': 'application/json' },
-      method: 'PATCH',
-    });
+  if (videoId) {
+    return buildYouTubeThumbnailUrl(videoId);
   }
 
-  function handleSelect(slug: string) {
-    window.location.href = `/livestream/${slug}?date=${date}`;
-  }
+  return `/api/og/livestream/${encodeURIComponent(topic.slug)}?date=${encodeURIComponent(topic.date)}`;
+}
 
-  if (loading) {
+async function buildCards(topics: Topic[]): Promise<LivestreamCard[]> {
+  return Promise.all(
+    topics.map(async (topic) => ({
+      thumbnailUrl: await getTopicThumbnailUrl(topic),
+      topic,
+    })),
+  );
+}
+
+function LivestreamCardGrid({
+  cards,
+  kind,
+}: {
+  cards: LivestreamCard[];
+  kind: keyof typeof STATUS_META;
+}) {
+  const meta = STATUS_META[kind];
+
+  if (cards.length === 0) {
     return (
-      <div className="min-h-screen bg-surface text-text-primary">
-        <AppHeader subtitle="Livestream" activeHref="/livestream" />
-        <LivestreamBoardContentSkeleton />
+      <div className="rounded-2xl border border-dashed border-surface-border bg-surface-card/40 p-8 text-center">
+        <p className="text-sm font-medium text-text-primary">{meta.empty}</p>
+        <p className="mt-2 text-xs text-text-muted">{meta.copy}</p>
       </div>
     );
   }
 
-  const selectedCount = topics.filter((t) => t.status === 'in_progress').length;
-  const totalCount = topics.length;
+  return (
+    <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+      {cards.map(({ thumbnailUrl, topic }) => (
+        <Link
+          key={`${topic.date}-${topic.slug}`}
+          href={`/livestream/${topic.slug}?date=${topic.date}`}
+          className="group overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-colors hover:border-accent-red/40"
+        >
+          <div className="aspect-[16/9] overflow-hidden bg-surface-elevated">
+            <img
+              src={thumbnailUrl}
+              alt=""
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+            />
+          </div>
+          <div className="space-y-3 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
+                  {formatLivestreamDate(topic.date)}
+                </p>
+                <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-text-primary transition-colors group-hover:text-accent-red">
+                  {topic.title}
+                </h3>
+              </div>
+              <span
+                className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-medium ${meta.badgeClass}`}
+              >
+                {meta.label}
+              </span>
+            </div>
+            <div className="flex items-center justify-between gap-3 text-[11px] text-text-muted">
+              <span className="truncate">{topic.source}</span>
+              <span>Open topic</span>
+            </div>
+          </div>
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+export default async function LivestreamPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  const requestedDate = date || todayLocalDate();
+  const resolvedDate = await resolveLivestreamDate(requestedDate);
+  const availableDates = await listAvailableLivestreamDates();
+  const topicsByDate = await Promise.all(
+    availableDates.map(async (currentDate) => ({
+      date: currentDate,
+      topics: await getTopicsForDate(currentDate),
+    })),
+  );
+
+  const selectedTopics = sortTopics(
+    (
+      topicsByDate.find((entry) => entry.date === resolvedDate)?.topics ?? []
+    ).filter((topic) => topic.status === 'in_progress'),
+  );
+  const archivedTopics = sortTopics(
+    topicsByDate.flatMap((entry) =>
+      entry.topics.filter((topic) => topic.status === 'done'),
+    ),
+  );
+
+  const [selectedCards, archivedCards] = await Promise.all([
+    buildCards(selectedTopics),
+    buildCards(archivedTopics),
+  ]);
 
   return (
-    <div className="min-h-screen bg-surface">
-      <AppHeader subtitle="Livestream" activeHref="/livestream" />
-
-      <main className="p-8 space-y-6">
-        {error ? (
-          <div className="rounded-xl border border-accent-red/20 bg-accent-red/5 p-4">
-            <p className="text-sm text-accent-red">{error}</p>
-          </div>
-        ) : null}
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-          <div>
-            <p className="text-sm font-medium text-text-primary">
-              {date} · {selectedCount}/{totalCount} selected
-            </p>
-            {isFallback && (
-              <p className="text-[11px] text-text-muted mt-1">
-                No topics for {requestedDate}. Showing latest board instead.
+    <div className="min-h-screen bg-surface text-text-primary">
+      <AppHeader
+        subtitle="Show Rundown"
+        activeHref="/livestream"
+        links={[
+          { href: '/analytics', label: 'Analytics' },
+          { href: '/livestream', label: 'Livestream' },
+        ]}
+      />
+      <main className="mx-auto max-w-6xl space-y-10 px-6 py-8">
+        <section className="space-y-6">
+          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
+                Current date
               </p>
-            )}
+              <h2 className="mt-2 text-2xl font-semibold text-text-primary">
+                {formatLivestreamDate(resolvedDate)}
+              </h2>
+              <p className="mt-2 text-sm text-text-muted">
+                Only selected livestream topics are shown here.
+              </p>
+            </div>
+            <span className="text-xs text-text-muted">
+              {selectedCards.length} selected topic
+              {selectedCards.length === 1 ? '' : 's'}
+            </span>
           </div>
-          <div className="flex items-center gap-3">
-            {availableDates.length > 0 && (
-              <Select
-                value={date}
-                onValueChange={(value: string) => {
-                  setLoading(true);
-                  setRequestedDate(value);
-                }}
-              >
-                <SelectTrigger className="h-8 text-xs font-medium text-text-secondary">
-                  <SelectValue placeholder="Select date" />
-                </SelectTrigger>
-                <SelectContent>
-                  {availableDates.map((availableDate) => (
-                    <SelectItem key={availableDate} value={availableDate}>
-                      {availableDate}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            )}
-            <Button
-              onClick={fetchTopics}
-              className="h-8 text-xs text-text-secondary"
-            >
-              Refresh
-            </Button>
+
+          <LivestreamCardGrid cards={selectedCards} kind="selected" />
+        </section>
+
+        <section className="space-y-6">
+          <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
+                Archive
+              </p>
+              <h2 className="mt-2 text-2xl font-semibold text-text-primary">
+                {STATUS_META.archived.title}
+              </h2>
+              <p className="mt-2 text-sm text-text-muted">
+                Finished livestream topics drop out of the active list and stay
+                here.
+              </p>
+            </div>
+            <span className="text-xs text-text-muted">
+              {archivedCards.length} archived topic
+              {archivedCards.length === 1 ? '' : 's'}
+            </span>
           </div>
-        </div>
-        {availableDates.length === 0 ? (
-          <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/30 p-8 text-center">
-            <p className="text-sm text-text-primary">
-              No livestream topics yet.
-            </p>
-            <p className="text-xs text-text-muted mt-2">
-              Add markdown topic files under{' '}
-              <code>data/livestream/YYYY-MM-DD/</code>.
-            </p>
-          </div>
-        ) : (
-          <div className="flex gap-6 overflow-x-auto">
-            {COLUMNS.map((status) => (
-              <KanbanColumn
-                key={status}
-                status={status}
-                topics={topics.filter((t) => t.status === status)}
-                onStatusChange={handleStatusChange}
-                onSelect={handleSelect}
-              />
-            ))}
-          </div>
-        )}
+
+          <LivestreamCardGrid cards={archivedCards} kind="archived" />
+        </section>
       </main>
     </div>
   );

@@ -2,6 +2,11 @@ import path from 'node:path';
 import { app, BrowserWindow } from 'electron';
 import { registerTerminalHandlers } from './ipc/terminal';
 import { registerTopicsHandlers } from './ipc/topics';
+import { registerTrendsHandlers } from './ipc/trends';
+import { registerPipelineHandlers } from './ipc/pipeline';
+import { registerReviewHandlers } from './ipc/review';
+import { registerCommentsHandlers } from './ipc/comments';
+import { registerYouTubeAuthHandlers } from './ipc/youtube-auth';
 
 let mainWindow: BrowserWindow | null = null;
 
@@ -32,6 +37,11 @@ function createWindow() {
 app.whenReady().then(() => {
   registerTerminalHandlers();
   registerTopicsHandlers();
+  registerTrendsHandlers();
+  registerPipelineHandlers();
+  registerReviewHandlers();
+  registerCommentsHandlers();
+  registerYouTubeAuthHandlers();
   createWindow();
 
   app.on('activate', () => {

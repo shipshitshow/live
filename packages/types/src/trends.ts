@@ -1,4 +1,5 @@
 export type TrendSource = 'hackernews' | 'reddit' | 'youtube' | 'x';
+export type TrendSourceStatus = 'ok' | 'error' | 'manual';
 
 export interface TrendItem {
   id: string;
@@ -17,7 +18,7 @@ export interface TrendItem {
 export interface TrendsResponse {
   items: TrendItem[];
   fetchedAt: string;
-  sources: Record<TrendSource, 'ok' | 'error'>;
+  sources: Record<TrendSource, TrendSourceStatus>;
 }
 
 export interface TrendsSearchResponse {

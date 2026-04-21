@@ -12,7 +12,6 @@ import type {
 import { isErrorResponse, isReauthRequiredResponse } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { AuthStatus } from '@/components/AuthStatus';
 import { ChannelSelector } from '@/components/ChannelSelector';
 import { DateRangeSelector } from '@/components/DateRangeSelector';
 import { StatCard } from '@/components/StatCard';
@@ -244,7 +243,6 @@ export function DashboardClient() {
             <h2 className="text-xl font-bold text-text-primary">
               {headerTitle}
             </h2>
-            <AuthStatus />
           </div>
           <p className="text-text-muted text-sm mt-0.5">
             {headerSub}

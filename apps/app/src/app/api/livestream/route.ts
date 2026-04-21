@@ -5,7 +5,6 @@ import type {
 import { NextResponse } from 'next/server';
 import { todayLocalDate } from '@/lib/date';
 import {
-  createTopic,
   getTopicsForDate,
   listAvailableLivestreamDates,
   resolveLivestreamDate,
@@ -47,37 +46,5 @@ export async function GET(request: Request) {
           : 'Failed to load livestream topics',
     };
     return NextResponse.json(response, { status: 500 });
-  }
-}
-
-export async function POST(request: Request) {
-  try {
-    const body = await request.json();
-    const { title, slug, source, date, content } = body as {
-      title: string;
-      slug: string;
-      source: string;
-      date: string;
-      content: string;
-    };
-
-    const created = await createTopic({ content, date, slug, source, title });
-    logEvent('api.livestream.created', {
-      date,
-      fileName: created.fileName,
-      slug,
-      source,
-      title,
-    });
-
-    return NextResponse.json(created, { status: 201 });
-  } catch (error) {
-    const response: ErrorResponse = {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'Failed to create livestream topic',
-    };
-    return NextResponse.json(response, { status: 503 });
   }
 }

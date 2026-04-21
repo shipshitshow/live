@@ -25,13 +25,6 @@ logs/
 .env
 .env*.local
 
-# agent symlinks (tracked targets live in .agents/)
-.claude/memory
-.claude/skills
-.codex/
-.cursor/skills/
-.openclaw/skills/
-
 # youtube tokens & cache
 apps/app/data/youtube-tokens.json
 apps/app/data/youtube-cache/

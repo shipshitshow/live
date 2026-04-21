@@ -1,6 +1,4 @@
 import type { Metadata } from 'next';
-import { DevOverlays } from '@/components/DevOverlays';
-import { isDevToolsEnabled, isYouTubeAuthEnabled } from '@/lib/dev-tools';
 import { buildDefaultMetadata } from '@/lib/site';
 import './globals.scss';
 
@@ -15,19 +13,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const devToolsEnabled = isDevToolsEnabled();
-  const youtubeAuthEnabled = isYouTubeAuthEnabled();
-
   return (
     <html lang="en">
       <body>
         <div id="app-content-shell" className="app-content-shell">
           {children}
         </div>
-        <DevOverlays
-          devToolsEnabled={devToolsEnabled}
-          youtubeAuthEnabled={youtubeAuthEnabled}
-        />
       </body>
     </html>
   );

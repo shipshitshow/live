@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@shipshitshow/types": "workspace:*"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "main": "./src/index.ts",
+  "name": "@shipshitshow/talking-points",
+  "private": true,
+  "types": "./src/index.ts",
+  "version": "0.1.0"
+}

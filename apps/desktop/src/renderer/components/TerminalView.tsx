@@ -1,38 +1,39 @@
+import { cn } from '@shipshitshow/ui';
 import { useEffect, useRef } from 'react';
 
-declare global {
-  interface Window {
-    electronAPI: {
-      terminal: {
-        kill: () => Promise<void>;
-        onData: (cb: (data: string) => void) => () => void;
-        onExit: (cb: (exitCode: number) => void) => () => void;
-        resize: (cols: number, rows: number) => Promise<void>;
-        spawn: (cols: number, rows: number) => Promise<{ pid: number }>;
-        subscribe: () => void;
-        write: (data: string) => Promise<void>;
-      };
-    };
-  }
+type Disposable = { dispose: () => void };
+
+interface TerminalViewProps {
+  className?: string;
 }
 
-export function TerminalView() {
+export function TerminalView({ className }: TerminalViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const termRef = useRef<import('xterm').Terminal | null>(null);
 
   useEffect(() => {
-    let cleanupData: (() => void) | null = null;
-    let cleanupExit: (() => void) | null = null;
+    let cancelled = false;
+    let detachData: (() => void) | null = null;
+    let detachExit: (() => void) | null = null;
+    let observer: ResizeObserver | null = null;
+    let terminalInstance: import('xterm').Terminal | null = null;
+    let inputSubscription: Disposable | null = null;
+    let resizeSubscription: Disposable | null = null;
 
     async function init() {
       if (!containerRef.current) return;
 
-      const { Terminal } = await import('xterm');
-      const { FitAddon } = await import('xterm-addon-fit');
+      const [{ Terminal }, { FitAddon }] = await Promise.all([
+        import('xterm'),
+        import('xterm-addon-fit'),
+      ]);
+
+      if (cancelled || !containerRef.current) {
+        return;
+      }
 
       const term = new Terminal({
         cursorBlink: true,
-        fontFamily: 'monospace',
+        fontFamily: 'var(--font-mono), monospace',
         fontSize: 14,
         theme: {
           background: '#0d0d0d',
@@ -43,46 +44,64 @@ export function TerminalView() {
 
       const fitAddon = new FitAddon();
       term.loadAddon(fitAddon);
-      term.open(containerRef.current!);
+      term.open(containerRef.current);
       fitAddon.fit();
-      termRef.current = term;
+      terminalInstance = term;
 
       const { terminal } = window.electronAPI;
+      const spawnResult = await terminal.spawn(term.cols, term.rows);
 
-      await terminal.spawn(term.cols, term.rows);
-      terminal.subscribe();
-
-      cleanupData = terminal.onData((data) => term.write(data));
-      cleanupExit = terminal.onExit((code) => {
-        term.writeln(`\r\n[Process exited with code ${code}]`);
-      });
-
-      term.onData((data) => terminal.write(data));
-      term.onResize(({ cols, rows }) => terminal.resize(cols, rows));
-
-      const observer = new ResizeObserver(() => fitAddon.fit());
-      observer.observe(containerRef.current!);
-
-      return () => {
-        observer.disconnect();
+      if (cancelled) {
+        await terminal.kill();
         term.dispose();
-        terminal.kill();
-      };
+        return;
+      }
+
+      if (spawnResult.error) {
+        term.writeln('\x1b[31mUnable to start terminal.\x1b[0m');
+        term.writeln(`\r\n${spawnResult.error}`);
+        term.writeln(`\r\nShell: ${spawnResult.shell}`);
+        term.writeln(`\r\nWorking directory: ${spawnResult.cwd}`);
+      } else {
+        terminal.subscribe();
+
+        detachData = terminal.onData((data) => term.write(data));
+        detachExit = terminal.onExit((code) => {
+          term.writeln(`\r\n[Process exited with code ${code}]`);
+        });
+
+        inputSubscription = term.onData((data) => {
+          void terminal.write(data);
+        });
+        resizeSubscription = term.onResize(({ cols, rows }) => {
+          void terminal.resize(cols, rows);
+        });
+      }
+
+      observer = new ResizeObserver(() => fitAddon.fit());
+      observer.observe(containerRef.current);
+
+      term.focus();
     }
 
-    const cleanupPromise = init();
+    void init();
 
     return () => {
-      cleanupPromise.then((cleanup) => cleanup?.());
-      cleanupData?.();
-      cleanupExit?.();
+      cancelled = true;
+      observer?.disconnect();
+      inputSubscription?.dispose();
+      resizeSubscription?.dispose();
+      detachData?.();
+      detachExit?.();
+      terminalInstance?.dispose();
+      void window.electronAPI.terminal.kill();
     };
   }, []);
 
   return (
     <div
       ref={containerRef}
-      style={{ height: '100%', padding: '4px', width: '100%' }}
+      className={cn('h-full w-full bg-surface p-2', className)}
     />
   );
 }
