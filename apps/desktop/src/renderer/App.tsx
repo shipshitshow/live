@@ -1,3 +1,4 @@
+import { LayoutGrid, MessageSquare, PlayCircle, Settings, TrendingUp } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { YouTubeAuthView } from './components/auth/YouTubeAuthView';
 import { CommentsView } from './components/comments/CommentsView';
@@ -9,45 +10,20 @@ import { TerminalView } from './components/TerminalView';
 import { KanbanBoard } from './components/topics/KanbanBoard';
 import { TrendsView } from './components/trends/TrendsView';
 
-const PRIMARY_VIEWS = [
-  {
-    description: 'Daily livestream topics and backlog',
-    id: 'topics',
-    label: 'Topics',
-    shortLabel: 'TP',
-  },
-  {
-    description: 'Trend research and deeper searches',
-    id: 'trends',
-    label: 'Trends',
-    shortLabel: 'TR',
-  },
-  {
-    description: 'Review queue and content generation',
-    id: 'review',
-    label: 'Review',
-    shortLabel: 'RV',
-  },
-  {
-    description: 'Comment triage and reply drafting',
-    id: 'comments',
-    label: 'Comments',
-    shortLabel: 'CM',
-  },
-] as const satisfies readonly ShellNavItem[];
+const PRIMARY_VIEWS: ShellNavItem[] = [
+  { icon: LayoutGrid, id: 'topics', label: 'Topics' },
+  { icon: TrendingUp, id: 'trends', label: 'Trends' },
+  { icon: PlayCircle, id: 'review', label: 'Review' },
+  { icon: MessageSquare, id: 'comments', label: 'Comments' },
+];
 
-const SECONDARY_VIEWS = [
-  {
-    description: 'YouTube auth and local app setup',
-    id: 'settings',
-    label: 'Settings',
-    shortLabel: 'ST',
-  },
-] as const satisfies readonly ShellNavItem[];
+const SECONDARY_VIEWS: ShellNavItem[] = [
+  { icon: Settings, id: 'settings', label: 'Settings' },
+];
 
-type ViewId =
-  | (typeof PRIMARY_VIEWS)[number]['id']
-  | (typeof SECONDARY_VIEWS)[number]['id'];
+const ALL_VIEWS = [...PRIMARY_VIEWS, ...SECONDARY_VIEWS];
+
+type ViewId = 'topics' | 'trends' | 'review' | 'comments' | 'settings';
 
 function renderView(activeView: ViewId) {
   switch (activeView) {
@@ -68,16 +44,14 @@ function renderView(activeView: ViewId) {
 
 export function App() {
   const [activeView, setActiveView] = useState<ViewId>('topics');
+  const [previousView, setPreviousView] = useState<ViewId>('topics');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [terminalVisible, setTerminalVisible] = useState(true);
   const [terminalMaximized, setTerminalMaximized] = useState(false);
   const [terminalHeight, setTerminalHeight] = useState(280);
 
-  const activeViewLabel =
-    [...PRIMARY_VIEWS, ...SECONDARY_VIEWS].find(
-      (item) => item.id === activeView,
-    )?.label ?? 'Topics';
-
+  const activeViewLabel = ALL_VIEWS.find((item) => item.id === activeView)?.label ?? 'Topics';
+  const isSettingsView = activeView === 'settings';
   const hideMainContent = terminalVisible && terminalMaximized;
 
   const toggleSidebar = useCallback(() => {
@@ -97,6 +71,19 @@ export function App() {
   const toggleTerminalMaximized = useCallback(() => {
     setTerminalVisible(true);
     setTerminalMaximized((current) => !current);
+  }, []);
+
+  const handleSelectSettings = useCallback(() => {
+    if (isSettingsView) {
+      setActiveView(previousView);
+    } else {
+      setPreviousView(activeView);
+      setActiveView('settings');
+    }
+  }, [isSettingsView, activeView, previousView]);
+
+  const handleSelectView = useCallback((viewId: string) => {
+    setActiveView(viewId as ViewId);
   }, []);
 
   useEffect(() => {
@@ -140,6 +127,8 @@ export function App() {
     <div className="flex h-screen flex-col overflow-hidden bg-surface text-text-primary">
       <Titlebar
         activeViewLabel={activeViewLabel}
+        isSettingsView={isSettingsView}
+        onSelectSettings={handleSelectSettings}
         onToggleSidebar={toggleSidebar}
         onToggleTerminal={toggleTerminal}
         sidebarCollapsed={sidebarCollapsed}
@@ -147,16 +136,20 @@ export function App() {
       />
 
       <div className="flex min-h-0 flex-1 overflow-hidden">
-        <Sidebar
-          activeView={activeView}
-          collapsed={sidebarCollapsed}
-          onSelect={(viewId) => setActiveView(viewId as ViewId)}
-          primaryItems={[...PRIMARY_VIEWS]}
-          secondaryItems={[...SECONDARY_VIEWS]}
-        />
+        {!sidebarCollapsed && (
+          <Sidebar
+            activeView={activeView}
+            onSelect={handleSelectView}
+            primaryItems={PRIMARY_VIEWS}
+            secondaryItems={SECONDARY_VIEWS}
+          />
+        )}
 
         <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-          {hideMainContent ? (
+          <div className={hideMainContent ? 'hidden' : 'min-h-0 flex-1 overflow-hidden'}>
+            {content}
+          </div>
+          {terminalVisible && (
             <TerminalDrawer
               height={terminalHeight}
               maximized={terminalMaximized}
@@ -164,19 +157,6 @@ export function App() {
               onHeightChange={setTerminalHeight}
               onToggleMaximize={toggleTerminalMaximized}
             />
-          ) : (
-            <>
-              <div className="min-h-0 flex-1 overflow-hidden">{content}</div>
-              {terminalVisible && (
-                <TerminalDrawer
-                  height={terminalHeight}
-                  maximized={terminalMaximized}
-                  onClose={toggleTerminal}
-                  onHeightChange={setTerminalHeight}
-                  onToggleMaximize={toggleTerminalMaximized}
-                />
-              )}
-            </>
           )}
         </div>
       </div>

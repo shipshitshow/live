@@ -33,7 +33,7 @@ export function TerminalView({ className }: TerminalViewProps) {
 
       const term = new Terminal({
         cursorBlink: true,
-        fontFamily: 'var(--font-mono), monospace',
+        fontFamily: '"SF Mono", SFMono-Regular, Consolas, Menlo, monospace',
         fontSize: 14,
         theme: {
           background: '#0d0d0d',

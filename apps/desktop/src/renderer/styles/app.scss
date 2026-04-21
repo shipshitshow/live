@@ -1,0 +1,41 @@
+@import url("tailwindcss");
+@import url("@shipshitshow/ui/theme.css");
+@import url("xterm/css/xterm.css");
+@source "../../../../../../packages/ui/src";
+
+@utility app-region-drag {
+  -webkit-app-region: drag;
+}
+@utility app-region-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html, body, #root {
+    height: 100%;
+    font-family: var(--font-sans);
+    background: var(--color-surface);
+    color: var(--color-text-primary);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    overflow: hidden;
+  }
+
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--color-surface-border); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+  button, [role="button"] { cursor: pointer; }
+  button:disabled, [role="button"][aria-disabled="true"] { cursor: not-allowed; }
+
+  button:focus, [role="button"]:focus { outline: none; }
+}

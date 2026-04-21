@@ -13,11 +13,13 @@ function todayLocalDate(): string {
 export function KanbanBoard() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [date, setDate] = useState(() => todayLocalDate());
   const [availableDates, setAvailableDates] = useState<string[]>([]);
 
   const fetchTopics = useCallback(async () => {
     setLoading(true);
+    setError(null);
     try {
       const dates = await window.electronAPI.topics.listDates();
       setAvailableDates(dates);
@@ -27,6 +29,8 @@ export function KanbanBoard() {
 
       const result = await window.electronAPI.topics.list(resolvedDate);
       setTopics(result);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'Failed to load topics');
     } finally {
       setLoading(false);
     }
@@ -51,6 +55,21 @@ export function KanbanBoard() {
     return (
       <div className="flex items-center justify-center h-full text-text-muted text-sm">
         Loading topics...
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 gap-4">
+        <div className="text-accent-red text-4xl">!</div>
+        <p className="text-text-secondary text-sm">{error}</p>
+        <Button
+          onClick={fetchTopics}
+          className="text-xs hover:border-accent-red"
+        >
+          Retry
+        </Button>
       </div>
     );
   }
@@ -96,7 +115,7 @@ export function KanbanBoard() {
             </p>
             <p className="text-xs text-text-muted mt-2">
               Add topics via the Trends tab or create markdown files under{' '}
-              <code>data/livestream/{date}/</code>.
+              <code>apps/app/data/livestream/{date}/</code>.
             </p>
           </div>
         ) : (

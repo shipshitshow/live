@@ -10,9 +10,22 @@ import type {
 } from '@shipshitshow/types';
 import { CONTENT_FIELDS } from '@shipshitshow/types';
 
-const DATA_DIR =
-  process.env.APP_DATA_DIR ||
-  path.resolve(__dirname, '..', '..', '..', '..', 'app', 'data', 'livestream');
+function resolveDataDir(): string {
+  if (process.env.APP_DATA_DIR) {
+    return process.env.APP_DATA_DIR;
+  }
+
+  const candidates = [
+    path.join(process.cwd(), '..', 'app', 'data', 'livestream'),
+    path.join(process.cwd(), 'apps', 'app', 'data', 'livestream'),
+    path.resolve(__dirname, '..', '..', '..', 'app', 'data', 'livestream'),
+    path.resolve(__dirname, '..', '..', '..', '..', 'app', 'data', 'livestream'),
+  ];
+
+  return candidates.find((candidate) => fs.existsSync(candidate)) ?? candidates[0];
+}
+
+const DATA_DIR = resolveDataDir();
 
 const EMPTY_GENERATED: TopicGeneratedContent = {
   linkedin_post: null,

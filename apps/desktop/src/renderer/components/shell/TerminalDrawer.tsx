@@ -20,9 +20,7 @@ export function TerminalDrawer({
   onHeightChange,
   onToggleMaximize,
 }: TerminalDrawerProps) {
-  const dragStateRef = useRef<{ startHeight: number; startY: number } | null>(
-    null,
-  );
+  const dragStateRef = useRef<{ startHeight: number; startY: number } | null>(null);
 
   const handleResizeMouseDown = useCallback(
     (event: ReactMouseEvent<HTMLButtonElement>) => {
@@ -78,40 +76,32 @@ export function TerminalDrawer({
         />
       )}
 
-      <div className="flex items-center justify-between gap-3 border-b border-surface-border px-3 py-2">
-        <div className="min-w-0">
-          <div className="flex items-center gap-2">
-            <Terminal size={14} className="text-accent-red" />
-            <span className="text-sm font-semibold text-text-primary">
-              Terminal
-            </span>
-          </div>
-          <p className="mt-0.5 text-xs text-text-muted">
-            Local shell drawer. Toggle with{' '}
-            <span className="font-medium text-text-secondary">Cmd/Ctrl+J</span>.
-          </p>
+      <div className="flex items-center justify-between gap-3 border-b border-surface-border px-3 py-1.5">
+        <div className="flex items-center gap-2">
+          <Terminal size={14} className="text-accent-red" />
+          <span className="text-[13px] font-medium text-text-primary">Terminal</span>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1">
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            className="shrink-0"
+            className="shrink-0 rounded-md"
             onClick={onToggleMaximize}
+            title={maximized ? 'Restore' : 'Maximize'}
           >
             {maximized ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-            {maximized ? 'Restore' : 'Maximize'}
           </Button>
           <Button
             type="button"
             variant="ghost"
             size="sm"
-            className="shrink-0"
+            className="shrink-0 rounded-md"
             onClick={onClose}
+            title="Hide terminal"
           >
             <X size={14} />
-            Hide
           </Button>
         </div>
       </div>

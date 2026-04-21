@@ -1,8 +1,10 @@
 import { Button, cn } from '@shipshitshow/ui';
-import { PanelLeftClose, PanelLeftOpen, Terminal } from 'lucide-react';
+import { PanelLeftClose, PanelLeftOpen, Settings, Terminal, X } from 'lucide-react';
 
 interface TitlebarProps {
   activeViewLabel: string;
+  isSettingsView: boolean;
+  onSelectSettings: () => void;
   onToggleSidebar: () => void;
   onToggleTerminal: () => void;
   sidebarCollapsed: boolean;
@@ -11,56 +13,63 @@ interface TitlebarProps {
 
 export function Titlebar({
   activeViewLabel,
+  isSettingsView,
+  onSelectSettings,
   onToggleSidebar,
   onToggleTerminal,
   sidebarCollapsed,
   terminalVisible,
 }: TitlebarProps) {
   return (
-    <header className="flex h-14 shrink-0 items-center justify-between border-b border-surface-border bg-[linear-gradient(180deg,rgba(20,20,20,0.98),rgba(13,13,13,0.96))] px-3">
-      <div className="flex min-w-0 items-center gap-3">
+    <header className="relative flex h-[38px] shrink-0 items-center justify-between border-b border-surface-border bg-surface pl-[84px] pr-2 app-region-drag">
+      <div className="flex min-w-0 items-center gap-2 text-[11px]">
         <Button
           type="button"
           variant="ghost"
-          size="icon"
+          size="sm"
+          className="shrink-0 rounded-md app-region-no-drag"
           onClick={onToggleSidebar}
+          title={sidebarCollapsed ? 'Show sidebar' : 'Hide sidebar'}
         >
-          {sidebarCollapsed ? (
-            <PanelLeftOpen size={16} />
-          ) : (
-            <PanelLeftClose size={16} />
-          )}
+          {sidebarCollapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
         </Button>
-        <div className="min-w-0">
-          <div className="text-[10px] tracking-[0.18em] text-text-muted uppercase">
-            Ship Shit Show
-          </div>
-          <div className="truncate text-sm font-semibold text-text-primary">
-            {activeViewLabel}
-          </div>
-        </div>
+        <span className="text-text-muted">Ship Shit Show</span>
+        <span className="text-text-muted">/</span>
+        <span className="truncate font-medium text-text-primary">{activeViewLabel}</span>
       </div>
 
-      <div className="flex items-center gap-2">
-        <span className="hidden text-[11px] text-text-muted md:block">
-          Cmd/Ctrl+J
-        </span>
+      <div className="flex items-center gap-1">
+        {!isSettingsView && (
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className={cn(
+              'shrink-0 rounded-md app-region-no-drag',
+              terminalVisible && 'bg-surface-elevated text-text-primary',
+            )}
+            onClick={onToggleTerminal}
+            title={terminalVisible ? 'Hide terminal (⌘J)' : 'Show terminal (⌘J)'}
+          >
+            <Terminal size={14} className={terminalVisible ? 'text-text-primary' : 'text-text-secondary'} />
+          </Button>
+        )}
         <Button
           type="button"
           variant="ghost"
           size="sm"
           className={cn(
-            'shrink-0 border border-transparent',
-            terminalVisible &&
-              'border-accent-red/20 bg-accent-red/10 text-text-primary',
+            'shrink-0 rounded-md app-region-no-drag',
+            isSettingsView && 'bg-surface-elevated text-text-primary',
           )}
-          onClick={onToggleTerminal}
+          onClick={onSelectSettings}
+          title="Settings"
         >
-          <Terminal
-            size={14}
-            className={terminalVisible ? 'text-accent-red' : ''}
-          />
-          Terminal
+          {isSettingsView ? (
+            <X size={14} className="text-text-primary" />
+          ) : (
+            <Settings size={14} className="text-text-secondary" />
+          )}
         </Button>
       </div>
     </header>
