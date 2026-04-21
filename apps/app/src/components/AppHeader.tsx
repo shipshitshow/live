@@ -7,7 +7,7 @@ interface AppHeaderLink {
 
 const DEFAULT_HEADER_LINKS: AppHeaderLink[] = [
   { href: '/analytics', label: 'Analytics' },
-  { href: '/livestream', label: 'Livestream' },
+  { href: '/livestreams', label: 'Livestreams' },
 ];
 
 interface AppHeaderProps {

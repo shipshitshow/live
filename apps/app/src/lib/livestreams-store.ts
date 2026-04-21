@@ -11,7 +11,7 @@ import type {
 } from '@shipshitshow/types';
 import { CONTENT_FIELDS } from '@shipshitshow/types';
 import { get, list, put } from '@vercel/blob';
-import { findTopicFile, getTopicDrawingFile } from '@/lib/livestream-files';
+import { findTopicFile, getTopicDrawingFile } from '@/lib/livestreams-files';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
@@ -258,7 +258,10 @@ function listFilesystemDates(): string[] {
 }
 
 function listFilesystemLivestreamHistory(): LivestreamHistoryItem[] {
-  if (!fs.existsSync(CLEAN_TRANSCRIPTS_DIR) || !fs.existsSync(TRANSCRIPTS_DIR)) {
+  if (
+    !fs.existsSync(CLEAN_TRANSCRIPTS_DIR) ||
+    !fs.existsSync(TRANSCRIPTS_DIR)
+  ) {
     return [];
   }
 
@@ -275,7 +278,9 @@ function listFilesystemLivestreamHistory(): LivestreamHistoryItem[] {
 
   return fs
     .readdirSync(CLEAN_TRANSCRIPTS_DIR)
-    .filter((fileName) => /^\d{4}-\d{2}-\d{2}-livestream-.+\.txt$/.test(fileName))
+    .filter((fileName) =>
+      /^\d{4}-\d{2}-\d{2}-livestream-.+\.txt$/.test(fileName),
+    )
     .map((fileName) => {
       const match = fileName.match(
         /^(\d{4}-\d{2}-\d{2})-livestream-(.+)\.txt$/,
@@ -462,7 +467,9 @@ export async function resolveLivestreamDate(
   return availableDates[0] || requestedDate;
 }
 
-export async function listLivestreamHistory(): Promise<LivestreamHistoryItem[]> {
+export async function listLivestreamHistory(): Promise<
+  LivestreamHistoryItem[]
+> {
   return listFilesystemLivestreamHistory();
 }
 

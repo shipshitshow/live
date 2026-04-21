@@ -4,7 +4,7 @@ import {
   getTopicsForDate,
   listAvailableLivestreamDates,
   resolveLivestreamDate,
-} from '@/lib/livestream-store';
+} from '@/lib/livestreams-store';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);

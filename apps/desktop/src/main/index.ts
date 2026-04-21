@@ -1,4 +1,3 @@
-import { execFile } from 'node:child_process';
 import path from 'node:path';
 import { app, BrowserWindow, shell } from 'electron';
 import { registerCommentsHandlers } from './ipc/comments';
@@ -39,41 +38,8 @@ function shouldOpenExternally(
   }
 }
 
-function runCommand(command: string, args: string[]): Promise<void> {
-  return new Promise((resolve, reject) => {
-    execFile(command, args, { windowsHide: true }, (error) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
-      resolve();
-    });
-  });
-}
-
-async function openUrlInBrave(url: string): Promise<void> {
-  const attempts: Array<{ command: string; args: string[] }> =
-    process.platform === 'darwin'
-      ? [
-          { args: ['-b', 'com.brave.Browser', url], command: 'open' },
-          { args: ['-a', 'Brave Browser', url], command: 'open' },
-        ]
-      : process.platform === 'win32'
-        ? [{ args: ['/c', 'start', '', 'brave', url], command: 'cmd' }]
-        : [
-            { args: [url], command: 'brave-browser' },
-            { args: [url], command: 'brave' },
-          ];
-
-  for (const attempt of attempts) {
-    try {
-      await runCommand(attempt.command, attempt.args);
-      return;
-    } catch {}
-  }
-
-  await shell.openExternal(url);
+function openExternalUrl(url: string): Promise<void> {
+  return shell.openExternal(url);
 }
 
 function createWindow() {
@@ -93,7 +59,7 @@ function createWindow() {
 
   mainWindow.webContents.setWindowOpenHandler(({ url }) => {
     if (shouldOpenExternally(url, appUrl)) {
-      void openUrlInBrave(url);
+      void openExternalUrl(url);
       return { action: 'deny' };
     }
 
@@ -106,7 +72,7 @@ function createWindow() {
     }
 
     event.preventDefault();
-    void openUrlInBrave(url);
+    void openExternalUrl(url);
   });
 
   if (process.env.VITE_DEV_SERVER_URL) {

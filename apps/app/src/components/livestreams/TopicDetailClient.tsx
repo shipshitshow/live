@@ -499,7 +499,7 @@ export function TopicDetailClient() {
   const fetchTopics = useCallback(async () => {
     const startedAt = performance.now();
     try {
-      const res = await fetch(`/api/livestream?date=${date}`);
+      const res = await fetch(`/api/livestreams?date=${date}`);
       const data = await parseJsonResponse<
         LivestreamListResponse | { error: string }
       >(res);
@@ -532,7 +532,7 @@ export function TopicDetailClient() {
 
   const fetchStreamMeta = useCallback(async () => {
     const startedAt = performance.now();
-    const res = await fetch(`/api/livestream/${slug}/youtube?date=${date}`);
+    const res = await fetch(`/api/livestreams/${slug}/youtube?date=${date}`);
     const data = await parseJsonResponse<LivestreamMeta>(res);
     setStreamMeta(data);
     logClientPerf('livestream_topic_fetch_stream_meta', {
@@ -703,7 +703,7 @@ export function TopicDetailClient() {
   if (loading) {
     return (
       <div className="min-h-screen bg-surface text-text-primary">
-        <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
+        <AppHeader subtitle="Livestream Topic" activeHref="" />
         <LivestreamTopicContentSkeleton />
       </div>
     );
@@ -712,7 +712,7 @@ export function TopicDetailClient() {
   if (!topic) {
     return (
       <div className="min-h-screen bg-surface text-text-primary">
-        <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
+        <AppHeader subtitle="Livestream Topic" activeHref="" />
         <main className="mx-auto flex min-h-[calc(100vh-65px)] w-full max-w-[960px] flex-col items-center justify-center px-6 text-center">
           <p className="text-lg font-semibold text-text-primary">
             Topic not found
@@ -733,7 +733,7 @@ export function TopicDetailClient() {
 
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
+      <AppHeader subtitle="Livestream Topic" activeHref="" />
 
       <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 px-6 py-6">
         <main
@@ -743,10 +743,10 @@ export function TopicDetailClient() {
           <div className="rounded-xl border border-surface-border bg-surface-card p-5">
             <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-widest">
               <Link
-                href={`/livestream?date=${date}`}
+                href={`/livestreams?date=${date}`}
                 className="text-text-muted transition-colors hover:text-text-primary"
               >
-                Livestream
+                Livestreams
               </Link>
               <span className="text-text-muted/50">/</span>
               <span className="text-accent-red">{resolvedDate}</span>
@@ -809,46 +809,48 @@ export function TopicDetailClient() {
 
                 {seg.rawText && (
                   <div className="mb-4 space-y-4 border-l-2 border-yellow-500/40 bg-yellow-500/5 py-3 pl-4">
-                    {parseRichTextBlocks(seg.rawText).map((block, blockIndex) => {
-                      if (block.type === 'heading') {
+                    {parseRichTextBlocks(seg.rawText).map(
+                      (block, blockIndex) => {
+                        if (block.type === 'heading') {
+                          return (
+                            <h4
+                              key={`${seg.number}-raw-${blockIndex}`}
+                              className="text-lg font-semibold text-text-primary"
+                            >
+                              {renderInlineMarkdown(block.value)}
+                            </h4>
+                          );
+                        }
+
+                        if (block.type === 'code') {
+                          return (
+                            <div
+                              key={`${seg.number}-raw-${blockIndex}`}
+                              className="overflow-hidden rounded-xl border border-surface-border bg-surface"
+                            >
+                              <div className="flex items-center justify-between border-b border-surface-border px-3 py-2">
+                                <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
+                                  Prompt
+                                </span>
+                                <CopyButton text={block.value} />
+                              </div>
+                              <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-text-primary">
+                                <code>{block.value}</code>
+                              </pre>
+                            </div>
+                          );
+                        }
+
                         return (
-                          <h4
+                          <p
                             key={`${seg.number}-raw-${blockIndex}`}
-                            className="text-lg font-semibold text-text-primary"
+                            className="text-[20px] leading-[1.7] text-text-primary"
                           >
                             {renderInlineMarkdown(block.value)}
-                          </h4>
+                          </p>
                         );
-                      }
-
-                      if (block.type === 'code') {
-                        return (
-                          <div
-                            key={`${seg.number}-raw-${blockIndex}`}
-                            className="overflow-hidden rounded-xl border border-surface-border bg-surface"
-                          >
-                            <div className="flex items-center justify-between border-b border-surface-border px-3 py-2">
-                              <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
-                                Prompt
-                              </span>
-                              <CopyButton text={block.value} />
-                            </div>
-                            <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-text-primary">
-                              <code>{block.value}</code>
-                            </pre>
-                          </div>
-                        );
-                      }
-
-                      return (
-                        <p
-                          key={`${seg.number}-raw-${blockIndex}`}
-                          className="text-[20px] leading-[1.7] text-text-primary"
-                        >
-                          {renderInlineMarkdown(block.value)}
-                        </p>
-                      );
-                    })}
+                      },
+                    )}
                   </div>
                 )}
 
@@ -961,7 +963,7 @@ export function TopicDetailClient() {
                   )}
 
                   <Link
-                    href={`/livestream/${slug}/draw?date=${date}`}
+                    href={`/livestreams/${slug}/draw?date=${date}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"

@@ -176,7 +176,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
     setSaveStatus('saving');
 
     try {
-      const res = await fetch(`/api/livestream/${slug}/drawing?date=${date}`, {
+      const res = await fetch(`/api/livestreams/${slug}/drawing?date=${date}`, {
         body: JSON.stringify({ content }),
         headers: { 'Content-Type': 'application/json' },
         method: 'PATCH',
@@ -226,8 +226,8 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
     const load = async () => {
       try {
         const [topicsRes, drawingRes] = await Promise.all([
-          fetch(`/api/livestream?date=${date}`),
-          fetch(`/api/livestream/${slug}/drawing?date=${date}`),
+          fetch(`/api/livestreams?date=${date}`),
+          fetch(`/api/livestreams/${slug}/drawing?date=${date}`),
         ]);
 
         const topicsData = (await topicsRes.json()) as
@@ -413,7 +413,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
             <div className="space-y-3">
               <div className="flex items-start justify-between gap-3">
                 <Link
-                  href={`/livestream/${slug}?date=${date}`}
+                  href={`/livestreams/${slug}?date=${date}`}
                   className="inline-flex items-center gap-2 text-xs font-medium text-text-secondary transition-colors hover:text-text-primary"
                 >
                   <span aria-hidden="true">←</span>
@@ -518,7 +518,7 @@ export function TopicDrawingBoard({ date, slug }: TopicDrawingBoardProps) {
             </button>
 
             <Link
-              href={`/livestream/${slug}?date=${date}`}
+              href={`/livestreams/${slug}?date=${date}`}
               className="flex w-full flex-col items-center gap-1 rounded-xl border border-surface-border bg-[#0c0c0c] px-2 py-3 text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
             >
               <span aria-hidden="true" className="text-sm">

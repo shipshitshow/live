@@ -9,8 +9,8 @@ export type {
   TopicGeneratedContent,
   TopicStatus,
   TopicUpdate,
-} from './livestream';
-export { CONTENT_FIELDS } from './livestream';
+} from './livestreams';
+export { CONTENT_FIELDS } from './livestreams';
 export type {
   PipelineJob,
   PipelineJobStatus,

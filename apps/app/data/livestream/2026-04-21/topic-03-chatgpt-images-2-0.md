@@ -100,12 +100,14 @@ OpenAI's `ChatGPT Images 2.0` launch matters because it is not just another "pre
 ## X Timeline To Pull Up Live
 - [X: @OpenAI official livestream post](https://x.com/OpenAI/status/2046665696898412887)
 - [X: @btibor91 launch-day reference](https://x.com/btibor91/status/2046545878538961304?s=20)
+- [X: @VaibhavSpace image example](https://x.com/VaibhavSpace/status/2046678054706331845/photo/1)
 - Use these as timeline signal items alongside the official links.
 - If you want a cleaner structure live:
   - official OpenAI X post
   - official OpenAI page
   - live YouTube stream
   - `@btibor91`
+  - `@VaibhavSpace`
   - then HN and Reddit reactions
 
 ## Best Examples To Show Live
@@ -155,6 +157,10 @@ OpenAI's `ChatGPT Images 2.0` launch matters because it is not just another "pre
   - Best community infographic example I could verify from public X search results.
   - Good supporting proof that people are immediately stress-testing text-heavy infographics.
   - Source: [X: @TeksEdge Ferrari infographic example](https://x.com/TeksEdge/status/2040489463550529755/photo/1)
+- `VaibhavSpace community image example`
+  - Good extra community proof point from the X timeline during launch night.
+  - Use it as a live reaction/example slot after the official OpenAI samples and before the Reddit examples.
+  - Source: [X: @VaibhavSpace image example](https://x.com/VaibhavSpace/status/2046678054706331845/photo/1)
 
 ## Prompt Blocks — Live Demo
 Built from the official launch themes OpenAI is pushing: posters, brochures, infographics, diagrams, text rendering, and multilingual layouts.
@@ -349,3 +355,4 @@ The most important thing about `ChatGPT Images 2.0` is not image beauty. It is r
 - [Reddit: GPT-Image-2 is rolling out](https://www.reddit.com/r/singularity/comments/1sr6kfy/gptimage2_is_rolling_out/)
 - [X: @OpenAI official livestream post](https://x.com/OpenAI/status/2046665696898412887)
 - [X: @btibor91 launch-day reference](https://x.com/btibor91/status/2046545878538961304?s=20)
+- [X: @VaibhavSpace image example](https://x.com/VaibhavSpace/status/2046678054706331845/photo/1)

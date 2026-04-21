@@ -6,7 +6,7 @@ import {
   listDates,
   readTopicRaw,
   saveTopicUpdate,
-} from '../lib/livestream';
+} from '../lib/livestreams';
 
 export function registerTopicsHandlers() {
   ipcMain.handle('topics:list-dates', () => listDates());

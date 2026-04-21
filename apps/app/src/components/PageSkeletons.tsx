@@ -274,7 +274,7 @@ export function TrendsPageSkeleton() {
 export function LivestreamBoardPageSkeleton() {
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Livestream" activeHref="/livestream" />
+      <AppHeader subtitle="Livestreams" activeHref="/livestreams" />
       <LivestreamBoardContentSkeleton />
     </div>
   );
@@ -283,7 +283,7 @@ export function LivestreamBoardPageSkeleton() {
 export function LivestreamTopicPageSkeleton() {
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Livestream Topic" activeHref="/livestream" />
+      <AppHeader subtitle="Livestream Topic" activeHref="" />
       <LivestreamTopicContentSkeleton />
     </div>
   );

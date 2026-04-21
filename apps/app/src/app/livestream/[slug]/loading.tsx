@@ -1,5 +1,1 @@
-import { LivestreamTopicPageSkeleton } from '@/components/PageSkeletons';
-
-export default function Loading() {
-  return <LivestreamTopicPageSkeleton />;
-}
+export { default } from '../../livestreams/[slug]/loading';
