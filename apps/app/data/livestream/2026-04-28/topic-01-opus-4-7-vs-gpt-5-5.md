@@ -34,22 +34,73 @@ Anthropic dropped Claude Opus 4.7 on April 16, 2026. OpenAI fired back with GPT-
 
 ## Talking Points — The Benchmark Split
 - **SWE-Bench Pro** (real GitHub issue resolution):
-  - Opus 4.7: `64.3%`
+  - Opus 4.7: `64.3%` — up from `53.4%` on Opus 4.6.
   - GPT-5.5: `58.6%`
   - Opus wins multi-file refactor and cross-repo reasoning.
+  - [Source: Vellum benchmarks breakdown](https://www.vellum.ai/blog/claude-opus-4-7-benchmarks-explained)
+  - [Source: Kingy AI field guide](https://kingy.ai/uncategorized/gpt-5-5-vs-claude-opus-4-7-a-benchmark-by-benchmark-field-guide-to-the-new-frontier/)
 - **SWE-Bench Verified**:
   - GPT-5.5: `88.7%`
   - Opus 4.7: `87.6%`
   - Tight. Practically a tie.
+  - [Source: automatio Opus 4.7 page](https://automatio.ai/models/claude-opus-4-7)
+  - [Source: llm-stats GPT-5.5 vs Opus 4.7](https://llm-stats.com/blog/research/gpt-5-5-vs-claude-opus-4-7)
 - **Terminal-Bench 2.0** (planning + tool coordination + shell loops):
   - GPT-5.5: `82.7%`
   - Opus 4.7: `69.4%`
   - GPT-5.5 wins agent execution by a wide margin.
+  - [Source: Kingy AI field guide](https://kingy.ai/uncategorized/gpt-5-5-vs-claude-opus-4-7-a-benchmark-by-benchmark-field-guide-to-the-new-frontier/)
+  - [Source: lushbinary comparison](https://lushbinary.com/blog/gpt-5-5-vs-claude-opus-4-7-comparison-benchmarks-pricing/)
+- **GPQA Diamond** (graduate-level science):
+  - Opus 4.7: `94.2%` — basically tied with GPT-5.4 Pro (`94.4%`) and Gemini 3.1 Pro (`94.3%`).
+  - Up from Opus 4.6 at `91.3%`.
+  - [Source: Vellum benchmarks breakdown](https://www.vellum.ai/blog/claude-opus-4-7-benchmarks-explained)
+  - [Source: llm-stats Opus 4.7 page](https://llm-stats.com/models/claude-opus-4-7)
+- **MMLU**:
+  - Opus 4.7: `89.8%`
+  - [Source: llm-stats Opus 4.7 page](https://llm-stats.com/models/claude-opus-4-7)
+- **LiveCodeBench**:
+  - Opus 4.7: `78.5%`
+  - [Source: llm-stats Opus 4.7 page](https://llm-stats.com/models/claude-opus-4-7)
+- **GDPval-AA** (Artificial Analysis benchmark for real-world agentic work):
+  - Opus 4.7 at launch: `1753` Elo on max effort — surpassed GPT-5.4 xhigh, took the #1 spot.
+  - [Source: Artificial Analysis announcement (X)](https://x.com/ArtificialAnlys/status/2044856740970402115)
+- **Artificial Analysis Intelligence Index**:
+  - Opus 4.7: `57` — `+4` over Opus 4.6, tied with GPT-5.4 and Gemini 3.1 Pro at the top.
+  - [Source: Artificial Analysis index post (X)](https://x.com/ArtificialAnlys/status/2045292578434875552)
 - **Token efficiency**:
   - GPT-5.5 uses roughly `72%` fewer output tokens on equivalent tasks.
   - That is not a small number. That is the bill.
+  - [Source: MindStudio coding comparison](https://www.mindstudio.ai/blog/gpt-55-vs-claude-opus-47-coding-comparison)
+  - [Source: digitalapplied frontier comparison](https://www.digitalapplied.com/blog/gpt-5-5-vs-claude-opus-4-7-frontier-comparison)
 - Strong line:
   - **Opus thinks harder. GPT-5.5 thinks cheaper.**
+
+## Talking Points — The Pricing Math
+- **Claude Opus 4.7** ([Anthropic pricing](https://platform.claude.com/docs/en/about-claude/pricing)):
+  - Input: `$5 / 1M tokens`
+  - Output: `$25 / 1M tokens`
+  - Cached input: `$0.50 / 1M tokens` (`90%` off, prompt caching)
+  - Batch: `50%` off all rates
+  - Context window: `1M` tokens
+  - Tokenizer change vs Opus 4.6: new tokenizer can use up to `35%` more tokens per fixed text — same headline price, higher effective bill on long content.
+- **GPT-5.5** ([OpenAI pricing](https://developers.openai.com/api/docs/pricing)):
+  - Input: `$5 / 1M tokens`
+  - Output: `$30 / 1M tokens`
+  - Cached input: `$0.50 / 1M tokens`
+  - Batch: `50%` off → `$2.50 / $15` per `1M` tokens
+  - Context window: `1M` tokens on both `gpt-5.5` and `gpt-5.5-pro`
+  - Long-context tax: prompts over `272K` input tokens get billed at `2x` input + `1.5x` output for the entire session.
+- **GPT-5.5 Pro**:
+  - Input: `$30 / 1M tokens`
+  - Output: `$180 / 1M tokens`
+  - This is the "I will pay for the smartest possible call" tier. Almost nobody should default to it.
+- **Per-output-token, head to head**:
+  - GPT-5.5 is `20%` more expensive per output token than Opus 4.7 on paper.
+  - GPT-5.5 produces `~72%` fewer output tokens for equivalent work.
+  - Net: GPT-5.5 is meaningfully cheaper on equivalent tasks despite the higher unit price.
+- Strong line:
+  - **Cheaper per task is not the same as cheaper per token. Stop reading the price page wrong.**
 
 ## Talking Points — Pick The Right Tool For The Right Loop
 - Use Opus 4.7 when:
@@ -210,16 +261,66 @@ Anthropic dropped Claude Opus 4.7 on April 16, 2026. OpenAI fired back with GPT-
   - **ShipCode is the routing layer this whole topic argues for. Today is a good day to show it.**
 
 ## Talking Points — X Reactions To Pull Up Live
-- Token waste is operational waste — pull this one when defending the RTK / caveman / code-review-graph stack against the "just ship faster" crowd.
-  - [TWEET: @al3rez on token discipline as cost discipline](https://x.com/al3rez/status/2038819027339116559)
-- Context discipline is the new competitive advantage — use this when transitioning from the benchmark split into the harness thesis.
-  - [TWEET: @kunchenguid on context discipline beating raw model choice](https://x.com/kunchenguid/status/2043511416448307378)
-- Benchmark wins are temporary, harness quality is permanent — close the segment with this one right before flipping into the ShipCode demo.
-  - [TWEET: @datachaz on harness quality outlasting any single model lead](https://x.com/datachaz/status/2045784379155226971?s=46&t=w-NI09Z0j8OCuWo36n_gCQ)
+- **Dan McAteer** (`@daniel_mac8`) — token-efficiency receipt from the GPT side. Quote line: "GPT-5.5 beats Opus 4.7 on several benchmarks, esp those related to agentic coding + tool calling… GPT-5.5 is far more token efficient than Opus 4.7. OpenAI cooked this Spud 🥔."
+  - Pull when transitioning from benchmark split into pricing math. Reaction: agentic-loop tier belongs to GPT for now, Anthropic has to answer with cheaper output, not just smarter output.
+  - [TWEET: @daniel_mac8 on GPT-5.5 token efficiency](https://x.com/daniel_mac8/status/2047407932954841129)
+- **Boris Cherny** (`@bcherny`, Anthropic engineer on Claude Code) — defends Opus 4.7 from the inside. Quote line: "Opus 4.7 feels more intelligent, agentic, and precise than 4.6. It took a few days for me to learn how to work with it effectively, to fully take advantage of its new capabilities."
+  - Use this to acknowledge Anthropic's real upgrade is not benchmarks — it is the workflow ergonomics of the new model.
+  - [TWEET: @bcherny on Opus 4.7 day-to-day feel](https://x.com/bcherny/status/2044822408826380440)
+- **Artificial Analysis** (`@ArtificialAnlys`) — independent benchmark authority. Confirms Opus 4.7 retook GDPval-AA #1 with Elo `1753`, ahead of GPT-5.4 xhigh.
+  - Pull when defending the Opus side against "GPT just won everything" takes. The benchmark for real agentic work has Opus on top right now.
+  - [TWEET: @ArtificialAnlys — Opus 4.7 #1 on GDPval-AA](https://x.com/ArtificialAnlys/status/2044856740970402115)
+- **Zvi Mowshowitz** (`@TheZvi`) — long-form thread "Opus 4.7 Part 2: Capabilities and Reactions." Best single doc dump of community reactions to the launch.
+  - Use when chat asks "where do I read more." Skip the press releases. This thread is the best one-stop signal aggregator.
+  - [TWEET: @TheZvi — Opus 4.7 capabilities + reactions thread](https://x.com/TheZvi/status/2046703306454798538)
+- **Nate Herk** (`@nateherk`) — practical hands-on comparison. Ran speed, tokens, cost, requests, quality. Same thesis as ours: route per task, do not pick a brand.
+  - Pull as the natural lead-in to the ShipCode demo. He proves the same point we are about to demo live.
+  - [TWEET: @nateherk — GPT-5.5 vs Opus 4.7 hands-on breakdown](https://x.com/nateherk/status/2047436752051118513)
+  - [Companion video — "I Tested GPT 5.5 vs Opus 4.7"](https://www.youtube.com/watch?v=WX4rp-vP3zo)
+- **OpenAI launch tweet** (`@OpenAI`) — official framing for GPT-5.5. Quote line: "A new class of intelligence for real work and powering agents."
+  - Pull this on screen when reading the OpenAI angle section. The OpenAI marketing copy IS the agent-loop pitch.
+  - [TWEET: @OpenAI — GPT-5.5 launch](https://x.com/OpenAI/status/2047376561205325845)
+- **llmdevguy** (`@llmdevguy`) — practical "how to use 5.5" tips. Indie-dev field guide for the new behavior shape.
+  - Pull as the closing beat after Theo's "should have been called GPT-6" line — Theo says old prompts won't work, llmdevguy says here's what does.
+  - Maps directly to OpenAI's own guidance: outcome-first prompts, low/medium reasoning by default, drop "ALWAYS/NEVER" cargo cult, fresh baseline over migration.
+  - Reaction sentence: **prompt stacks are now version-locked to model releases — your old harness is the regression.**
+  - [TWEET: @llmdevguy — how to use GPT-5.5](https://x.com/llmdevguy/status/2048736363600613776)
+  - TODO live: read the tweet on stream, pick 2 tips that map to our harness thesis (caveman compresses output, RTK shrinks tool noise, code-review-graph scopes the read).
 - How to use the segment live:
-  - Read each tweet on screen, react in one sentence, tie it back to the Opus 4.7 vs GPT-5.5 split.
-  - Do not just quote — extend. Each tweet is a setup for one of the three thesis lines above.
-  - Land the bridge: **the harness is what compounds, the model is what changes every six weeks.**
+  - One tweet on screen, one reaction sentence, one tie-back to a thesis line. Do not just quote.
+  - The 3 thesis lines to land somewhere across the segment:
+    - token waste is operational waste
+    - context discipline is now a competitive advantage
+    - benchmark wins are temporary, harness quality is permanent
+  - Closing bridge: **the harness is what compounds, the model is what changes every six weeks.**
+
+## Talking Points — Mythos vs Opus 4.7 (What Anthropic Held Back)
+- TheAIGRID buries it at `[13:40]`. We are not.
+- Anthropic shipped **two** models this cycle. You only got one.
+- **Claude Mythos Preview** — released April 7, 2026 under **Project Glasswing**.
+  - Most capable model Anthropic has ever benchmarked.
+  - Available only to Glasswing partners for defensive cybersecurity work.
+  - Microsoft, Google, JP Morgan, Nvidia get it. Pro/Max users do not.
+  - [Source: Anthropic — Mythos Preview](https://red.anthropic.com/2026/mythos-preview/)
+  - [Source: Axios — Anthropic concedes Opus 4.7 trails Mythos](https://www.axios.com/2026/04/16/anthropic-claude-opus-model-mythos)
+  - [Source: CNBC — Opus 4.7 less risky than Mythos](https://www.cnbc.com/2026/04/16/anthropic-claude-opus-4-7-model-mythos.html)
+- **Benchmark gap, head to head**:
+  - SWE-Bench Verified: Mythos `93.9%` vs Opus 4.7 `87.6%` — `+6.3pt`.
+  - CyberGym (vulnerability repro): Mythos `83.1%` vs Opus 4.7 `73.1%` — `+10pt`.
+  - GPT-5.4 on CyberGym: `66.3%`. Both Anthropic models clear it.
+  - [Source: NxCode — Opus 4.7 vs 4.6 vs Mythos](https://www.nxcode.io/resources/news/claude-opus-4-7-vs-4-6-vs-mythos-which-model-2026)
+  - [Source: Medium — Opus 4.7 vs Mythos breakdown](https://medium.com/data-science-in-your-pocket/claude-opus-4-7-vs-claude-mythos-f70a98643c00)
+  - [Source: Ivy Pro School — Opus vs Mythos full comparison](https://ivyproschool.com/aihelpcenter/ai-strategy-pm/claude-opus-vs-claude-mythos)
+- **What Anthropic left out of the 4.7 launch story**:
+  - Opus 4.7 is the **bridge model**. Production safeguards tested here, then promoted up to Mythos-class for the enterprise tier.
+  - The `$20`/Pro user is the safety-test cohort, not the customer.
+  - Same week Anthropic briefly killed Claude Code on Pro and pushed users to API billing — see postmortem section.
+- Tie back to thesis:
+  - Two-tier model strategy is now explicit. Frontier capability gated behind enterprise contracts.
+  - "Use the best model" stops being a real option for indie devs. You route what you have.
+  - **The model is not the product. The harness is.** And the model you can't access is also not the product — it's the moat.
+- Strong line:
+  - **Anthropic's best model isn't on the price page. It's behind a Glasswing partner agreement.**
 
 ## Reaction — TheAIGRID Video
 - Video: [Opus 4.7 Just Dropped — Here's What Everyone Missed](https://www.youtube.com/watch?v=r5BLAFPk9Jo) (TheAIGRID, 18:31, Apr 17 2026)
@@ -321,8 +422,34 @@ Opus 4.7 versus GPT-5.5 is not really a fight about model quality. The benchmark
 - [GitHub: JuliusBrussee/caveman](https://github.com/juliusbrussee/caveman)
 - [GitHub: tirth8205/code-review-graph](https://github.com/tirth8205/code-review-graph)
 - [ShipCode — AI dev pipeline harness](https://shipcode.shipshit.dev)
-- [X: @al3rez reference](https://x.com/al3rez/status/2038819027339116559)
-- [X: @kunchenguid reference](https://x.com/kunchenguid/status/2043511416448307378)
-- [X: @datachaz reference](https://x.com/datachaz/status/2045784379155226971?s=46&t=w-NI09Z0j8OCuWo36n_gCQ)
+- [Anthropic — Claude API pricing](https://platform.claude.com/docs/en/about-claude/pricing)
+- [Anthropic — Claude Opus 4.7 launch](https://www.anthropic.com/news/claude-opus-4-7)
+- [OpenAI — GPT-5.5 model page](https://developers.openai.com/api/docs/models/gpt-5.5)
+- [OpenAI — API pricing](https://developers.openai.com/api/docs/pricing)
+- [pricepertoken — Opus 4.7 cost breakdown](https://pricepertoken.com/pricing-page/model/anthropic-claude-opus-4.7)
+- [apidog — GPT-5.5 pricing breakdown (Apr 2026)](https://apidog.com/blog/gpt-5-5-pricing/)
+- [finout — Opus 4.7 pricing real cost story](https://www.finout.io/blog/claude-opus-4.7-pricing-the-real-cost-story-behind-the-unchanged-price-tag)
+- [Vellum — Opus 4.7 benchmarks explained](https://www.vellum.ai/blog/claude-opus-4-7-benchmarks-explained)
+- [llm-stats — Claude Opus 4.7 benchmarks](https://llm-stats.com/models/claude-opus-4-7)
+- [automatio — Opus 4.7 1M context, SWE-bench](https://automatio.ai/models/claude-opus-4-7)
+- [MindStudio — Opus 4.7 vision/coding/finance breakdown](https://www.mindstudio.ai/blog/claude-opus-47-benchmark-breakdown)
+- [Kingy AI — GPT-5.5 vs Opus 4.7 benchmark field guide](https://kingy.ai/uncategorized/gpt-5-5-vs-claude-opus-4-7-a-benchmark-by-benchmark-field-guide-to-the-new-frontier/)
+- [Tom's Guide — 7-test ChatGPT-5.5 vs Claude 4.7 wipeout](https://www.tomsguide.com/ai/7-0-wipeout-i-put-chatgpt-5-5-and-claude-4-7-through-7-impossible-tests-and-the-results-shocked-me)
+- [TechCrunch — OpenAI ships GPT-5.5](https://techcrunch.com/2026/04/23/openai-chatgpt-gpt-5-5-ai-model-superapp/)
+- [X: @daniel_mac8 — GPT-5.5 token efficiency](https://x.com/daniel_mac8/status/2047407932954841129)
+- [X: @bcherny — Opus 4.7 day-to-day feel](https://x.com/bcherny/status/2044822408826380440)
+- [X: @ArtificialAnlys — Opus 4.7 #1 GDPval-AA](https://x.com/ArtificialAnlys/status/2044856740970402115)
+- [X: @ArtificialAnlys — Intelligence Index 57](https://x.com/ArtificialAnlys/status/2045292578434875552)
+- [X: @TheZvi — Opus 4.7 capabilities + reactions](https://x.com/TheZvi/status/2046703306454798538)
+- [X: @nateherk — GPT-5.5 vs Opus 4.7 hands-on](https://x.com/nateherk/status/2047436752051118513)
+- [X: @OpenAI — GPT-5.5 launch](https://x.com/OpenAI/status/2047376561205325845)
+- [X: @llmdevguy — how to use GPT-5.5](https://x.com/llmdevguy/status/2048736363600613776)
+- [Anthropic — Claude Mythos Preview (Project Glasswing)](https://red.anthropic.com/2026/mythos-preview/)
+- [Axios — Anthropic concedes Opus 4.7 trails Mythos](https://www.axios.com/2026/04/16/anthropic-claude-opus-model-mythos)
+- [CNBC — Opus 4.7 less risky than Mythos](https://www.cnbc.com/2026/04/16/anthropic-claude-opus-4-7-model-mythos.html)
+- [NxCode — Opus 4.7 vs 4.6 vs Mythos](https://www.nxcode.io/resources/news/claude-opus-4-7-vs-4-6-vs-mythos-which-model-2026)
+- [Medium — Opus 4.7 vs Mythos breakdown](https://medium.com/data-science-in-your-pocket/claude-opus-4-7-vs-claude-mythos-f70a98643c00)
+- [Ivy Pro School — Opus vs Mythos full comparison](https://ivyproschool.com/aihelpcenter/ai-strategy-pm/claude-opus-vs-claude-mythos)
+- [YouTube: Nate Herk — I Tested GPT 5.5 vs Opus 4.7](https://www.youtube.com/watch?v=WX4rp-vP3zo)
 - [YouTube: TheAIGRID — Opus 4.7 Just Dropped — Here's What Everyone Missed](https://www.youtube.com/watch?v=r5BLAFPk9Jo)
 - [YouTube: Theo (t3.gg) — I don't really like GPT-5.5…](https://www.youtube.com/watch?v=HUsDzyJ3H64)
