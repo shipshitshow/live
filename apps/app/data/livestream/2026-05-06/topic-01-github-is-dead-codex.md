@@ -2,7 +2,7 @@
 title: "GitHub Is Dead. We're Rebuilding It With Codex."
 slug: "github-is-dead-codex"
 source: "OpenAI, GitHub, Mitchell Hashimoto, The Register, Axios, Incidenthub"
-status: "ready"
+status: "in_progress"
 date: "2026-05-06"
 thumbnail_prompt: null
 ---
