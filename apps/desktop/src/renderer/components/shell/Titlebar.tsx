@@ -57,7 +57,7 @@ export function Titlebar({
             variant="ghost"
             size="sm"
             className={cn(
-              'shrink-0 rounded-md app-region-no-drag',
+              'shrink-0 gap-1.5 rounded-md app-region-no-drag',
               terminalVisible && 'bg-surface-elevated text-text-primary',
             )}
             onClick={onToggleTerminal}
@@ -71,6 +71,7 @@ export function Titlebar({
                 terminalVisible ? 'text-text-primary' : 'text-text-secondary'
               }
             />
+            <span className="text-[11px]">Terminal</span>
           </Button>
         )}
         <Button

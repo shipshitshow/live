@@ -55,6 +55,7 @@ export type DateRange = 7 | 30 | 90;
 export interface YouTubeCommentReply {
   id: string;
   text: string;
+  authorChannelId: string | null;
   authorDisplayName: string;
   authorProfileImageUrl: string | null;
   publishedAt: string;
@@ -76,6 +77,7 @@ export interface YouTubeCommentThread {
   updatedAt: string;
   likeCount: number;
   totalReplyCount: number;
+  hasChannelReply: boolean;
   canReply: boolean;
   viewerRating: string;
   replies: YouTubeCommentReply[];

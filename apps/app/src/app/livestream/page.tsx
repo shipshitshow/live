@@ -6,7 +6,5 @@ export default async function LegacyLivestreamPage({
   searchParams: Promise<{ date?: string }>;
 }) {
   const { date } = await searchParams;
-  redirect(
-    date ? `/livestreams?date=${encodeURIComponent(date)}` : '/livestreams',
-  );
+  redirect(date ? `/livestreams/${encodeURIComponent(date)}` : '/livestreams');
 }

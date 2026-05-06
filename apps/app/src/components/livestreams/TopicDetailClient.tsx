@@ -65,6 +65,20 @@ interface LivestreamMeta {
     | 'error';
 }
 
+function stripBlockquotes(text: string): string {
+  return text
+    .split('\n')
+    .map((line) => line.replace(/^>\s?/, ''))
+    .join('\n');
+}
+
+function stripHorizontalRules(text: string): string {
+  return text
+    .split('\n')
+    .filter((line) => !/^-{3,}\s*$/.test(line.trim()))
+    .join('\n');
+}
+
 function parseMarkdownSections(content: string): ParsedSection[] {
   const sections: ParsedSection[] = [];
   const lines = content.split('\n');
@@ -72,10 +86,23 @@ function parseMarkdownSections(content: string): ParsedSection[] {
   let currentBody: string[] = [];
 
   for (const line of lines) {
+    const transitionMatch = line.match(/^###\s*→\s*TRANSITION:\s*(.+)/i);
+    if (transitionMatch) {
+      if (currentHeading) {
+        sections.push({
+          body: stripHorizontalRules(currentBody.join('\n')).trim(),
+          heading: currentHeading,
+        });
+      }
+      currentHeading = `→ ${transitionMatch[1].trim()}`;
+      currentBody = [];
+      continue;
+    }
+
     if (line.startsWith('## ')) {
       if (currentHeading) {
         sections.push({
-          body: currentBody.join('\n').trim(),
+          body: stripHorizontalRules(currentBody.join('\n')).trim(),
           heading: currentHeading,
         });
       }
@@ -87,23 +114,27 @@ function parseMarkdownSections(content: string): ParsedSection[] {
   }
   if (currentHeading) {
     sections.push({
-      body: currentBody.join('\n').trim(),
+      body: stripHorizontalRules(currentBody.join('\n')).trim(),
       heading: currentHeading,
     });
   }
   return sections;
 }
 
+function isTransitionSection(heading: string): boolean {
+  return heading.trim().startsWith('→');
+}
+
 function shouldIncludeSectionInRundown(heading: string): boolean {
   const normalized = heading.trim().toLowerCase();
+  if (/^(cold open|intro)\b/.test(normalized)) return false;
+  if (isTransitionSection(heading)) return false;
 
   return ![
     'summary',
     'sources',
     'livestream notes',
     'hot take',
-    'cold open',
-    'intro',
   ].includes(normalized);
 }
 
@@ -169,6 +200,14 @@ function isRestreamUrl(url: string): boolean {
   return /studio\.restream\.io/i.test(url);
 }
 
+function getEffectiveTopicStatus(topic: Topic): Topic['status'] {
+  if (topic.date < todayLocalDate() && topic.status !== 'backlog') {
+    return 'done';
+  }
+
+  return topic.status;
+}
+
 interface TalkingPoint {
   text: string;
   sources: { text: string; url: string }[];
@@ -215,7 +254,7 @@ interface ShowSegment {
   duration: string;
   points: TalkingPoint[];
   rawText?: string;
-  type: 'intro' | 'segment' | 'hottake' | 'conclusion';
+  type: 'intro' | 'segment' | 'hottake' | 'conclusion' | 'transition';
 }
 
 function countWords(text: string): number {
@@ -291,15 +330,14 @@ function estimateSegmentSeconds(
       return clampSeconds(totalWords * 4.5 + 90, 120, 480);
     case 'conclusion':
       return clampSeconds(totalWords * 3.5 + points.length * 35, 120, 360);
+    case 'transition':
+      return clampSeconds(totalWords * 3 + 15, 15, 60);
   }
 }
 
 function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
-  const rundownSections = sections.filter((s) =>
-    shouldIncludeSectionInRundown(s.heading),
-  );
   const coldOpen = sections.find((s) =>
-    /^(cold open|intro)$/i.test(s.heading.trim()),
+    /^(cold open|intro)\b/i.test(s.heading.trim()),
   );
   const summary = sections.find((s) => s.heading === 'Summary');
   const hotTake = sections.find((s) => s.heading === 'Hot Take');
@@ -308,9 +346,12 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   let segNum = 0;
   let currentSeconds = 0;
 
-  const introPoints = coldOpen ? parseTalkingPoints(coldOpen.body) : [];
+  const coldOpenBody = coldOpen
+    ? stripBlockquotes(coldOpen.body)
+    : '';
+  const introPoints = coldOpen ? parseTalkingPoints(coldOpenBody) : [];
   const introRawText =
-    coldOpen && introPoints.length === 0 ? coldOpen.body.trim() : undefined;
+    coldOpen && introPoints.length === 0 ? coldOpenBody.trim() : undefined;
   const introHook = buildColdOpenHook(summary);
   const fallbackIntroPoints = [{ sources: [], text: introHook }];
   const resolvedIntroPoints =
@@ -331,7 +372,30 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   });
   currentSeconds += introSeconds;
 
-  for (const section of rundownSections) {
+  for (const section of sections) {
+    if (isTransitionSection(section.heading)) {
+      const transitionBody = stripBlockquotes(section.body);
+      const transitionRawText = transitionBody.trim() || undefined;
+      const transitionSeconds = estimateSegmentSeconds(
+        'transition',
+        [],
+        transitionRawText,
+      );
+      segments.push({
+        duration: formatSegmentDuration(transitionSeconds),
+        label: section.heading,
+        number: segNum++,
+        points: [],
+        rawText: transitionRawText,
+        time: formatSegmentTime(currentSeconds),
+        type: 'transition',
+      });
+      currentSeconds += transitionSeconds;
+      continue;
+    }
+
+    if (!shouldIncludeSectionInRundown(section.heading)) continue;
+
     const points = parseTalkingPoints(section.body);
     const rawText = points.length === 0 ? section.body.trim() : undefined;
     const shortLabel = section.heading
@@ -394,8 +458,13 @@ interface RichTextBlock {
 
 function parseRichTextBlocks(rawText: string): RichTextBlock[] {
   const blocks: RichTextBlock[] = [];
-  const normalized = rawText.replace(/\r\n/g, '\n');
-  const parts = normalized.split(/(```[\s\S]*?```)/g).filter(Boolean);
+  const cleaned = rawText
+    .replace(/\r\n/g, '\n')
+    .split('\n')
+    .map((line) => line.replace(/^>\s?/, ''))
+    .filter((line) => !/^-{3,}\s*$/.test(line.trim()))
+    .join('\n');
+  const parts = cleaned.split(/(```[\s\S]*?```)/g).filter(Boolean);
 
   for (const part of parts) {
     if (part.startsWith('```') && part.endsWith('```')) {
@@ -479,7 +548,68 @@ const SEGMENT_COLORS: Record<
     line: 'bg-accent-red/20',
     time: 'text-accent-red',
   },
+  transition: {
+    dot: 'bg-purple-400',
+    line: 'bg-purple-400/20',
+    time: 'text-purple-400',
+  },
 };
+
+interface SegmentMediaItem {
+  type: 'tweet' | 'youtube' | 'link';
+  id: string;
+  url: string;
+  label: string;
+}
+
+function extractSegmentMedia(segment: ShowSegment): SegmentMediaItem[] {
+  const items: SegmentMediaItem[] = [];
+  const seen = new Set<string>();
+
+  const processUrl = (url: string, label: string) => {
+    if (seen.has(url) || isRestreamUrl(url)) return;
+    seen.add(url);
+
+    const tweetMatch = url.match(
+      /(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/,
+    );
+    if (tweetMatch) {
+      items.push({ type: 'tweet', id: tweetMatch[1], url, label });
+      return;
+    }
+
+    const ytMatch = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
+    );
+    if (ytMatch) {
+      items.push({ type: 'youtube', id: ytMatch[1], url, label });
+      return;
+    }
+
+    items.push({ type: 'link', id: url, url, label });
+  };
+
+  for (const point of segment.points) {
+    const urls = Array.from(
+      point.text.matchAll(/https?:\/\/[^\s)<>]+/g),
+    ).map((m) => m[0]);
+    const label = point.text
+      .replace(/https?:\/\/[^\s]+/g, '')
+      .replace(/\s+/g, ' ')
+      .trim();
+    for (const url of urls) processUrl(url, label);
+    for (const source of point.sources) processUrl(source.url, source.text);
+  }
+
+  if (segment.rawText) {
+    const urls = Array.from(
+      segment.rawText.matchAll(/https?:\/\/[^\s)<>]+/g),
+    ).map((m) => m[0]);
+    for (const url of urls) processUrl(url, '');
+  }
+
+  return items;
+}
 
 export function TopicDetailClient() {
   const params = useParams();
@@ -554,6 +684,7 @@ export function TopicDetailClient() {
   }, [slug, date]);
 
   const topic = topics.find((t) => t.slug === slug);
+  const effectiveStatus = topic ? getEffectiveTopicStatus(topic) : null;
   const sections = parseMarkdownSections(topic?.content ?? '');
   const sourceBadges = topic?.source.split(',').map((s) => s.trim()) ?? [];
   const summarySection = sections.find((s) => s.heading === 'Summary');
@@ -575,6 +706,9 @@ export function TopicDetailClient() {
   const segments = buildShowRundown(sections);
   const activeSegment =
     segments.find((seg) => seg.number === activeSegmentNumber) || segments[0];
+  const activeSegmentMedia = activeSegment
+    ? extractSegmentMedia(activeSegment)
+    : [];
   const keyFacts = segments
     .filter((seg) => seg.type === 'segment')
     .flatMap((seg) => seg.points.slice(0, 2))
@@ -740,10 +874,10 @@ export function TopicDetailClient() {
           ref={rundownScrollRef}
           className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto pr-2"
         >
-          <div className="rounded-xl border border-surface-border bg-surface-card p-5">
+          <div className="sticky top-0 z-20 rounded-xl border border-surface-border bg-surface-card/95 p-5 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
             <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-widest">
               <Link
-                href={`/livestreams?date=${date}`}
+                href={`/livestreams/${encodeURIComponent(date)}`}
                 className="text-text-muted transition-colors hover:text-text-primary"
               >
                 Livestreams
@@ -765,9 +899,9 @@ export function TopicDetailClient() {
                 </span>
               ))}
               <span
-                className={`rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${STATUS_BADGES[topic.status]}`}
+                className={`rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${STATUS_BADGES[effectiveStatus ?? topic.status]}`}
               >
-                {topic.status.replace('_', ' ')}
+                {(effectiveStatus ?? topic.status).replace('_', ' ')}
               </span>
             </div>
 
@@ -917,6 +1051,85 @@ export function TopicDetailClient() {
 
         <aside className="min-h-0 w-full max-w-[360px] shrink-0 overflow-y-auto">
           <div className="space-y-4">
+            {activeSegmentMedia.length > 0 && (
+              <div className="sticky top-0 z-10 overflow-hidden rounded-xl border border-accent-red/20 bg-surface-card/95 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
+                <div className="flex items-center gap-2 border-b border-surface-border px-5 py-3">
+                  <span
+                    className={`h-2 w-2 rounded-full ${SEGMENT_COLORS[activeSegment?.type || 'segment'].dot}`}
+                  />
+                  <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                    Sources — {activeSegment?.label}
+                  </h3>
+                </div>
+                <div className="max-h-[50vh] space-y-3 overflow-y-auto p-4">
+                  {activeSegmentMedia
+                    .filter((m) => m.type === 'youtube')
+                    .map((item) => (
+                      <div
+                        key={item.id}
+                        className="overflow-hidden rounded-lg border border-surface-border"
+                      >
+                        <iframe
+                          src={`https://www.youtube.com/embed/${item.id}`}
+                          title={item.label || 'YouTube video'}
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                          allowFullScreen
+                          className="aspect-video w-full"
+                        />
+                        {item.label && (
+                          <p className="truncate px-3 py-2 text-xs text-text-secondary">
+                            {item.label}
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  {activeSegmentMedia
+                    .filter((m) => m.type === 'tweet')
+                    .map((item) => (
+                      <a
+                        key={item.id}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-blue-400/30 hover:bg-blue-400/5"
+                      >
+                        <div className="mb-1.5 flex items-center gap-2">
+                          <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-blue-400">
+                            X
+                          </span>
+                        </div>
+                        <p className="line-clamp-3 text-sm leading-relaxed text-text-primary">
+                          {item.label}
+                        </p>
+                      </a>
+                    ))}
+                  {activeSegmentMedia
+                    .filter((m) => m.type === 'link')
+                    .map((item) => {
+                      const { badge, cls } = getBadgeForUrl(item.url);
+                      return (
+                        <a
+                          key={item.id}
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+                        >
+                          <span
+                            className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
+                          >
+                            {badge}
+                          </span>
+                          <span className="truncate">
+                            {item.label || item.url}
+                          </span>
+                        </a>
+                      );
+                    })}
+                </div>
+              </div>
+            )}
+
             <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
               <div className="border-b border-surface-border px-5 py-3">
                 <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">

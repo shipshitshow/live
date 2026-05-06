@@ -1,14 +1,7 @@
-import {
-  LayoutGrid,
-  MessageSquare,
-  PlayCircle,
-  Settings,
-  TrendingUp,
-} from 'lucide-react';
+import { LayoutGrid, MessageSquare, Settings, TrendingUp } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { YouTubeAuthView } from './components/auth/YouTubeAuthView';
 import { CommentsView } from './components/comments/CommentsView';
-import { ReviewQueueView } from './components/review/ReviewQueueView';
 import { type ShellNavItem, Sidebar } from './components/shell/Sidebar';
 import { TerminalDrawer } from './components/shell/TerminalDrawer';
 import { Titlebar } from './components/shell/Titlebar';
@@ -19,7 +12,6 @@ import { TrendsView } from './components/trends/TrendsView';
 const PRIMARY_VIEWS: ShellNavItem[] = [
   { icon: LayoutGrid, id: 'topics', label: 'Topics' },
   { icon: TrendingUp, id: 'trends', label: 'Trends' },
-  { icon: PlayCircle, id: 'review', label: 'Review' },
   { icon: MessageSquare, id: 'comments', label: 'Comments' },
 ];
 
@@ -29,7 +21,7 @@ const SECONDARY_VIEWS: ShellNavItem[] = [
 
 const ALL_VIEWS = [...PRIMARY_VIEWS, ...SECONDARY_VIEWS];
 
-type ViewId = 'topics' | 'trends' | 'review' | 'comments' | 'settings';
+type ViewId = 'topics' | 'trends' | 'comments' | 'settings';
 
 function renderView(activeView: ViewId) {
   switch (activeView) {
@@ -37,8 +29,6 @@ function renderView(activeView: ViewId) {
       return <KanbanBoard />;
     case 'trends':
       return <TrendsView />;
-    case 'review':
-      return <ReviewQueueView />;
     case 'comments':
       return <CommentsView />;
     case 'settings':
@@ -52,7 +42,7 @@ export function App() {
   const [activeView, setActiveView] = useState<ViewId>('topics');
   const [previousView, setPreviousView] = useState<ViewId>('topics');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [terminalVisible, setTerminalVisible] = useState(true);
+  const [terminalVisible, setTerminalVisible] = useState(false);
   const [terminalMaximized, setTerminalMaximized] = useState(false);
   const [terminalHeight, setTerminalHeight] = useState(280);
 

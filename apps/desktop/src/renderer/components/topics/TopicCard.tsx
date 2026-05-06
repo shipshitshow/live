@@ -12,11 +12,17 @@ const SOURCE_COLORS: Record<string, string> = {
 
 interface TopicCardProps {
   topic: Topic;
-  onStatusChange: (slug: string, status: TopicStatus) => void;
+  showDate?: boolean;
+  onStatusChange: (topic: Topic, status: TopicStatus) => void;
   onSelect: (slug: string) => void;
 }
 
-export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
+export function TopicCard({
+  topic,
+  showDate,
+  onStatusChange,
+  onSelect,
+}: TopicCardProps) {
   const sources = topic.source.split(',').map((s) => s.trim());
 
   const summary =
@@ -33,6 +39,7 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
       draggable
       onDragStart={(e) => {
         e.dataTransfer.setData('text/plain', topic.slug);
+        e.dataTransfer.setData('application/json', JSON.stringify(topic));
         e.dataTransfer.effectAllowed = 'move';
         (e.currentTarget as HTMLElement).style.opacity = '0.4';
       }}
@@ -46,6 +53,11 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
         <h3 className="text-sm font-semibold text-text-primary group-hover:text-accent-red transition-colors leading-tight">
           {topic.title}
         </h3>
+        {showDate && (
+          <span className="shrink-0 rounded bg-surface-border px-1.5 py-0.5 font-mono text-[10px] text-text-muted">
+            {topic.date}
+          </span>
+        )}
       </div>
 
       <div className="flex gap-1.5 mb-3">
@@ -72,7 +84,7 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
           <Button
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              onStatusChange(topic.slug, 'in_progress');
+              onStatusChange(topic, 'in_progress');
             }}
             size="sm"
             className="rounded-md bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
@@ -85,7 +97,7 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                onStatusChange(topic.slug, 'done');
+                onStatusChange(topic, 'done');
               }}
               size="sm"
               className="rounded-md border-green-500/20 bg-green-500/10 text-[10px] text-green-400 hover:bg-green-500/20 hover:text-green-300"
@@ -95,7 +107,7 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
             <Button
               onClick={(e: React.MouseEvent) => {
                 e.stopPropagation();
-                onStatusChange(topic.slug, 'backlog');
+                onStatusChange(topic, 'backlog');
               }}
               size="sm"
               className="rounded-md bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-secondary"
@@ -108,7 +120,7 @@ export function TopicCard({ topic, onStatusChange, onSelect }: TopicCardProps) {
           <Button
             onClick={(e: React.MouseEvent) => {
               e.stopPropagation();
-              onStatusChange(topic.slug, 'in_progress');
+              onStatusChange(topic, 'in_progress');
             }}
             size="sm"
             className="rounded-md bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-secondary"

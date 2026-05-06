@@ -20,7 +20,7 @@ export function TrendActionBar({
   addingToLivestream,
 }: TrendActionBarProps) {
   return (
-    <div className="sticky bottom-0 z-10 -mx-1 border-t border-surface-border bg-surface px-1 pt-4 pb-1">
+    <div className="z-10 -mx-1 shrink-0 border-t border-surface-border bg-surface px-1 pt-4 pb-1">
       <div className="flex flex-wrap items-center gap-3">
         <Button
           onClick={onGoDeeper}

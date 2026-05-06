@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { KanbanColumn } from './KanbanColumn';
 
 const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
+const ALL_DATES_VALUE = '__all__';
 
 function todayLocalDate(): string {
   const now = new Date();
@@ -24,10 +25,23 @@ export function KanbanBoard() {
       const dates = await window.electronAPI.topics.listDates();
       setAvailableDates(dates);
 
-      const resolvedDate = dates.includes(date) ? date : dates[0] || date;
-      if (resolvedDate !== date) setDate(resolvedDate);
+      if (date === ALL_DATES_VALUE) {
+        const results = await Promise.all(
+          dates.map((availableDate) =>
+            window.electronAPI.topics.list(availableDate),
+          ),
+        );
+        setTopics(results.flat());
+        return;
+      }
 
-      const result = await window.electronAPI.topics.list(resolvedDate);
+      const resolvedDate = dates.includes(date) ? date : dates[0] || date;
+      if (resolvedDate !== date) {
+        setDate(resolvedDate);
+        return;
+      }
+
+      const result = await window.electronAPI.topics.list(date);
       setTopics(result);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Failed to load topics');
@@ -40,11 +54,17 @@ export function KanbanBoard() {
     fetchTopics();
   }, [fetchTopics]);
 
-  async function handleStatusChange(slug: string, status: TopicStatus) {
+  async function handleStatusChange(topic: Topic, status: TopicStatus) {
     setTopics((prev) =>
-      prev.map((t) => (t.slug === slug ? { ...t, status } : t)),
+      prev.map((t) =>
+        t.slug === topic.slug && t.date === topic.date ? { ...t, status } : t,
+      ),
     );
-    await window.electronAPI.topics.updateStatus(date, slug, status);
+    await window.electronAPI.topics.updateStatus(
+      topic.date,
+      topic.slug,
+      status,
+    );
   }
 
   function handleSelect(_slug: string) {
@@ -75,13 +95,15 @@ export function KanbanBoard() {
   }
 
   const selectedCount = topics.filter((t) => t.status === 'in_progress').length;
+  const isAllDates = date === ALL_DATES_VALUE;
+  const headerLabel = isAllDates ? 'All topics' : date;
 
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between px-6 py-4 border-b border-surface-border">
         <div>
           <p className="text-sm font-medium text-text-primary">
-            {date} · {selectedCount}/{topics.length} selected
+            {headerLabel} · {selectedCount}/{topics.length} selected
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -91,6 +113,7 @@ export function KanbanBoard() {
               onChange={(e) => setDate(e.target.value)}
               className="h-8 rounded-md border border-surface-border bg-surface-card px-2 text-xs text-text-secondary"
             >
+              <option value={ALL_DATES_VALUE}>All topics</option>
               {availableDates.map((d) => (
                 <option key={d} value={d}>
                   {d}
@@ -119,12 +142,13 @@ export function KanbanBoard() {
             </p>
           </div>
         ) : (
-          <div className="flex gap-6">
+          <div className="grid min-w-[900px] grid-cols-3 gap-6">
             {COLUMNS.map((status) => (
               <KanbanColumn
                 key={status}
                 status={status}
                 topics={topics.filter((t) => t.status === status)}
+                showDates={isAllDates}
                 onStatusChange={handleStatusChange}
                 onSelect={handleSelect}
               />

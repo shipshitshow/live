@@ -5,9 +5,20 @@ import { Button } from '@shipshitshow/ui';
 import { useState } from 'react';
 import { formatNumber, formatWatchTime } from '@/lib/format';
 
-type SortKey = 'views' | 'likes' | 'comments' | 'watch_time_minutes';
+type SortKey =
+  | 'published_at'
+  | 'views'
+  | 'likes'
+  | 'comments'
+  | 'watch_time_minutes';
 
 const PAGE_SIZE = 10;
+
+const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
 
 const CHANNEL_HANDLES: Record<string, { handle: string; cls: string }> = {
   clips: { cls: 'bg-red-400/20 text-red-400', handle: '@sssclips' },
@@ -25,9 +36,18 @@ export function VideoTable({
   const [desc, setDesc] = useState(true);
   const [page, setPage] = useState(0);
 
-  const sorted = [...videos].sort((a, b) =>
-    desc ? b[sortKey] - a[sortKey] : a[sortKey] - b[sortKey],
-  );
+  const sorted = [...videos].sort((a, b) => {
+    const aValue =
+      sortKey === 'published_at'
+        ? new Date(a.published_at).getTime()
+        : a[sortKey];
+    const bValue =
+      sortKey === 'published_at'
+        ? new Date(b.published_at).getTime()
+        : b[sortKey];
+
+    return desc ? bValue - aValue : aValue - bValue;
+  });
 
   const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
   const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
@@ -42,11 +62,19 @@ export function VideoTable({
   }
 
   const cols: { key: SortKey; label: string }[] = [
+    { key: 'published_at', label: 'Date' },
     { key: 'views', label: 'Views' },
     { key: 'likes', label: 'Likes' },
     { key: 'comments', label: 'Comments' },
     { key: 'watch_time_minutes', label: 'Watch Time' },
   ];
+
+  function formatPublishDate(value: string) {
+    const timestamp = new Date(value).getTime();
+    if (Number.isNaN(timestamp)) return '—';
+
+    return DATE_FORMATTER.format(timestamp);
+  }
 
   return (
     <div>
@@ -101,6 +129,9 @@ export function VideoTable({
                         {v.title}
                       </a>
                     </div>
+                  </td>
+                  <td className="py-3 px-4 text-right tabular-nums text-text-secondary whitespace-nowrap">
+                    {formatPublishDate(v.published_at)}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
                     {formatNumber(v.views)}

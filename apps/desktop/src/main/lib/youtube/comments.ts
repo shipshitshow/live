@@ -32,6 +32,7 @@ const ytFetch = async <T>(url: string, token: string): Promise<T> => {
 };
 
 const mapReply = (reply: YouTubeCommentReplyItem): YouTubeCommentReply => ({
+  authorChannelId: reply.snippet?.authorChannelId?.value ?? null,
   authorDisplayName: reply.snippet?.authorDisplayName ?? 'Unknown',
   authorProfileImageUrl: reply.snippet?.authorProfileImageUrl ?? null,
   id: reply.id ?? '',
@@ -53,6 +54,37 @@ const fetchVideoTitles = async (
   return new Map(
     (res.items ?? []).map((item) => [item.id, item.snippet?.title ?? item.id]),
   );
+};
+
+const fetchAllReplies = async (
+  token: string,
+  parentId: string,
+): Promise<YouTubeCommentReply[]> => {
+  const replies: YouTubeCommentReply[] = [];
+  let pageToken: string | undefined;
+
+  do {
+    const params = new URLSearchParams({
+      maxResults: '100',
+      parentId,
+      part: 'snippet',
+      textFormat: 'plainText',
+    });
+
+    if (pageToken) params.set('pageToken', pageToken);
+
+    const res = await ytFetch<{
+      items?: YouTubeCommentReplyItem[];
+      nextPageToken?: string;
+    }>(`${DATA_API}/comments?${params.toString()}`, token);
+
+    replies.push(
+      ...(res.items ?? []).map(mapReply).filter((reply) => reply.id),
+    );
+    pageToken = res.nextPageToken;
+  } while (pageToken);
+
+  return replies;
 };
 
 export const fetchCommentThreads = async (
@@ -85,38 +117,50 @@ export const fetchCommentThreads = async (
   );
   const videoTitles = await fetchVideoTitles(token, videoIds);
 
-  return items.flatMap((item) => {
-    const topLevel = item.snippet?.topLevelComment;
-    const topLevelSnippet = topLevel?.snippet;
-    const videoId = item.snippet?.videoId;
-    const commentId = topLevel?.id;
+  const threads = await Promise.all(
+    items.map(async (item) => {
+      const topLevel = item.snippet?.topLevelComment;
+      const topLevelSnippet = topLevel?.snippet;
+      const videoId = item.snippet?.videoId;
+      const commentId = topLevel?.id;
 
-    if (!videoId || !commentId || !topLevelSnippet) return [];
+      if (!videoId || !commentId || !topLevelSnippet) return null;
 
-    return [
-      {
+      let replies = (item.replies?.comments ?? [])
+        .map(mapReply)
+        .filter((reply) => reply.id);
+      const totalReplyCount = Number(item.snippet?.totalReplyCount ?? 0);
+
+      if (totalReplyCount > replies.length) {
+        replies = await fetchAllReplies(token, commentId);
+      }
+
+      return {
         authorDisplayName: topLevelSnippet.authorDisplayName ?? 'Unknown',
         authorProfileImageUrl: topLevelSnippet.authorProfileImageUrl ?? null,
         canReply: Boolean(item.snippet?.canReply),
         channelId: item.snippet?.channelId ?? channelConfig.id,
         channelLabel: channelConfig.label,
         commentId,
+        hasChannelReply: replies.some(
+          (reply) => reply.authorChannelId === channelConfig.id,
+        ),
         id: item.id,
         likeCount: Number(topLevelSnippet.likeCount ?? 0),
         publishedAt: topLevelSnippet.publishedAt ?? '',
-        replies: (item.replies?.comments ?? [])
-          .map(mapReply)
-          .filter((reply) => reply.id),
+        replies,
         text: topLevelSnippet.textOriginal ?? topLevelSnippet.textDisplay ?? '',
-        totalReplyCount: Number(item.snippet?.totalReplyCount ?? 0),
+        totalReplyCount,
         updatedAt:
           topLevelSnippet.updatedAt ?? topLevelSnippet.publishedAt ?? '',
         videoId,
         videoTitle: videoTitles.get(videoId) ?? videoId,
         viewerRating: topLevelSnippet.viewerRating ?? 'none',
-      },
-    ];
-  });
+      };
+    }),
+  );
+
+  return threads.filter(isDefined);
 };
 
 export const replyToComment = async (

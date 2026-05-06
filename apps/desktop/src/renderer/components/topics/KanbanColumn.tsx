@@ -22,13 +22,15 @@ const COLUMN_CONFIG: Record<
 interface KanbanColumnProps {
   status: TopicStatus;
   topics: Topic[];
-  onStatusChange: (slug: string, status: TopicStatus) => void;
+  showDates?: boolean;
+  onStatusChange: (topic: Topic, status: TopicStatus) => void;
   onSelect: (slug: string) => void;
 }
 
 export function KanbanColumn({
   status,
   topics,
+  showDates,
   onStatusChange,
   onSelect,
 }: KanbanColumnProps) {
@@ -49,8 +51,14 @@ export function KanbanColumn({
       onDrop={(e) => {
         e.preventDefault();
         setDragOver(false);
-        const slug = e.dataTransfer.getData('text/plain');
-        if (slug) onStatusChange(slug, status);
+        const rawTopic = e.dataTransfer.getData('application/json');
+        if (!rawTopic) return;
+
+        try {
+          onStatusChange(JSON.parse(rawTopic) as Topic, status);
+        } catch {
+          // Ignore stale drags from older app builds or non-topic payloads.
+        }
       }}
     >
       <div className="flex items-center gap-2 mb-4 px-1">
@@ -68,8 +76,9 @@ export function KanbanColumn({
       <div className="flex flex-col gap-3">
         {topics.map((topic) => (
           <TopicCard
-            key={topic.slug}
+            key={`${topic.date}:${topic.slug}`}
             topic={topic}
+            showDate={showDates}
             onStatusChange={onStatusChange}
             onSelect={onSelect}
           />

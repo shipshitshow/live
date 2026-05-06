@@ -12,6 +12,10 @@ import type {
 import { CONTENT_FIELDS } from '@shipshitshow/types';
 import { get, list, put } from '@vercel/blob';
 import { findTopicFile, getTopicDrawingFile } from '@/lib/livestreams-files';
+import {
+  extractLivestreamYouTubeUrl,
+  extractVideoId,
+} from '@/lib/livestreams-youtube';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
@@ -42,6 +46,18 @@ export interface LivestreamHistoryItem {
   date: string;
   title: string;
   transcriptPath: string;
+  videoId: string | null;
+  youtubeUrl: string | null;
+}
+
+export interface LivestreamArchiveItem {
+  date: string;
+  hasTranscript: boolean;
+  title: string;
+  topicCount: number;
+  topics: Topic[];
+  transcriptPath: string | null;
+  transcriptTitle: string | null;
   videoId: string | null;
   youtubeUrl: string | null;
 }
@@ -471,6 +487,88 @@ export async function listLivestreamHistory(): Promise<
   LivestreamHistoryItem[]
 > {
   return listFilesystemLivestreamHistory();
+}
+
+function buildArchiveTitle(
+  date: string,
+  topics: Topic[],
+  historyItem: LivestreamHistoryItem | null,
+): string {
+  if (historyItem && topics.length === 0) return historyItem.title;
+  if (topics.length === 1) return topics[0].title;
+  return `${date} Livestream Rundown`;
+}
+
+export async function listLivestreamArchive(): Promise<
+  LivestreamArchiveItem[]
+> {
+  const historyByDate = new Map(
+    listFilesystemLivestreamHistory().map((item) => [item.date, item]),
+  );
+  const dates = new Set<string>([
+    ...Array.from(historyByDate.keys()),
+    ...(await listAvailableLivestreamDates()),
+  ]);
+
+  const items = await Promise.all(
+    Array.from(dates).map(async (date) => {
+      const topics = await getTopicsForDate(date);
+      const historyItem = historyByDate.get(date) ?? null;
+      const topicVideoUrl = topics
+        .map((topic) => extractLivestreamYouTubeUrl(topic.content))
+        .find((url): url is string => Boolean(url));
+      const topicVideoId = topicVideoUrl ? extractVideoId(topicVideoUrl) : null;
+      const youtubeUrl = historyItem?.youtubeUrl ?? topicVideoUrl ?? null;
+      const videoId = historyItem?.videoId ?? topicVideoId;
+
+      return {
+        date,
+        hasTranscript: Boolean(historyItem),
+        title: buildArchiveTitle(date, topics, historyItem),
+        topicCount: topics.length,
+        topics,
+        transcriptPath: historyItem?.transcriptPath ?? null,
+        transcriptTitle: historyItem?.title ?? null,
+        videoId,
+        youtubeUrl,
+      } satisfies LivestreamArchiveItem;
+    }),
+  );
+
+  return items.sort((a, b) => b.date.localeCompare(a.date));
+}
+
+export async function getLivestreamArchiveByDate(
+  date: string,
+): Promise<(LivestreamArchiveItem & { transcript: string | null }) | null> {
+  const item =
+    (await listLivestreamArchive()).find((archive) => archive.date === date) ??
+    null;
+  if (!item) return null;
+
+  return {
+    ...item,
+    transcript: item.transcriptPath
+      ? fs.readFileSync(item.transcriptPath, 'utf-8')
+      : null,
+  };
+}
+
+export async function getLivestreamArchiveByVideoId(
+  videoId: string,
+): Promise<(LivestreamArchiveItem & { transcript: string | null }) | null> {
+  const item =
+    (await listLivestreamArchive()).find(
+      (archive) => archive.videoId === videoId,
+    ) ?? null;
+  if (!item) return null;
+
+  return {
+    ...item,
+    transcript: item.transcriptPath
+      ? fs.readFileSync(item.transcriptPath, 'utf-8')
+      : null,
+  };
 }
 
 export async function getTopicsForDate(date: string): Promise<Topic[]> {

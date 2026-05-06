@@ -1,5 +1,5 @@
 import { execFileSync } from 'node:child_process';
-import { existsSync, statSync } from 'node:fs';
+import { accessSync, constants, existsSync, statSync } from 'node:fs';
 import os from 'node:os';
 import { ipcMain } from 'electron';
 import type { IPty } from 'node-pty';
@@ -77,28 +77,39 @@ function getShellEnv(): Record<string, string> {
   }
 }
 
-function resolveShell(): string {
+function canExecute(filePath: string): boolean {
+  try {
+    accessSync(filePath, constants.X_OK);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+function resolveShellCandidates(): string[] {
   const candidates = [process.env.SHELL?.trim(), ...FALLBACK_SHELLS].filter(
     (value): value is string => Boolean(value),
   );
+  const shells: string[] = [];
 
   for (const candidate of candidates) {
     if (!candidate.startsWith('/')) {
       continue;
     }
 
-    if (existsSync(candidate)) {
-      return candidate;
+    if (existsSync(candidate) && canExecute(candidate)) {
+      shells.push(candidate);
     }
   }
 
-  return '/bin/sh';
+  return Array.from(new Set(shells.length > 0 ? shells : ['/bin/sh']));
 }
 
-function resolveWorkingDirectory(): string {
+function resolveWorkingDirectories(): string[] {
   const candidates = [process.env.PWD, process.cwd(), os.homedir()].filter(
     (value): value is string => Boolean(value),
   );
+  const directories: string[] = [];
 
   for (const candidate of candidates) {
     if (!existsSync(candidate)) {
@@ -106,11 +117,13 @@ function resolveWorkingDirectory(): string {
     }
 
     if (statSync(candidate).isDirectory()) {
-      return candidate;
+      directories.push(candidate);
     }
   }
 
-  return os.homedir();
+  return Array.from(
+    new Set(directories.length > 0 ? directories : [os.homedir()]),
+  );
 }
 
 export function registerTerminalHandlers() {
@@ -128,8 +141,8 @@ export function registerTerminalHandlers() {
         cachedEnv = getShellEnv();
       }
 
-      const shell = resolveShell();
-      const cwd = resolveWorkingDirectory();
+      const shells = resolveShellCandidates();
+      const workingDirectories = resolveWorkingDirectories();
       const safeCols = Number.isFinite(cols)
         ? Math.max(1, Math.floor(cols))
         : 120;
@@ -137,38 +150,46 @@ export function registerTerminalHandlers() {
         ? Math.max(1, Math.floor(rows))
         : 30;
 
-      try {
-        ptyProcess = pty.spawn(shell, [], {
-          cols: safeCols,
-          cwd,
-          env: {
-            ...cachedEnv,
-            FORCE_COLOR: '1',
-            SHELL: shell,
-            TERM: 'xterm-256color',
-          },
-          name: 'xterm-256color',
-          rows: safeRows,
-        });
-      } catch (error) {
-        ptyProcess = null;
+      let lastError: unknown;
 
-        return {
-          cwd,
-          error:
-            error instanceof Error
-              ? `Failed to start shell: ${error.message}`
-              : 'Failed to start shell',
-          pid: null,
-          shell,
-        };
+      for (const cwd of workingDirectories) {
+        for (const shell of shells) {
+          try {
+            ptyProcess = pty.spawn(shell, [], {
+              cols: safeCols,
+              cwd,
+              env: {
+                ...cachedEnv,
+                FORCE_COLOR: '1',
+                PWD: cwd,
+                SHELL: shell,
+                TERM: 'xterm-256color',
+              },
+              name: 'xterm-256color',
+              rows: safeRows,
+            });
+
+            return {
+              cwd,
+              error: null,
+              pid: ptyProcess.pid,
+              shell,
+            };
+          } catch (error) {
+            lastError = error;
+            ptyProcess = null;
+          }
+        }
       }
 
       return {
-        cwd,
-        error: null,
-        pid: ptyProcess.pid,
-        shell,
+        cwd: workingDirectories[0] ?? os.homedir(),
+        error:
+          lastError instanceof Error
+            ? `Failed to start shell: ${lastError.message}`
+            : 'Failed to start shell',
+        pid: null,
+        shell: shells[0] ?? '/bin/sh',
       };
     },
   );

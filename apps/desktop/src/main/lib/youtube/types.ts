@@ -68,6 +68,7 @@ export interface YouTubeCommentReplyItem {
     textDisplay?: string;
     textOriginal?: string;
     authorDisplayName?: string;
+    authorChannelId?: { value?: string };
     authorProfileImageUrl?: string;
     publishedAt?: string;
     updatedAt?: string;
@@ -88,6 +89,7 @@ export interface YouTubeCommentThreadItem {
         textDisplay?: string;
         textOriginal?: string;
         authorDisplayName?: string;
+        authorChannelId?: { value?: string };
         authorProfileImageUrl?: string;
         publishedAt?: string;
         updatedAt?: string;

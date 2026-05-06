@@ -8,6 +8,7 @@ import { CopyButton } from '../CopyButton';
 
 type DraftState = Record<string, string[]>;
 type SendingState = Record<string, number | null>;
+type ReplyFilter = 'needs_reply' | 'all';
 
 const formatPublishedAt = (value: string) =>
   new Date(value).toLocaleString([], {
@@ -28,6 +29,7 @@ export function CommentsView() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [channelFilter, setChannelFilter] = useState('all');
   const [videoFilter, setVideoFilter] = useState('all');
+  const [replyFilter, setReplyFilter] = useState<ReplyFilter>('needs_reply');
   const [draftsByComment, setDraftsByComment] = useState<DraftState>({});
   const [draftLoadingId, setDraftLoadingId] = useState<string | null>(null);
   const [sendingByComment, setSendingByComment] = useState<SendingState>({});
@@ -85,9 +87,14 @@ export function CommentsView() {
   }, [videoFilter, videoOptions]);
 
   const visibleComments = useMemo(() => {
-    if (videoFilter === 'all') return filteredByChannel;
-    return filteredByChannel.filter((item) => item.videoId === videoFilter);
-  }, [filteredByChannel, videoFilter]);
+    const byReplyStatus =
+      replyFilter === 'needs_reply'
+        ? filteredByChannel.filter((item) => !item.hasChannelReply)
+        : filteredByChannel;
+
+    if (videoFilter === 'all') return byReplyStatus;
+    return byReplyStatus.filter((item) => item.videoId === videoFilter);
+  }, [filteredByChannel, replyFilter, videoFilter]);
 
   const selectedComment = useMemo(
     () =>
@@ -149,6 +156,7 @@ export function CommentsView() {
             item.commentId === comment.commentId
               ? {
                   ...item,
+                  hasChannelReply: true,
                   replies: [...item.replies, reply],
                   totalReplyCount: item.totalReplyCount + 1,
                 }
@@ -180,6 +188,14 @@ export function CommentsView() {
               : ''}
           </p>
           <div className="flex items-center gap-3 flex-wrap">
+            <select
+              value={replyFilter}
+              onChange={(e) => setReplyFilter(e.target.value as ReplyFilter)}
+              className="h-9 rounded-md border border-surface-border bg-surface-card px-3 text-xs text-text-primary"
+            >
+              <option value="needs_reply">Needs reply</option>
+              <option value="all">All comments</option>
+            </select>
             <select
               value={channelFilter}
               onChange={(e) => setChannelFilter(e.target.value)}

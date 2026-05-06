@@ -1,5 +1,6 @@
 import type { Topic } from '@shipshitshow/types';
 import { NextResponse } from 'next/server';
+import { todayLocalDate } from '@/lib/date';
 import {
   getTopicsForDate,
   listAvailableLivestreamDates,
@@ -21,13 +22,14 @@ export async function GET(request: Request) {
 
   const resolvedDate = await resolveLivestreamDate(requestedDate);
   const topics: Topic[] = await getTopicsForDate(resolvedDate);
+  const isPast = resolvedDate < todayLocalDate();
 
   const publicTopics = topics
     .filter((t) => t.status !== 'backlog')
     .map((t) => ({
       date: t.date,
       slug: t.slug,
-      status: t.status,
+      status: isPast ? 'done' : t.status,
       title: t.title,
     }));
 

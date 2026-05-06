@@ -252,9 +252,9 @@ export function TrendsView() {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 gap-6 p-4">
-      <div className="flex min-h-0 w-3/5 min-w-0 flex-col">
-        <div className="flex items-center justify-between mb-4">
+    <div className="flex h-full min-h-0 gap-6 overflow-hidden p-4">
+      <div className="flex h-full min-h-0 w-3/5 min-w-0 flex-col overflow-hidden">
+        <div className="mb-4 flex shrink-0 items-center justify-between">
           <div className="min-w-0">
             <TrendFilters
               active={sourceFilter}
@@ -278,7 +278,7 @@ export function TrendsView() {
           </Button>
         </div>
 
-        <div className="flex-1 space-y-2 overflow-y-auto pr-2 pb-4">
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pr-2 pb-4">
           {loading
             ? Array.from({ length: 8 }, (_, index) => (
                 <div
@@ -309,7 +309,7 @@ export function TrendsView() {
         />
       </div>
 
-      <div className="w-2/5 min-h-0 overflow-y-auto border-l border-surface-border pl-6">
+      <div className="h-full min-h-0 w-2/5 overflow-y-auto border-l border-surface-border pl-6">
         <DeepDivePanel
           activeItem={activeItem}
           activeSelected={!!activeItem && selectedIds.has(activeItem.id)}
