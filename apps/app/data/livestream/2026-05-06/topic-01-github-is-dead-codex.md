@@ -8,6 +8,7 @@ thumbnail_prompt: null
 ---
 
 ## Livestream Notes
+- [YouTube livestream](https://www.youtube.com/watch?v=11UOZiFBTRM)
 - [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
 
 ## Cold Open — READ THIS
