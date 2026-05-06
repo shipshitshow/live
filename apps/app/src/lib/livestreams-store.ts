@@ -50,6 +50,19 @@ export interface LivestreamHistoryItem {
   youtubeUrl: string | null;
 }
 
+export type PublishedVideoType = 'livestream' | 'video';
+
+export interface PublishedVideoItem {
+  date: string;
+  routeSlug: string;
+  title: string;
+  transcriptPath: string;
+  type: PublishedVideoType;
+  videoId: string | null;
+  wordCount: number;
+  youtubeUrl: string | null;
+}
+
 export interface LivestreamArchiveItem {
   date: string;
   hasTranscript: boolean;
@@ -159,6 +172,93 @@ function titleFromSlug(value: string): string {
     .filter(Boolean)
     .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
     .join(' ');
+}
+
+function getTranscriptWordCount(transcriptPath: string): number {
+  const transcript = fs.readFileSync(transcriptPath, 'utf-8');
+  return transcript.split(/\s+/).filter(Boolean).length;
+}
+
+function getPublishedVideoRouteSlug(
+  date: string,
+  type: PublishedVideoType,
+  rawTitleSlug: string,
+  videoId: string | null,
+): string {
+  return videoId ?? `${date}-${type}-${rawTitleSlug}`;
+}
+
+function getYoutubeUrl(videoId: string | null): string | null {
+  return videoId ? `https://www.youtube.com/watch?v=${videoId}` : null;
+}
+
+function getRawTranscriptVideoMap(): Map<
+  string,
+  { title: string; videoId: string }
+> {
+  const videoMap = new Map<string, { title: string; videoId: string }>();
+
+  if (!fs.existsSync(TRANSCRIPTS_DIR)) return videoMap;
+
+  for (const fileName of fs.readdirSync(TRANSCRIPTS_DIR)) {
+    const match = fileName.match(/^([\w-]{11})-(.+)\.en\.vtt$/);
+    if (!match) continue;
+
+    const [, videoId, rawTitle] = match;
+    const isLive = /^\[LIVE\]\s*/i.test(rawTitle);
+    const type: PublishedVideoType = isLive ? 'livestream' : 'video';
+    const title = rawTitle.replace(/^\[LIVE\]\s*/i, '');
+    videoMap.set(`${type}:${normalizeHistoryKey(title)}`, { title, videoId });
+  }
+
+  return videoMap;
+}
+
+function listFilesystemPublishedVideos(): PublishedVideoItem[] {
+  if (!fs.existsSync(CLEAN_TRANSCRIPTS_DIR)) return [];
+
+  const videoMap = getRawTranscriptVideoMap();
+
+  return fs
+    .readdirSync(CLEAN_TRANSCRIPTS_DIR)
+    .map((fileName) => {
+      const match = fileName.match(
+        /^(\d{4}-\d{2}-\d{2})-(livestream|video)-(.+)\.txt$/,
+      );
+      if (!match) return null;
+
+      const [, date, type, rawTitleSlug] = match;
+      const typed = type as PublishedVideoType;
+      const transcriptPath = path.join(CLEAN_TRANSCRIPTS_DIR, fileName);
+      const mapped = videoMap.get(
+        `${typed}:${normalizeHistoryKey(rawTitleSlug)}`,
+      );
+      const title = mapped?.title ?? titleFromSlug(rawTitleSlug);
+      const videoId = mapped?.videoId ?? null;
+
+      return {
+        date,
+        routeSlug: getPublishedVideoRouteSlug(
+          date,
+          typed,
+          rawTitleSlug,
+          videoId,
+        ),
+        title,
+        transcriptPath,
+        type: typed,
+        videoId,
+        wordCount: getTranscriptWordCount(transcriptPath),
+        youtubeUrl: getYoutubeUrl(videoId),
+      } satisfies PublishedVideoItem;
+    })
+    .filter((item): item is PublishedVideoItem => item !== null)
+    .sort(
+      (a, b) =>
+        b.date.localeCompare(a.date) ||
+        a.type.localeCompare(b.type) ||
+        a.title.localeCompare(b.title),
+    );
 }
 
 export function isTopicStatus(value: string | null): value is TopicStatus {
@@ -274,52 +374,17 @@ function listFilesystemDates(): string[] {
 }
 
 function listFilesystemLivestreamHistory(): LivestreamHistoryItem[] {
-  if (
-    !fs.existsSync(CLEAN_TRANSCRIPTS_DIR) ||
-    !fs.existsSync(TRANSCRIPTS_DIR)
-  ) {
-    return [];
-  }
-
-  const videoMap = new Map<string, { title: string; videoId: string }>();
-
-  for (const fileName of fs.readdirSync(TRANSCRIPTS_DIR)) {
-    const match = fileName.match(/^([\w-]{11})-(.+)\.en\.vtt$/);
-    if (!match) continue;
-
-    const [, videoId, rawTitle] = match;
-    const title = rawTitle.replace(/^\[LIVE\]\s*/i, '');
-    videoMap.set(normalizeHistoryKey(title), { title, videoId });
-  }
-
-  return fs
-    .readdirSync(CLEAN_TRANSCRIPTS_DIR)
-    .filter((fileName) =>
-      /^\d{4}-\d{2}-\d{2}-livestream-.+\.txt$/.test(fileName),
-    )
-    .map((fileName) => {
-      const match = fileName.match(
-        /^(\d{4}-\d{2}-\d{2})-livestream-(.+)\.txt$/,
-      );
-      if (!match) return null;
-
-      const [, date, rawTitleSlug] = match;
-      const mapped = videoMap.get(normalizeHistoryKey(rawTitleSlug));
-      const title = mapped?.title ?? titleFromSlug(rawTitleSlug);
-      const videoId = mapped?.videoId ?? null;
-
-      return {
-        date,
-        title,
-        transcriptPath: path.join(CLEAN_TRANSCRIPTS_DIR, fileName),
-        videoId,
-        youtubeUrl: videoId
-          ? `https://www.youtube.com/watch?v=${videoId}`
-          : null,
-      } satisfies LivestreamHistoryItem;
-    })
-    .filter((item): item is LivestreamHistoryItem => item !== null)
-    .sort((a, b) => b.date.localeCompare(a.date));
+  return listFilesystemPublishedVideos()
+    .filter((item) => item.type === 'livestream')
+    .map(
+      (item): LivestreamHistoryItem => ({
+        date: item.date,
+        title: item.title,
+        transcriptPath: item.transcriptPath,
+        videoId: item.videoId,
+        youtubeUrl: item.youtubeUrl,
+      }),
+    );
 }
 
 async function readBlobJson<T>(
@@ -487,6 +552,25 @@ export async function listLivestreamHistory(): Promise<
   LivestreamHistoryItem[]
 > {
   return listFilesystemLivestreamHistory();
+}
+
+export async function listPublishedVideos(): Promise<PublishedVideoItem[]> {
+  return listFilesystemPublishedVideos();
+}
+
+export async function getPublishedVideoBySlug(
+  slug: string,
+): Promise<(PublishedVideoItem & { transcript: string }) | null> {
+  const item =
+    listFilesystemPublishedVideos().find(
+      (video) => video.routeSlug === slug || video.videoId === slug,
+    ) ?? null;
+  if (!item) return null;
+
+  return {
+    ...item,
+    transcript: fs.readFileSync(item.transcriptPath, 'utf-8'),
+  };
 }
 
 function buildArchiveTitle(

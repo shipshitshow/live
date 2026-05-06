@@ -43,9 +43,7 @@ function isRestreamUrl(url: string): boolean {
 }
 
 function extractTweetIds(body: string): string[] {
-  const matches = body.matchAll(
-    /(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/g,
-  );
+  const matches = body.matchAll(/(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/g);
   return Array.from(new Set(Array.from(matches, (m) => m[1])));
 }
 
@@ -59,7 +57,10 @@ function extractYouTubeVideoIds(body: string): string[] {
 function stripEmbedUrls(body: string): string {
   return body
     .replace(/https?:\/\/(?:twitter\.com|x\.com)\/\w+\/status\/\d+/g, '')
-    .replace(/https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}[^\s)"]*/g, '');
+    .replace(
+      /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=|youtu\.be\/)[\w-]{11}[^\s)"]*/g,
+      '',
+    );
 }
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
@@ -85,8 +86,8 @@ const STATUS_META = {
 } as const;
 
 const TAB_META = {
-  'talking-points': 'Talking Points',
   comments: 'Comments',
+  'talking-points': 'Talking Points',
   transcript: 'Transcript',
 } as const;
 
@@ -218,19 +219,11 @@ function renderInlineMarkdown(text: string) {
       );
     }
 
-    return (
-      <span key={index}>{renderAutoLinkedText(part, String(index))}</span>
-    );
+    return <span key={index}>{renderAutoLinkedText(part, String(index))}</span>;
   });
 }
 
-function MarkdownBody({
-  body,
-  large,
-}: {
-  body: string;
-  large?: boolean;
-}) {
+function MarkdownBody({ body, large }: { body: string; large?: boolean }) {
   const lines = body.split('\n').filter((line) => line.trim().length > 0);
   const textSize = large ? 'text-lg' : 'text-sm';
   const leading = large ? 'leading-[1.8]' : 'leading-relaxed';
@@ -661,38 +654,44 @@ function StreamInfoSidebar({
           <p className="px-1 text-[10px] uppercase tracking-[0.18em] text-text-muted">
             Topics
           </p>
-          {cards.map(({ effectiveStatus: cardStatus, thumbnailUrl: cardThumb, topic }) => {
-            const cardMeta = STATUS_META[cardStatus];
-            const href = streamSlug
-              ? `/livestreams/${encodeURIComponent(streamSlug)}?tab=talking-points#${encodeURIComponent(topic.slug)}`
-              : `#${encodeURIComponent(topic.slug)}`;
+          {cards.map(
+            ({
+              effectiveStatus: cardStatus,
+              thumbnailUrl: cardThumb,
+              topic,
+            }) => {
+              const cardMeta = STATUS_META[cardStatus];
+              const href = streamSlug
+                ? `/livestreams/${encodeURIComponent(streamSlug)}?tab=talking-points#${encodeURIComponent(topic.slug)}`
+                : `#${encodeURIComponent(topic.slug)}`;
 
-            return (
-              <Link
-                key={`${topic.date}-${topic.slug}`}
-                href={href}
-                className="group flex items-center gap-3 overflow-hidden rounded-xl border border-surface-border bg-surface-card p-3 transition-colors hover:border-accent-red/40"
-              >
-                <div className="h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-elevated">
-                  <img
-                    src={cardThumb}
-                    alt=""
-                    className="h-full w-full object-cover"
-                  />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <h3 className="line-clamp-2 text-xs font-semibold text-text-primary transition-colors group-hover:text-accent-red">
-                    {topic.title}
-                  </h3>
-                  <span
-                    className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${cardMeta.badgeClass}`}
-                  >
-                    {cardMeta.label}
-                  </span>
-                </div>
-              </Link>
-            );
-          })}
+              return (
+                <Link
+                  key={`${topic.date}-${topic.slug}`}
+                  href={href}
+                  className="group flex items-center gap-3 overflow-hidden rounded-xl border border-surface-border bg-surface-card p-3 transition-colors hover:border-accent-red/40"
+                >
+                  <div className="h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-elevated">
+                    <img
+                      src={cardThumb}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h3 className="line-clamp-2 text-xs font-semibold text-text-primary transition-colors group-hover:text-accent-red">
+                      {topic.title}
+                    </h3>
+                    <span
+                      className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${cardMeta.badgeClass}`}
+                    >
+                      {cardMeta.label}
+                    </span>
+                  </div>
+                </Link>
+              );
+            },
+          )}
         </div>
       ) : null}
     </div>
@@ -816,7 +815,7 @@ export async function LivestreamDateView({
   );
   const thumbnailUrl = singleTopic
     ? await getTopicThumbnailUrl(singleTopic)
-    : cards[0]?.thumbnailUrl ?? null;
+    : (cards[0]?.thumbnailUrl ?? null);
 
   const defaultContentArea = (
     <>
@@ -844,7 +843,8 @@ export async function LivestreamDateView({
   );
 
   const sidebarEmbeds = (() => {
-    if (!singleTopic) return { tweetIds: [] as string[], videoIds: [] as string[] };
+    if (!singleTopic)
+      return { tweetIds: [] as string[], videoIds: [] as string[] };
     const sections = parseSections(singleTopic.content).filter((s) =>
       isUsefulSection(s.title),
     );
@@ -854,10 +854,16 @@ export async function LivestreamDateView({
     const seenVideos = new Set<string>();
     for (const section of sections) {
       for (const id of extractTweetIds(section.body)) {
-        if (!seenTweets.has(id)) { seenTweets.add(id); allTweetIds.push(id); }
+        if (!seenTweets.has(id)) {
+          seenTweets.add(id);
+          allTweetIds.push(id);
+        }
       }
       for (const id of extractYouTubeVideoIds(section.body)) {
-        if (!seenVideos.has(id)) { seenVideos.add(id); allVideoIds.push(id); }
+        if (!seenVideos.has(id)) {
+          seenVideos.add(id);
+          allVideoIds.push(id);
+        }
       }
     }
     return { tweetIds: allTweetIds, videoIds: allVideoIds };
@@ -878,9 +884,7 @@ export async function LivestreamDateView({
 
         <div className="flex flex-col gap-2">
           {youtubeUrl ? (
-            <ActionLinkButton href={youtubeUrl}>
-              Open stream
-            </ActionLinkButton>
+            <ActionLinkButton href={youtubeUrl}>Open stream</ActionLinkButton>
           ) : null}
           {restreamLink ? (
             <ActionLinkButton href={restreamLink.url}>
@@ -922,7 +926,10 @@ export async function LivestreamDateView({
                 Tweets — Pull Up Live
               </h3>
             </div>
-            <div className="max-h-[60vh] space-y-3 overflow-y-auto p-3" data-theme="dark">
+            <div
+              className="max-h-[60vh] space-y-3 overflow-y-auto p-3"
+              data-theme="dark"
+            >
               {sidebarEmbeds.tweetIds.map((id) => (
                 <Suspense
                   key={id}
@@ -947,6 +954,7 @@ export async function LivestreamDateView({
         activeHref="/livestreams"
         links={[
           { href: '/analytics', label: 'Analytics' },
+          { href: '/videos', label: 'Videos' },
           {
             href: '/livestreams',
             label: 'Livestreams',
@@ -1163,6 +1171,7 @@ export default async function LivestreamPage({
         links={[
           { href: '/analytics', label: 'Analytics' },
           { href: '/livestreams', label: 'Livestreams' },
+          { href: '/videos', label: 'Videos' },
         ]}
       />
       <main className="mx-auto max-w-6xl space-y-10 px-6 py-8">
@@ -1177,8 +1186,8 @@ export default async function LivestreamPage({
                   {upcoming.title}
                 </h1>
                 <p className="mt-1 text-sm text-text-muted">
-                  {formatLivestreamDate(upcoming.date)} ·{' '}
-                  {upcoming.topicCount} talking point
+                  {formatLivestreamDate(upcoming.date)} · {upcoming.topicCount}{' '}
+                  talking point
                   {upcoming.topicCount === 1 ? '' : 's'}
                 </p>
               </div>

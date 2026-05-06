@@ -130,12 +130,9 @@ function shouldIncludeSectionInRundown(heading: string): boolean {
   if (/^(cold open|intro)\b/.test(normalized)) return false;
   if (isTransitionSection(heading)) return false;
 
-  return ![
-    'summary',
-    'sources',
-    'livestream notes',
-    'hot take',
-  ].includes(normalized);
+  return !['summary', 'sources', 'livestream notes', 'hot take'].includes(
+    normalized,
+  );
 }
 
 function formatCompactNumber(value: number | null | undefined): string {
@@ -346,9 +343,7 @@ function buildShowRundown(sections: ParsedSection[]): ShowSegment[] {
   let segNum = 0;
   let currentSeconds = 0;
 
-  const coldOpenBody = coldOpen
-    ? stripBlockquotes(coldOpen.body)
-    : '';
+  const coldOpenBody = coldOpen ? stripBlockquotes(coldOpen.body) : '';
   const introPoints = coldOpen ? parseTalkingPoints(coldOpenBody) : [];
   const introRawText =
     coldOpen && introPoints.length === 0 ? coldOpenBody.trim() : undefined;
@@ -570,11 +565,9 @@ function extractSegmentMedia(segment: ShowSegment): SegmentMediaItem[] {
     if (seen.has(url) || isRestreamUrl(url)) return;
     seen.add(url);
 
-    const tweetMatch = url.match(
-      /(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/,
-    );
+    const tweetMatch = url.match(/(?:twitter\.com|x\.com)\/\w+\/status\/(\d+)/);
     if (tweetMatch) {
-      items.push({ type: 'tweet', id: tweetMatch[1], url, label });
+      items.push({ id: tweetMatch[1], label, type: 'tweet', url });
       return;
     }
 
@@ -582,17 +575,17 @@ function extractSegmentMedia(segment: ShowSegment): SegmentMediaItem[] {
       /(?:youtube\.com\/watch\?v=|youtu\.be\/)([\w-]+)/,
     );
     if (ytMatch) {
-      items.push({ type: 'youtube', id: ytMatch[1], url, label });
+      items.push({ id: ytMatch[1], label, type: 'youtube', url });
       return;
     }
 
-    items.push({ type: 'link', id: url, url, label });
+    items.push({ id: url, label, type: 'link', url });
   };
 
   for (const point of segment.points) {
-    const urls = Array.from(
-      point.text.matchAll(/https?:\/\/[^\s)<>]+/g),
-    ).map((m) => m[0]);
+    const urls = Array.from(point.text.matchAll(/https?:\/\/[^\s)<>]+/g)).map(
+      (m) => m[0],
+    );
     const label = point.text
       .replace(/https?:\/\/[^\s]+/g, '')
       .replace(/\s+/g, ' ')
@@ -1433,7 +1426,7 @@ export function TopicDetailClient() {
                   X Reactions
                 </h3>
               </div>
-              <div className="space-y-2 p-4">
+              <div className="max-h-[40vh] space-y-2 overflow-y-auto p-4">
                 {xReactions.length > 0 ? (
                   xReactions.map((tweet) => (
                     <a
@@ -1470,6 +1463,55 @@ export function TopicDetailClient() {
             </div>
           </div>
         </aside>
+
+        <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={() =>
+              rundownScrollRef.current?.scrollTo({
+                top: 0,
+                behavior: 'smooth',
+              })
+            }
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 12V4M4 7l4-4 4 4" />
+            </svg>
+          </button>
+          <button
+            type="button"
+            onClick={() =>
+              rundownScrollRef.current?.scrollTo({
+                top: rundownScrollRef.current.scrollHeight,
+                behavior: 'smooth',
+              })
+            }
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
+          >
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M8 4v8M4 9l4 4 4-4" />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );
