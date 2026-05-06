@@ -1469,8 +1469,8 @@ export function TopicDetailClient() {
             type="button"
             onClick={() =>
               rundownScrollRef.current?.scrollTo({
-                top: 0,
                 behavior: 'smooth',
+                top: 0,
               })
             }
             className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
@@ -1492,8 +1492,8 @@ export function TopicDetailClient() {
             type="button"
             onClick={() =>
               rundownScrollRef.current?.scrollTo({
-                top: rundownScrollRef.current.scrollHeight,
                 behavior: 'smooth',
+                top: rundownScrollRef.current.scrollHeight,
               })
             }
             className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { Tweet } from 'react-tweet';
 import { AppHeader } from '@/components/AppHeader';
+import { TranscriptScorecard } from '@/components/TranscriptScorecard';
 import { todayLocalDate } from '@/lib/date';
 import { formatNumber } from '@/lib/format';
 import {
@@ -19,6 +20,10 @@ import {
   extractYouTubeUrl,
   fetchVideoStats,
 } from '@/lib/livestreams-youtube';
+import {
+  analyzeTranscriptScorecard,
+  type TranscriptScorecard as TranscriptScorecardData,
+} from '@/lib/transcript-scorecard';
 
 interface MarkdownLink {
   text: string;
@@ -86,7 +91,6 @@ const STATUS_META = {
 } as const;
 
 const TAB_META = {
-  comments: 'Comments',
   'talking-points': 'Talking Points',
   transcript: 'Transcript',
 } as const;
@@ -131,7 +135,6 @@ function isPastDate(date: string): boolean {
 
 function resolveTab(tab: string | undefined): LivestreamTab {
   if (tab === 'transcript') return 'transcript';
-  if (tab === 'comments') return 'comments';
   return 'talking-points';
 }
 
@@ -541,59 +544,20 @@ function TranscriptPanel({
   );
 }
 
-function CommentsPanel({
-  commentCount,
-  videoId,
-}: {
-  commentCount: number | null;
-  videoId: string | null;
-}) {
-  if (!videoId) {
-    return (
-      <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/40 p-6 text-sm text-text-muted">
-        No YouTube video linked to this livestream yet.
-      </div>
-    );
-  }
-
-  const youtubeUrl = `https://www.youtube.com/watch?v=${videoId}`;
-
-  return (
-    <section className="space-y-4">
-      {commentCount !== null && commentCount > 0 ? (
-        <p className="text-sm text-text-secondary">
-          {formatNumber(commentCount)} comment
-          {commentCount === 1 ? '' : 's'} on YouTube
-        </p>
-      ) : null}
-      <a
-        href={youtubeUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="inline-flex items-center gap-2 rounded-lg border border-surface-border px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-      >
-        View comments on YouTube
-      </a>
-    </section>
-  );
-}
-
 function StreamInfoSidebar({
-  cards,
   commentCount,
   effectiveStatus,
   resolvedDate,
-  streamSlug,
+  scorecard,
   thumbnailUrl,
   title,
   viewCount,
   youtubeUrl,
 }: {
-  cards: LivestreamCard[];
   commentCount: number | null;
   effectiveStatus: keyof typeof STATUS_META;
   resolvedDate: string;
-  streamSlug?: string;
+  scorecard: TranscriptScorecardData | null;
   thumbnailUrl: string | null;
   title: string;
   viewCount: number | null;
@@ -649,51 +613,7 @@ function StreamInfoSidebar({
         </div>
       </div>
 
-      {cards.length > 0 ? (
-        <div className="space-y-2">
-          <p className="px-1 text-[10px] uppercase tracking-[0.18em] text-text-muted">
-            Topics
-          </p>
-          {cards.map(
-            ({
-              effectiveStatus: cardStatus,
-              thumbnailUrl: cardThumb,
-              topic,
-            }) => {
-              const cardMeta = STATUS_META[cardStatus];
-              const href = streamSlug
-                ? `/livestreams/${encodeURIComponent(streamSlug)}?tab=talking-points#${encodeURIComponent(topic.slug)}`
-                : `#${encodeURIComponent(topic.slug)}`;
-
-              return (
-                <Link
-                  key={`${topic.date}-${topic.slug}`}
-                  href={href}
-                  className="group flex items-center gap-3 overflow-hidden rounded-xl border border-surface-border bg-surface-card p-3 transition-colors hover:border-accent-red/40"
-                >
-                  <div className="h-12 w-20 shrink-0 overflow-hidden rounded-lg bg-surface-elevated">
-                    <img
-                      src={cardThumb}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <div className="min-w-0 flex-1">
-                    <h3 className="line-clamp-2 text-xs font-semibold text-text-primary transition-colors group-hover:text-accent-red">
-                      {topic.title}
-                    </h3>
-                    <span
-                      className={`mt-1 inline-block rounded-full border px-2 py-0.5 text-[10px] font-medium ${cardMeta.badgeClass}`}
-                    >
-                      {cardMeta.label}
-                    </span>
-                  </div>
-                </Link>
-              );
-            },
-          )}
-        </div>
-      ) : null}
+      <TranscriptScorecard scorecard={scorecard} />
     </div>
   );
 }
@@ -803,6 +723,7 @@ export async function LivestreamDateView({
   ]);
   const title = getLivestreamTitle(resolvedDate, visibleTopics, archive?.title);
   const youtubeUrl = getYoutubeUrl(visibleTopics, archive?.youtubeUrl);
+  const transcriptScorecard = analyzeTranscriptScorecard(archive?.transcript);
   const isUpcoming = !isPastDate(resolvedDate);
   const isSingleTopic = isUpcoming && visibleTopics.length === 1;
   const singleTopic = isSingleTopic ? visibleTopics[0] : null;
@@ -1040,11 +961,6 @@ export async function LivestreamDateView({
                     title={archive?.transcriptTitle ?? title}
                     transcript={archive?.transcript ?? null}
                   />
-                ) : activeTab === 'comments' ? (
-                  <CommentsPanel
-                    commentCount={videoStats?.commentCount ?? null}
-                    videoId={videoId}
-                  />
                 ) : (
                   <TalkingPointsPanel cards={cards} />
                 )}
@@ -1053,11 +969,10 @@ export async function LivestreamDateView({
           </main>
           <aside className="hidden w-[380px] shrink-0 lg:sticky lg:top-6 lg:block lg:self-start">
             <StreamInfoSidebar
-              cards={cards}
               commentCount={videoStats?.commentCount ?? null}
               effectiveStatus={effectiveStatus}
               resolvedDate={resolvedDate}
-              streamSlug={streamSlug}
+              scorecard={transcriptScorecard}
               thumbnailUrl={thumbnailUrl}
               title={title}
               viewCount={videoStats?.viewCount ?? null}
@@ -1174,7 +1089,7 @@ export default async function LivestreamPage({
           { href: '/videos', label: 'Videos' },
         ]}
       />
-      <main className="mx-auto max-w-6xl space-y-10 px-6 py-8">
+      <main className="mx-auto max-w-7xl space-y-10 px-6 py-8">
         {upcoming ? (
           <section className="space-y-4">
             <div className="flex items-end justify-between">
@@ -1223,7 +1138,7 @@ export default async function LivestreamPage({
           </div>
 
           {streams.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-3">
+            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
               {streams.map((stream) => (
                 <Link
                   key={stream.date}
@@ -1249,17 +1164,6 @@ export default async function LivestreamPage({
                       </div>
                       <span className="shrink-0 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-[10px] font-medium text-green-400">
                         Done
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between gap-3 text-[11px] text-text-muted">
-                      <span>
-                        {stream.topicCount} talking point
-                        {stream.topicCount === 1 ? '' : 's'}
-                      </span>
-                      <span>
-                        {stream.hasTranscript
-                          ? 'Transcript ready'
-                          : 'No transcript'}
                       </span>
                     </div>
                   </div>

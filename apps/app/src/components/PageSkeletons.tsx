@@ -161,44 +161,37 @@ export function LivestreamBoardContentSkeleton() {
 
 export function LivestreamTopicContentSkeleton() {
   return (
-    <div className="flex" style={{ height: 'calc(100vh - 65px)' }}>
-      <main className="flex-1 overflow-y-auto px-8 py-8">
-        <div className="mx-auto w-full max-w-[1480px] space-y-6">
-          <div className="flex items-start gap-3">
-            <SkeletonBlock className="h-8 w-8 rounded-lg" />
-            <div className="flex-1 space-y-3">
-              <SkeletonBlock className="h-8 w-2/3 rounded-lg" />
-              <div className="flex gap-2">
-                {Array.from({ length: 5 }, (_, index) => (
-                  <SkeletonBlock key={index} className="h-5 w-14 rounded-md" />
-                ))}
-              </div>
-            </div>
+    <div className="mx-auto flex max-w-[1400px] gap-8 px-6 py-8">
+      <main className="min-w-0 flex-1">
+        <div className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
+          <div className="flex gap-2 border-b border-surface-border px-4 py-3">
+            <SkeletonBlock className="h-8 w-28 rounded-md" />
+            <SkeletonBlock className="h-8 w-24 rounded-md" />
           </div>
-          <SkeletonBlock className="h-12" />
-          <div className="space-y-6">
-            {Array.from({ length: 4 }, (_, index) => (
-              <div key={index} className="flex gap-6">
-                <div className="w-10 shrink-0 space-y-2">
-                  <SkeletonBlock className="h-3 w-8 rounded-md border-none bg-surface-elevated" />
-                  <SkeletonBlock className="h-4 w-4 rounded-full" />
-                </div>
-                <div className="flex-1 space-y-3">
-                  <SkeletonBlock className="h-8 w-80 rounded-lg" />
-                  <SkeletonBlock className="h-20" />
-                  <SkeletonBlock className="h-20" />
-                </div>
-              </div>
-            ))}
+          <div className="space-y-4 p-5">
+            <SkeletonBlock className="h-4 w-48 rounded-md" />
+            <SkeletonBlock className="h-7 w-3/4 rounded-lg" />
+            <SkeletonBlock className="h-24" />
+            <SkeletonBlock className="h-4 w-32 rounded-md" />
+            <SkeletonBlock className="h-20" />
+            <SkeletonBlock className="h-4 w-40 rounded-md" />
+            <SkeletonBlock className="h-20" />
           </div>
         </div>
       </main>
-      <aside className="w-[320px] shrink-0 border-l border-surface-border p-4">
+      <aside className="hidden w-[380px] shrink-0 lg:block">
         <div className="space-y-4">
-          <SkeletonBlock className="h-20" />
-          <SkeletonBlock className="h-44" />
-          <SkeletonBlock className="h-32" />
-          <SkeletonBlock className="h-32" />
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <SkeletonBlock className="aspect-video w-full rounded-none border-none" />
+            <div className="space-y-3 p-4">
+              <SkeletonBlock className="h-5 w-3/4 rounded-md" />
+              <div className="flex gap-2">
+                <SkeletonBlock className="h-5 w-14 rounded-full" />
+                <SkeletonBlock className="h-5 w-24 rounded-md" />
+              </div>
+              <SkeletonBlock className="h-9 w-28 rounded-lg" />
+            </div>
+          </div>
         </div>
       </aside>
     </div>
@@ -283,7 +276,7 @@ export function LivestreamBoardPageSkeleton() {
 export function LivestreamTopicPageSkeleton() {
   return (
     <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Livestream Topic" activeHref="" />
+      <AppHeader subtitle="Show Rundown" activeHref="/livestreams" />
       <LivestreamTopicContentSkeleton />
     </div>
   );

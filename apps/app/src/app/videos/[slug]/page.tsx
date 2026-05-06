@@ -2,11 +2,13 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AppHeader } from '@/components/AppHeader';
+import { TranscriptScorecard } from '@/components/TranscriptScorecard';
 import { formatNumber } from '@/lib/format';
 import { getPublishedVideoBySlug } from '@/lib/livestreams-store';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
 import { clampText, stripMarkdown } from '@/lib/text';
+import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
   day: 'numeric',
@@ -81,6 +83,7 @@ export default async function VideoDetailPage({
   const thumbnailUrl = video.videoId
     ? await buildYouTubeThumbnailUrl(video.videoId)
     : '/icon.svg';
+  const transcriptScorecard = analyzeTranscriptScorecard(video.transcript);
 
   return (
     <div className="min-h-screen bg-surface text-text-primary">
@@ -151,6 +154,7 @@ export default async function VideoDetailPage({
                 ) : null}
               </div>
             </div>
+            <TranscriptScorecard scorecard={transcriptScorecard} />
           </aside>
         </div>
       </main>
