@@ -26,7 +26,8 @@ function resolveSubtitle(pathname: string): string {
 function resolveActiveHref(pathname: string): string {
   if (pathname.startsWith('/livestreams')) return '/livestreams';
   if (pathname.startsWith('/videos')) return '/videos';
-  if (pathname.startsWith('/analytics') || pathname === '/') return '/analytics';
+  if (pathname.startsWith('/analytics') || pathname === '/')
+    return '/analytics';
   return '';
 }
 

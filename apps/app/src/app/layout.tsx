@@ -18,13 +18,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <div id="app-content-shell" className="flex h-screen flex-col bg-surface text-text-primary">
+        <div
+          id="app-content-shell"
+          className="flex h-screen flex-col bg-surface text-text-primary"
+        >
           <AppTitlebar />
           <div className="flex flex-1 overflow-hidden">
             <AppSidebar />
-            <main className="flex-1 min-w-0 overflow-y-auto">
-              {children}
-            </main>
+            <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>
           </div>
         </div>
       </body>

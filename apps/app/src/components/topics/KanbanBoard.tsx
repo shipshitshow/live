@@ -32,7 +32,9 @@ export function KanbanBoard() {
       if (date === ALL_DATES_VALUE) {
         const results = await Promise.all(
           dates.map(async (d) => {
-            const res = await fetch(`/api/topics?date=${encodeURIComponent(d)}`);
+            const res = await fetch(
+              `/api/topics?date=${encodeURIComponent(d)}`,
+            );
             const data: { topics: Topic[] } = await res.json();
             return data.topics;
           }),
@@ -71,9 +73,9 @@ export function KanbanBoard() {
     await fetch(
       `/api/topics/${encodeURIComponent(topic.date)}/${encodeURIComponent(topic.slug)}`,
       {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
+        headers: { 'Content-Type': 'application/json' },
+        method: 'PATCH',
       },
     );
   }

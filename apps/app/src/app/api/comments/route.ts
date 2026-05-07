@@ -1,5 +1,5 @@
-import { type NextRequest, NextResponse } from 'next/server';
 import type { YouTubeCommentThread } from '@shipshitshow/types';
+import { type NextRequest, NextResponse } from 'next/server';
 import { fetchCommentThreads } from '@/lib/youtube/comments';
 import { getAccessToken, getChannelConfigs } from '@/lib/youtube/token';
 

@@ -318,96 +318,94 @@ export default async function VideoDetailPage({
   const transcriptScorecard = analyzeTranscriptScorecard(video.transcript);
 
   return (
-    <>
-      <main className="mx-auto max-w-6xl px-6 py-8">
-        <Link
-          href="/videos"
-          className="text-xs font-medium text-text-muted transition-colors hover:text-accent-red"
-        >
-          Back to videos
-        </Link>
+    <main className="mx-auto max-w-6xl px-6 py-8">
+      <Link
+        href="/videos"
+        className="text-xs font-medium text-text-muted transition-colors hover:text-accent-red"
+      >
+        Back to videos
+      </Link>
 
-        <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
-          <section className="min-w-0 space-y-6">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
-                {formatVideoType(video.type)}
-              </p>
-              <h1 className="mt-2 text-3xl font-semibold leading-tight text-text-primary">
-                {video.title}
-              </h1>
-              <p className="mt-2 text-sm text-text-muted">
-                {formatVideoDate(video.date)} · {formatNumber(video.wordCount)}{' '}
-                transcript words
-              </p>
+      <div className="mt-5 grid gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+        <section className="min-w-0 space-y-6">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
+              {formatVideoType(video.type)}
+            </p>
+            <h1 className="mt-2 text-3xl font-semibold leading-tight text-text-primary">
+              {video.title}
+            </h1>
+            <p className="mt-2 text-sm text-text-muted">
+              {formatVideoDate(video.date)} · {formatNumber(video.wordCount)}{' '}
+              transcript words
+            </p>
+          </div>
+
+          <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
+            <VideoTabs
+              activeTab={activeTab}
+              slug={video.routeSlug}
+              hasTalkingPoints={hasTalkingPoints}
+            />
+            <div className="p-5">
+              {activeTab === 'talking-points' ? (
+                <TalkingPointsPanel topics={topics} />
+              ) : (
+                <>
+                  <div className="border-b border-surface-border pb-4">
+                    <h2 className="text-sm font-semibold text-text-primary">
+                      Transcript
+                    </h2>
+                  </div>
+                  <pre className="max-h-[760px] overflow-auto whitespace-pre-wrap pt-4 text-sm leading-relaxed text-text-secondary">
+                    {video.transcript}
+                  </pre>
+                </>
+              )}
             </div>
-
-            <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
-              <VideoTabs
-                activeTab={activeTab}
-                slug={video.routeSlug}
-                hasTalkingPoints={hasTalkingPoints}
-              />
-              <div className="p-5">
-                {activeTab === 'talking-points' ? (
-                  <TalkingPointsPanel topics={topics} />
-                ) : (
-                  <>
-                    <div className="border-b border-surface-border pb-4">
-                      <h2 className="text-sm font-semibold text-text-primary">
-                        Transcript
-                      </h2>
-                    </div>
-                    <pre className="max-h-[760px] overflow-auto whitespace-pre-wrap pt-4 text-sm leading-relaxed text-text-secondary">
-                      {video.transcript}
-                    </pre>
-                  </>
-                )}
-              </div>
-            </section>
           </section>
+        </section>
 
-          <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="aspect-video overflow-hidden bg-surface-elevated">
-                <img
-                  src={thumbnailUrl}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="space-y-3 p-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <span className="rounded-full border border-accent-red/20 bg-accent-red/10 px-2.5 py-1 text-[10px] font-medium text-accent-red">
-                    {formatVideoType(video.type)}
-                  </span>
-                  <span className="text-xs text-text-muted">
-                    {formatVideoDate(video.date)}
-                  </span>
-                </div>
-                {video.youtubeUrl ? (
-                  <a
-                    href={video.youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-accent-red px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-accent-red/85"
-                  >
-                    <svg
-                      viewBox="0 0 24 24"
-                      fill="currentColor"
-                      className="h-5 w-5"
-                    >
-                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
-                    </svg>
-                    Watch
-                  </a>
-                ) : null}
-              </div>
+        <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="aspect-video overflow-hidden bg-surface-elevated">
+              <img
+                src={thumbnailUrl}
+                alt=""
+                className="h-full w-full object-cover"
+              />
             </div>
-            <TranscriptScorecard scorecard={transcriptScorecard} />
-          </aside>
-        </div>
-      </main>
-    </>
+            <div className="space-y-3 p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="rounded-full border border-accent-red/20 bg-accent-red/10 px-2.5 py-1 text-[10px] font-medium text-accent-red">
+                  {formatVideoType(video.type)}
+                </span>
+                <span className="text-xs text-text-muted">
+                  {formatVideoDate(video.date)}
+                </span>
+              </div>
+              {video.youtubeUrl ? (
+                <a
+                  href={video.youtubeUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-accent-red px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-accent-red/85"
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    className="h-5 w-5"
+                  >
+                    <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                  </svg>
+                  Watch
+                </a>
+              ) : null}
+            </div>
+          </div>
+          <TranscriptScorecard scorecard={transcriptScorecard} />
+        </aside>
+      </div>
+    </main>
   );
 }

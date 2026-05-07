@@ -606,11 +606,7 @@ function StreamInfoSidebar({
               rel="noopener noreferrer"
               className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-accent-red px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-accent-red/85"
             >
-              <svg
-                viewBox="0 0 24 24"
-                fill="currentColor"
-                className="h-5 w-5"
-              >
+              <svg viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5">
                 <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
               </svg>
               {isPastDate(resolvedDate) ? 'Watch replay' : 'Watch stream'}
@@ -1084,118 +1080,124 @@ export default async function LivestreamPage({
   ]);
 
   return (
-      <main className="mx-auto max-w-7xl space-y-10 px-6 py-8">
-        {upcoming ? (
-          <section className="space-y-4">
-            <div className="flex items-end justify-between">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
-                  Upcoming
-                </p>
-                <h1 className="mt-2 text-3xl font-semibold text-text-primary">
-                  {upcoming.title}
-                </h1>
-                <p className="mt-1 text-sm text-text-muted">
-                  {formatLivestreamDate(upcoming.date)} · {upcoming.topicCount}{' '}
-                  talking point
-                  {upcoming.topicCount === 1 ? '' : 's'}
-                </p>
-              </div>
-            </div>
-            <Link
-              href={`/livestreams/${encodeURIComponent(upcoming.routeSlug)}/talking-points`}
-              className="group block overflow-hidden rounded-2xl border border-accent-red/30 bg-surface-card transition-colors hover:border-accent-red/60"
-            >
-              <div className="aspect-[21/9] overflow-hidden bg-surface-elevated">
-                <img
-                  src={upcoming.thumbnailUrl}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
-                />
-              </div>
-            </Link>
-          </section>
-        ) : null}
-
-        <section className="space-y-5">
-          <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+    <main className="mx-auto max-w-7xl space-y-10 px-6 py-8">
+      {upcoming ? (
+        <section className="space-y-4">
+          <div className="flex items-end justify-between">
             <div>
               <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
-                Past
+                Upcoming
               </p>
-              <h2 className="mt-2 text-xl font-semibold text-text-primary">
-                Previous Livestreams
-              </h2>
+              <h1 className="mt-2 text-3xl font-semibold text-text-primary">
+                {upcoming.title}
+              </h1>
+              <p className="mt-1 text-sm text-text-muted">
+                {formatLivestreamDate(upcoming.date)} · {upcoming.topicCount}{' '}
+                talking point
+                {upcoming.topicCount === 1 ? '' : 's'}
+              </p>
             </div>
-            <span className="text-xs text-text-muted">
-              {streams.length} stream{streams.length === 1 ? '' : 's'}
-            </span>
           </div>
+          <Link
+            href={`/livestreams/${encodeURIComponent(upcoming.routeSlug)}/talking-points`}
+            className="group block overflow-hidden rounded-2xl border border-accent-red/30 bg-surface-card transition-colors hover:border-accent-red/60"
+          >
+            <div className="aspect-[21/9] overflow-hidden bg-surface-elevated">
+              <img
+                src={upcoming.thumbnailUrl}
+                alt=""
+                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+              />
+            </div>
+          </Link>
+        </section>
+      ) : null}
 
-          {streams.length > 0 ? (
-            <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
-              {streams.map((stream) => (
-                <Link
-                  key={stream.date}
-                  href={`/livestreams/${encodeURIComponent(stream.routeSlug)}/talking-points`}
-                  className="group overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-colors hover:border-accent-red/40"
-                >
-                  <div className="aspect-[16/9] overflow-hidden bg-surface-elevated">
-                    <img
-                      src={stream.thumbnailUrl}
-                      alt=""
-                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                    />
-                  </div>
-                  <div className="space-y-3 p-4">
-                    <div className="flex items-start justify-between gap-3">
-                      <div className="min-w-0">
-                        <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
-                          {formatLivestreamDate(stream.date)}
-                        </p>
-                        <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-text-primary transition-colors group-hover:text-accent-red">
-                          {stream.title}
-                        </h3>
-                      </div>
-                      {stream.transcriptScore !== null ? (
-                        <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+      <section className="space-y-5">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.24em] text-text-muted">
+              Past
+            </p>
+            <h2 className="mt-2 text-xl font-semibold text-text-primary">
+              Previous Livestreams
+            </h2>
+          </div>
+          <span className="text-xs text-text-muted">
+            {streams.length} stream{streams.length === 1 ? '' : 's'}
+          </span>
+        </div>
+
+        {streams.length > 0 ? (
+          <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
+            {streams.map((stream) => (
+              <Link
+                key={stream.date}
+                href={`/livestreams/${encodeURIComponent(stream.routeSlug)}/talking-points`}
+                className="group overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-colors hover:border-accent-red/40"
+              >
+                <div className="aspect-[16/9] overflow-hidden bg-surface-elevated">
+                  <img
+                    src={stream.thumbnailUrl}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                </div>
+                <div className="space-y-3 p-4">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="min-w-0">
+                      <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
+                        {formatLivestreamDate(stream.date)}
+                      </p>
+                      <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-text-primary transition-colors group-hover:text-accent-red">
+                        {stream.title}
+                      </h3>
+                    </div>
+                    {stream.transcriptScore !== null ? (
+                      <span
+                        className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold ${
                           stream.transcriptScore >= 8
                             ? 'border-green-500/20 bg-green-500/10 text-green-400'
                             : stream.transcriptScore >= 6
                               ? 'border-yellow-500/20 bg-yellow-500/10 text-yellow-400'
                               : 'border-red-500/20 bg-red-500/10 text-red-400'
-                        }`}>
-                          {stream.transcriptScore}/10
+                        }`}
+                      >
+                        {stream.transcriptScore}/10
+                      </span>
+                    ) : null}
+                  </div>
+                  {stream.hasTranscript ? (
+                    <div className="flex items-center gap-3 text-[10px] text-text-muted">
+                      {stream.transcriptGrade ? (
+                        <span>Grade {stream.transcriptGrade}</span>
+                      ) : null}
+                      {stream.transcriptWords ? (
+                        <span>
+                          {formatNumber(stream.transcriptWords)} words
                         </span>
                       ) : null}
+                      {stream.transcriptMinutes ? (
+                        <span>~{stream.transcriptMinutes} min</span>
+                      ) : null}
                     </div>
-                    {stream.hasTranscript ? (
-                      <div className="flex items-center gap-3 text-[10px] text-text-muted">
-                        {stream.transcriptGrade ? (
-                          <span>Grade {stream.transcriptGrade}</span>
-                        ) : null}
-                        {stream.transcriptWords ? (
-                          <span>{formatNumber(stream.transcriptWords)} words</span>
-                        ) : null}
-                        {stream.transcriptMinutes ? (
-                          <span>~{stream.transcriptMinutes} min</span>
-                        ) : null}
-                      </div>
-                    ) : (
-                      <p className="text-[10px] text-text-muted/50">No transcript</p>
-                    )}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="rounded-2xl border border-dashed border-surface-border bg-surface-card/40 p-8 text-center">
-              <p className="text-sm font-medium text-text-primary">
-                No completed livestreams yet.
-              </p>
-            </div>
-          )}
-        </section>
-      </main>
+                  ) : (
+                    <p className="text-[10px] text-text-muted/50">
+                      No transcript
+                    </p>
+                  )}
+                </div>
+              </Link>
+            ))}
+          </div>
+        ) : (
+          <div className="rounded-2xl border border-dashed border-surface-border bg-surface-card/40 p-8 text-center">
+            <p className="text-sm font-medium text-text-primary">
+              No completed livestreams yet.
+            </p>
+          </div>
+        )}
+      </section>
+    </main>
   );
 }

@@ -1,10 +1,10 @@
 import { redirect } from 'next/navigation';
 import {
-  UPCOMING_STREAM_SLUG,
   isDateSlug,
   isYouTubeVideoId,
   resolveStreamPathForDate,
   resolveUpcomingLivestreamDate,
+  UPCOMING_STREAM_SLUG,
 } from '@/lib/livestreams-routing';
 import { getLivestreamArchiveByVideoId } from '@/lib/livestreams-store';
 import { LivestreamDateView } from '../../page';

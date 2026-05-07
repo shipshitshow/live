@@ -26,7 +26,5 @@ export default function TopicDrawingPage() {
   const slug = params.slug as string;
   const date = searchParams.get('date') || todayLocalDate();
 
-  return (
-    <TopicDrawingBoard date={date} slug={slug} />
-  );
+  return <TopicDrawingBoard date={date} slug={slug} />;
 }

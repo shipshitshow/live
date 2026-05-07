@@ -1,7 +1,6 @@
 'use client';
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { cn } from '@shipshitshow/ui';
 import {
   BarChart3,
   Film,
@@ -10,7 +9,8 @@ import {
   Radio,
   TrendingUp,
 } from 'lucide-react';
-import { cn } from '@shipshitshow/ui';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import type { ComponentType } from 'react';
 
 interface NavItemDef {
@@ -26,25 +26,26 @@ interface NavSection {
 
 const SECTIONS: NavSection[] = [
   {
-    label: 'Content',
     items: [
-      { href: '/livestreams', label: 'Livestreams', icon: Radio },
-      { href: '/videos', label: 'Videos', icon: Film },
-      { href: '/analytics', label: 'Analytics', icon: BarChart3 },
+      { href: '/livestreams', icon: Radio, label: 'Livestreams' },
+      { href: '/videos', icon: Film, label: 'Videos' },
+      { href: '/analytics', icon: BarChart3, label: 'Analytics' },
     ],
+    label: 'Content',
   },
   {
-    label: 'Trends',
     items: [
-      { href: '/trends', label: 'Trends', icon: TrendingUp },
-      { href: '/topics', label: 'Topics', icon: LayoutGrid },
-      { href: '/comments', label: 'Comments', icon: MessageSquare },
+      { href: '/trends', icon: TrendingUp, label: 'Trends' },
+      { href: '/topics', icon: LayoutGrid, label: 'Topics' },
+      { href: '/comments', icon: MessageSquare, label: 'Comments' },
     ],
+    label: 'Trends',
   },
 ];
 
 function isActive(pathname: string, href: string): boolean {
-  if (href === '/analytics') return pathname === '/analytics' || pathname === '/';
+  if (href === '/analytics')
+    return pathname === '/analytics' || pathname === '/';
   return pathname === href || pathname.startsWith(`${href}/`);
 }
 

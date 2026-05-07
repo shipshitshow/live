@@ -3,20 +3,20 @@ import { redirect } from 'next/navigation';
 import { TopicDetailClient } from '@/components/livestreams/TopicDetailClient';
 import { todayLocalDate } from '@/lib/date';
 import {
+  buildTopicImageUrl,
+  extractSummary,
+  isDateSlug,
+  isYouTubeVideoId,
+  resolveStreamPathForDate,
+  UPCOMING_STREAM_SLUG,
+} from '@/lib/livestreams-routing';
+import {
   getLivestreamArchiveByVideoId,
   getTopicBySlug,
   resolveLivestreamDate,
 } from '@/lib/livestreams-store';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
 import { clampText } from '@/lib/text';
-import {
-  UPCOMING_STREAM_SLUG,
-  buildTopicImageUrl,
-  extractSummary,
-  isDateSlug,
-  isYouTubeVideoId,
-  resolveStreamPathForDate,
-} from '@/lib/livestreams-routing';
 
 function resolveTabSegment(tab: string | undefined): string {
   return tab === 'transcript' ? 'transcript' : 'talking-points';
@@ -157,9 +157,7 @@ export default async function TopicDetailPage({
   const topic = await getTopicBySlug(resolvedDate, slug);
   if (topic) {
     const streamPath = await resolveStreamPathForDate(resolvedDate);
-    redirect(
-      `${streamPath}/talking-points#${encodeURIComponent(topic.slug)}`,
-    );
+    redirect(`${streamPath}/talking-points#${encodeURIComponent(topic.slug)}`);
   }
 
   return <TopicDetailClient />;

@@ -215,9 +215,9 @@ export function TrendsView() {
         const draft = buildLivestreamTopicDraft(item);
 
         await fetch('/api/topics', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ date, ...draft }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
         });
 
         setAddedIds((prev) => new Set([...prev, item.id]));

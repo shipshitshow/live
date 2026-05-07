@@ -833,673 +833,667 @@ export function TopicDetailClient() {
   if (!topic) {
     return (
       <main className="mx-auto flex min-h-[calc(100vh-65px)] w-full max-w-[960px] flex-col items-center justify-center px-6 text-center">
-          <p className="text-lg font-semibold text-text-primary">
-            Topic not found
-          </p>
-          <p className="mt-2 text-sm text-text-muted">
-            No topic with slug <code>{slug}</code> was found for {resolvedDate}.
-          </p>
-          <Link
-            href="/analytics"
-            className="mt-6 rounded-lg border border-surface-border px-4 py-2 text-sm text-text-secondary transition-colors hover:border-accent-red/40 hover:text-text-primary"
-          >
-            Back to dashboard
-          </Link>
+        <p className="text-lg font-semibold text-text-primary">
+          Topic not found
+        </p>
+        <p className="mt-2 text-sm text-text-muted">
+          No topic with slug <code>{slug}</code> was found for {resolvedDate}.
+        </p>
+        <Link
+          href="/analytics"
+          className="mt-6 rounded-lg border border-surface-border px-4 py-2 text-sm text-text-secondary transition-colors hover:border-accent-red/40 hover:text-text-primary"
+        >
+          Back to dashboard
+        </Link>
       </main>
     );
   }
 
   return (
     <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 px-6 py-6">
-        <main
-          ref={rundownScrollRef}
-          className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto pr-2"
-        >
-          <div className="sticky top-0 z-20 rounded-xl border border-surface-border bg-surface-card/95 p-5 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
-            <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-widest">
-              <Link
-                href={`/livestreams/${encodeURIComponent(date)}`}
-                className="text-text-muted transition-colors hover:text-text-primary"
-              >
-                Livestreams
-              </Link>
-              <span className="text-text-muted/50">/</span>
-              <span className="text-accent-red">{resolvedDate}</span>
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2">
-              {sourceBadges.map((source) => (
-                <span
-                  key={source}
-                  className={`rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
-                    SOURCE_COLORS[source] ||
-                    'bg-surface-border text-text-secondary'
-                  }`}
-                >
-                  {source}
-                </span>
-              ))}
-              <span
-                className={`rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${STATUS_BADGES[effectiveStatus ?? topic.status]}`}
-              >
-                {(effectiveStatus ?? topic.status).replace('_', ' ')}
-              </span>
-            </div>
-
-            <h1 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
-              {topic.title}
-            </h1>
+      <main
+        ref={rundownScrollRef}
+        className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto pr-2"
+      >
+        <div className="sticky top-0 z-20 rounded-xl border border-surface-border bg-surface-card/95 p-5 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
+          <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px] font-medium uppercase tracking-widest">
+            <Link
+              href={`/livestreams/${encodeURIComponent(date)}`}
+              className="text-text-muted transition-colors hover:text-text-primary"
+            >
+              Livestreams
+            </Link>
+            <span className="text-text-muted/50">/</span>
+            <span className="text-accent-red">{resolvedDate}</span>
           </div>
 
-          <section className="rounded-xl border border-surface-border bg-surface-card px-6">
-            {segments.map((seg) => (
-              <div
-                key={seg.number}
-                ref={(element) => {
-                  if (element) {
-                    segmentRefs.current.set(seg.number, element);
-                  } else {
-                    segmentRefs.current.delete(seg.number);
-                  }
-                }}
-                data-segment-number={seg.number}
-                className="border-t border-surface-border/70 py-5 first:border-t-0"
+          <div className="flex flex-wrap items-center gap-2">
+            {sourceBadges.map((source) => (
+              <span
+                key={source}
+                className={`rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${
+                  SOURCE_COLORS[source] ||
+                  'bg-surface-border text-text-secondary'
+                }`}
               >
-                <div className="sticky top-0 z-10 -mx-6 mb-4 flex items-center gap-3 border-b border-surface-border bg-surface-card/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
-                  <span
-                    className={`h-2.5 w-2.5 rounded-full ${SEGMENT_COLORS[seg.type].dot}`}
-                  />
-                  <span
-                    className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] ${SEGMENT_COLORS[seg.type].time}`}
-                  >
-                    {seg.time}
-                  </span>
-                  <span className="text-sm font-medium text-text-primary">
-                    {seg.label}
-                  </span>
-                  <span className="text-xs text-text-muted">
-                    {seg.duration}
-                  </span>
-                </div>
+                {source}
+              </span>
+            ))}
+            <span
+              className={`rounded px-2 py-1 text-[10px] font-semibold uppercase tracking-wider ${STATUS_BADGES[effectiveStatus ?? topic.status]}`}
+            >
+              {(effectiveStatus ?? topic.status).replace('_', ' ')}
+            </span>
+          </div>
 
-                {seg.rawText && (
-                  <div className="mb-4 space-y-4 border-l-2 border-yellow-500/40 bg-yellow-500/5 py-3 pl-4">
-                    {parseRichTextBlocks(seg.rawText).map(
-                      (block, blockIndex) => {
-                        if (block.type === 'heading') {
-                          return (
-                            <h4
-                              key={`${seg.number}-raw-${blockIndex}`}
-                              className="text-lg font-semibold text-text-primary"
-                            >
-                              {renderInlineMarkdown(block.value)}
-                            </h4>
-                          );
-                        }
+          <h1 className="mt-4 text-4xl font-semibold tracking-tight text-text-primary">
+            {topic.title}
+          </h1>
+        </div>
 
-                        if (block.type === 'code') {
-                          return (
-                            <div
-                              key={`${seg.number}-raw-${blockIndex}`}
-                              className="overflow-hidden rounded-xl border border-surface-border bg-surface"
-                            >
-                              <div className="flex items-center justify-between border-b border-surface-border px-3 py-2">
-                                <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
-                                  Prompt
-                                </span>
-                                <CopyButton text={block.value} />
-                              </div>
-                              <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-text-primary">
-                                <code>{block.value}</code>
-                              </pre>
-                            </div>
-                          );
-                        }
+        <section className="rounded-xl border border-surface-border bg-surface-card px-6">
+          {segments.map((seg) => (
+            <div
+              key={seg.number}
+              ref={(element) => {
+                if (element) {
+                  segmentRefs.current.set(seg.number, element);
+                } else {
+                  segmentRefs.current.delete(seg.number);
+                }
+              }}
+              data-segment-number={seg.number}
+              className="border-t border-surface-border/70 py-5 first:border-t-0"
+            >
+              <div className="sticky top-0 z-10 -mx-6 mb-4 flex items-center gap-3 border-b border-surface-border bg-surface-card/95 px-6 py-4 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
+                <span
+                  className={`h-2.5 w-2.5 rounded-full ${SEGMENT_COLORS[seg.type].dot}`}
+                />
+                <span
+                  className={`text-[11px] font-mono font-bold uppercase tracking-[0.2em] ${SEGMENT_COLORS[seg.type].time}`}
+                >
+                  {seg.time}
+                </span>
+                <span className="text-sm font-medium text-text-primary">
+                  {seg.label}
+                </span>
+                <span className="text-xs text-text-muted">{seg.duration}</span>
+              </div>
 
-                        return (
-                          <p
-                            key={`${seg.number}-raw-${blockIndex}`}
-                            className="text-[20px] leading-[1.7] text-text-primary"
-                          >
-                            {renderInlineMarkdown(block.value)}
-                          </p>
-                        );
-                      },
-                    )}
-                  </div>
-                )}
+              {seg.rawText && (
+                <div className="mb-4 space-y-4 border-l-2 border-yellow-500/40 bg-yellow-500/5 py-3 pl-4">
+                  {parseRichTextBlocks(seg.rawText).map((block, blockIndex) => {
+                    if (block.type === 'heading') {
+                      return (
+                        <h4
+                          key={`${seg.number}-raw-${blockIndex}`}
+                          className="text-lg font-semibold text-text-primary"
+                        >
+                          {renderInlineMarkdown(block.value)}
+                        </h4>
+                      );
+                    }
 
-                <div className="space-y-4">
-                  {seg.points.map((point, pointIndex) => (
-                    <div
-                      key={`${seg.number}-${pointIndex}`}
-                      className="flex gap-4"
-                    >
-                      <div className="mt-1 flex flex-col items-center">
-                        <span
-                          className={`h-2.5 w-2.5 rounded-full ${SEGMENT_COLORS[seg.type].dot}`}
-                        />
-                        {pointIndex !== seg.points.length - 1 ? (
-                          <span
-                            className={`mt-2 w-px flex-1 ${SEGMENT_COLORS[seg.type].line}`}
-                          />
-                        ) : null}
-                      </div>
-
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[20px] font-medium leading-[1.7] text-text-primary">
-                          {renderInlineMarkdown(point.text)}
-                        </p>
-
-                        {point.sources.length > 0 ? (
-                          <div className="mt-3 flex flex-wrap gap-2">
-                            {[
-                              ...point.sources.filter((s) => isTweetUrl(s.url)),
-                              ...point.sources.filter(
-                                (s) => !isTweetUrl(s.url),
-                              ),
-                            ].map((source, sourceIndex) => {
-                              const { badge, cls } = getBadgeForUrl(source.url);
-                              return (
-                                <a
-                                  key={`${source.url}-${sourceIndex}`}
-                                  href={source.url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 rounded-lg border border-surface-border px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
-                                >
-                                  <span
-                                    className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
-                                  >
-                                    {badge}
-                                  </span>
-                                  <span className="truncate">
-                                    {stripSourcePrefix(source.text)}
-                                  </span>
-                                </a>
-                              );
-                            })}
+                    if (block.type === 'code') {
+                      return (
+                        <div
+                          key={`${seg.number}-raw-${blockIndex}`}
+                          className="overflow-hidden rounded-xl border border-surface-border bg-surface"
+                        >
+                          <div className="flex items-center justify-between border-b border-surface-border px-3 py-2">
+                            <span className="text-[10px] font-medium uppercase tracking-[0.18em] text-text-muted">
+                              Prompt
+                            </span>
+                            <CopyButton text={block.value} />
                           </div>
-                        ) : null}
-                      </div>
+                          <pre className="overflow-x-auto p-4 text-sm leading-relaxed text-text-primary">
+                            <code>{block.value}</code>
+                          </pre>
+                        </div>
+                      );
+                    }
+
+                    return (
+                      <p
+                        key={`${seg.number}-raw-${blockIndex}`}
+                        className="text-[20px] leading-[1.7] text-text-primary"
+                      >
+                        {renderInlineMarkdown(block.value)}
+                      </p>
+                    );
+                  })}
+                </div>
+              )}
+
+              <div className="space-y-4">
+                {seg.points.map((point, pointIndex) => (
+                  <div
+                    key={`${seg.number}-${pointIndex}`}
+                    className="flex gap-4"
+                  >
+                    <div className="mt-1 flex flex-col items-center">
+                      <span
+                        className={`h-2.5 w-2.5 rounded-full ${SEGMENT_COLORS[seg.type].dot}`}
+                      />
+                      {pointIndex !== seg.points.length - 1 ? (
+                        <span
+                          className={`mt-2 w-px flex-1 ${SEGMENT_COLORS[seg.type].line}`}
+                        />
+                      ) : null}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <p className="text-[20px] font-medium leading-[1.7] text-text-primary">
+                        {renderInlineMarkdown(point.text)}
+                      </p>
+
+                      {point.sources.length > 0 ? (
+                        <div className="mt-3 flex flex-wrap gap-2">
+                          {[
+                            ...point.sources.filter((s) => isTweetUrl(s.url)),
+                            ...point.sources.filter((s) => !isTweetUrl(s.url)),
+                          ].map((source, sourceIndex) => {
+                            const { badge, cls } = getBadgeForUrl(source.url);
+                            return (
+                              <a
+                                key={`${source.url}-${sourceIndex}`}
+                                href={source.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-2 rounded-lg border border-surface-border px-2.5 py-1.5 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+                              >
+                                <span
+                                  className={`rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
+                                >
+                                  {badge}
+                                </span>
+                                <span className="truncate">
+                                  {stripSourcePrefix(source.text)}
+                                </span>
+                              </a>
+                            );
+                          })}
+                        </div>
+                      ) : null}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
+      </main>
+
+      <aside className="min-h-0 w-full max-w-[360px] shrink-0 overflow-y-auto">
+        <div className="space-y-4">
+          {activeSegmentMedia.length > 0 && (
+            <div className="sticky top-0 z-10 overflow-hidden rounded-xl border border-accent-red/20 bg-surface-card/95 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
+              <div className="flex items-center gap-2 border-b border-surface-border px-5 py-3">
+                <span
+                  className={`h-2 w-2 rounded-full ${SEGMENT_COLORS[activeSegment?.type || 'segment'].dot}`}
+                />
+                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                  Sources — {activeSegment?.label}
+                </h3>
+              </div>
+              <div className="max-h-[50vh] space-y-3 overflow-y-auto p-4">
+                {activeSegmentMedia
+                  .filter((m) => m.type === 'youtube')
+                  .map((item) => (
+                    <div
+                      key={item.id}
+                      className="overflow-hidden rounded-lg border border-surface-border"
+                    >
+                      <iframe
+                        src={`https://www.youtube.com/embed/${item.id}`}
+                        title={item.label || 'YouTube video'}
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        className="aspect-video w-full"
+                      />
+                      {item.label && (
+                        <p className="truncate px-3 py-2 text-xs text-text-secondary">
+                          {item.label}
+                        </p>
+                      )}
                     </div>
                   ))}
-                </div>
-              </div>
-            ))}
-          </section>
-        </main>
-
-        <aside className="min-h-0 w-full max-w-[360px] shrink-0 overflow-y-auto">
-          <div className="space-y-4">
-            {activeSegmentMedia.length > 0 && (
-              <div className="sticky top-0 z-10 overflow-hidden rounded-xl border border-accent-red/20 bg-surface-card/95 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
-                <div className="flex items-center gap-2 border-b border-surface-border px-5 py-3">
-                  <span
-                    className={`h-2 w-2 rounded-full ${SEGMENT_COLORS[activeSegment?.type || 'segment'].dot}`}
-                  />
-                  <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                    Sources — {activeSegment?.label}
-                  </h3>
-                </div>
-                <div className="max-h-[50vh] space-y-3 overflow-y-auto p-4">
-                  {activeSegmentMedia
-                    .filter((m) => m.type === 'youtube')
-                    .map((item) => (
-                      <div
-                        key={item.id}
-                        className="overflow-hidden rounded-lg border border-surface-border"
-                      >
-                        <iframe
-                          src={`https://www.youtube.com/embed/${item.id}`}
-                          title={item.label || 'YouTube video'}
-                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                          allowFullScreen
-                          className="aspect-video w-full"
-                        />
-                        {item.label && (
-                          <p className="truncate px-3 py-2 text-xs text-text-secondary">
-                            {item.label}
-                          </p>
-                        )}
+                {activeSegmentMedia
+                  .filter((m) => m.type === 'tweet')
+                  .map((item) => (
+                    <a
+                      key={item.id}
+                      href={item.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-blue-400/30 hover:bg-blue-400/5"
+                    >
+                      <div className="mb-1.5 flex items-center gap-2">
+                        <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-blue-400">
+                          X
+                        </span>
                       </div>
-                    ))}
-                  {activeSegmentMedia
-                    .filter((m) => m.type === 'tweet')
-                    .map((item) => (
+                      <p className="line-clamp-3 text-sm leading-relaxed text-text-primary">
+                        {item.label}
+                      </p>
+                    </a>
+                  ))}
+                {activeSegmentMedia
+                  .filter((m) => m.type === 'link')
+                  .map((item) => {
+                    const { badge, cls } = getBadgeForUrl(item.url);
+                    return (
                       <a
                         key={item.id}
                         href={item.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-blue-400/30 hover:bg-blue-400/5"
+                        className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
                       >
-                        <div className="mb-1.5 flex items-center gap-2">
-                          <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-blue-400">
-                            X
-                          </span>
-                        </div>
-                        <p className="line-clamp-3 text-sm leading-relaxed text-text-primary">
-                          {item.label}
-                        </p>
-                      </a>
-                    ))}
-                  {activeSegmentMedia
-                    .filter((m) => m.type === 'link')
-                    .map((item) => {
-                      const { badge, cls } = getBadgeForUrl(item.url);
-                      return (
-                        <a
-                          key={item.id}
-                          href={item.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+                        <span
+                          className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
                         >
-                          <span
-                            className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
-                          >
-                            {badge}
-                          </span>
-                          <span className="truncate">
-                            {item.label || item.url}
-                          </span>
-                        </a>
-                      );
-                    })}
-                </div>
+                          {badge}
+                        </span>
+                        <span className="truncate">
+                          {item.label || item.url}
+                        </span>
+                      </a>
+                    );
+                  })}
               </div>
-            )}
+            </div>
+          )}
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  Stream Snapshot
-                </h3>
-              </div>
-              <div className="space-y-4 p-4">
-                <div className="grid grid-cols-1 gap-2">
-                  {streamMeta?.youtubeUrl && (
-                    <a
-                      href={streamMeta.youtubeUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                    >
-                      <span>
-                        {streamMeta.liveStatus === 'live'
-                          ? 'Open Livestream'
-                          : 'Open Replay'}
-                      </span>
-                    </a>
-                  )}
-
-                  {restreamLink && (
-                    <a
-                      href={restreamLink.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                    >
-                      <span>Open Restream Studio</span>
-                    </a>
-                  )}
-
-                  {announcementTweetLink && (
-                    <a
-                      href={announcementTweetLink.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
-                    >
-                      <span>Open Announcement Tweet</span>
-                    </a>
-                  )}
-
-                  <Link
-                    href={`/livestreams/${slug}/draw?date=${date}`}
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Stream Snapshot
+              </h3>
+            </div>
+            <div className="space-y-4 p-4">
+              <div className="grid grid-cols-1 gap-2">
+                {streamMeta?.youtubeUrl && (
+                  <a
+                    href={streamMeta.youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
                   >
-                    <span>Open Drawing Board</span>
-                  </Link>
-                </div>
-
-                {streamMeta?.thumbnailUrl && (
-                  <img
-                    src={streamMeta.thumbnailUrl}
-                    alt={streamMeta.title || topic.title}
-                    className="w-full rounded-lg border border-surface-border"
-                  />
+                    <span>
+                      {streamMeta.liveStatus === 'live'
+                        ? 'Open Livestream'
+                        : 'Open Replay'}
+                    </span>
+                  </a>
                 )}
 
-                {(streamMeta?.title ||
-                  streamMeta?.channelTitle ||
-                  summarySection?.body) && (
-                  <div>
-                    {streamMeta?.title && (
-                      <p className="text-sm font-semibold leading-snug text-text-primary">
-                        {streamMeta.title}
-                      </p>
-                    )}
-                    {streamMeta?.channelTitle && (
-                      <p className="mt-1 text-xs text-text-muted">
-                        {streamMeta.channelTitle}
-                      </p>
-                    )}
-                    {summarySection?.body && (
-                      <p className="mt-3 text-sm leading-relaxed text-text-secondary">
-                        {clampText(stripMarkdown(summarySection.body), 220)}
-                      </p>
-                    )}
-                  </div>
+                {restreamLink && (
+                  <a
+                    href={restreamLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                  >
+                    <span>Open Restream Studio</span>
+                  </a>
                 )}
 
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between gap-3">
-                    <span className="text-xs text-text-muted">Status</span>
-                    <span
-                      className={`rounded px-2 py-1 text-[11px] font-medium uppercase ${
-                        streamMeta?.liveStatus === 'live'
-                          ? 'bg-red-500/10 text-red-400'
-                          : streamMeta?.liveStatus === 'ended'
-                            ? 'bg-green-500/10 text-green-400'
-                            : 'bg-surface-border text-text-secondary'
-                      }`}
-                    >
-                      {streamMeta?.liveStatus || 'missing'}
-                    </span>
-                  </div>
+                {announcementTweetLink && (
+                  <a
+                    href={announcementTweetLink.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                  >
+                    <span>Open Announcement Tweet</span>
+                  </a>
+                )}
 
-                  {streamMeta?.youtubeUrl && (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs text-text-muted">YouTube</span>
-                      <a
-                        href={streamMeta.youtubeUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="max-w-[220px] truncate text-right text-xs text-accent-red hover:underline"
-                      >
-                        {streamMeta.liveStatus === 'live'
-                          ? 'Open stream'
-                          : 'Open replay'}
-                      </a>
-                    </div>
-                  )}
-
-                  {streamMeta?.viewCount !== undefined && (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs text-text-muted">Views</span>
-                      <span className="text-sm font-semibold text-text-primary">
-                        {formatCompactNumber(streamMeta.viewCount)}
-                      </span>
-                    </div>
-                  )}
-
-                  {streamMeta?.liveStatus === 'live' && (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs text-text-muted">
-                        Current viewers
-                      </span>
-                      <span className="text-sm font-semibold text-red-400">
-                        {formatCompactNumber(streamMeta.concurrentViewers)}
-                      </span>
-                    </div>
-                  )}
-
-                  {streamMeta?.actualStartTime && (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs text-text-muted">Started</span>
-                      <span className="text-xs text-text-secondary">
-                        {new Date(streamMeta.actualStartTime).toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-
-                  {streamMeta?.actualEndTime && (
-                    <div className="flex items-center justify-between gap-3">
-                      <span className="text-xs text-text-muted">Ended</span>
-                      <span className="text-xs text-text-secondary">
-                        {new Date(streamMeta.actualEndTime).toLocaleString()}
-                      </span>
-                    </div>
-                  )}
-                </div>
+                <Link
+                  href={`/livestreams/${slug}/draw?date=${date}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 rounded-lg border border-surface-border bg-surface-elevated/50 px-4 py-3 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                >
+                  <span>Open Drawing Board</span>
+                </Link>
               </div>
-            </div>
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  Co-Host Cues
-                </h3>
-              </div>
-              <div className="space-y-3 p-4">
-                {cohostCues.map((cue) => (
-                  <div key={cue} className="flex gap-3">
-                    <span className="mt-0.5 text-[11px] font-mono font-bold text-accent-red">
-                      Q
-                    </span>
-                    <p className="text-sm leading-relaxed text-text-primary">
-                      {cue}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
+              {streamMeta?.thumbnailUrl && (
+                <img
+                  src={streamMeta.thumbnailUrl}
+                  alt={streamMeta.title || topic.title}
+                  className="w-full rounded-lg border border-surface-border"
+                />
+              )}
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  Episode Brief
-                </h3>
-              </div>
-              <div className="space-y-4 p-4">
+              {(streamMeta?.title ||
+                streamMeta?.channelTitle ||
+                summarySection?.body) && (
                 <div>
-                  <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-text-muted">
-                    What Happened
-                  </p>
-                  <p className="text-sm leading-relaxed text-text-primary">
-                    {summarySection
-                      ? stripMarkdown(summarySection.body)
-                      : 'No summary provided yet.'}
-                  </p>
+                  {streamMeta?.title && (
+                    <p className="text-sm font-semibold leading-snug text-text-primary">
+                      {streamMeta.title}
+                    </p>
+                  )}
+                  {streamMeta?.channelTitle && (
+                    <p className="mt-1 text-xs text-text-muted">
+                      {streamMeta.channelTitle}
+                    </p>
+                  )}
+                  {summarySection?.body && (
+                    <p className="mt-3 text-sm leading-relaxed text-text-secondary">
+                      {clampText(stripMarkdown(summarySection.body), 220)}
+                    </p>
+                  )}
                 </div>
-                {hotTakeSection && (
-                  <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
-                    <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-yellow-300/80">
-                      What Side To Take
-                    </p>
-                    <p className="text-sm leading-relaxed text-text-primary">
-                      {stripMarkdown(hotTakeSection.body)}
-                    </p>
-                  </div>
-                )}
-              </div>
-            </div>
+              )}
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  Segment Timeline
-                </h3>
-              </div>
-              <div className="space-y-2 p-4">
-                {segments.map((seg) => (
-                  <button
-                    key={seg.number}
-                    type="button"
-                    onClick={() => jumpToSegment(seg.number)}
-                    className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
-                      activeSegmentNumber === seg.number
-                        ? 'border-accent-red/30 bg-accent-red/5'
-                        : 'border-surface-border/70 bg-surface-elevated/30 hover:border-accent-red/20 hover:bg-surface-elevated/50'
+              <div className="space-y-2">
+                <div className="flex items-center justify-between gap-3">
+                  <span className="text-xs text-text-muted">Status</span>
+                  <span
+                    className={`rounded px-2 py-1 text-[11px] font-medium uppercase ${
+                      streamMeta?.liveStatus === 'live'
+                        ? 'bg-red-500/10 text-red-400'
+                        : streamMeta?.liveStatus === 'ended'
+                          ? 'bg-green-500/10 text-green-400'
+                          : 'bg-surface-border text-text-secondary'
                     }`}
                   >
-                    <span
-                      className={`mt-0.5 text-[11px] font-mono font-bold ${SEGMENT_COLORS[seg.type].time}`}
-                    >
-                      {seg.time}
-                    </span>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium leading-snug text-text-primary">
-                        {seg.label}
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-text-muted">
-                        {seg.duration}
-                      </p>
-                    </div>
-                  </button>
-                ))}
-              </div>
-            </div>
+                    {streamMeta?.liveStatus || 'missing'}
+                  </span>
+                </div>
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  Must-Hit Facts
-                </h3>
-              </div>
-              <div className="space-y-3 p-4">
-                {keyFacts.map((fact, index) => (
-                  <div key={`${index}-${fact}`} className="flex gap-3">
-                    <span className="mt-0.5 text-[11px] font-mono font-bold text-text-muted">
-                      {index + 1}
-                    </span>
-                    <p className="text-sm leading-relaxed text-text-primary">
-                      {fact}
-                    </p>
+                {streamMeta?.youtubeUrl && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">YouTube</span>
+                    <a
+                      href={streamMeta.youtubeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="max-w-[220px] truncate text-right text-xs text-accent-red hover:underline"
+                    >
+                      {streamMeta.liveStatus === 'live'
+                        ? 'Open stream'
+                        : 'Open replay'}
+                    </a>
                   </div>
-                ))}
-              </div>
-            </div>
+                )}
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  Key Links
-                </h3>
-              </div>
-              <div className="space-y-2 p-4">
-                {keyLinks.map((link, index) => {
-                  const { badge, cls } = getBadgeForUrl(link.url);
-                  return (
-                    <a
-                      key={`${link.url}-${index}`}
-                      href={link.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
-                    >
-                      <span
-                        className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
-                      >
-                        {index === 0 && streamMeta?.youtubeUrl === link.url
-                          ? 'LIVE'
-                          : badge}
-                      </span>
-                      <span className="truncate">
-                        {stripSourcePrefix(link.text)}
-                      </span>
-                    </a>
-                  );
-                })}
-              </div>
-            </div>
+                {streamMeta?.viewCount !== undefined && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Views</span>
+                    <span className="text-sm font-semibold text-text-primary">
+                      {formatCompactNumber(streamMeta.viewCount)}
+                    </span>
+                  </div>
+                )}
 
-            <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-              <div className="border-b border-surface-border px-5 py-3">
-                <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
-                  X Reactions
-                </h3>
-              </div>
-              <div className="max-h-[40vh] space-y-2 overflow-y-auto p-4">
-                {xReactions.length > 0 ? (
-                  xReactions.map((tweet) => (
-                    <a
-                      key={tweet.id}
-                      href={tweet.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-accent-red/30"
-                    >
-                      <div className="flex items-center gap-2 text-[10px] text-text-muted">
-                        <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono font-bold text-blue-400">
-                          X
-                        </span>
-                        {tweet.author ? (
-                          <span className="truncate text-text-secondary">
-                            {tweet.author}
-                          </span>
-                        ) : null}
-                        <span className="ml-auto font-mono">
-                          {formatCompactNumber(tweet.score)}
-                        </span>
-                      </div>
-                      <p className="mt-2 text-sm leading-relaxed text-text-primary">
-                        {clampText(tweet.title, 180)}
-                      </p>
-                    </a>
-                  ))
-                ) : (
-                  <p className="text-sm text-text-muted">
-                    No matching tweets surfaced for this topic yet.
-                  </p>
+                {streamMeta?.liveStatus === 'live' && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">
+                      Current viewers
+                    </span>
+                    <span className="text-sm font-semibold text-red-400">
+                      {formatCompactNumber(streamMeta.concurrentViewers)}
+                    </span>
+                  </div>
+                )}
+
+                {streamMeta?.actualStartTime && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Started</span>
+                    <span className="text-xs text-text-secondary">
+                      {new Date(streamMeta.actualStartTime).toLocaleString()}
+                    </span>
+                  </div>
+                )}
+
+                {streamMeta?.actualEndTime && (
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="text-xs text-text-muted">Ended</span>
+                    <span className="text-xs text-text-secondary">
+                      {new Date(streamMeta.actualEndTime).toLocaleString()}
+                    </span>
+                  </div>
                 )}
               </div>
             </div>
           </div>
-        </aside>
 
-        <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-2">
-          <button
-            type="button"
-            onClick={() =>
-              rundownScrollRef.current?.scrollTo({
-                behavior: 'smooth',
-                top: 0,
-              })
-            }
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M8 12V4M4 7l4-4 4 4" />
-            </svg>
-          </button>
-          <button
-            type="button"
-            onClick={() =>
-              rundownScrollRef.current?.scrollTo({
-                behavior: 'smooth',
-                top: rundownScrollRef.current.scrollHeight,
-              })
-            }
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
-          >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M8 4v8M4 9l4 4 4-4" />
-            </svg>
-          </button>
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Co-Host Cues
+              </h3>
+            </div>
+            <div className="space-y-3 p-4">
+              {cohostCues.map((cue) => (
+                <div key={cue} className="flex gap-3">
+                  <span className="mt-0.5 text-[11px] font-mono font-bold text-accent-red">
+                    Q
+                  </span>
+                  <p className="text-sm leading-relaxed text-text-primary">
+                    {cue}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Episode Brief
+              </h3>
+            </div>
+            <div className="space-y-4 p-4">
+              <div>
+                <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-text-muted">
+                  What Happened
+                </p>
+                <p className="text-sm leading-relaxed text-text-primary">
+                  {summarySection
+                    ? stripMarkdown(summarySection.body)
+                    : 'No summary provided yet.'}
+                </p>
+              </div>
+              {hotTakeSection && (
+                <div className="rounded-lg border border-yellow-500/20 bg-yellow-500/5 p-3">
+                  <p className="mb-2 text-[10px] font-medium uppercase tracking-widest text-yellow-300/80">
+                    What Side To Take
+                  </p>
+                  <p className="text-sm leading-relaxed text-text-primary">
+                    {stripMarkdown(hotTakeSection.body)}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Segment Timeline
+              </h3>
+            </div>
+            <div className="space-y-2 p-4">
+              {segments.map((seg) => (
+                <button
+                  key={seg.number}
+                  type="button"
+                  onClick={() => jumpToSegment(seg.number)}
+                  className={`flex w-full items-start gap-3 rounded-lg border px-3 py-2 text-left transition-colors ${
+                    activeSegmentNumber === seg.number
+                      ? 'border-accent-red/30 bg-accent-red/5'
+                      : 'border-surface-border/70 bg-surface-elevated/30 hover:border-accent-red/20 hover:bg-surface-elevated/50'
+                  }`}
+                >
+                  <span
+                    className={`mt-0.5 text-[11px] font-mono font-bold ${SEGMENT_COLORS[seg.type].time}`}
+                  >
+                    {seg.time}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-snug text-text-primary">
+                      {seg.label}
+                    </p>
+                    <p className="mt-0.5 text-[11px] text-text-muted">
+                      {seg.duration}
+                    </p>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Must-Hit Facts
+              </h3>
+            </div>
+            <div className="space-y-3 p-4">
+              {keyFacts.map((fact, index) => (
+                <div key={`${index}-${fact}`} className="flex gap-3">
+                  <span className="mt-0.5 text-[11px] font-mono font-bold text-text-muted">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm leading-relaxed text-text-primary">
+                    {fact}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                Key Links
+              </h3>
+            </div>
+            <div className="space-y-2 p-4">
+              {keyLinks.map((link, index) => {
+                const { badge, cls } = getBadgeForUrl(link.url);
+                return (
+                  <a
+                    key={`${link.url}-${index}`}
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-2 rounded-lg border border-surface-border px-3 py-2 text-xs text-text-secondary transition-colors hover:border-accent-red/30 hover:text-text-primary"
+                  >
+                    <span
+                      className={`shrink-0 rounded px-1.5 py-0.5 font-mono text-[10px] font-bold uppercase ${cls}`}
+                    >
+                      {index === 0 && streamMeta?.youtubeUrl === link.url
+                        ? 'LIVE'
+                        : badge}
+                    </span>
+                    <span className="truncate">
+                      {stripSourcePrefix(link.text)}
+                    </span>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
+            <div className="border-b border-surface-border px-5 py-3">
+              <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                X Reactions
+              </h3>
+            </div>
+            <div className="max-h-[40vh] space-y-2 overflow-y-auto p-4">
+              {xReactions.length > 0 ? (
+                xReactions.map((tweet) => (
+                  <a
+                    key={tweet.id}
+                    href={tweet.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-accent-red/30"
+                  >
+                    <div className="flex items-center gap-2 text-[10px] text-text-muted">
+                      <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono font-bold text-blue-400">
+                        X
+                      </span>
+                      {tweet.author ? (
+                        <span className="truncate text-text-secondary">
+                          {tweet.author}
+                        </span>
+                      ) : null}
+                      <span className="ml-auto font-mono">
+                        {formatCompactNumber(tweet.score)}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm leading-relaxed text-text-primary">
+                      {clampText(tweet.title, 180)}
+                    </p>
+                  </a>
+                ))
+              ) : (
+                <p className="text-sm text-text-muted">
+                  No matching tweets surfaced for this topic yet.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
+      </aside>
+
+      <div className="fixed bottom-6 right-6 z-30 flex flex-col gap-2">
+        <button
+          type="button"
+          onClick={() =>
+            rundownScrollRef.current?.scrollTo({
+              behavior: 'smooth',
+              top: 0,
+            })
+          }
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M8 12V4M4 7l4-4 4 4" />
+          </svg>
+        </button>
+        <button
+          type="button"
+          onClick={() =>
+            rundownScrollRef.current?.scrollTo({
+              behavior: 'smooth',
+              top: rundownScrollRef.current.scrollHeight,
+            })
+          }
+          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
+        >
+          <svg
+            width="16"
+            height="16"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M8 4v8M4 9l4 4 4-4" />
+          </svg>
+        </button>
       </div>
+    </div>
   );
 }

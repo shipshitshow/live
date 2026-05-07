@@ -27,7 +27,9 @@ export function AppTitlebar() {
   return (
     <div className="flex h-[38px] shrink-0 items-center justify-between border-b border-surface-border bg-surface px-4">
       <div className="flex items-center gap-2 text-[11px]">
-        <span className="font-semibold text-text-secondary">Ship Shit Show</span>
+        <span className="font-semibold text-text-secondary">
+          Ship Shit Show
+        </span>
         <span className="text-text-muted">/</span>
         <span className="text-text-secondary">{subtitle}</span>
       </div>

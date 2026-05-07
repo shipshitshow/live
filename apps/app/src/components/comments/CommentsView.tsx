@@ -48,7 +48,12 @@ export function CommentsView() {
       setComments(data.items);
       setFetchedAt(data.fetchedAt);
       setSelectedId((prev) => {
-        if (prev && data.items.some((item: YouTubeCommentThread) => item.commentId === prev))
+        if (
+          prev &&
+          data.items.some(
+            (item: YouTubeCommentThread) => item.commentId === prev,
+          )
+        )
           return prev;
         return data.items[0]?.commentId ?? null;
       });
@@ -122,14 +127,14 @@ export function CommentsView() {
       setActionError(null);
       try {
         const res = await fetch('/api/comments/draft', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             authorDisplayName: comment.authorDisplayName,
             channelLabel: comment.channelLabel,
             commentText: comment.text,
             videoTitle: comment.videoTitle,
           }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
         });
         if (!res.ok) throw new Error('Failed to generate drafts');
         const data = await res.json();
@@ -154,13 +159,13 @@ export function CommentsView() {
       setActionError(null);
       try {
         const res = await fetch('/api/comments/reply', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            parentCommentId: comment.commentId,
             channelId: comment.channelId,
+            parentCommentId: comment.commentId,
             text: draft,
           }),
+          headers: { 'Content-Type': 'application/json' },
+          method: 'POST',
         });
         if (!res.ok) throw new Error('Failed to send reply');
         const reply: YouTubeCommentReply = await res.json();
