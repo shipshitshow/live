@@ -82,6 +82,7 @@ export interface YouTubeCommentReplyItem {
     textDisplay?: string;
     textOriginal?: string;
     authorDisplayName?: string;
+    authorChannelId?: { value?: string };
     authorProfileImageUrl?: string;
     publishedAt?: string;
     updatedAt?: string;

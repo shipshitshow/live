@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { AppHeader } from '@/components/AppHeader';
 import { formatNumber } from '@/lib/format';
 import {
   listPublishedVideos,
@@ -15,7 +14,7 @@ export const metadata: Metadata = {
     canonical: toAbsoluteUrl('/videos'),
   },
   description:
-    'Published Ship Shit Show videos and livestream replays with transcripts.',
+    'Published Ship Shit Show video transcripts.',
   title: 'Ship Shit Show - Videos',
 };
 
@@ -35,12 +34,9 @@ function formatVideoDate(date: string): string {
   return DATE_FORMATTER.format(new Date(Date.UTC(year, month - 1, day)));
 }
 
-function formatVideoType(type: PublishedVideoItem['type']): string {
-  return type === 'livestream' ? 'Livestream' : 'Video';
-}
-
 async function buildVideoCards(): Promise<VideoCard[]> {
-  const videos = await listPublishedVideos();
+  const allVideos = await listPublishedVideos();
+  const videos = allVideos.filter((video) => video.type === 'video');
 
   return Promise.all(
     videos.map(async (video) => ({
@@ -54,15 +50,9 @@ async function buildVideoCards(): Promise<VideoCard[]> {
 
 export default async function VideosPage() {
   const videos = await buildVideoCards();
-  const livestreamCount = videos.filter(
-    (video) => video.type === 'livestream',
-  ).length;
-  const regularVideoCount = videos.length - livestreamCount;
 
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Videos" activeHref="/videos" />
-
+    <>
       <main className="mx-auto max-w-6xl space-y-8 px-6 py-8">
         <section className="flex flex-col gap-4 border-b border-surface-border pb-8 md:flex-row md:items-end md:justify-between">
           <div>
@@ -73,16 +63,12 @@ export default async function VideosPage() {
               Published Videos
             </h1>
             <p className="mt-2 max-w-2xl text-sm leading-relaxed text-text-muted">
-              Every imported Ship Shit Show video transcript, including full
-              videos and livestream replays.
+              Every imported Ship Shit Show video transcript.
             </p>
           </div>
           <div className="flex gap-2 text-xs text-text-muted">
             <span className="rounded-full border border-surface-border px-3 py-1">
-              {formatNumber(regularVideoCount)} videos
-            </span>
-            <span className="rounded-full border border-surface-border px-3 py-1">
-              {formatNumber(livestreamCount)} livestreams
+              {formatNumber(videos.length)} videos
             </span>
           </div>
         </section>
@@ -117,7 +103,7 @@ export default async function VideosPage() {
                       </Link>
                     </div>
                     <span className="shrink-0 rounded-full border border-accent-red/20 bg-accent-red/10 px-2.5 py-1 text-[10px] font-medium text-accent-red">
-                      {formatVideoType(video.type)}
+                      Video
                     </span>
                   </div>
                   <div className="flex items-center justify-between gap-3 text-[11px] text-text-muted">
@@ -141,6 +127,6 @@ export default async function VideosPage() {
           </div>
         )}
       </main>
-    </div>
+    </>
   );
 }

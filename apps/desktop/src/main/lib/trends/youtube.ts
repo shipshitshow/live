@@ -22,9 +22,10 @@ interface YouTubeVideoItem {
 
 const YT_API = 'https://www.googleapis.com/youtube/v3';
 const AI_TREND_QUERIES = [
-  '"artificial intelligence" OR AI OR LLM',
-  'OpenAI OR Anthropic OR Claude OR ChatGPT OR GPT',
-  '"local llm" OR llama.cpp OR Ollama OR Qwen OR DeepSeek OR Cursor OR Codex',
+  '"Claude Code" OR Codex OR Cursor OR "AI coding"',
+  '"AI agents" "software engineering" OR "vibe coding"',
+  'OpenAI Anthropic Claude GPT developers',
+  '"local llm" Ollama Qwen DeepSeek developers',
 ];
 
 function hasYouTubeApiKey(): boolean {
@@ -91,7 +92,7 @@ async function searchVideoIds(
     TTL.TREND_DISCOVERY,
     async () => {
       const searchRes = await fetch(
-        `${YT_API}/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoCategoryId=28&maxResults=${maxResults}&order=${order}&regionCode=US&publishedAfter=${encodeURIComponent(publishedAfter)}&key=${apiKey}`,
+        `${YT_API}/search?part=snippet&q=${encodeURIComponent(query)}&type=video&videoCategoryId=28&videoDuration=medium&maxResults=${maxResults}&order=${order}&regionCode=US&relevanceLanguage=en&publishedAfter=${encodeURIComponent(publishedAfter)}&key=${apiKey}`,
       );
 
       if (!searchRes.ok) {

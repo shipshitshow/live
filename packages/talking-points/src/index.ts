@@ -1,5 +1,6 @@
 export type { TrendFetcher, TrendFetcherEntry } from './feed';
 export { buildTrendsResponse, buildTrendsSearchResponse } from './feed';
+export { getShowFit, withShowFit, withShowFitItems } from './fit';
 export { fetchHNTrending, searchHN } from './hackernews';
 export { dedupeTrendItems, slugify, sortTrendSearchItems } from './items';
 export { buildLivestreamTopicDraft } from './livestreams';

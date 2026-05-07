@@ -5,6 +5,7 @@ import type {
   TrendsResponse,
   TrendsSearchResponse,
 } from '@shipshitshow/types';
+import { withShowFitItems } from './fit';
 import { dedupeTrendItems, sortTrendSearchItems } from './items';
 import { sortTrendItems } from './ranking';
 import { isAIRelevant } from './relevance';
@@ -39,7 +40,9 @@ export async function buildTrendsResponse(
 
   return {
     fetchedAt: new Date().toISOString(),
-    items: sortTrendItems(dedupeTrendItems(items).filter(isAIRelevant)),
+    items: sortTrendItems(
+      withShowFitItems(dedupeTrendItems(items).filter(isAIRelevant)),
+    ),
     sources,
   };
 }
@@ -68,7 +71,7 @@ export async function buildTrendsSearchResponse(
   }
 
   return {
-    items: sortTrendSearchItems(dedupeTrendItems(items)),
+    items: sortTrendSearchItems(withShowFitItems(dedupeTrendItems(items))),
     query: trimmedQuery,
   };
 }

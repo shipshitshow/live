@@ -1,5 +1,3 @@
-import { AppHeader } from '@/components/AppHeader';
-
 function SkeletonBlock({ className }: { className: string }) {
   return (
     <div
@@ -208,85 +206,44 @@ export function YouTubeAuthContentSkeleton() {
 
 export function AnalyticsPageSkeleton() {
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Analytics Dashboard" activeHref="/analytics" />
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <AnalyticsContentSkeleton />
-      </main>
-    </div>
+    <main className="mx-auto max-w-7xl px-6 py-8">
+      <AnalyticsContentSkeleton />
+    </main>
   );
 }
 
 export function CommentsPageSkeleton() {
-  return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Comments" activeHref="/comments" />
-      <CommentsContentSkeleton />
-    </div>
-  );
+  return <CommentsContentSkeleton />;
 }
 
 export function ReviewQueuePageSkeleton() {
-  return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Review Queue" activeHref="/review" />
-      <ReviewQueueContentSkeleton />
-    </div>
-  );
+  return <ReviewQueueContentSkeleton />;
 }
 
 export function ReviewDetailPageSkeleton() {
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader
-        subtitle="Video Review"
-        activeHref="/review"
-        links={[
-          { href: '/', label: 'Analytics' },
-          { href: '/review', label: 'Review Queue' },
-        ]}
-      />
-      <main className="mx-auto max-w-7xl px-6 py-8">
-        <ReviewDetailContentSkeleton />
-      </main>
-    </div>
+    <main className="mx-auto max-w-7xl px-6 py-8">
+      <ReviewDetailContentSkeleton />
+    </main>
   );
 }
 
 export function TrendsPageSkeleton() {
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Trends" activeHref="/trends" />
-      <main className="mx-auto w-full max-w-[1800px] px-6 py-6">
-        <TrendsContentSkeleton />
-      </main>
-    </div>
+    <main className="mx-auto w-full max-w-[1800px] px-6 py-6">
+      <TrendsContentSkeleton />
+    </main>
   );
 }
 
 export function LivestreamBoardPageSkeleton() {
-  return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Livestreams" activeHref="/livestreams" />
-      <LivestreamBoardContentSkeleton />
-    </div>
-  );
+  return <LivestreamBoardContentSkeleton />;
 }
 
 export function LivestreamTopicPageSkeleton() {
-  return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Show Rundown" activeHref="/livestreams" />
-      <LivestreamTopicContentSkeleton />
-    </div>
-  );
+  return <LivestreamTopicContentSkeleton />;
 }
 
 export function YouTubeAuthPageSkeleton() {
-  return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Reconnect YouTube" activeHref="/analytics" />
-      <YouTubeAuthContentSkeleton />
-    </div>
-  );
+  return <YouTubeAuthContentSkeleton />;
 }

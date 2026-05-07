@@ -82,6 +82,21 @@ export function DeepDivePanel({
                   })}
                 </span>
               </div>
+              {typeof activeItem.showScore === 'number' && (
+                <div className="mb-1.5 flex flex-wrap items-center gap-1.5 text-[10px] font-mono">
+                  <span className="rounded bg-accent-red/10 px-1.5 py-0.5 text-accent-red">
+                    fit {activeItem.showScore}
+                  </span>
+                  {activeItem.showReasons?.slice(0, 3).map((reason) => (
+                    <span
+                      key={reason}
+                      className="rounded bg-surface-elevated px-1.5 py-0.5 text-text-muted"
+                    >
+                      {reason}
+                    </span>
+                  ))}
+                </div>
+              )}
               <h3 className="text-sm font-semibold text-text-primary line-clamp-2">
                 {activeItem.title}
               </h3>

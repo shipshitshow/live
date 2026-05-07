@@ -3,79 +3,23 @@ import { redirect } from 'next/navigation';
 import { TopicDetailClient } from '@/components/livestreams/TopicDetailClient';
 import { todayLocalDate } from '@/lib/date';
 import {
-  getLivestreamArchiveByDate,
   getLivestreamArchiveByVideoId,
   getTopicBySlug,
-  listAvailableLivestreamDates,
   resolveLivestreamDate,
 } from '@/lib/livestreams-store';
-import {
-  buildYouTubeThumbnailUrl,
-  extractVideoId,
-  extractYouTubeUrl,
-} from '@/lib/livestreams-youtube';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
-import { clampText, stripMarkdown } from '@/lib/text';
-import { LivestreamDateView } from '../page';
+import { clampText } from '@/lib/text';
+import {
+  UPCOMING_STREAM_SLUG,
+  buildTopicImageUrl,
+  extractSummary,
+  isDateSlug,
+  isYouTubeVideoId,
+  resolveStreamPathForDate,
+} from '@/lib/livestreams-routing';
 
-const UPCOMING_STREAM_SLUG = 'live-stream-upcoming';
-
-function isDateSlug(slug: string): boolean {
-  return /^\d{4}-\d{2}-\d{2}$/.test(slug);
-}
-
-function isYouTubeVideoId(slug: string): boolean {
-  return /^[\w-]{11}$/.test(slug);
-}
-
-async function resolveUpcomingLivestreamDate(): Promise<string> {
-  const today = todayLocalDate();
-  const dates = await listAvailableLivestreamDates();
-  const upcoming = dates
-    .filter((date) => date >= today)
-    .sort((a, b) => a.localeCompare(b))[0];
-
-  return upcoming ?? resolveLivestreamDate(today);
-}
-
-function appendTab(pathname: string, tab?: string): string {
-  return tab ? `${pathname}?tab=${encodeURIComponent(tab)}` : pathname;
-}
-
-async function resolveStreamPathForDate(date: string): Promise<string> {
-  if (date >= todayLocalDate()) {
-    return `/livestreams/${UPCOMING_STREAM_SLUG}`;
-  }
-
-  const archive = await getLivestreamArchiveByDate(date);
-  return archive?.videoId
-    ? `/livestreams/${encodeURIComponent(archive.videoId)}`
-    : `/livestreams/${encodeURIComponent(date)}`;
-}
-
-function extractSummary(content: string): string | null {
-  const match = content.match(/## Summary\n([\s\S]*?)(?:\n## |\n?$)/);
-  if (!match) return null;
-
-  const summary = stripMarkdown(match[1]).trim();
-  return summary.length > 0 ? summary : null;
-}
-
-async function buildTopicImageUrl(
-  slug: string,
-  date: string,
-  content: string,
-): Promise<string> {
-  const youtubeUrl = extractYouTubeUrl(content);
-  const videoId = youtubeUrl ? extractVideoId(youtubeUrl) : null;
-
-  if (videoId) {
-    return await buildYouTubeThumbnailUrl(videoId);
-  }
-
-  return toAbsoluteUrl(
-    `/api/og/livestreams/${encodeURIComponent(slug)}?date=${encodeURIComponent(date)}`,
-  );
+function resolveTabSegment(tab: string | undefined): string {
+  return tab === 'transcript' ? 'transcript' : 'talking-points';
 }
 
 export async function generateMetadata({
@@ -186,51 +130,25 @@ export default async function TopicDetailPage({
 }) {
   const { slug } = await params;
   const { date, tab } = await searchParams;
+  const tabSegment = resolveTabSegment(tab);
 
   if (isDateSlug(slug)) {
     const canonicalPath = await resolveStreamPathForDate(slug);
     if (canonicalPath !== `/livestreams/${encodeURIComponent(slug)}`) {
-      redirect(appendTab(canonicalPath, tab));
+      redirect(`${canonicalPath}/${tabSegment}`);
     }
-
-    return (
-      <LivestreamDateView
-        dateHrefMode="path"
-        requestedDate={slug}
-        showDateSelector={false}
-        streamSlug={slug}
-        tab={tab}
-      />
-    );
+    redirect(`/livestreams/${encodeURIComponent(slug)}/${tabSegment}`);
   }
 
   if (slug === UPCOMING_STREAM_SLUG) {
-    return (
-      <LivestreamDateView
-        dateHrefMode="path"
-        requestedDate={await resolveUpcomingLivestreamDate()}
-        showDateSelector={false}
-        streamSlug={UPCOMING_STREAM_SLUG}
-        tab={tab}
-      />
-    );
+    redirect(`/livestreams/${UPCOMING_STREAM_SLUG}/${tabSegment}`);
   }
 
   if (isYouTubeVideoId(slug)) {
     const archive = await getLivestreamArchiveByVideoId(slug);
-
     if (archive) {
-      return (
-        <LivestreamDateView
-          dateHrefMode="path"
-          requestedDate={archive.date}
-          showDateSelector={false}
-          streamSlug={slug}
-          tab={tab}
-        />
-      );
+      redirect(`/livestreams/${encodeURIComponent(slug)}/${tabSegment}`);
     }
-
     redirect('/livestreams');
   }
 
@@ -238,8 +156,9 @@ export default async function TopicDetailPage({
   const resolvedDate = await resolveLivestreamDate(requestedDate);
   const topic = await getTopicBySlug(resolvedDate, slug);
   if (topic) {
+    const streamPath = await resolveStreamPathForDate(resolvedDate);
     redirect(
-      `${appendTab(await resolveStreamPathForDate(resolvedDate), 'talking-points')}#${encodeURIComponent(topic.slug)}`,
+      `${streamPath}/talking-points#${encodeURIComponent(topic.slug)}`,
     );
   }
 

@@ -1,4 +1,5 @@
 import { redirect } from 'next/navigation';
+import { resolveStreamPathForDate } from '@/lib/livestreams-routing';
 
 export default async function LegacyLivestreamArchivePage({
   params,
@@ -6,5 +7,6 @@ export default async function LegacyLivestreamArchivePage({
   params: Promise<{ date: string }>;
 }) {
   const { date } = await params;
-  redirect(`/livestreams/${encodeURIComponent(date)}?tab=talking-points`);
+  const canonicalPath = await resolveStreamPathForDate(date);
+  redirect(`${canonicalPath}/talking-points`);
 }

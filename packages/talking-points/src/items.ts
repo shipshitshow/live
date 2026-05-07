@@ -14,6 +14,9 @@ export function dedupeTrendItems(items: TrendItem[]): TrendItem[] {
 
 export function sortTrendSearchItems(items: TrendItem[]): TrendItem[] {
   return [...items].sort((a, b) => {
+    const showDiff = (b.showScore ?? 0) - (a.showScore ?? 0);
+    if (showDiff !== 0) return showDiff;
+
     const scoreDiff = b.score - a.score;
     if (scoreDiff !== 0) return scoreDiff;
 

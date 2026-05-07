@@ -22,17 +22,7 @@ const nextConfig = {
       {
         destination: "/analytics",
         permanent: false,
-        source: "/trends",
-      },
-      {
-        destination: "/analytics",
-        permanent: false,
         source: "/review",
-      },
-      {
-        destination: "/analytics",
-        permanent: false,
-        source: "/comments",
       },
     ];
   },

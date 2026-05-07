@@ -1,9 +1,9 @@
+import fs from 'node:fs';
 import type { Topic } from '@shipshitshow/types';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 import { Tweet } from 'react-tweet';
-import { AppHeader } from '@/components/AppHeader';
 import { TranscriptScorecard } from '@/components/TranscriptScorecard';
 import { todayLocalDate } from '@/lib/date';
 import { formatNumber } from '@/lib/format';
@@ -115,6 +115,10 @@ interface StreamListItem {
   thumbnailUrl: string;
   title: string;
   topicCount: number;
+  transcriptGrade: string | null;
+  transcriptScore: number | null;
+  transcriptWords: number | null;
+  transcriptMinutes: number | null;
 }
 
 function formatLivestreamDate(date: string): string {
@@ -322,7 +326,7 @@ function LivestreamCardGrid({
       {cards.map(({ effectiveStatus, thumbnailUrl, topic }) => {
         const meta = STATUS_META[effectiveStatus];
         const href = streamSlug
-          ? `/livestreams/${encodeURIComponent(streamSlug)}?tab=talking-points#${encodeURIComponent(topic.slug)}`
+          ? `/livestreams/${encodeURIComponent(streamSlug)}/talking-points#${encodeURIComponent(topic.slug)}`
           : `#${encodeURIComponent(topic.slug)}`;
 
         return (
@@ -380,7 +384,7 @@ function LivestreamTabs({
   const pathSlug = encodeURIComponent(streamSlug ?? date);
   const hrefForTab = (tab: string) =>
     dateHrefMode === 'path'
-      ? `/livestreams/${pathSlug}?tab=${tab}`
+      ? `/livestreams/${pathSlug}/${tab}`
       : `/livestreams?date=${encodeURIComponent(date)}&tab=${tab}`;
 
   return (
@@ -417,11 +421,10 @@ function TalkingPointsPanel({ cards }: { cards: LivestreamCard[] }) {
 
   return (
     <div className="space-y-4">
-      {cards.map(({ effectiveStatus, topic }) => {
+      {cards.map(({ topic }) => {
         const sections = parseSections(topic.content).filter((section) =>
           isUsefulSection(section.title),
         );
-        const meta = STATUS_META[effectiveStatus];
 
         return (
           <article
@@ -429,22 +432,13 @@ function TalkingPointsPanel({ cards }: { cards: LivestreamCard[] }) {
             id={topic.slug}
             className="rounded-xl border border-surface-border bg-surface-card p-5"
           >
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
-                  {topic.source}
-                </p>
-                <h3 className="mt-1 text-lg font-semibold text-text-primary">
-                  {topic.title}
-                </h3>
-              </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <span
-                  className={`rounded-full border px-2.5 py-1 text-[10px] font-medium ${meta.badgeClass}`}
-                >
-                  {meta.label}
-                </span>
-              </div>
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
+                {topic.source}
+              </p>
+              <h3 className="mt-1 text-lg font-semibold text-text-primary">
+                {topic.title}
+              </h3>
             </div>
 
             <div className="mt-5 space-y-5">
@@ -606,9 +600,21 @@ function StreamInfoSidebar({
           ) : null}
 
           {youtubeUrl ? (
-            <ActionLinkButton href={youtubeUrl}>
-              {isPastDate(resolvedDate) ? 'Open replay' : 'Open stream'}
-            </ActionLinkButton>
+            <a
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-accent-red px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-accent-red/85"
+            >
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-5 w-5"
+              >
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+              </svg>
+              {isPastDate(resolvedDate) ? 'Watch replay' : 'Watch stream'}
+            </a>
           ) : null}
         </div>
       </div>
@@ -869,20 +875,7 @@ export async function LivestreamDateView({
   );
 
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader
-        subtitle="Show Rundown"
-        activeHref="/livestreams"
-        links={[
-          { href: '/analytics', label: 'Analytics' },
-          { href: '/videos', label: 'Videos' },
-          {
-            href: '/livestreams',
-            label: 'Livestreams',
-          },
-        ]}
-      />
-
+    <>
       {!isSingleTopic && showDateSelector ? (
         <div className="border-b border-surface-border bg-surface-card px-6 py-6">
           <div className="mx-auto max-w-6xl">
@@ -922,7 +915,7 @@ export async function LivestreamDateView({
                 const active = d === resolvedDate;
                 const href =
                   dateHrefMode === 'path'
-                    ? `/livestreams/${encodeURIComponent(d)}?tab=${activeTab}`
+                    ? `/livestreams/${encodeURIComponent(d)}/${activeTab}`
                     : `/livestreams?date=${encodeURIComponent(d)}&tab=${activeTab}`;
 
                 return (
@@ -946,8 +939,8 @@ export async function LivestreamDateView({
           </main>
         </div>
       ) : (
-        <div className="mx-auto flex max-w-[1400px] gap-8 px-6 py-8">
-          <main className="min-w-0 flex-1">
+        <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-6 lg:flex-row lg:items-start">
+          <main className="min-w-0 flex-1 space-y-6">
             <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
               <LivestreamTabs
                 activeTab={activeTab}
@@ -962,12 +955,12 @@ export async function LivestreamDateView({
                     transcript={archive?.transcript ?? null}
                   />
                 ) : (
-                  <TalkingPointsPanel cards={cards} />
+                  <StreamRundownPanel cards={cards} />
                 )}
               </div>
             </section>
           </main>
-          <aside className="hidden w-[380px] shrink-0 lg:sticky lg:top-6 lg:block lg:self-start">
+          <aside className="w-full shrink-0 lg:sticky lg:top-6 lg:w-[380px]">
             <StreamInfoSidebar
               commentCount={videoStats?.commentCount ?? null}
               effectiveStatus={effectiveStatus}
@@ -981,7 +974,7 @@ export async function LivestreamDateView({
           </aside>
         </div>
       )}
-    </div>
+    </>
   );
 }
 
@@ -1020,6 +1013,10 @@ async function buildUpcomingStream(): Promise<StreamListItem | null> {
     thumbnailUrl,
     title,
     topicCount: activeTopics.length || archive?.topicCount || 0,
+    transcriptGrade: null,
+    transcriptMinutes: null,
+    transcriptScore: null,
+    transcriptWords: null,
   };
 }
 
@@ -1049,6 +1046,11 @@ async function buildDoneStreams(): Promise<StreamListItem[]> {
         ? await buildYouTubeThumbnailUrl(archive.videoId)
         : '/icon.svg';
 
+      const transcript = archive?.transcriptPath
+        ? fs.readFileSync(archive.transcriptPath, 'utf-8')
+        : null;
+      const scorecard = analyzeTranscriptScorecard(transcript);
+
       return {
         date,
         hasTranscript: Boolean(archive?.hasTranscript),
@@ -1056,6 +1058,10 @@ async function buildDoneStreams(): Promise<StreamListItem[]> {
         thumbnailUrl,
         title,
         topicCount: publicTopics.length || archive?.topicCount || 0,
+        transcriptGrade: scorecard?.grade ?? null,
+        transcriptMinutes: scorecard?.stats.estimatedMinutes ?? null,
+        transcriptScore: scorecard?.overall ?? null,
+        transcriptWords: scorecard?.stats.wordCount ?? null,
       };
     }),
   );
@@ -1068,9 +1074,8 @@ export default async function LivestreamPage({
 }) {
   const { date, tab } = await searchParams;
   if (date) {
-    redirect(
-      `/livestreams/${encodeURIComponent(date)}${tab ? `?tab=${encodeURIComponent(tab)}` : ''}`,
-    );
+    const tabSegment = tab === 'transcript' ? 'transcript' : 'talking-points';
+    redirect(`/livestreams/${encodeURIComponent(date)}/${tabSegment}`);
   }
 
   const [upcoming, streams] = await Promise.all([
@@ -1079,16 +1084,6 @@ export default async function LivestreamPage({
   ]);
 
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader
-        subtitle="Livestreams"
-        activeHref="/livestreams"
-        links={[
-          { href: '/analytics', label: 'Analytics' },
-          { href: '/livestreams', label: 'Livestreams' },
-          { href: '/videos', label: 'Videos' },
-        ]}
-      />
       <main className="mx-auto max-w-7xl space-y-10 px-6 py-8">
         {upcoming ? (
           <section className="space-y-4">
@@ -1108,7 +1103,7 @@ export default async function LivestreamPage({
               </div>
             </div>
             <Link
-              href={`/livestreams/${encodeURIComponent(upcoming.routeSlug)}`}
+              href={`/livestreams/${encodeURIComponent(upcoming.routeSlug)}/talking-points`}
               className="group block overflow-hidden rounded-2xl border border-accent-red/30 bg-surface-card transition-colors hover:border-accent-red/60"
             >
               <div className="aspect-[21/9] overflow-hidden bg-surface-elevated">
@@ -1142,7 +1137,7 @@ export default async function LivestreamPage({
               {streams.map((stream) => (
                 <Link
                   key={stream.date}
-                  href={`/livestreams/${encodeURIComponent(stream.routeSlug)}`}
+                  href={`/livestreams/${encodeURIComponent(stream.routeSlug)}/talking-points`}
                   className="group overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-colors hover:border-accent-red/40"
                 >
                   <div className="aspect-[16/9] overflow-hidden bg-surface-elevated">
@@ -1162,10 +1157,33 @@ export default async function LivestreamPage({
                           {stream.title}
                         </h3>
                       </div>
-                      <span className="shrink-0 rounded-full border border-green-500/20 bg-green-500/10 px-2.5 py-1 text-[10px] font-medium text-green-400">
-                        Done
-                      </span>
+                      {stream.transcriptScore !== null ? (
+                        <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold ${
+                          stream.transcriptScore >= 8
+                            ? 'border-green-500/20 bg-green-500/10 text-green-400'
+                            : stream.transcriptScore >= 6
+                              ? 'border-yellow-500/20 bg-yellow-500/10 text-yellow-400'
+                              : 'border-red-500/20 bg-red-500/10 text-red-400'
+                        }`}>
+                          {stream.transcriptScore}/10
+                        </span>
+                      ) : null}
                     </div>
+                    {stream.hasTranscript ? (
+                      <div className="flex items-center gap-3 text-[10px] text-text-muted">
+                        {stream.transcriptGrade ? (
+                          <span>Grade {stream.transcriptGrade}</span>
+                        ) : null}
+                        {stream.transcriptWords ? (
+                          <span>{formatNumber(stream.transcriptWords)} words</span>
+                        ) : null}
+                        {stream.transcriptMinutes ? (
+                          <span>~{stream.transcriptMinutes} min</span>
+                        ) : null}
+                      </div>
+                    ) : (
+                      <p className="text-[10px] text-text-muted/50">No transcript</p>
+                    )}
                   </div>
                 </Link>
               ))}
@@ -1179,6 +1197,5 @@ export default async function LivestreamPage({
           )}
         </section>
       </main>
-    </div>
   );
 }

@@ -1,10 +1,13 @@
+import type { Topic } from '@shipshitshow/types';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { AppHeader } from '@/components/AppHeader';
 import { TranscriptScorecard } from '@/components/TranscriptScorecard';
 import { formatNumber } from '@/lib/format';
-import { getPublishedVideoBySlug } from '@/lib/livestreams-store';
+import {
+  getPublishedVideoBySlug,
+  getTopicsForDate,
+} from '@/lib/livestreams-store';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
 import { clampText, stripMarkdown } from '@/lib/text';
@@ -17,6 +20,18 @@ const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
   year: 'numeric',
 });
 
+type VideoTab = 'talking-points' | 'transcript';
+
+const TAB_META: Record<VideoTab, string> = {
+  'talking-points': 'Talking Points',
+  transcript: 'Transcript',
+};
+
+function resolveTab(tab: string | undefined): VideoTab {
+  if (tab === 'talking-points') return 'talking-points';
+  return 'transcript';
+}
+
 function formatVideoDate(date: string): string {
   const [year, month, day] = date.split('-').map(Number);
   return DATE_FORMATTER.format(new Date(Date.UTC(year, month - 1, day)));
@@ -24,6 +39,211 @@ function formatVideoDate(date: string): string {
 
 function formatVideoType(type: 'livestream' | 'video'): string {
   return type === 'livestream' ? 'Livestream' : 'Video';
+}
+
+interface MarkdownSection {
+  body: string;
+  title: string;
+}
+
+function parseSections(content: string): MarkdownSection[] {
+  const sections: MarkdownSection[] = [];
+  const matches = Array.from(content.matchAll(/^## (.+)$/gm));
+
+  for (let i = 0; i < matches.length; i += 1) {
+    const match = matches[i];
+    const next = matches[i + 1];
+    const title = match[1].trim();
+    const body = content
+      .slice((match.index ?? 0) + match[0].length, next?.index)
+      .trim();
+
+    if (body.length > 0) sections.push({ body, title });
+  }
+
+  return sections;
+}
+
+function isUsefulSection(title: string): boolean {
+  const normalized = title.toLowerCase();
+  return (
+    normalized === 'summary' ||
+    normalized === 'hot take' ||
+    normalized.startsWith('cold open') ||
+    normalized.startsWith('talking points') ||
+    normalized.startsWith('close') ||
+    normalized.startsWith('tweets')
+  );
+}
+
+function renderInlineMarkdown(text: string) {
+  const parts = text.split(/(\[.*?\]\(.*?\)|\*\*.*?\*\*|`.*?`)/g);
+  return parts.map((part, index) => {
+    const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
+    if (linkMatch) {
+      return (
+        <a
+          key={index}
+          href={linkMatch[2]}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-accent-red hover:underline"
+        >
+          {linkMatch[1]}
+        </a>
+      );
+    }
+
+    const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
+    if (boldMatch) return <strong key={index}>{boldMatch[1]}</strong>;
+
+    const codeMatch = part.match(/^`(.*?)`$/);
+    if (codeMatch) {
+      return (
+        <code key={index} className="rounded bg-surface-elevated px-1 py-0.5">
+          {codeMatch[1]}
+        </code>
+      );
+    }
+
+    return <span key={index}>{part}</span>;
+  });
+}
+
+function MarkdownBody({ body }: { body: string }) {
+  const lines = body.split('\n').filter((line) => line.trim().length > 0);
+
+  return (
+    <div className="space-y-2.5">
+      {lines.map((line, index) => {
+        const trimmed = line.trim();
+        const bullet = trimmed.match(/^-+\s+(.+)$/);
+        const quote = trimmed.match(/^>\s?(.+)$/);
+
+        if (bullet) {
+          return (
+            <p
+              key={`${index}-${trimmed}`}
+              className="pl-5 text-sm leading-relaxed text-text-secondary before:-ml-5 before:mr-2 before:text-accent-red before:content-['-']"
+            >
+              {renderInlineMarkdown(bullet[1])}
+            </p>
+          );
+        }
+
+        if (quote) {
+          return (
+            <blockquote
+              key={`${index}-${trimmed}`}
+              className="border-l-2 border-accent-red/50 pl-4 text-sm leading-relaxed text-text-primary"
+            >
+              {renderInlineMarkdown(quote[1])}
+            </blockquote>
+          );
+        }
+
+        return (
+          <p
+            key={`${index}-${trimmed}`}
+            className="text-sm leading-relaxed text-text-secondary"
+          >
+            {renderInlineMarkdown(trimmed)}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+function VideoTabs({
+  activeTab,
+  slug,
+  hasTalkingPoints,
+}: {
+  activeTab: VideoTab;
+  slug: string;
+  hasTalkingPoints: boolean;
+}) {
+  const tabs = hasTalkingPoints
+    ? (Object.entries(TAB_META) as [VideoTab, string][])
+    : ([['transcript', 'Transcript']] as [VideoTab, string][]);
+
+  return (
+    <div className="flex flex-wrap gap-2 border-b border-surface-border">
+      {tabs.map(([tab, label]) => {
+        const isActive = tab === activeTab;
+        return (
+          <Link
+            key={tab}
+            href={`/videos/${encodeURIComponent(slug)}?tab=${tab}`}
+            className={`-mb-px border-b-2 px-4 py-3 text-sm font-semibold transition-colors ${
+              isActive
+                ? 'border-accent-red text-text-primary'
+                : 'border-transparent text-text-muted hover:text-text-primary'
+            }`}
+          >
+            {label}
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function TalkingPointsPanel({ topics }: { topics: Topic[] }) {
+  if (topics.length === 0) {
+    return (
+      <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/40 p-6 text-sm text-text-muted">
+        No talking points available for this video.
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {topics.map((topic) => {
+        const sections = parseSections(topic.content).filter((section) =>
+          isUsefulSection(section.title),
+        );
+
+        return (
+          <article
+            key={`${topic.date}-${topic.slug}`}
+            id={topic.slug}
+            className="rounded-xl border border-surface-border bg-surface-card p-5"
+          >
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
+                {topic.source}
+              </p>
+              <h3 className="mt-1 text-lg font-semibold text-text-primary">
+                {topic.title}
+              </h3>
+            </div>
+
+            <div className="mt-5 space-y-5">
+              {sections.map((section) => (
+                <section
+                  key={`${topic.slug}-${section.title}`}
+                  className="space-y-2"
+                >
+                  <h4 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
+                    {section.title}
+                  </h4>
+                  <MarkdownBody body={section.body} />
+                </section>
+              ))}
+              {sections.length === 0 ? (
+                <p className="text-sm text-text-muted">
+                  No summary or talking point sections found in this topic.
+                </p>
+              ) : null}
+            </div>
+          </article>
+        );
+      })}
+    </div>
+  );
 }
 
 export async function generateMetadata({
@@ -72,13 +292,25 @@ export async function generateMetadata({
 
 export default async function VideoDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ tab?: string }>;
 }) {
   const { slug } = await params;
+  const { tab } = await searchParams;
   const video = await getPublishedVideoBySlug(slug);
 
   if (!video) notFound();
+
+  const topics =
+    video.type === 'livestream'
+      ? (await getTopicsForDate(video.date)).filter(
+          (t) => t.status !== 'backlog',
+        )
+      : [];
+  const hasTalkingPoints = topics.length > 0;
+  const activeTab = hasTalkingPoints ? resolveTab(tab) : 'transcript';
 
   const thumbnailUrl = video.videoId
     ? await buildYouTubeThumbnailUrl(video.videoId)
@@ -86,9 +318,7 @@ export default async function VideoDetailPage({
   const transcriptScorecard = analyzeTranscriptScorecard(video.transcript);
 
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Video Transcript" activeHref="/videos" />
-
+    <>
       <main className="mx-auto max-w-6xl px-6 py-8">
         <Link
           href="/videos"
@@ -113,14 +343,27 @@ export default async function VideoDetailPage({
             </div>
 
             <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
-              <div className="border-b border-surface-border px-5 py-4">
-                <h2 className="text-sm font-semibold text-text-primary">
-                  Transcript
-                </h2>
+              <VideoTabs
+                activeTab={activeTab}
+                slug={video.routeSlug}
+                hasTalkingPoints={hasTalkingPoints}
+              />
+              <div className="p-5">
+                {activeTab === 'talking-points' ? (
+                  <TalkingPointsPanel topics={topics} />
+                ) : (
+                  <>
+                    <div className="border-b border-surface-border pb-4">
+                      <h2 className="text-sm font-semibold text-text-primary">
+                        Transcript
+                      </h2>
+                    </div>
+                    <pre className="max-h-[760px] overflow-auto whitespace-pre-wrap pt-4 text-sm leading-relaxed text-text-secondary">
+                      {video.transcript}
+                    </pre>
+                  </>
+                )}
               </div>
-              <pre className="max-h-[760px] overflow-auto whitespace-pre-wrap p-5 text-sm leading-relaxed text-text-secondary">
-                {video.transcript}
-              </pre>
             </section>
           </section>
 
@@ -147,9 +390,16 @@ export default async function VideoDetailPage({
                     href={video.youtubeUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 rounded-lg border border-surface-border px-4 py-2 text-sm font-semibold text-text-primary transition-colors hover:border-accent-red/30 hover:text-accent-red"
+                    className="flex w-full items-center justify-center gap-2.5 rounded-xl bg-accent-red px-5 py-3.5 text-sm font-bold text-white transition-colors hover:bg-accent-red/85"
                   >
-                    Open on YouTube
+                    <svg
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      className="h-5 w-5"
+                    >
+                      <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+                    </svg>
+                    Watch
                   </a>
                 ) : null}
               </div>
@@ -158,6 +408,6 @@ export default async function VideoDetailPage({
           </aside>
         </div>
       </main>
-    </div>
+    </>
   );
 }

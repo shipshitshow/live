@@ -28,7 +28,8 @@ Raw, unfiltered takes on AI dev tools from someone who actually ships with them.
 - **Name:** Ship Shit Show
 - **Color:** #ff2d20 (red) on #0d0d0d (dark)
 - **Font:** Space Grotesk
-- **Channels:** @shipshitshow (main), @ShipShitShowClips (clips)
+- **YouTube channels:** @shipshitshow (main), @ShipShitShowClips (clips)
+- **X account:** @shipshitdev is the Ship Shit Show account. Treat `shipshitdev` as the show account for X/trends/social integrations, not as a separate personal fallback.
 
 ## Content Pillars
 1. Weekly AI/dev news livestream (trending topics, drama, releases)

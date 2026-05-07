@@ -2,7 +2,6 @@
 
 import dynamic from 'next/dynamic';
 import { useParams, useSearchParams } from 'next/navigation';
-import { AppHeader } from '@/components/AppHeader';
 import { todayLocalDate } from '@/lib/date';
 
 const TopicDrawingBoard = dynamic(
@@ -28,9 +27,6 @@ export default function TopicDrawingPage() {
   const date = searchParams.get('date') || todayLocalDate();
 
   return (
-    <div className="min-h-screen bg-black text-text-primary">
-      <AppHeader subtitle="Livestream Drawing Board" activeHref="" />
-      <TopicDrawingBoard date={date} slug={slug} />
-    </div>
+    <TopicDrawingBoard date={date} slug={slug} />
   );
 }

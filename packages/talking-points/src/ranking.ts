@@ -27,15 +27,17 @@ function getAgeHours(timestamp: string): number {
 }
 
 function hasMinimumTrendEngagement(item: TrendItem): boolean {
+  const showScore = item.showScore ?? 0;
+
   switch (item.source) {
     case 'reddit':
-      return item.score >= 25 || item.commentCount >= 12;
+      return showScore >= 45 || item.score >= 25 || item.commentCount >= 12;
     case 'hackernews':
-      return item.score >= 20 || item.commentCount >= 10;
+      return showScore >= 45 || item.score >= 20 || item.commentCount >= 10;
     case 'youtube':
-      return item.score >= 10000 || item.commentCount >= 25;
+      return showScore >= 55 || item.score >= 10000 || item.commentCount >= 25;
     case 'x':
-      return item.score >= 80 || item.commentCount >= 5;
+      return showScore >= 55 || item.score >= 80 || item.commentCount >= 5;
     default:
       return true;
   }
@@ -55,12 +57,14 @@ function getTrendRank(item: TrendItem): number {
     1 + Math.min(0.75, Math.log10(item.commentCount + 1) * 0.35);
   const freshness = Math.max(0.2, 1 - ageHours / maxAge);
   const breakingBoost = ageHours <= 6 ? 1.15 : 1;
+  const showFitBoost = 1 + Math.min(1.5, (item.showScore ?? 0) / 70);
 
   return (
     (normalizedScore + normalizedComments) *
     discussionBoost *
     freshness *
-    breakingBoost
+    breakingBoost *
+    showFitBoost
   );
 }
 

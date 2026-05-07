@@ -28,6 +28,10 @@ function getXBearerToken(): string | null {
   return process.env.X_BEARER_TOKEN ?? null;
 }
 
+function getYouTubeApiKey(): string | null {
+  return process.env.YOUTUBE_API_KEY ?? null;
+}
+
 export async function fetchAppHNTrending(): Promise<TrendItem[]> {
   return fetchHNTrending();
 }
@@ -60,14 +64,22 @@ export async function searchAppX(query: string): Promise<TrendItem[]> {
 
 export async function fetchAppYouTubeTrending(): Promise<TrendItem[]> {
   const accessToken = await getYouTubeAccessToken();
-  if (!accessToken) return [];
+  const apiKey = getYouTubeApiKey();
+  if (!accessToken && !apiKey) return [];
 
-  return fetchYouTubeTrending({ accessToken });
+  return fetchYouTubeTrending({
+    accessToken: accessToken ?? undefined,
+    apiKey: apiKey ?? undefined,
+  });
 }
 
 export async function searchAppYouTube(query: string): Promise<TrendItem[]> {
   const accessToken = await getYouTubeAccessToken();
-  if (!accessToken) return [];
+  const apiKey = getYouTubeApiKey();
+  if (!accessToken && !apiKey) return [];
 
-  return searchYouTube(query, { accessToken });
+  return searchYouTube(query, {
+    accessToken: accessToken ?? undefined,
+    apiKey: apiKey ?? undefined,
+  });
 }

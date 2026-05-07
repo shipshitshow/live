@@ -262,9 +262,20 @@ export function DashboardClient() {
           <DateRangeSelector value={days} onChange={setDays} />
           <Button
             onClick={() => load({ force: true })}
-            className="text-xs hover:border-accent-red"
+            className="hover:border-accent-red px-2.5"
           >
-            Refresh
+            <svg
+              viewBox="0 0 16 16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-3.5 w-3.5"
+            >
+              <path d="M1 1v4h4M15 15v-4h-4" />
+              <path d="M13.5 6A6 6 0 0 0 3 3.5L1 5M2.5 10A6 6 0 0 0 13 12.5l2-1.5" />
+            </svg>
           </Button>
         </div>
       </div>

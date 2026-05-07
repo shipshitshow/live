@@ -8,7 +8,7 @@ Useful local inputs:
 - Raw VTT transcripts: `apps/app/data/transcripts/*.vtt`
 - Topic prep: `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`
 
-As of this skill's creation, the repo has 16 clean transcripts and 16 raw VTT transcripts. The corpus covers livestreams and edited videos from February-April 2026.
+As of the latest archive update, the repo has 23 clean transcripts and 23 raw VTT transcripts. The corpus covers livestreams and edited videos from February-May 2026.
 
 ## What The Transcripts Show
 

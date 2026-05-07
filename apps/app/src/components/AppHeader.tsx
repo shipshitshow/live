@@ -1,27 +1,40 @@
+'use client';
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
-interface AppHeaderLink {
-  href: string;
-  label: string;
-}
-
-const DEFAULT_HEADER_LINKS: AppHeaderLink[] = [
+const NAV_LINKS = [
   { href: '/analytics', label: 'Analytics' },
   { href: '/livestreams', label: 'Livestreams' },
   { href: '/videos', label: 'Videos' },
 ];
 
-interface AppHeaderProps {
-  subtitle: string;
-  activeHref: string;
-  links?: AppHeaderLink[];
+const SUBTITLE_MAP: Record<string, string> = {
+  '/analytics': 'Analytics Dashboard',
+  '/auth/youtube': 'Reconnect YouTube',
+  '/livestreams': 'Livestreams',
+  '/videos': 'Videos',
+};
+
+function resolveSubtitle(pathname: string): string {
+  if (pathname.includes('/draw')) return 'Drawing Board';
+  if (pathname.startsWith('/videos/')) return 'Video Transcript';
+  if (pathname.startsWith('/livestreams/')) return 'Show Rundown';
+  return SUBTITLE_MAP[pathname] ?? 'Ship Shit Show';
 }
 
-export function AppHeader({
-  subtitle,
-  activeHref,
-  links = DEFAULT_HEADER_LINKS,
-}: AppHeaderProps) {
+function resolveActiveHref(pathname: string): string {
+  if (pathname.startsWith('/livestreams')) return '/livestreams';
+  if (pathname.startsWith('/videos')) return '/videos';
+  if (pathname.startsWith('/analytics') || pathname === '/') return '/analytics';
+  return '';
+}
+
+export function AppHeader() {
+  const pathname = usePathname();
+  const subtitle = resolveSubtitle(pathname);
+  const activeHref = resolveActiveHref(pathname);
+
   return (
     <header className="border-b border-surface-border px-6 py-4 flex items-center justify-between gap-6">
       <Link
@@ -42,21 +55,19 @@ export function AppHeader({
         </div>
       </Link>
       <nav className="flex items-center gap-4 text-xs text-text-secondary shrink-0">
-        {links.map((link) =>
-          link.href === activeHref ? (
-            <span key={link.href} className="text-text-primary font-medium">
-              {link.label}
-            </span>
-          ) : (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="hover:text-text-primary transition-colors"
-            >
-              {link.label}
-            </Link>
-          ),
-        )}
+        {NAV_LINKS.map((link) => (
+          <Link
+            key={link.href}
+            href={link.href}
+            className={
+              link.href === activeHref
+                ? 'text-text-primary font-medium'
+                : 'hover:text-text-primary transition-colors'
+            }
+          >
+            {link.label}
+          </Link>
+        ))}
       </nav>
     </header>
   );

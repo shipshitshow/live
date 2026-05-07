@@ -14,9 +14,14 @@ export function buildLivestreamTopicDraft(item: TrendItem): {
   title: string;
 } {
   const source = TREND_SOURCE_LABELS[item.source];
+  const showFit = item.showScore
+    ? `\n- Ship Shit Show fit: ${item.showScore}/100${
+        item.showReasons?.length ? ` (${item.showReasons.join(', ')})` : ''
+      }`
+    : '';
   const content = `## Source
 
-- [${source}](${item.url}) — ${item.score.toLocaleString()} ${getTrendMetricLabel(item)}, ${item.commentCount.toLocaleString()} comments
+- [${source}](${item.url}) — ${item.score.toLocaleString()} ${getTrendMetricLabel(item)}, ${item.commentCount.toLocaleString()} comments${showFit}
 
 ## Summary
 

@@ -13,6 +13,8 @@ export interface TrendItem {
   subreddit?: string;
   author?: string;
   thumbnail?: string;
+  showScore?: number;
+  showReasons?: string[];
 }
 
 export interface TrendsResponse {

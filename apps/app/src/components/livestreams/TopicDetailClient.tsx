@@ -11,7 +11,6 @@ import { isErrorResponse } from '@shipshitshow/types';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { AppHeader } from '@/components/AppHeader';
 import { CopyButton } from '@/components/CopyButton';
 import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
@@ -828,19 +827,12 @@ export function TopicDetailClient() {
   }, [segments]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen bg-surface text-text-primary">
-        <AppHeader subtitle="Livestream Topic" activeHref="" />
-        <LivestreamTopicContentSkeleton />
-      </div>
-    );
+    return <LivestreamTopicContentSkeleton />;
   }
 
   if (!topic) {
     return (
-      <div className="min-h-screen bg-surface text-text-primary">
-        <AppHeader subtitle="Livestream Topic" activeHref="" />
-        <main className="mx-auto flex min-h-[calc(100vh-65px)] w-full max-w-[960px] flex-col items-center justify-center px-6 text-center">
+      <main className="mx-auto flex min-h-[calc(100vh-65px)] w-full max-w-[960px] flex-col items-center justify-center px-6 text-center">
           <p className="text-lg font-semibold text-text-primary">
             Topic not found
           </p>
@@ -853,16 +845,12 @@ export function TopicDetailClient() {
           >
             Back to dashboard
           </Link>
-        </main>
-      </div>
+      </main>
     );
   }
 
   return (
-    <div className="min-h-screen bg-surface text-text-primary">
-      <AppHeader subtitle="Livestream Topic" activeHref="" />
-
-      <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 px-6 py-6">
+    <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 px-6 py-6">
         <main
           ref={rundownScrollRef}
           className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto pr-2"
@@ -1513,6 +1501,5 @@ export function TopicDetailClient() {
           </button>
         </div>
       </div>
-    </div>
   );
 }
