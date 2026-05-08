@@ -4,8 +4,8 @@ import {
   isDateSlug,
   isYouTubeVideoId,
   resolveStreamPathForDate,
-  UPCOMING_STREAM_SLUG,
   resolveUpcomingLivestreamDate,
+  UPCOMING_STREAM_SLUG,
 } from '@/lib/livestreams-routing';
 import {
   getLivestreamArchiveByVideoId,

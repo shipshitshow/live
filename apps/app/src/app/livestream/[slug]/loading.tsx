@@ -1,1 +1,1 @@
-export { default } from '../../livestreams/[slug]/loading';
+export { default } from '../../livestreams/[slug]/(detail)/loading';

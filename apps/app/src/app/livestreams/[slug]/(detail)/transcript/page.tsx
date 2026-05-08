@@ -4,8 +4,8 @@ import {
   isDateSlug,
   isYouTubeVideoId,
   resolveStreamPathForDate,
-  UPCOMING_STREAM_SLUG,
   resolveUpcomingLivestreamDate,
+  UPCOMING_STREAM_SLUG,
 } from '@/lib/livestreams-routing';
 import {
   getLivestreamArchiveByDate,
@@ -66,11 +66,7 @@ export default async function TranscriptPage({
   const topics = await getTopicsForDate(resolvedDate);
   const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const archive = await getLivestreamArchiveByDate(resolvedDate);
-  const title = getLivestreamTitle(
-    resolvedDate,
-    visibleTopics,
-    archive?.title,
-  );
+  const title = getLivestreamTitle(resolvedDate, visibleTopics, archive?.title);
 
   return (
     <TranscriptPanel

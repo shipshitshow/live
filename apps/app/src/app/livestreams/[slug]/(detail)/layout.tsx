@@ -2,10 +2,10 @@ import { redirect } from 'next/navigation';
 import { LivestreamTabsClient } from '@/components/livestreams/LivestreamTabsClient';
 import { StreamInfoSidebar } from '@/components/livestreams/StreamInfoSidebar';
 import {
-  UPCOMING_STREAM_SLUG,
   isDateSlug,
   isYouTubeVideoId,
   resolveUpcomingLivestreamDate,
+  UPCOMING_STREAM_SLUG,
 } from '@/lib/livestreams-routing';
 import {
   getLivestreamArchiveByDate,
@@ -15,7 +15,6 @@ import {
   listLivestreamArchive,
   resolveLivestreamDate,
 } from '@/lib/livestreams-store';
-import { fetchVideoStats } from '@/lib/livestreams-youtube';
 import {
   buildCards,
   getEffectiveStatus,
@@ -25,6 +24,7 @@ import {
   isPastDate,
   sortTopics,
 } from '@/lib/livestreams-ui';
+import { fetchVideoStats } from '@/lib/livestreams-youtube';
 import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
 
 async function resolveSlug(slug: string): Promise<{
@@ -92,10 +92,7 @@ export default async function LivestreamDetailLayout({
     <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-6 lg:flex-row lg:items-start">
       <main className="min-w-0 flex-1 space-y-6">
         <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
-          <LivestreamTabsClient
-            date={resolvedDate}
-            streamSlug={streamSlug}
-          />
+          <LivestreamTabsClient date={resolvedDate} streamSlug={streamSlug} />
           <div className="p-5">{children}</div>
         </section>
       </main>

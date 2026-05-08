@@ -240,10 +240,6 @@ export function LivestreamBoardPageSkeleton() {
   return <LivestreamBoardContentSkeleton />;
 }
 
-export function LivestreamTopicPageSkeleton() {
-  return <LivestreamTopicContentSkeleton />;
-}
-
 export function YouTubeAuthPageSkeleton() {
   return <YouTubeAuthContentSkeleton />;
 }

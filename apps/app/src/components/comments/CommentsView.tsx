@@ -285,7 +285,7 @@ export function CommentsView() {
           </div>
         ) : (
           <div className="space-y-3">
-            {visibleComments.map((comment) => {
+            {pagedComments.map((comment) => {
               const isSelected =
                 selectedComment?.commentId === comment.commentId;
               return (
@@ -321,6 +321,28 @@ export function CommentsView() {
                 </Button>
               );
             })}
+          </div>
+        )}
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-surface-border px-1 py-3 mt-3">
+            <Button
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="text-xs text-text-secondary disabled:opacity-30"
+            >
+              Previous
+            </Button>
+            <span className="text-[11px] text-text-muted">
+              {page + 1} / {totalPages}
+            </span>
+            <Button
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+              className="text-xs text-text-secondary disabled:opacity-30"
+            >
+              Next
+            </Button>
           </div>
         )}
       </div>

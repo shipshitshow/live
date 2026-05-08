@@ -15,6 +15,7 @@ import { CopyButton } from '@/components/CopyButton';
 import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { logClientEvent, logClientPerf } from '@/lib/client-logger';
 import { todayLocalDate } from '@/lib/date';
+import { renderInlineMarkdown } from '@/lib/markdown-render';
 import { parseJsonResponse } from '@/lib/parse-json-response';
 import { clampText, stripMarkdown } from '@/lib/text';
 
@@ -139,42 +140,6 @@ function formatCompactNumber(value: number | null | undefined): string {
   if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K`;
   return String(value);
-}
-
-function renderInlineMarkdown(text: string) {
-  const parts = text.split(/(\[.*?\]\(.*?\)|\*\*.*?\*\*|`.*?`)/g);
-  return parts.map((part, j) => {
-    const linkMatch = part.match(/\[(.*?)\]\((.*?)\)/);
-    if (linkMatch) {
-      return (
-        <a
-          key={j}
-          href={linkMatch[2]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent-red hover:underline"
-        >
-          {linkMatch[1]}
-        </a>
-      );
-    }
-
-    const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
-    if (boldMatch) {
-      return <strong key={j}>{boldMatch[1]}</strong>;
-    }
-
-    const codeMatch = part.match(/^`(.*?)`$/);
-    if (codeMatch) {
-      return (
-        <code key={j} className="rounded bg-surface-elevated px-1.5 py-0.5">
-          {codeMatch[1]}
-        </code>
-      );
-    }
-
-    return <span key={j}>{part}</span>;
-  });
 }
 
 function stripSourcePrefix(text: string): string {

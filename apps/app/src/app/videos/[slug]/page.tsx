@@ -9,6 +9,11 @@ import {
   getTopicsForDate,
 } from '@/lib/livestreams-store';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
+import {
+  isUsefulSection,
+  MarkdownBody,
+  parseSections,
+} from '@/lib/markdown-render';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
 import { clampText, stripMarkdown } from '@/lib/text';
 import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
@@ -39,120 +44,6 @@ function formatVideoDate(date: string): string {
 
 function formatVideoType(type: 'livestream' | 'video'): string {
   return type === 'livestream' ? 'Livestream' : 'Video';
-}
-
-interface MarkdownSection {
-  body: string;
-  title: string;
-}
-
-function parseSections(content: string): MarkdownSection[] {
-  const sections: MarkdownSection[] = [];
-  const matches = Array.from(content.matchAll(/^## (.+)$/gm));
-
-  for (let i = 0; i < matches.length; i += 1) {
-    const match = matches[i];
-    const next = matches[i + 1];
-    const title = match[1].trim();
-    const body = content
-      .slice((match.index ?? 0) + match[0].length, next?.index)
-      .trim();
-
-    if (body.length > 0) sections.push({ body, title });
-  }
-
-  return sections;
-}
-
-function isUsefulSection(title: string): boolean {
-  const normalized = title.toLowerCase();
-  return (
-    normalized === 'summary' ||
-    normalized === 'hot take' ||
-    normalized.startsWith('cold open') ||
-    normalized.startsWith('talking points') ||
-    normalized.startsWith('close') ||
-    normalized.startsWith('tweets')
-  );
-}
-
-function renderInlineMarkdown(text: string) {
-  const parts = text.split(/(\[.*?\]\(.*?\)|\*\*.*?\*\*|`.*?`)/g);
-  return parts.map((part, index) => {
-    const linkMatch = part.match(/^\[(.*?)\]\((.*?)\)$/);
-    if (linkMatch) {
-      return (
-        <a
-          key={index}
-          href={linkMatch[2]}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-accent-red hover:underline"
-        >
-          {linkMatch[1]}
-        </a>
-      );
-    }
-
-    const boldMatch = part.match(/^\*\*(.*?)\*\*$/);
-    if (boldMatch) return <strong key={index}>{boldMatch[1]}</strong>;
-
-    const codeMatch = part.match(/^`(.*?)`$/);
-    if (codeMatch) {
-      return (
-        <code key={index} className="rounded bg-surface-elevated px-1 py-0.5">
-          {codeMatch[1]}
-        </code>
-      );
-    }
-
-    return <span key={index}>{part}</span>;
-  });
-}
-
-function MarkdownBody({ body }: { body: string }) {
-  const lines = body.split('\n').filter((line) => line.trim().length > 0);
-
-  return (
-    <div className="space-y-2.5">
-      {lines.map((line, index) => {
-        const trimmed = line.trim();
-        const bullet = trimmed.match(/^-+\s+(.+)$/);
-        const quote = trimmed.match(/^>\s?(.+)$/);
-
-        if (bullet) {
-          return (
-            <p
-              key={`${index}-${trimmed}`}
-              className="pl-5 text-sm leading-relaxed text-text-secondary before:-ml-5 before:mr-2 before:text-accent-red before:content-['-']"
-            >
-              {renderInlineMarkdown(bullet[1])}
-            </p>
-          );
-        }
-
-        if (quote) {
-          return (
-            <blockquote
-              key={`${index}-${trimmed}`}
-              className="border-l-2 border-accent-red/50 pl-4 text-sm leading-relaxed text-text-primary"
-            >
-              {renderInlineMarkdown(quote[1])}
-            </blockquote>
-          );
-        }
-
-        return (
-          <p
-            key={`${index}-${trimmed}`}
-            className="text-sm leading-relaxed text-text-secondary"
-          >
-            {renderInlineMarkdown(trimmed)}
-          </p>
-        );
-      })}
-    </div>
-  );
 }
 
 function VideoTabs({

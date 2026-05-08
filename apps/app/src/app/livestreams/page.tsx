@@ -3,12 +3,12 @@ import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { todayLocalDate } from '@/lib/date';
 import { formatNumber } from '@/lib/format';
-import { formatLivestreamDate, isPastDate } from '@/lib/livestreams-ui';
 import {
   getTopicsForDate,
   listAvailableLivestreamDates,
   listLivestreamArchive,
 } from '@/lib/livestreams-store';
+import { formatLivestreamDate, isPastDate } from '@/lib/livestreams-ui';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
 
