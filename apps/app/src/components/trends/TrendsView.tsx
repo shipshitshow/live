@@ -50,6 +50,7 @@ export function TrendsView() {
   const [manualXLoading, setManualXLoading] = useState(false);
   const [addingToLivestream, setAddingToLivestream] = useState(false);
   const [addedIds, setAddedIds] = useState<Set<string>>(new Set());
+  const [page, setPage] = useState(0);
 
   const fetchTrends = useCallback(async () => {
     setLoading(true);
@@ -81,6 +82,17 @@ export function TrendsView() {
     if (sourceFilter === 'all') return items;
     return items.filter((item) => item.source === sourceFilter);
   }, [items, sourceFilter]);
+
+  const PAGE_SIZE = 15;
+  const totalPages = Math.max(1, Math.ceil(filteredItems.length / PAGE_SIZE));
+  const pagedItems = filteredItems.slice(
+    page * PAGE_SIZE,
+    (page + 1) * PAGE_SIZE,
+  );
+
+  useEffect(() => {
+    setPage(0);
+  }, [sourceFilter]);
 
   const counts = useMemo(() => {
     const nextCounts: Record<FilterValue, number> = {
@@ -297,7 +309,7 @@ export function TrendsView() {
                   className="bg-surface-card border border-surface-border rounded-xl h-24 animate-pulse"
                 />
               ))
-            : filteredItems.map((item) => (
+            : pagedItems.map((item) => (
                 <TrendCard
                   key={item.id}
                   item={item}
@@ -308,6 +320,28 @@ export function TrendsView() {
                 />
               ))}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex shrink-0 items-center justify-between border-t border-surface-border px-1 py-2">
+            <Button
+              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              disabled={page === 0}
+              className="text-xs text-text-secondary disabled:opacity-30"
+            >
+              Previous
+            </Button>
+            <span className="text-[11px] text-text-muted">
+              {page + 1} / {totalPages}
+            </span>
+            <Button
+              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              disabled={page >= totalPages - 1}
+              className="text-xs text-text-secondary disabled:opacity-30"
+            >
+              Next
+            </Button>
+          </div>
+        )}
 
         <TrendActionBar
           selectedCount={selectedIds.size}

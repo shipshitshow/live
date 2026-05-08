@@ -24,12 +24,15 @@ interface NavSection {
   label: string;
 }
 
+const OVERVIEW_ITEMS: NavItemDef[] = [
+  { href: '/analytics', icon: BarChart3, label: 'Analytics' },
+];
+
 const SECTIONS: NavSection[] = [
   {
     items: [
       { href: '/livestreams', icon: Radio, label: 'Livestreams' },
       { href: '/videos', icon: Film, label: 'Videos' },
-      { href: '/analytics', icon: BarChart3, label: 'Analytics' },
     ],
     label: 'Content',
   },
@@ -70,6 +73,28 @@ export function AppSidebar() {
       </Link>
 
       <nav className="flex-1 overflow-y-auto">
+        <div className="space-y-0.5 px-2 pb-2">
+          {OVERVIEW_ITEMS.map((item) => {
+            const Icon = item.icon;
+            const active = isActive(pathname, item.href);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={cn(
+                  'flex w-full items-center gap-2 rounded-md pl-3 pr-5 py-2 text-[13px] font-normal transition-colors',
+                  active
+                    ? 'bg-surface-elevated text-text-primary font-medium'
+                    : 'text-text-secondary hover:bg-surface-elevated/60 hover:text-text-primary',
+                )}
+              >
+                <Icon size={14} className="shrink-0" />
+                {item.label}
+              </Link>
+            );
+          })}
+        </div>
         {SECTIONS.map((section) => (
           <div key={section.label}>
             <div className="px-4 pt-4 pb-1">

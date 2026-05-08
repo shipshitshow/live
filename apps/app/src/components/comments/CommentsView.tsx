@@ -37,6 +37,7 @@ export function CommentsView() {
   const [sendingByComment, setSendingByComment] = useState<SendingState>({});
   const [actionError, setActionError] = useState<string | null>(null);
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
+  const [page, setPage] = useState(0);
 
   const loadComments = useCallback(async () => {
     setLoading(true);
@@ -102,6 +103,17 @@ export function CommentsView() {
     if (videoFilter === 'all') return byReplyStatus;
     return byReplyStatus.filter((item) => item.videoId === videoFilter);
   }, [filteredByChannel, replyFilter, videoFilter]);
+
+  const PAGE_SIZE = 15;
+  const totalPages = Math.max(1, Math.ceil(visibleComments.length / PAGE_SIZE));
+  const pagedComments = visibleComments.slice(
+    page * PAGE_SIZE,
+    (page + 1) * PAGE_SIZE,
+  );
+
+  useEffect(() => {
+    setPage(0);
+  }, [replyFilter, channelFilter, videoFilter]);
 
   const selectedComment = useMemo(
     () =>
