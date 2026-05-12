@@ -262,7 +262,8 @@ export function DashboardClient() {
           <DateRangeSelector value={days} onChange={setDays} />
           <Button
             onClick={() => load({ force: true })}
-            className="hover:border-accent-red px-2.5"
+            disabled={loading}
+            className="hover:border-accent-red px-2.5 disabled:opacity-50"
           >
             <svg
               viewBox="0 0 16 16"
@@ -271,7 +272,7 @@ export function DashboardClient() {
               strokeWidth="2"
               strokeLinecap="round"
               strokeLinejoin="round"
-              className="h-3.5 w-3.5"
+              className={`h-3.5 w-3.5 transition-transform ${loading ? 'animate-spin' : ''}`}
             >
               <path d="M1 1v4h4M15 15v-4h-4" />
               <path d="M13.5 6A6 6 0 0 0 3 3.5L1 5M2.5 10A6 6 0 0 0 13 12.5l2-1.5" />

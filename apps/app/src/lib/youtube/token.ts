@@ -104,10 +104,6 @@ export function getConfiguredChannelMeta(): Array<{
   label: string;
   envRefreshToken?: string;
 }> {
-  if (!isYouTubeAuthEnabled()) {
-    return [];
-  }
-
   const channels: Array<{
     id: string;
     label: string;
