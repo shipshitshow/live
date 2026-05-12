@@ -237,12 +237,7 @@ function listFilesystemPublishedVideos(): PublishedVideoItem[] {
 
     items.push({
       date,
-      routeSlug: getPublishedVideoRouteSlug(
-        date,
-        typed,
-        rawTitleSlug,
-        videoId,
-      ),
+      routeSlug: getPublishedVideoRouteSlug(date, typed, rawTitleSlug, videoId),
       title,
       transcriptPath,
       type: typed,
@@ -261,7 +256,12 @@ function listFilesystemPublishedVideos(): PublishedVideoItem[] {
 }
 
 export function isTopicStatus(value: string | null): value is TopicStatus {
-  return value === 'draft' || value === 'backlog' || value === 'in_progress' || value === 'done';
+  return (
+    value === 'draft' ||
+    value === 'backlog' ||
+    value === 'in_progress' ||
+    value === 'done'
+  );
 }
 
 function parseFrontmatter(raw: string): {

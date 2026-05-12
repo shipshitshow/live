@@ -116,8 +116,10 @@ export function TrendsView() {
     const failed: string[] = [];
     const manual: string[] = [];
     for (const [source, status] of Object.entries(sources)) {
-      if (status === 'error') failed.push(SOURCE_STATUS_LABELS[source as TrendSource]);
-      else if (status === 'manual') manual.push(SOURCE_STATUS_LABELS[source as TrendSource]);
+      if (status === 'error')
+        failed.push(SOURCE_STATUS_LABELS[source as TrendSource]);
+      else if (status === 'manual')
+        manual.push(SOURCE_STATUS_LABELS[source as TrendSource]);
     }
 
     const statusParts: string[] = [
@@ -234,7 +236,9 @@ export function TrendsView() {
           });
         }),
       );
-      setAddedIds((prev) => new Set([...prev, ...trendsToAdd.map((i) => i.id)]));
+      setAddedIds(
+        (prev) => new Set([...prev, ...trendsToAdd.map((i) => i.id)]),
+      );
     } finally {
       setAddingToLivestream(false);
     }

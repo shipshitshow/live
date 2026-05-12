@@ -29,9 +29,9 @@ const SOURCE_COLORS: Record<string, string> = {
 };
 
 const STATUS_BADGES: Record<string, string> = {
-  draft: 'bg-surface-border/50 text-text-muted/70',
   backlog: 'bg-surface-border text-text-muted',
   done: 'bg-green-500/10 text-green-400',
+  draft: 'bg-surface-border/50 text-text-muted/70',
   in_progress: 'bg-accent-red/10 text-accent-red',
 };
 

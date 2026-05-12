@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
-import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { TopicDetailClient } from '@/components/livestreams/TopicDetailClient';
+import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { todayLocalDate } from '@/lib/date';
 import {
   buildTopicImageUrl,

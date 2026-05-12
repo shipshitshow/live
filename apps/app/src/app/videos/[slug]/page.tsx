@@ -261,12 +261,7 @@ export default async function VideoDetailPage({
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
             <div className="relative aspect-video overflow-hidden bg-surface-elevated">
-              <Image
-                src={thumbnailUrl}
-                alt=""
-                fill
-                className="object-cover"
-              />
+              <Image src={thumbnailUrl} alt="" fill className="object-cover" />
             </div>
             <div className="space-y-3 p-4">
               <div className="flex flex-wrap items-center gap-2">

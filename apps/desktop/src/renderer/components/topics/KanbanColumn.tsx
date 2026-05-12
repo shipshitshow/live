@@ -6,17 +6,17 @@ const COLUMN_CONFIG: Record<
   TopicStatus,
   { label: string; color: string; dot: string }
 > = {
-  draft: {
-    color: 'text-text-muted',
-    dot: 'bg-text-muted/50',
-    label: 'Draft',
-  },
   backlog: {
     color: 'text-text-secondary',
     dot: 'bg-text-muted',
     label: 'Backlog',
   },
   done: { color: 'text-green-400', dot: 'bg-green-400', label: 'Done' },
+  draft: {
+    color: 'text-text-muted',
+    dot: 'bg-text-muted/50',
+    label: 'Draft',
+  },
   in_progress: {
     color: 'text-accent-red',
     dot: 'bg-accent-red',

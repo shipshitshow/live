@@ -1,10 +1,10 @@
-import type { Metadata } from 'next';
 import { Button } from '@shipshitshow/ui';
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Ship Shit Show',
   description:
     'Live coding, hot takes, and shipping in public. Every week on YouTube.',
+  title: 'Ship Shit Show',
 };
 
 export default function HomePage() {

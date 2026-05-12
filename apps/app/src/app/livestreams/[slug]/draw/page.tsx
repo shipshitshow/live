@@ -3,8 +3,8 @@ import { Suspense } from 'react';
 import { TopicDrawingPageClient } from './TopicDrawingPageClient';
 
 export const metadata: Metadata = {
-  title: 'Drawing Board - Ship Shit Show',
   description: 'Livestream topic drawing board for Ship Shit Show.',
+  title: 'Drawing Board - Ship Shit Show',
 };
 
 function DrawingBoardFallback() {

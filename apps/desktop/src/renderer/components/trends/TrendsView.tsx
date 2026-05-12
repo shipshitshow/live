@@ -207,7 +207,9 @@ export function TrendsView() {
           return window.electronAPI.topics.create({ date, ...draft });
         }),
       );
-      setAddedIds((prev) => new Set([...prev, ...trendsToAdd.map((i) => i.id)]));
+      setAddedIds(
+        (prev) => new Set([...prev, ...trendsToAdd.map((i) => i.id)]),
+      );
     } finally {
       setAddingToLivestream(false);
     }

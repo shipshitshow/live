@@ -62,7 +62,9 @@ export function sortTopics(topics: Topic[]): Topic[] {
 
 export function getVisibleTopics(topics: Topic[], date: string): Topic[] {
   if (isPastDate(date)) {
-    return topics.filter((topic) => topic.status !== 'backlog' && topic.status !== 'draft');
+    return topics.filter(
+      (topic) => topic.status !== 'backlog' && topic.status !== 'draft',
+    );
   }
   return topics.filter((topic) => topic.status === 'in_progress');
 }

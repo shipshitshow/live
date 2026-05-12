@@ -15,8 +15,9 @@ import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
 
 export const metadata: Metadata = {
+  description:
+    'All Ship Shit Show livestreams — weekly AI dev tool news and hot takes.',
   title: 'Livestreams - Ship Shit Show',
-  description: 'All Ship Shit Show livestreams — weekly AI dev tool news and hot takes.',
 };
 
 interface StreamListItem {
@@ -90,7 +91,9 @@ async function buildDoneStreams(): Promise<StreamListItem[]> {
     dates.map(async (date) => {
       const archive = archiveByDate.get(date);
       const topics = await getTopicsForDate(date);
-      const publicTopics = topics.filter((topic) => topic.status !== 'backlog' && topic.status !== 'draft');
+      const publicTopics = topics.filter(
+        (topic) => topic.status !== 'backlog' && topic.status !== 'draft',
+      );
       const title =
         archive?.title ??
         (publicTopics.length === 1
