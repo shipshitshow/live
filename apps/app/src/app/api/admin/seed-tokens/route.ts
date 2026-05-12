@@ -1,12 +1,17 @@
 import { NextResponse } from 'next/server';
-import { getConfiguredChannelMeta, saveRefreshToken } from '@/lib/youtube/token';
+import {
+  getConfiguredChannelMeta,
+  saveRefreshToken,
+} from '@/lib/youtube/token';
 
 export async function POST() {
   const channels = getConfiguredChannelMeta();
 
   if (channels.length === 0) {
     return NextResponse.json(
-      { error: 'No channel env vars configured (YOUTUBE_CHANNEL_ID_MAIN etc.)' },
+      {
+        error: 'No channel env vars configured (YOUTUBE_CHANNEL_ID_MAIN etc.)',
+      },
       { status: 400 },
     );
   }
