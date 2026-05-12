@@ -5,7 +5,7 @@ import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useState } from 'react';
 import { KanbanColumn } from './KanbanColumn';
 
-const COLUMNS: TopicStatus[] = ['backlog', 'in_progress', 'done'];
+const COLUMNS: TopicStatus[] = ['draft', 'backlog', 'in_progress', 'done'];
 const ALL_DATES_VALUE = '__all__';
 
 function todayLocalDate(): string {
@@ -87,7 +87,7 @@ export function KanbanBoard() {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full text-text-muted text-sm">
-        Loading topics...
+        Loading topics…
       </div>
     );
   }

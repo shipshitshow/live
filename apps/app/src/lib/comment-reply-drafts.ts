@@ -29,10 +29,13 @@ function extractJson(raw: string): DraftReplyPayload {
     raw.slice(start, end + 1),
   ) as Partial<DraftReplyPayload>;
   const drafts = Array.isArray(parsed.drafts)
-    ? parsed.drafts
-        .filter((draft): draft is string => typeof draft === 'string')
-        .map((draft) => draft.trim())
-        .filter(Boolean)
+    ? parsed.drafts.reduce<string[]>((acc, draft) => {
+        if (typeof draft === 'string') {
+          const trimmed = draft.trim();
+          if (trimmed) acc.push(trimmed);
+        }
+        return acc;
+      }, [])
     : [];
 
   if (drafts.length === 0) {

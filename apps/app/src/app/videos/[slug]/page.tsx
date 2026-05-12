@@ -1,5 +1,6 @@
 import type { Topic } from '@shipshitshow/types';
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { TranscriptScorecard } from '@/components/TranscriptScorecard';
@@ -197,7 +198,7 @@ export default async function VideoDetailPage({
   const topics =
     video.type === 'livestream'
       ? (await getTopicsForDate(video.date)).filter(
-          (t) => t.status !== 'backlog',
+          (t) => t.status !== 'backlog' && t.status !== 'draft',
         )
       : [];
   const hasTalkingPoints = topics.length > 0;
@@ -259,11 +260,12 @@ export default async function VideoDetailPage({
 
         <aside className="space-y-4 lg:sticky lg:top-6 lg:self-start">
           <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-            <div className="aspect-video overflow-hidden bg-surface-elevated">
-              <img
+            <div className="relative aspect-video overflow-hidden bg-surface-elevated">
+              <Image
                 src={thumbnailUrl}
                 alt=""
-                className="h-full w-full object-cover"
+                fill
+                className="object-cover"
               />
             </div>
             <div className="space-y-3 p-4">
@@ -285,7 +287,7 @@ export default async function VideoDetailPage({
                   <svg
                     viewBox="0 0 24 24"
                     fill="currentColor"
-                    className="h-5 w-5"
+                    className="size-5"
                   >
                     <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
                   </svg>

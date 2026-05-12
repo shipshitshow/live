@@ -61,7 +61,7 @@ export function Sidebar({
         ))}
       </div>
 
-      <div className="mt-auto space-y-0.5 border-t border-surface-border px-2 py-2">
+      <div className="mt-auto space-y-0.5 border-t border-surface-border p-2">
         {secondaryItems.map((item) => (
           <NavItem
             key={item.id}

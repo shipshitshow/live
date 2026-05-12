@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { formatNumber } from '@/lib/format';
 import {
@@ -79,11 +80,12 @@ export default async function VideosPage() {
               className="group overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-colors hover:border-accent-red/40"
             >
               <Link href={`/videos/${encodeURIComponent(video.routeSlug)}`}>
-                <div className="aspect-[16/9] overflow-hidden bg-surface-elevated">
-                  <img
+                <div className="relative aspect-[16/9] overflow-hidden bg-surface-elevated">
+                  <Image
                     src={video.thumbnailUrl}
                     alt=""
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    fill
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                 </div>
               </Link>

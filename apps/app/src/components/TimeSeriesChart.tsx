@@ -46,7 +46,7 @@ function CustomTooltip({
       {payload.map((entry, i) => (
         <div key={i} className="flex items-center gap-2">
           <span
-            className="w-2 h-2 rounded-full shrink-0"
+            className="size-2 rounded-full shrink-0"
             style={{ backgroundColor: entry.stroke }}
           />
           <span className="text-text-primary font-semibold">

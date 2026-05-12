@@ -21,7 +21,11 @@ async function getYouTubeAccessToken(): Promise<string | null> {
   const configs = await getChannelConfigs();
   if (configs.length === 0) return null;
 
-  return getAccessToken(configs[0]);
+  try {
+    return await getAccessToken(configs[0]);
+  } catch {
+    return null;
+  }
 }
 
 function getXBearerToken(): string | null {

@@ -219,50 +219,49 @@ function listFilesystemPublishedVideos(): PublishedVideoItem[] {
 
   const videoMap = getRawTranscriptVideoMap();
 
-  return fs
-    .readdirSync(CLEAN_TRANSCRIPTS_DIR)
-    .map((fileName) => {
-      const match = fileName.match(
-        /^(\d{4}-\d{2}-\d{2})-(livestream|video)-(.+)\.txt$/,
-      );
-      if (!match) return null;
-
-      const [, date, type, rawTitleSlug] = match;
-      const typed = type as PublishedVideoType;
-      const transcriptPath = path.join(CLEAN_TRANSCRIPTS_DIR, fileName);
-      const mapped = videoMap.get(
-        `${typed}:${normalizeHistoryKey(rawTitleSlug)}`,
-      );
-      const title = mapped?.title ?? titleFromSlug(rawTitleSlug);
-      const videoId = mapped?.videoId ?? null;
-
-      return {
-        date,
-        routeSlug: getPublishedVideoRouteSlug(
-          date,
-          typed,
-          rawTitleSlug,
-          videoId,
-        ),
-        title,
-        transcriptPath,
-        type: typed,
-        videoId,
-        wordCount: getTranscriptWordCount(transcriptPath),
-        youtubeUrl: getYoutubeUrl(videoId),
-      } satisfies PublishedVideoItem;
-    })
-    .filter((item): item is PublishedVideoItem => item !== null)
-    .sort(
-      (a, b) =>
-        b.date.localeCompare(a.date) ||
-        a.type.localeCompare(b.type) ||
-        a.title.localeCompare(b.title),
+  const items: PublishedVideoItem[] = [];
+  for (const fileName of fs.readdirSync(CLEAN_TRANSCRIPTS_DIR)) {
+    const match = fileName.match(
+      /^(\d{4}-\d{2}-\d{2})-(livestream|video)-(.+)\.txt$/,
     );
+    if (!match) continue;
+
+    const [, date, type, rawTitleSlug] = match;
+    const typed = type as PublishedVideoType;
+    const transcriptPath = path.join(CLEAN_TRANSCRIPTS_DIR, fileName);
+    const mapped = videoMap.get(
+      `${typed}:${normalizeHistoryKey(rawTitleSlug)}`,
+    );
+    const title = mapped?.title ?? titleFromSlug(rawTitleSlug);
+    const videoId = mapped?.videoId ?? null;
+
+    items.push({
+      date,
+      routeSlug: getPublishedVideoRouteSlug(
+        date,
+        typed,
+        rawTitleSlug,
+        videoId,
+      ),
+      title,
+      transcriptPath,
+      type: typed,
+      videoId,
+      wordCount: getTranscriptWordCount(transcriptPath),
+      youtubeUrl: getYoutubeUrl(videoId),
+    } satisfies PublishedVideoItem);
+  }
+
+  return items.sort(
+    (a, b) =>
+      b.date.localeCompare(a.date) ||
+      a.type.localeCompare(b.type) ||
+      a.title.localeCompare(b.title),
+  );
 }
 
 export function isTopicStatus(value: string | null): value is TopicStatus {
-  return value === 'backlog' || value === 'in_progress' || value === 'done';
+  return value === 'draft' || value === 'backlog' || value === 'in_progress' || value === 'done';
 }
 
 function parseFrontmatter(raw: string): {
@@ -374,17 +373,21 @@ function listFilesystemDates(): string[] {
 }
 
 function listFilesystemLivestreamHistory(): LivestreamHistoryItem[] {
-  return listFilesystemPublishedVideos()
-    .filter((item) => item.type === 'livestream')
-    .map(
-      (item): LivestreamHistoryItem => ({
-        date: item.date,
-        title: item.title,
-        transcriptPath: item.transcriptPath,
-        videoId: item.videoId,
-        youtubeUrl: item.youtubeUrl,
-      }),
-    );
+  return listFilesystemPublishedVideos().reduce<LivestreamHistoryItem[]>(
+    (acc, item) => {
+      if (item.type === 'livestream') {
+        acc.push({
+          date: item.date,
+          title: item.title,
+          transcriptPath: item.transcriptPath,
+          videoId: item.videoId,
+          youtubeUrl: item.youtubeUrl,
+        });
+      }
+      return acc;
+    },
+    [],
+  );
 }
 
 async function readBlobJson<T>(

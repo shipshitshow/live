@@ -24,14 +24,19 @@ export async function GET(request: Request) {
   const topics: Topic[] = await getTopicsForDate(resolvedDate);
   const isPast = resolvedDate < todayLocalDate();
 
-  const publicTopics = topics
-    .filter((t) => t.status !== 'backlog')
-    .map((t) => ({
-      date: t.date,
-      slug: t.slug,
-      status: isPast ? 'done' : t.status,
-      title: t.title,
-    }));
+  const publicTopics = topics.reduce<
+    { date: string; slug: string; status: string; title: string }[]
+  >((acc, t) => {
+    if (t.status !== 'backlog') {
+      acc.push({
+        date: t.date,
+        slug: t.slug,
+        status: isPast ? 'done' : t.status,
+        title: t.title,
+      });
+    }
+    return acc;
+  }, []);
 
   return NextResponse.json({
     availableDates,

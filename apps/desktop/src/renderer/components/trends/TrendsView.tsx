@@ -201,16 +201,13 @@ export function TrendsView() {
     const date = todayLocalDate();
 
     try {
-      for (const item of trendsToAdd) {
-        const draft = buildLivestreamTopicDraft(item);
-
-        await window.electronAPI.topics.create({
-          date,
-          ...draft,
-        });
-
-        setAddedIds((prev) => new Set([...prev, item.id]));
-      }
+      await Promise.all(
+        trendsToAdd.map((item) => {
+          const draft = buildLivestreamTopicDraft(item);
+          return window.electronAPI.topics.create({ date, ...draft });
+        }),
+      );
+      setAddedIds((prev) => new Set([...prev, ...trendsToAdd.map((i) => i.id)]));
     } finally {
       setAddingToLivestream(false);
     }

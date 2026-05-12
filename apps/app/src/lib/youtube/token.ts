@@ -250,9 +250,12 @@ export async function getYouTubeAuthStatus(): Promise<YouTubeAuthStatus> {
 
   const channels = await getChannelConfigs();
   const labelsWithTokens = new Set(channels.map((channel) => channel.label));
-  const missingTokenLabels = configuredChannels
-    .map((channel) => channel.label)
-    .filter((label) => !labelsWithTokens.has(label));
+  const missingTokenLabels: string[] = [];
+  for (const channel of configuredChannels) {
+    if (!labelsWithTokens.has(channel.label)) {
+      missingTokenLabels.push(channel.label);
+    }
+  }
 
   if (missingTokenLabels.length > 0) {
     return {

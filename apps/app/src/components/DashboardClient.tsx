@@ -418,7 +418,7 @@ function TopVideosSkeleton() {
             <div className="flex flex-col gap-4">
               {[0, 1, 2].map((row) => (
                 <div key={row} className="flex gap-3">
-                  <div className="w-5 h-5 bg-surface-elevated rounded animate-pulse" />
+                  <div className="size-5 bg-surface-elevated rounded animate-pulse" />
                   <div className="w-28 h-16 bg-surface-elevated rounded-lg animate-pulse shrink-0" />
                   <div className="flex-1 space-y-2">
                     <div className="h-3 w-full bg-surface-elevated rounded animate-pulse" />

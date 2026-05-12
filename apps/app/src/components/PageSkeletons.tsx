@@ -230,7 +230,7 @@ export function ReviewDetailPageSkeleton() {
 
 export function TrendsPageSkeleton() {
   return (
-    <main className="mx-auto w-full max-w-[1800px] px-6 py-6">
+    <main className="mx-auto w-full max-w-[1800px] p-6">
       <TrendsContentSkeleton />
     </main>
   );

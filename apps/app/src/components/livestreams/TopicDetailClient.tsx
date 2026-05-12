@@ -8,6 +8,7 @@ import type {
   TrendsSearchResponse,
 } from '@shipshitshow/types';
 import { isErrorResponse } from '@shipshitshow/types';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -28,6 +29,7 @@ const SOURCE_COLORS: Record<string, string> = {
 };
 
 const STATUS_BADGES: Record<string, string> = {
+  draft: 'bg-surface-border/50 text-text-muted/70',
   backlog: 'bg-surface-border text-text-muted',
   done: 'bg-green-500/10 text-green-400',
   in_progress: 'bg-accent-red/10 text-accent-red',
@@ -815,7 +817,7 @@ export function TopicDetailClient() {
   }
 
   return (
-    <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 px-6 py-6">
+    <div className="mx-auto flex h-[calc(100vh-65px)] w-full max-w-[1800px] items-stretch gap-6 p-6">
       <main
         ref={rundownScrollRef}
         className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 overflow-y-auto pr-2"
@@ -995,7 +997,7 @@ export function TopicDetailClient() {
             <div className="sticky top-0 z-10 overflow-hidden rounded-xl border border-accent-red/20 bg-surface-card/95 backdrop-blur supports-[backdrop-filter]:bg-surface-card/85">
               <div className="flex items-center gap-2 border-b border-surface-border px-5 py-3">
                 <span
-                  className={`h-2 w-2 rounded-full ${SEGMENT_COLORS[activeSegment?.type || 'segment'].dot}`}
+                  className={`size-2 rounded-full ${SEGMENT_COLORS[activeSegment?.type || 'segment'].dot}`}
                 />
                 <h3 className="text-xs font-medium uppercase tracking-widest text-text-secondary">
                   Sources — {activeSegment?.label}
@@ -1031,7 +1033,7 @@ export function TopicDetailClient() {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-blue-400/30 hover:bg-blue-400/5"
+                      className="block rounded-lg border border-surface-border p-3 transition-colors hover:border-blue-400/30 hover:bg-blue-400/5"
                     >
                       <div className="mb-1.5 flex items-center gap-2">
                         <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono text-[10px] font-bold text-blue-400">
@@ -1126,11 +1128,14 @@ export function TopicDetailClient() {
               </div>
 
               {streamMeta?.thumbnailUrl && (
-                <img
-                  src={streamMeta.thumbnailUrl}
-                  alt={streamMeta.title || topic.title}
-                  className="w-full rounded-lg border border-surface-border"
-                />
+                <div className="relative aspect-video w-full overflow-hidden rounded-lg border border-surface-border">
+                  <Image
+                    src={streamMeta.thumbnailUrl}
+                    alt={streamMeta.title || topic.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
               )}
 
               {(streamMeta?.title ||
@@ -1381,7 +1386,7 @@ export function TopicDetailClient() {
                     href={tweet.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block rounded-lg border border-surface-border px-3 py-3 transition-colors hover:border-accent-red/30"
+                    className="block rounded-lg border border-surface-border p-3 transition-colors hover:border-accent-red/30"
                   >
                     <div className="flex items-center gap-2 text-[10px] text-text-muted">
                       <span className="rounded bg-blue-400/20 px-1.5 py-0.5 font-mono font-bold text-blue-400">
@@ -1420,7 +1425,7 @@ export function TopicDetailClient() {
               top: 0,
             })
           }
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
+          className="flex size-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
         >
           <svg
             width="16"
@@ -1443,7 +1448,7 @@ export function TopicDetailClient() {
               top: rundownScrollRef.current.scrollHeight,
             })
           }
-          className="flex h-10 w-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
+          className="flex size-10 items-center justify-center rounded-full border border-surface-border bg-surface-card/95 text-text-secondary shadow-lg backdrop-blur transition-colors hover:border-accent-red/40 hover:text-text-primary"
         >
           <svg
             width="16"

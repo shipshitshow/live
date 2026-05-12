@@ -57,7 +57,7 @@ export function YouTubeAuthView() {
 
   return (
     <div className="p-6 max-w-2xl">
-      <h2 className="text-lg font-bold text-text-primary mb-1">
+      <h2 className="text-lg font-semibold text-text-primary mb-1">
         YouTube Authentication
       </h2>
       <p className="text-xs text-text-muted mb-6">
@@ -105,7 +105,7 @@ export function YouTubeAuthView() {
               </div>
               <div className="flex items-center gap-3">
                 <span
-                  className={`w-2 h-2 rounded-full ${
+                  className={`size-2 rounded-full ${
                     isConnected ? 'bg-green-500' : 'bg-accent-red'
                   }`}
                 />

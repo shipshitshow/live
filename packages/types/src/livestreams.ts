@@ -1,4 +1,4 @@
-export type TopicStatus = 'backlog' | 'in_progress' | 'done';
+export type TopicStatus = 'draft' | 'backlog' | 'in_progress' | 'done';
 
 export type ContentField =
   | 'thumbnail_v1'

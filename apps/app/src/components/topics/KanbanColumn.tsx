@@ -8,6 +8,11 @@ const COLUMN_CONFIG: Record<
   TopicStatus,
   { label: string; color: string; dot: string }
 > = {
+  draft: {
+    color: 'text-text-muted',
+    dot: 'bg-text-muted/50',
+    label: 'Draft',
+  },
   backlog: {
     color: 'text-text-secondary',
     dot: 'bg-text-muted',
@@ -64,7 +69,7 @@ export function KanbanColumn({
       }}
     >
       <div className="flex items-center gap-2 mb-4 px-1">
-        <span className={`w-2 h-2 rounded-full ${config.dot}`} />
+        <span className={`size-2 rounded-full ${config.dot}`} />
         <h2
           className={`text-xs font-semibold uppercase tracking-widest ${config.color}`}
         >

@@ -2,6 +2,30 @@
 const isProduction = process.env.NODE_ENV === "production";
 
 const nextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "i.ytimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
+      {
+        protocol: "https",
+        hostname: "**.ytimg.com",
+      },
+      {
+        protocol: "https",
+        hostname: "preview.redd.it",
+      },
+      {
+        protocol: "https",
+        hostname: "**.redd.it",
+      },
+    ],
+  },
   allowedDevOrigins: ["127.0.0.1"],
   env: {
     ANALYTICS_API_URL: process.env.ANALYTICS_API_URL ?? "http://localhost:8000",

@@ -89,7 +89,7 @@ export default async function LivestreamDetailLayout({
   const transcriptScorecard = analyzeTranscriptScorecard(archive?.transcript);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-6 lg:flex-row lg:items-start">
+    <div className="mx-auto flex max-w-6xl flex-col gap-8 p-6 lg:flex-row lg:items-start">
       <main className="min-w-0 flex-1 space-y-6">
         <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
           <LivestreamTabsClient date={resolvedDate} streamSlug={streamSlug} />

@@ -113,12 +113,12 @@ export function TrendsView() {
   const sourceSummary = useMemo(() => {
     if (!sources) return null;
 
-    const failed = Object.entries(sources)
-      .filter(([, status]) => status === 'error')
-      .map(([source]) => SOURCE_STATUS_LABELS[source as TrendSource]);
-    const manual = Object.entries(sources)
-      .filter(([, status]) => status === 'manual')
-      .map(([source]) => SOURCE_STATUS_LABELS[source as TrendSource]);
+    const failed: string[] = [];
+    const manual: string[] = [];
+    for (const [source, status] of Object.entries(sources)) {
+      if (status === 'error') failed.push(SOURCE_STATUS_LABELS[source as TrendSource]);
+      else if (status === 'manual') manual.push(SOURCE_STATUS_LABELS[source as TrendSource]);
+    }
 
     const statusParts: string[] = [
       failed.length === 0
@@ -134,9 +134,10 @@ export function TrendsView() {
   }, [sources]);
 
   const getSelectedQuery = useCallback(() => {
-    const selectedTitles = items
-      .filter((item) => selectedIds.has(item.id))
-      .map((item) => item.title);
+    const selectedTitles = items.reduce<string[]>((acc, item) => {
+      if (selectedIds.has(item.id)) acc.push(item.title);
+      return acc;
+    }, []);
     return extractTrendKeywords(selectedTitles);
   }, [items, selectedIds]);
 
@@ -223,17 +224,17 @@ export function TrendsView() {
     const date = todayLocalDate();
 
     try {
-      for (const item of trendsToAdd) {
-        const draft = buildLivestreamTopicDraft(item);
-
-        await fetch('/api/topics', {
-          body: JSON.stringify({ date, ...draft }),
-          headers: { 'Content-Type': 'application/json' },
-          method: 'POST',
-        });
-
-        setAddedIds((prev) => new Set([...prev, item.id]));
-      }
+      await Promise.all(
+        trendsToAdd.map((item) => {
+          const draft = buildLivestreamTopicDraft(item);
+          return fetch('/api/topics', {
+            body: JSON.stringify({ date, ...draft }),
+            headers: { 'Content-Type': 'application/json' },
+            method: 'POST',
+          });
+        }),
+      );
+      setAddedIds((prev) => new Set([...prev, ...trendsToAdd.map((i) => i.id)]));
     } finally {
       setAddingToLivestream(false);
     }

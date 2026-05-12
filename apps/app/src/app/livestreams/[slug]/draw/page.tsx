@@ -1,30 +1,26 @@
-'use client';
+import type { Metadata } from 'next';
+import { Suspense } from 'react';
+import { TopicDrawingPageClient } from './TopicDrawingPageClient';
 
-import dynamic from 'next/dynamic';
-import { useParams, useSearchParams } from 'next/navigation';
-import { todayLocalDate } from '@/lib/date';
+export const metadata: Metadata = {
+  title: 'Drawing Board - Ship Shit Show',
+  description: 'Livestream topic drawing board for Ship Shit Show.',
+};
 
-const TopicDrawingBoard = dynamic(
-  async () =>
-    (await import('@/components/livestreams/TopicDrawingBoard'))
-      .TopicDrawingBoard,
-  {
-    loading: () => (
-      <div className="flex min-h-[calc(100vh-65px)] items-center justify-center bg-black">
-        <p className="text-sm text-text-muted animate-pulse">
-          Loading drawing board…
-        </p>
-      </div>
-    ),
-    ssr: false,
-  },
-);
+function DrawingBoardFallback() {
+  return (
+    <div className="flex min-h-[calc(100vh-65px)] items-center justify-center bg-black">
+      <p className="animate-pulse text-sm text-text-muted">
+        Loading drawing board…
+      </p>
+    </div>
+  );
+}
 
 export default function TopicDrawingPage() {
-  const params = useParams();
-  const searchParams = useSearchParams();
-  const slug = params.slug as string;
-  const date = searchParams.get('date') || todayLocalDate();
-
-  return <TopicDrawingBoard date={date} slug={slug} />;
+  return (
+    <Suspense fallback={<DrawingBoardFallback />}>
+      <TopicDrawingPageClient />
+    </Suspense>
+  );
 }

@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { StreamRundownPanel } from '@/components/livestreams/StreamRundownPanel';
+
+export const metadata: Metadata = {
+  title: 'Talking Points - Ship Shit Show',
+  description: 'Livestream talking points and topic rundown for Ship Shit Show.',
+};
 import {
   isDateSlug,
   isYouTubeVideoId,

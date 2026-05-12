@@ -1,4 +1,6 @@
 import fs from 'node:fs';
+import type { Metadata } from 'next';
+import Image from 'next/image';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { todayLocalDate } from '@/lib/date';
@@ -11,6 +13,11 @@ import {
 import { formatLivestreamDate, isPastDate } from '@/lib/livestreams-ui';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
+
+export const metadata: Metadata = {
+  title: 'Livestreams - Ship Shit Show',
+  description: 'All Ship Shit Show livestreams — weekly AI dev tool news and hot takes.',
+};
 
 interface StreamListItem {
   date: string;
@@ -76,14 +83,14 @@ async function buildDoneStreams(): Promise<StreamListItem[]> {
   const dates = Array.from(
     new Set([...topicDates, ...archiveItems.map((item) => item.date)]),
   )
-    .filter((date) => isPastDate(date))
+    .filter((date) => isPastDate(date) && archiveByDate.get(date)?.videoId)
     .sort((a, b) => b.localeCompare(a));
 
   return Promise.all(
     dates.map(async (date) => {
       const archive = archiveByDate.get(date);
       const topics = await getTopicsForDate(date);
-      const publicTopics = topics.filter((topic) => topic.status !== 'backlog');
+      const publicTopics = topics.filter((topic) => topic.status !== 'backlog' && topic.status !== 'draft');
       const title =
         archive?.title ??
         (publicTopics.length === 1
@@ -153,12 +160,19 @@ export default async function LivestreamPage({
             href={`/livestreams/${encodeURIComponent(upcoming.routeSlug)}/talking-points`}
             className="group block overflow-hidden rounded-2xl border border-accent-red/30 bg-surface-card transition-colors hover:border-accent-red/60"
           >
-            <div className="aspect-[21/9] overflow-hidden bg-surface-elevated">
-              <img
-                src={upcoming.thumbnailUrl}
-                alt=""
-                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.01]"
-              />
+            <div className="relative aspect-[21/9] overflow-hidden bg-surface-elevated">
+              {upcoming.thumbnailUrl === '/icon.svg' ? (
+                <div className="flex size-full items-center justify-center">
+                  <Image src="/icon.svg" alt="" width={64} height={64} />
+                </div>
+              ) : (
+                <Image
+                  src={upcoming.thumbnailUrl}
+                  alt=""
+                  fill
+                  className="object-cover transition-transform duration-300 group-hover:scale-[1.01]"
+                />
+              )}
             </div>
           </Link>
         </section>
@@ -187,12 +201,19 @@ export default async function LivestreamPage({
                 href={`/livestreams/${encodeURIComponent(stream.routeSlug)}/talking-points`}
                 className="group overflow-hidden rounded-2xl border border-surface-border bg-surface-card transition-colors hover:border-accent-red/40"
               >
-                <div className="aspect-[16/9] overflow-hidden bg-surface-elevated">
-                  <img
-                    src={stream.thumbnailUrl}
-                    alt=""
-                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
-                  />
+                <div className="relative aspect-[16/9] overflow-hidden bg-surface-elevated">
+                  {stream.thumbnailUrl === '/icon.svg' ? (
+                    <div className="flex size-full items-center justify-center">
+                      <Image src="/icon.svg" alt="" width={48} height={48} />
+                    </div>
+                  ) : (
+                    <Image
+                      src={stream.thumbnailUrl}
+                      alt=""
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    />
+                  )}
                 </div>
                 <div className="space-y-3 p-4">
                   <div className="flex items-start justify-between gap-3">

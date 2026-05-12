@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
+import { Suspense } from 'react';
+import { LivestreamTopicContentSkeleton } from '@/components/PageSkeletons';
 import { TopicDetailClient } from '@/components/livestreams/TopicDetailClient';
 import { todayLocalDate } from '@/lib/date';
 import {
@@ -160,5 +162,9 @@ export default async function TopicDetailPage({
     redirect(`${streamPath}/talking-points#${encodeURIComponent(topic.slug)}`);
   }
 
-  return <TopicDetailClient />;
+  return (
+    <Suspense fallback={<LivestreamTopicContentSkeleton />}>
+      <TopicDetailClient />
+    </Suspense>
+  );
 }

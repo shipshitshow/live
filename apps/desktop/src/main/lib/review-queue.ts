@@ -67,12 +67,13 @@ async function fetchReviewQueueVideos(channelConfig: {
       );
       if (unlistedItems.length === 0) return [];
 
-      const videoIds = unlistedItems
-        .map((item) => item.snippet?.resourceId?.videoId)
-        .filter(
-          (videoId): videoId is string =>
-            typeof videoId === 'string' && videoId.length > 0,
-        );
+      const videoIds: string[] = [];
+      for (const item of unlistedItems) {
+        const videoId = item.snippet?.resourceId?.videoId;
+        if (typeof videoId === 'string' && videoId.length > 0) {
+          videoIds.push(videoId);
+        }
+      }
       const videosRes = await ytFetch<{ items?: YouTubeVideoItem[] }>(
         `${DATA_API}/videos?part=snippet,statistics,contentDetails,status&id=${videoIds.join(',')}`,
         token,

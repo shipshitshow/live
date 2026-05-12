@@ -1,5 +1,11 @@
+import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { TranscriptPanel } from '@/components/livestreams/TranscriptPanel';
+
+export const metadata: Metadata = {
+  title: 'Transcript - Ship Shit Show',
+  description: 'Livestream transcript for Ship Shit Show.',
+};
 import {
   isDateSlug,
   isYouTubeVideoId,

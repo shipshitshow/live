@@ -3,6 +3,7 @@
 import type { TrendItem, TrendSource } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 import { TrendCard } from './TrendCard';
 
 const SOURCE_ORDER: TrendSource[] = ['hackernews', 'reddit', 'youtube', 'x'];
@@ -103,11 +104,14 @@ export function DeepDivePanel({
           </div>
 
           {activeItem.thumbnail && (
-            <img
-              src={activeItem.thumbnail}
-              alt=""
-              className="w-full aspect-video object-cover bg-surface-elevated"
-            />
+            <div className="relative w-full aspect-video bg-surface-elevated">
+              <Image
+                src={activeItem.thumbnail}
+                alt=""
+                fill
+                className="object-cover"
+              />
+            </div>
           )}
 
           <div className="p-4 space-y-4">

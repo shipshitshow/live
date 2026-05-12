@@ -3,6 +3,7 @@
 import type { TrendItem, TrendSource } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { formatDistanceToNow } from 'date-fns';
+import Image from 'next/image';
 
 const SOURCE_COLORS: Record<TrendSource, string> = {
   hackernews: 'bg-orange-500/20 text-orange-400',
@@ -140,11 +141,14 @@ export function TrendCard({
         </div>
 
         {item.thumbnail && !compact && (
-          <img
-            src={item.thumbnail}
-            alt=""
-            className="w-24 h-16 rounded-lg object-cover shrink-0"
-          />
+          <div className="relative w-24 h-16 rounded-lg overflow-hidden shrink-0">
+            <Image
+              src={item.thumbnail}
+              alt=""
+              fill
+              className="object-cover"
+            />
+          </div>
         )}
       </div>
     </div>

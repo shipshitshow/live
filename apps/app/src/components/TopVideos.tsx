@@ -1,6 +1,7 @@
 'use client';
 
 import type { VideoStats, VideoType } from '@shipshitshow/types';
+import Image from 'next/image';
 import { useMemo } from 'react';
 import { formatNumber, formatWatchTime } from '@/lib/format';
 
@@ -30,12 +31,13 @@ function TopVideoCard({ video, rank }: { video: VideoStats; rank: number }) {
       </div>
 
       {/* Thumbnail */}
-      <div className="w-28 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-elevated">
+      <div className="relative w-28 h-16 rounded-lg overflow-hidden shrink-0 bg-surface-elevated">
         {video.thumbnail_url ? (
-          <img
+          <Image
             src={video.thumbnail_url}
             alt=""
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+            fill
+            className="object-cover group-hover:scale-105 transition-transform"
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-text-muted text-[10px]">

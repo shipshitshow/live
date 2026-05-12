@@ -34,7 +34,7 @@ export function TopicCard({
         (line) =>
           line.length > 20 && !line.startsWith('#') && !line.startsWith('-'),
       )
-      ?.slice(0, 140) + '...';
+      ?.slice(0, 140) + '…';
 
   return (
     <div
@@ -48,8 +48,16 @@ export function TopicCard({
       onDragEnd={(e) => {
         (e.currentTarget as HTMLElement).style.opacity = '1';
       }}
+      role="button"
+      tabIndex={0}
       className="bg-surface-card border border-surface-border rounded-xl p-4 cursor-grab active:cursor-grabbing hover:border-accent-red/40 transition-colors group"
       onClick={() => onSelect(topic.slug)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onSelect(topic.slug);
+        }
+      }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <h3 className="text-sm font-semibold text-text-primary group-hover:text-accent-red transition-colors leading-tight">
@@ -82,6 +90,18 @@ export function TopicCard({
       )}
 
       <div className="flex gap-2">
+        {topic.status === 'draft' && (
+          <Button
+            onClick={(e: React.MouseEvent) => {
+              e.stopPropagation();
+              onStatusChange(topic, 'backlog');
+            }}
+            size="sm"
+            className="rounded-md bg-surface-border text-[10px] text-text-muted hover:bg-surface-border hover:text-text-secondary"
+          >
+            Move to backlog
+          </Button>
+        )}
         {topic.status === 'backlog' && (
           <Button
             onClick={(e: React.MouseEvent) => {
