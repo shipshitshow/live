@@ -42,38 +42,37 @@ export async function fetchVideoStats(
   }
 }
 
+const YT_URL_PATTERN =
+  /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtube\.com\/live\/[\w-]+|youtu\.be\/[\w-]+)/;
+
+const RESTREAM_URL_PATTERN = /https?:\/\/studio\.restream\.io\/[\w-]+/;
+
+const LIVESTREAM_NOTES_PATTERN =
+  /## Livestream Notes\s*([\s\S]*?)(?:\n## |\n?$)/;
+
 export function extractYouTubeUrl(raw: string): string | null {
-  const livestreamNotesMatch = raw.match(
-    /## Livestream Notes\s*([\s\S]*?)(?:\n## |\n?$)/,
-  );
-
-  const preferredMatch = livestreamNotesMatch?.[1]?.match(
-    /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/,
-  );
-  if (preferredMatch?.[0]) {
-    return preferredMatch[0];
-  }
-
-  const match = raw.match(
-    /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/,
-  );
-  return match?.[0] ?? null;
+  const notesMatch = raw.match(LIVESTREAM_NOTES_PATTERN);
+  const preferredMatch = notesMatch?.[1]?.match(YT_URL_PATTERN);
+  if (preferredMatch?.[0]) return preferredMatch[0];
+  return raw.match(YT_URL_PATTERN)?.[0] ?? null;
 }
 
 export function extractLivestreamYouTubeUrl(raw: string): string | null {
-  const livestreamNotesMatch = raw.match(
-    /## Livestream Notes\s*([\s\S]*?)(?:\n## |\n?$)/,
-  );
+  const notesMatch = raw.match(LIVESTREAM_NOTES_PATTERN);
+  return notesMatch?.[1]?.match(YT_URL_PATTERN)?.[0] ?? null;
+}
 
-  const match = livestreamNotesMatch?.[1]?.match(
-    /https?:\/\/(?:www\.)?(?:youtube\.com\/watch\?v=[\w-]+|youtu\.be\/[\w-]+)/,
-  );
-  return match?.[0] ?? null;
+export function extractRestreamUrl(raw: string): string | null {
+  const notesMatch = raw.match(LIVESTREAM_NOTES_PATTERN);
+  return notesMatch?.[1]?.match(RESTREAM_URL_PATTERN)?.[0] ?? null;
 }
 
 export function extractVideoId(url: string): string | null {
   const watchMatch = url.match(/[?&]v=([\w-]+)/);
   if (watchMatch) return watchMatch[1];
+
+  const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
+  if (liveMatch) return liveMatch[1];
 
   const shortMatch = url.match(/youtu\.be\/([\w-]+)/);
   return shortMatch?.[1] ?? null;

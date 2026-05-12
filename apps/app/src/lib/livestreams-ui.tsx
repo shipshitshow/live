@@ -2,6 +2,7 @@ import type { Topic } from '@shipshitshow/types';
 import { todayLocalDate } from '@/lib/date';
 import {
   buildYouTubeThumbnailUrl,
+  extractRestreamUrl,
   extractVideoId,
   extractYouTubeUrl,
 } from '@/lib/livestreams-youtube';
@@ -91,6 +92,14 @@ export function getYoutubeUrl(
   return (
     topics
       .map((topic) => extractYouTubeUrl(topic.content))
+      .find((url): url is string => Boolean(url)) ?? null
+  );
+}
+
+export function getRestreamUrl(topics: Topic[]): string | null {
+  return (
+    topics
+      .map((topic) => extractRestreamUrl(topic.content))
       .find((url): url is string => Boolean(url)) ?? null
   );
 }
