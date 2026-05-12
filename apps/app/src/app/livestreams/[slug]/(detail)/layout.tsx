@@ -20,8 +20,8 @@ import {
   buildCards,
   getEffectiveStatus,
   getLivestreamTitle,
-  getVisibleTopics,
   getRestreamUrl,
+  getVisibleTopics,
   getYoutubeUrl,
   isPastDate,
   sortTopics,
@@ -95,7 +95,11 @@ export default async function LivestreamDetailLayout({
     <div className="mx-auto flex max-w-6xl flex-col gap-8 p-6 lg:flex-row lg:items-start">
       <main className="min-w-0 flex-1 space-y-6">
         <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
-          <LivestreamTabsClient date={resolvedDate} hasTranscript={Boolean(archive?.transcript)} streamSlug={streamSlug} />
+          <LivestreamTabsClient
+            date={resolvedDate}
+            hasTranscript={Boolean(archive?.transcript)}
+            streamSlug={streamSlug}
+          />
           <div className="p-5">{children}</div>
         </section>
       </main>

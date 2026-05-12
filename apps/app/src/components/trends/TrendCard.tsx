@@ -142,7 +142,7 @@ export function TrendCard({
 
         {item.thumbnail && !compact && (
           <div className="relative w-24 h-16 rounded-lg overflow-hidden shrink-0">
-            <Image src={item.thumbnail} alt="" fill className="object-cover" />
+            <Image src={item.thumbnail} alt="" fill sizes="96px" className="object-cover" />
           </div>
         )}
       </div>

@@ -12,6 +12,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import type { ComponentType } from 'react';
+import { useSidebarState } from '@/components/livestreams/SidebarStateContext';
 
 interface NavItemDef {
   href: string;
@@ -54,9 +55,15 @@ function isActive(pathname: string, href: string): boolean {
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { collapsed } = useSidebarState();
 
   return (
-    <aside className="flex w-[240px] shrink-0 flex-col border-r border-surface-border bg-surface">
+    <aside
+      className={cn(
+        'flex shrink-0 flex-col border-r border-surface-border bg-surface overflow-hidden transition-[width,opacity] duration-200 ease-out',
+        collapsed ? 'w-0 opacity-0' : 'w-[240px] opacity-100',
+      )}
+    >
       <Link
         href="/livestreams"
         className="flex items-center gap-3 px-4 py-5 hover:opacity-90 transition-opacity"

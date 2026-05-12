@@ -22,41 +22,41 @@ function resolveSubtitle(pathname: string): string {
   return SUBTITLE_MAP[pathname] ?? 'Ship Shit Show';
 }
 
+function LogoMark() {
+  return (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M23.5 6.19a3.02 3.02 0 0 0-2.12-2.14C19.54 3.5 12 3.5 12 3.5s-7.54 0-9.38.55A3.02 3.02 0 0 0 .5 6.19C0 8.04 0 12 0 12s0 3.96.5 5.81a3.02 3.02 0 0 0 2.12 2.14C4.46 20.5 12 20.5 12 20.5s7.54 0 9.38-.55a3.02 3.02 0 0 0 2.12-2.14C24 15.96 24 12 24 12s0-3.96-.5-5.81z" />
+      <path d="M9.75 15.02V8.98L15.5 12l-5.75 3.02z" fill="#0d0d0d" />
+    </svg>
+  );
+}
+
 export function AppTitlebar() {
   const pathname = usePathname();
   const subtitle = resolveSubtitle(pathname);
   const { collapsed, toggle } = useSidebarState();
-  const hasSidebar = pathname.startsWith('/livestreams/') && pathname !== '/livestreams/';
 
   return (
-    <div className="flex h-[38px] shrink-0 items-center justify-between border-b border-surface-border bg-surface px-4">
-      <div className="flex items-center gap-2 text-[11px]">
-        <span className="font-semibold text-text-secondary">
-          Ship Shit Show
+    <div className="flex h-[38px] shrink-0 items-center gap-3 border-b border-surface-border bg-surface px-4">
+      <button
+        type="button"
+        onClick={toggle}
+        aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        className="group relative flex size-6 shrink-0 items-center justify-center rounded-md text-accent-red transition-colors hover:bg-surface-elevated"
+      >
+        <span className="transition-opacity group-hover:opacity-0">
+          <LogoMark />
         </span>
+        <span className="absolute inset-0 flex items-center justify-center text-text-muted opacity-0 transition-opacity group-hover:opacity-100">
+          {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
+        </span>
+      </button>
+
+      <div className="flex items-center gap-2 text-[11px]">
+        <span className="font-semibold text-text-secondary">Ship Shit Show</span>
         <span className="text-text-muted">/</span>
         <span className="text-text-secondary">{subtitle}</span>
       </div>
-      {hasSidebar ? (
-        <button
-          type="button"
-          onClick={toggle}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-          className="flex items-center justify-center size-6 rounded-full border border-surface-border bg-surface-card text-text-muted transition-colors hover:border-accent-red hover:text-accent-red"
-        >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className={`size-3 transition-transform ${collapsed ? 'rotate-180' : ''}`}
-          >
-            <path d="M9 18l6-6-6-6" />
-          </svg>
-        </button>
-      ) : null}
     </div>
   );
 }
