@@ -48,12 +48,18 @@ export function AppTitlebar() {
           <LogoMark />
         </span>
         <span className="absolute inset-0 flex items-center justify-center text-text-muted opacity-0 transition-opacity group-hover:opacity-100">
-          {collapsed ? <PanelLeftOpen size={14} /> : <PanelLeftClose size={14} />}
+          {collapsed ? (
+            <PanelLeftOpen size={14} />
+          ) : (
+            <PanelLeftClose size={14} />
+          )}
         </span>
       </button>
 
       <div className="flex items-center gap-2 text-[11px]">
-        <span className="font-semibold text-text-secondary">Ship Shit Show</span>
+        <span className="font-semibold text-text-secondary">
+          Ship Shit Show
+        </span>
         <span className="text-text-muted">/</span>
         <span className="text-text-secondary">{subtitle}</span>
       </div>
