@@ -80,14 +80,18 @@ async function persistRefreshToken(label: string, refreshToken: string) {
     // KV not available locally
   }
 
-  const current = readTokenFile();
-  writeTokenFile({
-    ...current,
-    refreshTokens: {
-      ...(current.refreshTokens ?? {}),
-      [label]: refreshToken,
-    },
-  });
+  try {
+    const current = readTokenFile();
+    writeTokenFile({
+      ...current,
+      refreshTokens: {
+        ...(current.refreshTokens ?? {}),
+        [label]: refreshToken,
+      },
+    });
+  } catch {
+    // Filesystem not writable (e.g. Vercel)
+  }
 }
 
 async function clearCachedAccessToken(channelId: string) {
