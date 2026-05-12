@@ -1,10 +1,17 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import {
   getConfiguredChannelMeta,
   saveRefreshToken,
 } from '@/lib/youtube/token';
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  let body: Record<string, string> = {};
+  try {
+    body = await req.json();
+  } catch {
+    // no body — use env vars only
+  }
+
   const channels = getConfiguredChannelMeta();
 
   if (channels.length === 0) {
@@ -19,11 +26,12 @@ export async function POST() {
   const results: Record<string, string> = {};
 
   for (const ch of channels) {
-    if (!ch.envRefreshToken) {
-      results[ch.label] = 'skipped — no env refresh token';
+    const token = body[ch.label] || ch.envRefreshToken;
+    if (!token) {
+      results[ch.label] = 'skipped — no token';
       continue;
     }
-    await saveRefreshToken(ch.label, ch.envRefreshToken);
+    await saveRefreshToken(ch.label, token);
     results[ch.label] = 'seeded';
   }
 
