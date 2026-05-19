@@ -25,10 +25,10 @@ export function parseSubSections(body: string): MarkdownSection[] {
   const sections: MarkdownSection[] = [];
   const matches = Array.from(body.matchAll(/^### (.+)$/gm));
 
-  if (matches.length === 0) return [{ title: '', body }];
+  if (matches.length === 0) return [{ body, title: '' }];
 
   const preamble = body.slice(0, matches[0].index).trim();
-  if (preamble) sections.push({ title: '', body: preamble });
+  if (preamble) sections.push({ body: preamble, title: '' });
 
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
@@ -37,7 +37,7 @@ export function parseSubSections(body: string): MarkdownSection[] {
     const sectionBody = body
       .slice((match.index ?? 0) + match[0].length, next?.index)
       .trim();
-    if (sectionBody.length > 0) sections.push({ title, body: sectionBody });
+    if (sectionBody.length > 0) sections.push({ body: sectionBody, title });
   }
 
   return sections;
