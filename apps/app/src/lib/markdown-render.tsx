@@ -21,6 +21,28 @@ export function parseSections(content: string): MarkdownSection[] {
   return sections;
 }
 
+export function parseSubSections(body: string): MarkdownSection[] {
+  const sections: MarkdownSection[] = [];
+  const matches = Array.from(body.matchAll(/^### (.+)$/gm));
+
+  if (matches.length === 0) return [{ title: '', body }];
+
+  const preamble = body.slice(0, matches[0].index).trim();
+  if (preamble) sections.push({ title: '', body: preamble });
+
+  for (let i = 0; i < matches.length; i++) {
+    const match = matches[i];
+    const next = matches[i + 1];
+    const title = match[1].trim();
+    const sectionBody = body
+      .slice((match.index ?? 0) + match[0].length, next?.index)
+      .trim();
+    if (sectionBody.length > 0) sections.push({ title, body: sectionBody });
+  }
+
+  return sections;
+}
+
 export function isUsefulSection(title: string): boolean {
   const normalized = title.toLowerCase();
   return (

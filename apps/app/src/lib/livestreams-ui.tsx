@@ -14,6 +14,7 @@ export {
   isUsefulSection,
   MarkdownBody,
   parseSections,
+  parseSubSections,
   stripEmbedUrls,
 } from '@/lib/markdown-render';
 

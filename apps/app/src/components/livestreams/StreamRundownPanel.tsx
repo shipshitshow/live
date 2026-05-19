@@ -3,6 +3,7 @@ import {
   type LivestreamCard,
   MarkdownBody,
   parseSections,
+  parseSubSections,
 } from '@/lib/livestreams-ui';
 
 export function StreamRundownPanel({ cards }: { cards: LivestreamCard[] }) {
@@ -15,23 +16,44 @@ export function StreamRundownPanel({ cards }: { cards: LivestreamCard[] }) {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {cards.map(({ topic }) => {
         const sections = parseSections(topic.content).filter((section) =>
           isUsefulSection(section.title),
         );
 
-        return sections.map((section) => (
-          <article
-            key={`${topic.slug}-${section.title}`}
-            className="rounded-xl border border-surface-border bg-surface-card p-6"
-          >
-            <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-text-muted">
-              {section.title}
-            </h3>
-            <MarkdownBody body={section.body} large />
-          </article>
-        ));
+        return sections.map((section) => {
+          if (section.title.toLowerCase().startsWith('talking points')) {
+            const subSections = parseSubSections(section.body);
+            return subSections.map((sub, idx) => (
+              <article
+                key={`${topic.slug}-${section.title}-${idx}`}
+                className="overflow-hidden rounded-xl border border-surface-border bg-surface-card"
+              >
+                {sub.title && (
+                  <h3 className="sticky top-0 z-10 border-b border-surface-border bg-surface-card px-6 py-3 text-sm font-semibold uppercase tracking-widest text-text-muted">
+                    {sub.title}
+                  </h3>
+                )}
+                <div className="p-6">
+                  <MarkdownBody body={sub.body} large />
+                </div>
+              </article>
+            ));
+          }
+
+          return (
+            <article
+              key={`${topic.slug}-${section.title}`}
+              className="rounded-xl border border-surface-border bg-surface-card p-6"
+            >
+              <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-text-muted">
+                {section.title}
+              </h3>
+              <MarkdownBody body={section.body} large />
+            </article>
+          );
+        });
       })}
     </div>
   );

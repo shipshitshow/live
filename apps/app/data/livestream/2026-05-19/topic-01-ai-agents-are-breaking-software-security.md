@@ -19,6 +19,18 @@ thumbnail_prompt: null
 - Bigger thesis: smart AI makes vulnerability discovery cheap, fast, and scalable
 - Angle: the new attack surface is not just production. It is the developer workflow: repo, agent, package manager, CI, secrets, browser, and deployment permissions.
 
+## Cold Open - READ THIS
+
+> "This is not a future risk. It is happening right now."
+>
+> "Today, May 19, Socket says an active supply-chain attack compromised hundreds of npm packages tied to AntV and the `atool` maintainer account. SafeDep says the attacker pushed 631 malicious versions across 314 packages in a 22-minute automated burst. Socket says it saw 639 compromised versions across 323 packages in tonight's Mini Shai-Hulud wave."
+>
+> "These are not toy packages. We are talking about charting, graphing, React wrappers, `echarts-for-react`, `timeago.js`, `size-sensor`, and a huge chunk of the data visualization ecosystem."
+>
+> "The payload runs at install time, steals developer and CI secrets, abuses GitHub as exfil infrastructure, and includes npm republishing logic. This is the nightmare version of `npm install`."
+>
+> "So yes: AI agents are a security risk. But the deeper story is worse. The software supply chain itself is turning into a worm surface."
+
 ## Talking Points
 
 ### Intro (0:00 – 2:00)
@@ -77,18 +89,6 @@ Operator checklist before close:
 - Require approval for package installs, CI edits, auth changes
 - Audit MCP servers like browser extensions
 - Clip line: "Autonomy without permissions design is just remote code execution with branding."
-
-## Cold Open - READ THIS
-
-> "This is not a future risk. It is happening right now."
->
-> "Today, May 19, Socket says an active supply-chain attack compromised hundreds of npm packages tied to AntV and the `atool` maintainer account. SafeDep says the attacker pushed 631 malicious versions across 314 packages in a 22-minute automated burst. Socket says it saw 639 compromised versions across 323 packages in tonight's Mini Shai-Hulud wave."
->
-> "These are not toy packages. We are talking about charting, graphing, React wrappers, `echarts-for-react`, `timeago.js`, `size-sensor`, and a huge chunk of the data visualization ecosystem."
->
-> "The payload runs at install time, steals developer and CI secrets, abuses GitHub as exfil infrastructure, and includes npm republishing logic. This is the nightmare version of `npm install`."
->
-> "So yes: AI agents are a security risk. But the deeper story is worse. The software supply chain itself is turning into a worm surface."
 
 ## Episode Thesis
 
