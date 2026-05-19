@@ -120,7 +120,10 @@ export function MarkdownBody({
   body: string;
   large?: boolean;
 }) {
-  const lines = body.split('\n').filter((line) => line.trim().length > 0);
+  const lines = body.split('\n').filter((line) => {
+    const t = line.trim();
+    return t.length > 0 && t !== '>';
+  });
   const textSize = large ? 'text-lg' : 'text-sm';
   const leading = large ? 'leading-[1.8]' : 'leading-relaxed';
 
@@ -130,6 +133,22 @@ export function MarkdownBody({
         const trimmed = line.trim();
         const bullet = trimmed.match(/^-+\s+(.+)$/);
         const quote = trimmed.match(/^>\s?(.+)$/);
+        const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+
+        if (headingMatch) {
+          const level = headingMatch[1].length;
+          const headingClass =
+            level <= 3
+              ? `text-base font-semibold ${leading} text-text-primary`
+              : level === 4
+                ? `text-sm font-semibold ${leading} text-text-secondary`
+                : `text-sm font-medium ${leading} text-text-muted`;
+          return (
+            <p key={`${index}-${trimmed}`} className={headingClass}>
+              {renderInlineMarkdown(headingMatch[2])}
+            </p>
+          );
+        }
 
         if (bullet) {
           return (

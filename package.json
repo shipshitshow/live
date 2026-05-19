@@ -2,11 +2,11 @@
   "devDependencies": {
     "@biomejs/biome": "2.4.15",
     "husky": "9.1.7",
-    "turbo": "2.9.12",
+    "turbo": "2.9.14",
     "typescript": "6.0.3"
   },
   "name": "shipshitshow",
-  "packageManager": "bun@1.3.13",
+  "packageManager": "bun@1.3.14",
   "private": true,
   "scripts": {
     "build": "turbo build",
