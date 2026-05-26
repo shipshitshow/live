@@ -42,47 +42,91 @@ Core point of view:
 
 ## Default Output Contract
 
-For topic prep, produce:
+CRITICAL: The producer dashboard (`apps/app`) filters topic sections via `isUsefulSection` in [markdown-render.tsx](apps/app/src/lib/markdown-render.tsx). Only `## ` headings starting with **summary**, **hot take**, **cold open**, **talking points**, **close**, **tweets**, or **sources** render. Any other top-level heading is dropped silently. Match the exact section names below or your prep will not show up on the dashboard.
+
+### Required top-level (`##`) section names
+
+| Section | Allowed heading forms |
+|---|---|
+| Episode thesis | `## Summary` |
+| Cold open script | `## Cold Open — Read This` (or `## Cold Open - READ THIS`) |
+| Each segment | `## Talking Points — <Segment Name>` |
+| Sources to pull up live | `## Sources — <Group Name>` |
+| Tweets to paste live | `## Tweets — Paste Live` |
+| Closing take | `## Closing Take` |
+| Hot take / debate side | `## Hot Take` |
+
+Anything else (e.g. `## Episode Thesis`, `## Segment 1 — X`, `## Demo Videos`, `## Verification Checklist`) WILL NOT RENDER. Either rename to a useful section or accept it stays prep-only metadata.
+
+### Sub-section (`###`) format inside each `## Talking Points — X`
+
+Each segment card splits sub-sections on `### ` headings (via `parseSubSections`). Use exactly these three:
 
 ```markdown
-## Cold Open - READ THIS
+## Talking Points — <Segment Name>
 
-> "60-120 spoken words."
-
-## Segment Thesis
+### Segment Thesis
 
 One sentence that says what this segment proves.
 
-## Talking Points
+### Talking Points
 
-- Claim:
-- Receipt:
-- Why it matters:
-- Operator take:
-- Clip line:
-- Transition:
+- **Claim:** …
+- **Receipt:** …
+  - [Source link](https://…)
+- **Why it matters:** …
+- **Operator take:** …
+- **Clip line:** …
+- **Transition:** …
 
-## Host Notes
+### Host Notes
 
 - Push on:
 - Avoid:
 - Pull up:
 ```
 
-For a full episode, produce:
+### Full episode skeleton
 
 ```markdown
-## Episode Thesis
+## Livestream Notes
 
-## Cold Open - READ THIS
+- Title: **[LIVE] …**
+- [YouTube livestream](https://…)
+- [Restream studio](https://…)
+- Format / angle notes
 
-## Segment 1 - [Name]
+## Cold Open — Read This
 
-## Segment 2 - [Name]
+> "60-120 spoken words."
 
-## Segment 3 - [Name]
+## Summary
+
+One-paragraph episode thesis.
+
+## Talking Points — <Segment 1 Name>
+
+### Segment Thesis
+### Talking Points
+### Host Notes
+
+## Talking Points — <Segment 2 Name>
+
+### Segment Thesis
+### Talking Points
+### Host Notes
+
+## Talking Points — <Segment 3 Name>
+
+### Segment Thesis
+### Talking Points
+### Host Notes
 
 ## Closing Take
+
+## Sources — <Group Name>
+
+## Tweets — Paste Live
 ```
 
 ## Hook Formula
@@ -126,6 +170,7 @@ Before finalizing:
 - There is at least one clip line per segment.
 - The output sounds like two builders who actually use the tools, not a news recap.
 - The episode passes the minimum publish gate in `references/content-quality-gate.md`.
+- **Dashboard render check:** Every `## ` heading starts with one of `Summary`, `Cold Open`, `Talking Points —`, `Sources —`, `Tweets`, `Hot Take`, or `Closing`. Anything else will be filtered out by `isUsefulSection` and never appear in the producer UI. Cross-check by skimming a prior topic file (e.g. `apps/app/data/livestream/2026-05-12/topic-01-html-new-markdown.md`) — copy its header structure, do not invent new top-level names.
 
 After changing this skill, run:
 

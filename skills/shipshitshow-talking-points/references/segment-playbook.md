@@ -67,20 +67,22 @@ Weak talking points:
 
 ## Segment Naming
 
-Prefer names that contain a claim:
+Heading format is **locked**: every segment heading must be `## Talking Points — <Segment Name>`. Anything else (e.g. `## Segment 1 — X`, `## The Bench Run`) is filtered out by the dashboard's `isUsefulSection` and will not render. See SKILL.md "Default Output Contract" for the full list of allowed `## ` prefixes.
 
-- `GitHub Is Just The Input Queue`
-- `The Wrapper Is Dying`
-- `The Bill Picks The Model`
-- `Security Is The First Real AI Labor Market`
-- `Open Source Has A Spam Problem, Not An AI Problem`
+Prefer segment names that contain a claim:
+
+- `## Talking Points — GitHub Is Just The Input Queue`
+- `## Talking Points — The Wrapper Is Dying`
+- `## Talking Points — The Bill Picks The Model`
+- `## Talking Points — Security Is The First Real AI Labor Market`
+- `## Talking Points — Open Source Has A Spam Problem, Not An AI Problem`
 
 Avoid names that only label a topic:
 
-- `GitHub`
-- `Model Benchmarks`
-- `AI Images`
-- `Open Source`
+- `## Talking Points — GitHub`
+- `## Talking Points — Model Benchmarks`
+- `## Talking Points — AI Images`
+- `## Talking Points — Open Source`
 
 ## Transitions
 
