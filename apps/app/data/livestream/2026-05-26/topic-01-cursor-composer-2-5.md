@@ -24,11 +24,11 @@ thumbnail_prompt: null
 
 > "Everyone thinks Cursor is yesterday's IDE. Composer 2.5 just scored 79.8 on SWE-Bench Multilingual — 0.7 points behind Opus 4.7 at one-tenth the price. Artificial Analysis independently ranked it third in the world. The base model? Moonshot Kimi K2.5. An open-weight Chinese model. I don't even use Cursor. But if a fine-tuned Kimi is beating Anthropic and OpenAI per dollar, every harness on your machine is about to get cheaper or die. Today: real benchmarks, real receipts, what this changes for the rest of us."
 
-## Episode Thesis
+## Summary
 
 Composer 2.5 is the first credible proof that a fine-tuned open-weight base can hit closed-lab coding performance at a tenth of the price. The story is not Cursor vs Claude Code — it is the cost floor under every coding agent collapsing.
 
-## Segment 1 — The Bench Run
+## Talking Points — The Bench Run
 
 ### Segment Thesis
 
@@ -54,7 +54,7 @@ Composer 2.5 is not a hype model. The benchmarks are real, near-frontier, and in
 - Avoid: arguing benchmark methodology in detail. Cite + move on.
 - Pull up: the AA leaderboard screenshot on stream.
 
-## Segment 2 — The Bill
+## Talking Points — The Bill
 
 ### Segment Thesis
 
@@ -80,7 +80,7 @@ Frontier coding just got 10-60x cheaper per task. That is the actual story.
 - Avoid: pretending you can read the full pricing model live. Stick to AA per-task numbers.
 - Pull up: pricing screenshot from AA + Cursor blog.
 
-## Segment 3 — The Supply Chain Shift
+## Talking Points — The Supply Chain Shift
 
 ### Segment Thesis
 
@@ -105,7 +105,7 @@ The base model is Moonshot Kimi K2.5. An open-weight Chinese model just became t
 - Avoid: geopolitical framing. Stay technical/economic.
 - Pull up: Moonshot Kimi K2.5 model card if accessible.
 
-## Segment 4 — User Receipts (Reddit + X reactions)
+## Talking Points — User Receipts
 
 ### Segment Thesis
 
@@ -139,14 +139,14 @@ The on-the-ground reaction is "new default" for most. Not all. The split is info
 
 > "I don't use Cursor. After this week, I'm thinking about it — not because the IDE matters, but because Composer 2.5 just reset the cost floor for every coding agent on the planet. Claude Code, Codex, Warp — every one of them now competes against a $0.07/task open-weight fine-tune that lands top-3 on independent benchmarks. The right response is not to switch tools. It is to route harder. Use Composer-grade economics for the 80% that's well-scoped. Spend Opus tokens only where taste and long context actually matter. That's the show. Subscribe if you want the receipts before the headlines."
 
-## Demo Videos to React To
+## Sources — Demo Videos
 
 - [WorldofAI — full test, "On par with Opus 4.7 + GPT 5.5"](https://www.youtube.com/watch?v=1ANj1A8Ecic) — 14k views, biggest reaction video
 - [AI Coding Daily — updated LLM benchmark on Composer 2.5](https://www.youtube.com/watch?v=f7PGu8u-pvU) — most credible independent reviewer
 - [Awesome Agents — "Rivals Claude for a tenth the cost"](https://www.youtube.com/watch?v=P-c9IeIcLms) — raises training-disclosure scrutiny
 - [AI Coding Daily — Plan with Opus, build with Composer 2.5](https://www.youtube.com/watch?v=SYJadIs0A_0) — hybrid routing thesis, matches our take
 
-## Long-Form Source Articles
+## Sources — Long-Form Articles
 
 - [Cursor blog: Introducing Composer 2.5](https://cursor.com/blog/composer-2-5) — primary source
 - [The New Stack: Cursor bets on cheaper coding with Composer 2.5 and Kimi K2.5](https://thenewstack.io/cursor-composer-benchmarks/) — analyst framing
