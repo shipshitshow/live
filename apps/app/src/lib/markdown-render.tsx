@@ -51,6 +51,7 @@ export function isUsefulSection(title: string): boolean {
     normalized.startsWith('cold open') ||
     normalized.startsWith('talking points') ||
     normalized.startsWith('close') ||
+    normalized.startsWith('closing') ||
     normalized.startsWith('tweets') ||
     normalized.startsWith('sources')
   );

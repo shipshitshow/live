@@ -5,16 +5,18 @@ description: Build Ship Shit Show brand voice, hooks, episode segments, talking 
 
 # Ship Shit Show Talking Points
 
-Use this skill to turn AI/dev-tool research into host-ready Ship Shit Show segments.
+Use this skill to turn AI/dev-tool research into host-ready Ship Shit Show segments that sound like Vincent live, not like vendor-analysis markdown.
 
 ## Quick Start
 
 1. Load the current topic file, usually `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`.
 2. Run `scripts/show-context.sh <topic-file>` from this skill to inspect transcript coverage and nearby prep.
-3. Read `references/brand-voice.md` when the task involves tone, brand, cold opens, or rewrites.
-4. Read `references/segment-playbook.md` when building an episode arc, segment order, transitions, or talking points.
-5. Read `references/content-quality-gate.md` when judging whether a transcript, topic, or episode is worth publishing.
-6. Write output in paste-ready markdown, preserving existing topic frontmatter and source URLs.
+3. Run `scripts/extract-live-voice.sh` to sample recent transcript lines before writing tone-sensitive sections.
+4. Read `references/live-voice-extraction.md` when the user asks for Vincent's voice, less robotic copy, better talking points, or more natural live phrasing.
+5. Read `references/brand-voice.md` when the task involves tone, brand, cold opens, or rewrites.
+6. Read `references/segment-playbook.md` when building an episode arc, segment order, transitions, or talking points.
+7. Read `references/content-quality-gate.md` when judging whether a transcript, topic, or episode is worth publishing.
+8. Write output in paste-ready markdown, preserving existing topic frontmatter and source URLs.
 
 ## Source Priority
 
@@ -60,7 +62,7 @@ Anything else (e.g. `## Episode Thesis`, `## Segment 1 — X`, `## Demo Videos`,
 
 ### Sub-section (`###`) format inside each `## Talking Points — X`
 
-Each segment card splits sub-sections on `### ` headings (via `parseSubSections`). Use exactly these three:
+Each segment card splits sub-sections on `### ` headings (via `parseSubSections`). Use these three headings. Keep `Claim / Receipt / Operator take` as mental scaffolding, but do not force those labels into every visible bullet when they make the prep sound robotic.
 
 ```markdown
 ## Talking Points — <Segment Name>
@@ -71,19 +73,17 @@ One sentence that says what this segment proves.
 
 ### Talking Points
 
-- **Claim:** …
-- **Receipt:** …
-  - [Source link](https://…)
-- **Why it matters:** …
-- **Operator take:** …
-- **Clip line:** …
-- **Transition:** …
+- Start with the uncomfortable version of the take.
+- Put the receipt next: number, date, link, screenshot, bill, demo result.
+- Say what changed in the workflow.
+- Say what Vincent would do with it tomorrow.
+- End with one clip line and a transition.
 
 ### Host Notes
 
-- Push on:
-- Avoid:
+- Ask Mitchell:
 - Pull up:
+- Don't pretend:
 ```
 
 ### Full episode skeleton
@@ -158,6 +158,9 @@ Let's go.
 - Prefer hard nouns over hype adjectives: bill, queue, harness, PR, outage, benchmark, token, agent, margin.
 - Use swearing rarely and only when it releases real tension.
 - Keep the French/Dutch/European roughness as rhythm, but remove filler that blocks the point.
+- Do a final Vincent voice pass: shorter sentences, more "okay, so", more "what are you doing?", more "it works until it doesn't", fewer polished consulting phrases.
+- Keep `Claim / Receipt / Operator take` as backstage structure, but write the actual bullets like host notes Vincent can riff from.
+- If a line sounds like a SaaS blog, rewrite it from the live-host point of view: "I tried this", "the bill hits", "the loop failed", "you can't trust that yet".
 - Write for live viewers and replay viewers at the same time.
 
 ## Verification

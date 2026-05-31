@@ -7,7 +7,13 @@ date: "2026-05-26"
 thumbnail_prompt: null
 ---
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
 
 - Title: **[LIVE] Cursor is a frontier lab now — Composer 2.5 receipt run**
 - [YouTube livestream](https://www.youtube.com/watch?v=QoQjddWCnKA)
@@ -19,6 +25,12 @@ thumbnail_prompt: null
 - Independent rank: 3rd on Artificial Analysis Coding Agent Index.
 - Operator angle: if a Kimi fine-tune beats closed labs per dollar, every harness on your machine adjusts or dies.
 - Pair with Microsoft cutting Claude Code internally over token bills (May 23-25). Same week. Not a coincidence.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Cold Open - READ THIS
 
@@ -157,7 +169,13 @@ The on-the-ground reaction is "new default" for most. Not all. The split is info
 - [Artificial Analysis full article on the Coding Agent Index](https://artificialanalysis.ai/articles/cursor-composer-2-5-coding-agent-index)
 - [Artificial Analysis on X: rank announcement](https://x.com/ArtificialAnlys/status/2057277363789197561)
 
-## Verification Checklist
+## Talking Points — Verification Checklist
+
+### Segment Thesis
+
+Okay, so this segment is about Verification Checklist.
+
+### Talking Points
 
 - [x] Topic named in first 10 seconds (cold open)
 - [x] One receipt + one stake in cold open (79.8 SWE-Bench + cost floor reset)
@@ -166,3 +184,9 @@ The on-the-ground reaction is "new default" for most. Not all. The split is info
 - [x] Outsider POV preserved — "I don't use Cursor"
 - [x] Negative receipts included for balance
 - [x] All sources linked with URLs
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

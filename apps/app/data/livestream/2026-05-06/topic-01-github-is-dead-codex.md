@@ -7,9 +7,22 @@ date: "2026-05-06"
 thumbnail_prompt: null
 ---
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
+
 - [YouTube livestream](https://www.youtube.com/watch?v=11UOZiFBTRM)
 - [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Cold Open — READ THIS
 
@@ -38,6 +51,12 @@ The Great Rewrite isn't coming. It started."
 GitHub's April 2026 reliability collapse — 85% uptime, silent PR reversions, Copilot agent 97.5% failure rate — exposes the real problem: Microsoft absorbed GitHub, removed all independent leadership, and gave nobody the wheel. Meanwhile OpenAI's Codex (now GPT-5.5 powered) already solves real GitHub issues end-to-end autonomously and runs as a third-party agent inside GitHub itself. The episode argues every pre-AI legacy platform — GitHub, Salesforce, Oracle, COBOL — is now undiscovered bug reports that AI can read and rewrite. The Great Rewrite already started. GitHub is just the first domino developers can see.
 
 ## Talking Points — Segment 1: GitHub Is Dead
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 1: GitHub Is Dead.
+
+### Talking Points
 
 - No CEO since Aug 2025. No replacement.
 - Absorbed into Microsoft CoreAI under Julia Liuson.
@@ -69,11 +88,23 @@ GitHub's April 2026 reliability collapse — 85% uptime, silent PR reversions, C
 - Hashimoto blog (Ghostty leaving): https://mitchellh.com/writing/ghostty-leaving-github
 - Dohmke departure: https://www.axios.com/2025/08/11/github-ceo-dohmke-step-down
 
-### → TRANSITION: Reliability → Integrity
+#### → TRANSITION: Reliability → Integrity
 
 "So GitHub can't keep your code safe. Merge queue silently reverts your work. But here's the thing — it's not just the infrastructure that's broken. The trust layer is broken too. Let me show you what I mean."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Segment 1B: GitHub Stars Are Fraud
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 1B: GitHub Stars Are Fraud.
+
+### Talking Points
 
 - People spend millions buying fake GitHub stars to raise VC money.
 - CMU study: 6 million fake stars across 18,617 repos using 301,000 bot accounts.
@@ -86,11 +117,23 @@ GitHub's April 2026 reliability collapse — 85% uptime, silent PR reversions, C
 **YouTube reaction:**
 - "Why people spend millions on Github stars" https://www.youtube.com/watch?v=P6u0K3-z2p4
 
-### → TRANSITION: Broken Platform → What Replaces It
+#### → TRANSITION: Broken Platform → What Replaces It
 
 "So reliability is gone. Integrity is gone. Stars are fake, commits get reverted, Copilot fails 97% of the time. Now — what actually works? What's replacing this? Because something already is."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Segment 2: Codex Rebuilds It
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 2: Codex Rebuilds It.
+
+### Talking Points
 
 - GPT-5.5 dropped April 24. Powers Codex now.
 - 82.7% Terminal-Bench. 58.6% SWE-Bench Pro. Best ever recorded.
@@ -108,11 +151,23 @@ GitHub's April 2026 reliability collapse — 85% uptime, silent PR reversions, C
 - GPT-5.5: https://openai.com/index/introducing-gpt-5-5/
 - Codex upgrades: https://openai.com/index/introducing-upgrades-to-codex/
 
-### → TRANSITION: Codex → Linear Proves the Thesis
+#### → TRANSITION: Codex → Linear Proves the Thesis
 
 "And it's not just OpenAI saying this. The tools AROUND GitHub already know what's happening. Linear just published something wild. Pull this up."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Segment 2B: Linear Said the Quiet Part Out Loud
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 2B: Linear Said the Quiet Part Out Loud.
+
+### Talking Points
 
 - Linear published "Next" — their vision for what comes after issue tracking. https://linear.app/next
 - Their thesis: traditional issue tracking was designed for handoffs between humans. That model is dead.
@@ -125,11 +180,23 @@ GitHub's April 2026 reliability collapse — 85% uptime, silent PR reversions, C
 **Pull up on stream:**
 - Linear Next announcement: https://linear.app/next
 
-### → TRANSITION: Individual Tools → Systemic Collapse
+#### → TRANSITION: Individual Tools → Systemic Collapse
 
 "So GitHub is broken. Codex is replacing its core function. Linear is pivoting to agent orchestration. But zoom out. This isn't just GitHub. This is happening to EVERY legacy software platform simultaneously. And the market already priced it in."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Segment 3: Everything Gets Rebuilt
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 3: Everything Gets Rebuilt.
+
+### Talking Points
 
 - $2T SaaS market cap evaporated in 30 days (Jan-Feb 2026). Salesforce, ServiceNow, SAP down 40-50%.
 - Naval Ravikant: "Pure software is uninvestable." SaaSpocalypse.
@@ -154,9 +221,15 @@ GitHub's April 2026 reliability collapse — 85% uptime, silent PR reversions, C
 - "SaaS Is Dead? AI Just Wiped $1 Trillion From Software Giants" https://www.youtube.com/watch?v=0j1QdcFTU7s
 - Phong Le (Strategy CEO): "Why SaaS is Dead — AI's Takeover" keynote https://www.youtube.com/watch?v=tJNNhS_ThdU
 
-### → TRANSITION: To Close
+#### → TRANSITION: To Close
 
 "So let's land this. GitHub is broken at every layer. The tool replacing it was funded by the same company that broke it. And this pattern — legacy platform hollowed out by AI agents — is happening to every SaaS company on Earth simultaneously. Two trillion dollars says the market agrees."
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Tweets — Paste Live
 

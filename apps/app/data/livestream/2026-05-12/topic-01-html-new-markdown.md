@@ -7,13 +7,26 @@ date: "2026-05-12"
 thumbnail_prompt: null
 ---
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
+
 - Title: **[LIVE] Stop Planning With Markdown. HTML Is Better.**
 - [YouTube livestream](https://youtube.com/live/vI0VlQ5lULo)
 - [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
 - Format: talk + live build
 - Build: GitHub Repo Roaster — paste any public repo URL, Claude reads it, outputs brutal HTML roast report
 - Key moment: side-by-side markdown blob vs opening HTML in browser live
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Cold Open — Read This
 
@@ -49,7 +62,7 @@ thumbnail_prompt: null
 - https://x.com/mattpocockuk/status/2053065993241477227
 - > *"This is super neat and I'll be trying this immediately"*
 
-## YouTube Reactions — Pull Up
+## Sources — YouTube Reactions — Pull Up
 
 - [RoboNuggets — "Is HTML the New Markdown?" (4.8K views, May 11)](https://www.youtube.com/watch?v=BZzmBRYC_4s) — 4 levels of HTML usage with Claude Code, good visual reference
 - [Deepify AI — "Is HTML the new markdown for AI output?" (1K views, May 10)](https://www.youtube.com/watch?v=IOpAJPb9Wqo)
@@ -57,12 +70,30 @@ thumbnail_prompt: null
 
 ## Talking Points — The History (5 min)
 
+### Segment Thesis
+
+Okay, so this segment is about The History (5 min).
+
+### Talking Points
+
 - Markdown became default AI output format during GPT-4 era — tiny context windows, every token counted
 - Made sense then. 8K context. Minimize tokens. Markdown was efficient.
 - Context windows are now 1 million tokens. Agents are powerful. Markdown is a bottleneck.
 - Nobody updated the default. Everyone kept generating markdown blobs.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Why HTML Wins
+
+### Segment Thesis
+
+Okay, so this segment is about Why HTML Wins.
+
+### Talking Points
 
 - **Information density** — HTML packs tables, SVG, CSS, JavaScript, images, interactions into one file
 - **Readability** — past 100 lines, markdown is effectively unreadable. HTML stays navigable.
@@ -70,16 +101,52 @@ thumbnail_prompt: null
 - **Two-way interaction** — HTML supports sliders, toggles, copy buttons, editors that pipe back to the agent
 - **Joy factor** — reading well-crafted HTML is a different experience. Markdown brackets are noise.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Key Quote
+
+### Segment Thesis
+
+Okay, so this segment is about Key Quote.
+
+### Talking Points
 
 > *"There is almost no set of information that Claude can read that you cannot fairly efficiently represent with HTML. This makes it a highly efficient way for the model to communicate in-depth information to you and for you to review."*
 > — Thariq Shihipar, Anthropic
 
-## The Prompt — Show Live
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — The Prompt — Show Live
+
+### Segment Thesis
+
+Okay, so this segment is about The Prompt — Show Live.
+
+### Talking Points
 
 > Output HTML, neatly styled and using capabilities of HTML and CSS and JavaScript to make the explanation rich and interactive and as clear as possible.
 
-## Thariq's 20 Examples — Show These
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Thariq's 20 Examples — Show These
+
+### Segment Thesis
+
+Okay, so this segment is about Thariq's 20 Examples — Show These.
+
+### Talking Points
 
 Live at https://thariqs.github.io/html-effectiveness/ — pull up the most impressive:
 - `03-code-review-pr.html` — annotated PR diff, color-coded by severity
@@ -88,7 +155,19 @@ Live at https://thariqs.github.io/html-effectiveness/ — pull up the most impre
 - `18-editor-triage-board.html` — drag-and-drop ticket organizer
 - `15-research-concept-explainer.html` — interactive concept teaching with live ring
 
-## The Live Build — GitHub Repo Roaster
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — The Live Build — GitHub Repo Roaster
+
+### Segment Thesis
+
+Okay, so this segment is about The Live Build — GitHub Repo Roaster.
+
+### Talking Points
 
 - Paste any public GitHub repo URL
 - Claude reads the code
@@ -111,9 +190,27 @@ Live at https://thariqs.github.io/html-effectiveness/ — pull up the most impre
 **Step 5 — Open chat**
 - Take 3–5 submissions from chat. Roast live.
 
-## The Build Prompt
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — The Build Prompt
+
+### Segment Thesis
+
+Okay, so this segment is about The Build Prompt.
+
+### Talking Points
 
 > Build a GitHub repo roaster. Given a public GitHub repo URL: fetch the repo structure and key files using the GitHub API, analyze the code for naming crimes, architectural disasters, copy-paste evidence, dead code, security issues, unnecessary complexity, then output a single self-contained HTML file with a shame score (0–100), hall of shame (worst 5 offenders with code snippets), color-coded crime categories, "What were they thinking?" section with specific quotes from the code, and a shareable styled report that opens in any browser. Output your implementation plan as HTML first, then build it.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Closing Take
 
@@ -133,10 +230,22 @@ Live at https://thariqs.github.io/html-effectiveness/ — pull up the most impre
 
 > [repo name] just got roasted by Claude. HTML report. Shame score: [X]/100. Share this.
 
-## Host Notes
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on: the browser open moment. Let it breathe. Let audience react.
 - Avoid: don't over-explain HTML. Everyone knows what a browser is.
 - Pull up: Thariq's 20 examples BEFORE the build — sets expectations.
 - If build breaks: roast the broken code live. That's content too.
 - Keep chat open for repo submissions from first mention.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

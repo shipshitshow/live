@@ -8,9 +8,17 @@ thumbnail_prompt: null
 ---
 
 ## Summary
+
 Claude Design is worth covering tonight because it makes the design-to-code loop a developer story, not just a designer story. The strongest version of the stream is: start from Anthropic's official announcement, use Theo's best workflow observations as framing, then show your existing `genfeed.ai` and `shipcode` templates as proof that the real value is not blank-canvas generation. It is faster iteration, better feedback loops, and a cleaner handoff into code. The conclusion should not be that Figma is dead. It should be that the blank-canvas moat is weaker, especially for dev-led teams with strong product context already in hand.
 
-## Show Structure — 60 Minutes
+## Talking Points — Show Structure — 60 Minutes
+
+### Segment Thesis
+
+Okay, so this segment is about Show Structure — 60 Minutes.
+
+### Talking Points
+
 - `00:00-08:00` Open on the official announcement.
   - Play Anthropic's launch video.
   - Open the official launch page.
@@ -36,7 +44,20 @@ Claude Design is worth covering tonight because it makes the design-to-code loop
   - Figma is not done.
   - But dev-first teams now have a much better way to skip slow mockup loops and go from concept to implementation faster.
 
-## Introduction — Start With The Anthropic Announcement
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Introduction — Start With The Anthropic Announcement
+
+### Segment Thesis
+
+Okay, so this segment is about Introduction — Start With The Anthropic Announcement.
+
+### Talking Points
+
 - Open with the official launch video:
   - [YouTube: Introducing Claude Design by Anthropic Labs](https://www.youtube.com/watch?v=t_LBECIQQqs)
 - Then open the official announcement page:
@@ -51,7 +72,20 @@ Claude Design is worth covering tonight because it makes the design-to-code loop
 - Best opener:
   - **Anthropic is saying the chat box is no longer enough. They want the same model to help with design direction, revision, and code handoff in one loop.**
 
-## Theo Talking Points To Use
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Theo Talking Points To Use
+
+### Segment Thesis
+
+Okay, so this segment is about Theo Talking Points To Use.
+
+### Talking Points
+
 - [YouTube: Theo - t3.gg — Did Anthropic just kill Figma?](https://www.youtube.com/watch?v=wDgq9aiuL-w)
 - Theo's most useful points for this show are not the title bait. They are the workflow observations.
 - Use these beats:
@@ -64,7 +98,20 @@ Claude Design is worth covering tonight because it makes the design-to-code loop
 - Best Theo-style pivot line:
   - **The interesting question is not whether Claude Design beats Figma at being a design tool. It is whether it helps a dev team choose better UI directions and get to code faster.**
 
-## Demo Angle — Use Your Existing Templates
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Demo Angle — Use Your Existing Templates
+
+### Segment Thesis
+
+Okay, so this segment is about Demo Angle — Use Your Existing Templates.
+
+### Talking Points
+
 - Do not let the live demo become "AI makes a generic landing page."
 - Your advantage is that you already built templates for `genfeed.ai` and `shipcode`.
 - That changes the story:
@@ -76,7 +123,20 @@ Claude Design is worth covering tonight because it makes the design-to-code loop
 - Another good line:
   - **Blank-page generation is the weakest demo. Starting from a real product direction is the strongest demo.**
 
-## Demo 1 — `genfeed.ai`
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Demo 1 — `genfeed.ai`
+
+### Segment Thesis
+
+Okay, so this segment is about Demo 1 — `genfeed.ai`.
+
+### Talking Points
+
 - What to emphasize:
   - information density
   - creator workflow clarity
@@ -106,7 +166,20 @@ Avoid generic SaaS gradients and soft startup visuals.
 This should feel sharp, technical, and built for creators running a serious content operation.
 ```
 
-## Demo 2 — `shipcode`
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Demo 2 — `shipcode`
+
+### Segment Thesis
+
+Okay, so this segment is about Demo 2 — `shipcode`.
+
+### Talking Points
+
 - What to emphasize:
   - dev-first aesthetics
   - stronger positioning
@@ -134,7 +207,14 @@ Do not give me generic startup design.
 Make it feel like a product made by and for serious developers.
 ```
 
-## X Timeline To Pull Up Live
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Sources — X Timeline To Pull Up Live
+
 - [X: @claudeai official Claude Design launch post](https://x.com/claudeai/status/2045156267690213649)
   - Use this as the clean intro to the announcement.
 - [X: @canva on Claude Design to Canva workflow](https://x.com/canva/status/2045163029138948493)
@@ -144,7 +224,14 @@ Make it feel like a product made by and for serious developers.
 - [X: Ryan Mather tips thread on Claude Design](https://x.com/Flomerboy/status/2045162321589252458)
   - Useful if you want a timeline post that reads like operator advice instead of hype.
 
-## Core Argument To Repeat Throughout
+## Talking Points — Core Argument To Repeat Throughout
+
+### Segment Thesis
+
+Okay, so this segment is about Core Argument To Repeat Throughout.
+
+### Talking Points
+
 - Claude Design matters if it shortens the path from:
   - rough idea
   - to visual direction
@@ -155,5 +242,12 @@ Make it feel like a product made by and for serious developers.
 - The big claim is:
   - **dev-led teams can now do much more serious pre-code exploration without leaving the model ecosystem**
 
-## Conclusion
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Closing Take
+
 Claude Design does not kill Figma tonight. Figma still wins where teams need deep collaboration, mature systems work, and precision design tooling. But the old blank-canvas moat is weaker now. For dev-led products like `genfeed.ai` and `shipcode`, especially when the taste and template direction already exist, Claude Design looks more like a design-to-code accelerator than a toy. That is the better ending for the stream: not "Figma is dead," but "the slowest part of product iteration just got attacked."

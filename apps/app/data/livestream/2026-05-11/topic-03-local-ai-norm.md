@@ -20,6 +20,12 @@ Biggest HN thread today. Privacy/sovereignty angle for AI tools. Running LLMs lo
 
 ## Talking Points
 
+### Segment Thesis
+
+Okay, so this is the useful part of the topic.
+
+### Talking Points
+
 - Claim: The developer community is loudly demanding local-first AI.
 - Receipt: 1,725 points. 683 comments. Biggest thread on HN today after hardware attestation.
 - Four Chinese labs dropped open-weight coding models in 12 days: DeepSeek V4, Kimi K2.6, MiniMax M2.7, GLM-5.1. All competitive.
@@ -29,8 +35,26 @@ Biggest HN thread today. Privacy/sovereignty angle for AI tools. Running LLMs lo
 - Clip line: "1,725 developers said local AI needs to be the norm. Four Chinese labs just made it possible. Your move, Anthropic."
 - Transition: "Speaking of what things cost..."
 
-## Host Notes
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on: Real tradeoff — local models are worse but private. Cloud models are better but you're sending everything.
 - Avoid: Don't pretend local is ready to replace Claude Code for serious work. Be honest.
 - Pull up: The HN thread, open-weight model benchmarks if available.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

@@ -7,7 +7,7 @@ date: "2026-04-07"
 thumbnail_prompt: null
 ---
 
-## Source
+## Sources — Source
 
 - [Reddit](https://i.redd.it/i52pbmo3bttg1.png) — 60 points, 31 comments
 
@@ -15,4 +15,18 @@ thumbnail_prompt: null
 
 Opus 5 is Coming
 
-## Generated Content
+## Talking Points — Generated Content
+
+### Segment Thesis
+
+Okay, so this segment is about Generated Content.
+
+### Talking Points
+
+- Add the useful live talking points here.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

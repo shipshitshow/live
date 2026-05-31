@@ -7,7 +7,13 @@ date: "2026-05-19"
 thumbnail_prompt: null
 ---
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
 
 - Title: **[LIVE] NPM is broken**
 - [YouTube livestream](https://www.youtube.com/watch?v=PuIJaW_YRdg)
@@ -18,6 +24,12 @@ thumbnail_prompt: null
 - Second story: Next.js/React security release cycle and React Server Components complexity
 - Bigger thesis: smart AI makes vulnerability discovery cheap, fast, and scalable
 - Angle: the new attack surface is not just production. It is the developer workflow: repo, agent, package manager, CI, secrets, browser, and deployment permissions.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Cold Open - READ THIS
 
@@ -33,22 +45,28 @@ thumbnail_prompt: null
 
 ## Talking Points
 
-### Intro (0:00 – 2:00)
+### Segment Thesis
+
+Okay, so this is the useful part of the topic.
+
+### Talking Points
+
+#### Intro (0:00 – 2:00)
 Cold open script. Hook: active npm supply-chain attack happening right now, today. Set thesis: the attack surface is not just production — it is the developer workflow.
 
-### Segment 1 — AntV: This Is Happening Right Now (~5 min)
+#### Segment 1 — AntV: This Is Happening Right Now (~5 min)
 - 631 malicious package versions across 314 packages in 22 minutes
 - Charting, graphing, React wrappers, `echarts-for-react`, `timeago.js` — normal product dashboard deps
 - Payload runs at install: steals GitHub tokens, npm tokens, AWS creds, CI secrets
 - Clip line: "The most dangerous command in software right now might be `npm install`."
 
-### Segment 2 — The Payload Is a Worm, Not Just Malware (~5 min)
+#### Segment 2 — The Payload Is a Worm, Not Just Malware (~5 min)
 - Not stealing your app. Stealing your ability to publish the next app.
 - CI is the jackpot: npm identity, GitHub token, cloud creds, deploy targets in one place
 - SafeDep: Claude Code hooks, Codex session hooks, VS Code `runOn: folderOpen` = persistence paths
 - Clip line: "Your AI agent has startup scripts now. Attackers noticed."
 
-### Segment 3 — Mitchell: The Future of AI + Security (~10 min)
+#### Segment 3 — Mitchell: The Future of AI + Security (~10 min)
 Discussion with Mitchell. Pick from:
 - Is npm just too broken to fix, or do we deserve this?
 - Your AI agent has more system access than your employees. Is that insane or just Tuesday?
@@ -57,7 +75,7 @@ Discussion with Mitchell. Pick from:
 - At 6-minute detection windows, is human incident response already obsolete?
 - Will AI security tools make junior devs safer — or give senior attackers superpowers?
 
-### Segment 4 — npm Alternatives: Is There a Way Out? (~5 min)
+#### Segment 4 — npm Alternatives: Is There a Way Out? (~5 min)
 **Registries:**
 - **JSR** (jsr.io) — Deno's registry, TypeScript-native, no install scripts, provenance built-in. Strongest security story right now.
 - **Private mirrors** (Verdaccio, GitHub Packages, AWS CodeArtifact) — audit before serving, lock what's allowed in
@@ -71,18 +89,18 @@ Discussion with Mitchell. Pick from:
 
 **Stream angle:** JSR vs npm is the generational bet — do we rebuild with security-first design, or keep patching a 15-year-old trust model?
 
-### Segment 5 — Last Week: TanStack + React/Next.js Complexity (~5 min)
+#### Segment 5 — Last Week: TanStack + React/Next.js Complexity (~5 min)
 - TanStack postmortem + OpenAI official response
 - PrimeTime's Next.js CVE cluster: DoS, middleware bypass, SSRF, cache poisoning
 - React Server Components parsing bug: unauthenticated payload → CPU spin / stack overflow
 - Clip line: "React stopped being the V in MVC and became an attack surface."
 
-### Segment 6 — Personal Takes (~5 min)
+#### Segment 6 — Personal Takes (~5 min)
 - "The boring stack is about to have a comeback because boring is auditable."
 - "Ship fast, but make every failure small."
 - "The model is not the product. The harness is. And the harness is now your security model."
 
-### Outro + CTA (last 2 min)
+#### Outro + CTA (last 2 min)
 Operator checklist before close:
 - Lock dep versions, block `preinstall` scripts
 - Sandbox agent terminal, keep secrets out of agent-visible files
@@ -90,11 +108,23 @@ Operator checklist before close:
 - Audit MCP servers like browser extensions
 - Clip line: "Autonomy without permissions design is just remote code execution with branding."
 
-## Episode Thesis
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Summary
 
 AI agents are turning the software supply chain into one connected attack surface, and smart AI makes every messy codebase easier to inspect, exploit, and poison.
 
-## Breaking Story - AntV / atool Compromise
+## Talking Points — Breaking Story - AntV / atool Compromise
+
+### Segment Thesis
+
+Okay, so this segment is about Breaking Story - AntV / atool Compromise.
+
+### Talking Points
 
 - Headline: Active npm supply-chain attack compromises AntV ecosystem packages.
 - Primary source: Socket Research, May 19: https://socket.dev/blog/antv-packages-compromised
@@ -104,7 +134,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - X search for broader package names: https://x.com/search?q=%22echarts-for-react%22%20compromised%20npm&src=typed_query&f=live
 - Accounts to check live: `@SocketSecurity`, `@feross`, `@safedep`, `@AikidoSecurity`, `@StepSecurity`, `@simonw`, `@josevalim`
 
-## AntV Timeline - Read This First
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — AntV Timeline - Read This First
+
+### Segment Thesis
+
+Okay, so this segment is about AntV Timeline - Read This First.
+
+### Talking Points
 
 - **May 19, 2026, 01:39-01:56 UTC:** SafeDep says the first automated wave published roughly 317 malicious versions, including early test publishes.
 - **May 19, 2026, around 01:56 UTC:** Socket says malicious publish activity began around this time in the wave it tracked.
@@ -116,7 +158,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - **Scope by SafeDep:** `atool` npm account compromised; 631 malicious versions across 314 packages in a 22-minute automated burst.
 - **High-impact packages:** SafeDep lists `size-sensor`, `echarts-for-react`, `@antv/scale`, `timeago.js`, and hundreds of `@antv` scoped packages. Socket names `@antv/g2`, `@antv/g6`, `@antv/x6`, `@antv/l7`, `@antv/s2`, `@antv/f2`, `@antv/g`, `@antv/g2plot`, `@antv/graphin`, `@antv/data-set`, plus `echarts-for-react`, `timeago.js`, `size-sensor`, and `canvas-nest.js`.
 
-## AntV Attack Mechanics
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — AntV Attack Mechanics
+
+### Segment Thesis
+
+Okay, so this segment is about AntV Attack Mechanics.
+
+### Talking Points
 
 - Install-time execution through `preinstall`: Socket shows `"preinstall":"bun run index.js"`.
 - Obfuscated Bun/JavaScript payload.
@@ -127,7 +181,13 @@ AI agents are turning the software supply chain into one connected attack surfac
 - SafeDep adds an AI-agent-specific persistence angle: Claude Code / Codex session hooks and VS Code folder-open tasks that re-execute the payload.
 - SafeDep also calls out Docker socket escape attempts and CI persistence via a fake `Run Copilot` CodeQL workflow.
 
-## X / Social Analysis To Pull Live
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Sources — X / Social Analysis To Pull Live
 
 - **Best live searches:** `@antv Mini Shai-Hulud`, `echarts-for-react compromised`, `atool npm compromised`, `Shai-Hulud Here We Go Again`.
 - **Good analysis frame from José Valim during Axios:** prompt injection + package install is the scary bridge. If a snippet tells an agent to use a faster package and that package is malicious, the agent will comply unless the harness blocks it.
@@ -136,7 +196,13 @@ AI agents are turning the software supply chain into one connected attack surfac
 - **Good analysis frame from X dev/security chatter:** these are becoming every-week incidents. The story is no longer "one package got hacked." The story is "npm is now an execution surface."
 - **Reddit sentiment worth reading live:** "Just another Tuesday for NPM"; "the s in npm stands for security"; "this doesn't seem like CVEs, just a maintainer account got hacked"; "disable build scripts"; "every dependency you take on is supply chain risk."
 
-## Segment 1 - Breaking: AntV Is Getting Hit Right Now
+## Talking Points — Segment 1 - Breaking: AntV Is Getting Hit Right Now
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 1 - Breaking: AntV Is Getting Hit Right Now.
+
+### Talking Points
 
 - Claim: This is the opening story because it is happening today, not last week.
 - Receipt: Socket reports an active May 19 npm supply-chain attack compromising AntV-related packages; SafeDep reports 631 malicious versions across 314 packages in a 22-minute automated burst.
@@ -145,7 +211,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "The most dangerous command in software right now might be `npm install`."
 - Transition: "And the payload is not just stealing one token. It is built to turn developer machines and CI into propagation infrastructure."
 
-## Segment 2 - The Payload Is a Developer-Environment Worm
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 2 - The Payload Is a Developer-Environment Worm
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 2 - The Payload Is a Developer-Environment Worm.
+
+### Talking Points
 
 - Claim: Mini Shai-Hulud is not ordinary malware. It is shaped specifically for modern dev and CI environments.
 - Receipt: Socket and SafeDep both describe install-time execution, credential harvesting, GitHub API abuse, npm republishing logic, and CI/CD platform targeting.
@@ -154,7 +232,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "This malware does not want your app. It wants your ability to publish the next app."
 - Transition: "Now connect that to AI agents, because SafeDep says this wave also touches Claude Code, Codex, and VS Code persistence."
 
-## Segment 3 - This Is the AI-Agent Security Story
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 3 - This Is the AI-Agent Security Story
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 3 - This Is the AI-Agent Security Story.
+
+### Talking Points
 
 - Claim: The AntV attack is the cleanest proof that AI coding tools are now part of the supply-chain security boundary.
 - Receipt: SafeDep reports Claude Code and Codex session hooks, plus VS Code `runOn: folderOpen` tasks, as persistence paths in the payload.
@@ -162,6 +252,12 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Operator take: Treat `.claude`, Codex hooks, `.vscode/tasks.json`, MCP configs, and package scripts like executable code in code review.
 - Clip line: "Your AI agent has startup scripts now. Attackers noticed."
 - Transition: "Last week TanStack was the warning. Today AntV is the pattern."
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Sources - Pull These Up
 
@@ -210,7 +306,13 @@ AI agents are turning the software supply chain into one connected attack surfac
   - https://github.com/facebook/react/blob/v19.2.0/packages/react-server/src/ReactFlightReplyServer.js#L468
   - https://github.com/facebook/react/blob/v19.2.0/packages/react-server/src/ReactFlightReplyServer.js#L386
 
-## PrimeTime Transcript Notes - Pull These Into The Discussion
+## Talking Points — PrimeTime Transcript Notes - Pull These Into The Discussion
+
+### Segment Thesis
+
+Okay, so this segment is about PrimeTime Transcript Notes - Pull These Into The Discussion.
+
+### Talking Points
 
 - Prime opens with the December Next.js warning about remote code execution across many Next.js versions, then contrasts it with another forced upgrade cycle days ago.
 - The latest cluster he lists includes denial of service, repeated middleware/proxy bypasses, SSRF, XSS, cache poisoning, and more middleware bypasses.
@@ -223,7 +325,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip angle: "This is a lot of engineering just to avoid thinking about how to load your data."
 - Strong bridge to our thesis: AI agents thrive in complex abstraction stacks, but complex abstraction stacks are also where security assumptions get buried.
 
-## Segment 4 - Last Week's Warning: TanStack
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 4 - Last Week's Warning: TanStack
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 4 - Last Week's Warning: TanStack.
+
+### Talking Points
 
 - Claim: This is not theoretical AI security discourse. The npm supply chain got hit, and major AI companies had to respond.
 - Receipt: TanStack published a postmortem. OpenAI published an official response. Socket tracked the broader campaign.
@@ -232,7 +346,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "The next breach might not look like malware. It might look like a clean pull request with nice formatting."
 - Transition: "Now add AI agents to that workflow."
 
-## Segment 5 - The Agent Is the New Attack Surface
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 5 - The Agent Is the New Attack Surface
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 5 - The Agent Is the New Attack Surface.
+
+### Talking Points
 
 - Claim: The dangerous part of coding agents is not just what they write. It is what they are allowed to do.
 - Receipt: Real agents can read code, edit files, run terminal commands, install packages, open browsers, call MCP servers, and interact with cloud tools.
@@ -241,7 +367,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "Would you give an intern your `.env` file and say: ship whatever looks right?"
 - Transition: "But agents do not even need to be compromised to create problems."
 
-## Segment 6 - Helpful Agents Can Still Be Dangerous
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 6 - Helpful Agents Can Still Be Dangerous
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 6 - Helpful Agents Can Still Be Dangerous.
+
+### Talking Points
 
 - Claim: AI does not need malicious intent to weaken your security. It only needs momentum.
 - Receipt: Agents optimize for task completion. They may add dependencies, weaken validation, relax auth, disable checks, or copy insecure examples if the prompt rewards speed.
@@ -250,7 +388,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "Vibe coding turns 'it works' into a security smell."
 - Transition: "And smart AI changes the attacker side too."
 
-## Segment 7 - Framework Complexity Is Security Debt
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 7 - Framework Complexity Is Security Debt
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 7 - Framework Complexity Is Security Debt.
+
+### Talking Points
 
 - Claim: The React/Next.js story is the second proof point: modern frameworks are not just UI libraries anymore. They are distributed systems with custom protocols.
 - Receipt: PrimeTime's May 18 video walks through the Next.js v16.2.6 upgrade warning, a public PoC repo, and a React Server Components parsing issue where unauthenticated payloads can force CPU spin / stack overflow.
@@ -259,7 +409,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "React stopped being the V in MVC and became an attack surface."
 - Transition: "Now connect this to AI: the same complexity that makes frameworks productive also makes them perfect targets for automated vuln hunting."
 
-## Segment 8 - AI Found the Search Bar for Exploits
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 8 - AI Found the Search Bar for Exploits
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 8 - AI Found the Search Bar for Exploits.
+
+### Talking Points
 
 - Claim: Smart AI makes vulnerability discovery cheaper, faster, and more scalable.
 - Receipt: Claude Mythos found a real curl vulnerability. Mozilla used Claude Mythos Preview to harden Firefox. OpenAI is positioning GPT-5.5 Cyber under trusted access.
@@ -268,7 +430,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Clip line: "AI did not make software insecure. It made insecurity searchable."
 - Transition: "So the question is not whether AI security is good or bad. The question is who gets there first."
 
-## Segment 9 - What Builders Should Actually Do
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Segment 9 - What Builders Should Actually Do
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 9 - What Builders Should Actually Do.
+
+### Talking Points
 
 - Claim: The answer is not to stop using agents. The answer is to treat them like production infrastructure.
 - Receipt: TanStack's follow-up is about hardening. That is the right frame: not panic, controls.
@@ -284,39 +458,63 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Operator take: Autonomy without permissions design is just remote code execution with branding.
 - Clip line: "The model is not the product. The harness is. And now the harness is your security model."
 
-## Personal Takes - Where Do We Go From Here?
+### Host Notes
 
-### Take 1 - Security Becomes a Product Feature Again
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Personal Takes - Where Do We Go From Here?
+
+### Segment Thesis
+
+Okay, so this segment is about Personal Takes - Where Do We Go From Here?.
+
+### Talking Points
+
+#### Take 1 - Security Becomes a Product Feature Again
 
 - Personal angle: "For ten years we treated security like the boring enterprise checklist after the product worked. That era is over."
 - Why: If agents can ship code, update dependencies, touch CI, and generate PoCs, then secure-by-default workflow is not enterprise polish. It is the product.
 - Host line: "The next great devtool is not the agent that writes the most code. It is the agent I can trust while I sleep."
 
-### Take 2 - Less Magic Might Become Cool Again
+#### Take 2 - Less Magic Might Become Cool Again
 
 - Personal angle: "I understand why people love Next and React Server Components. But every invisible protocol is a place where you need invisible trust."
 - Why: Prime's video is useful because it says the quiet part: frameworks solved developer experience by hiding complexity, and now we are paying for hidden complexity in security patches.
 - Host line: "The boring stack is about to have a comeback because boring is auditable."
 
-### Take 3 - AI Security Is Going to Split Teams
+#### Take 3 - AI Security Is Going to Split Teams
 
 - Personal angle: "Some teams will ban agents. Some teams will give agents root access. Both are wrong."
 - Why: The winning teams will build permissioned agent workflows: scoped tokens, sandboxed terminals, package approval gates, CI policy, audit logs, and fast rollback.
 - Host line: "The question is not 'do we use agents?' The question is 'what is the blast radius when the agent is wrong?'"
 
-### Take 4 - Every Patch Note Is Now Content for Attackers
+#### Take 4 - Every Patch Note Is Now Content for Attackers
 
 - Personal angle: "I used to read release notes to know what changed. Now attackers can read release notes to know what to attack."
 - Why: Patch diffs, CVEs, issue comments, and PoC repos are all training material for humans and agents.
 - Host line: "Your upgrade window is becoming your exploit window."
 
-### Take 5 - Founder Take: Move Fast, But Shrink The Blast Radius
+#### Take 5 - Founder Take: Move Fast, But Shrink The Blast Radius
 
 - Personal angle: "As a founder I still want AI to ship faster. I am not going back to slow software. But speed without isolation is fake speed."
 - Why: One leaked token, one poisoned dependency, one unsafe server action, or one agent-approved config change can erase the time you saved.
 - Host line: "Ship fast, but make every failure small."
 
-## Discussion Questions
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Discussion Questions
+
+### Segment Thesis
+
+Okay, so this segment is about Discussion Questions.
+
+### Talking Points
 
 - Are React/Next security issues a framework problem, or the unavoidable cost of powerful abstractions?
 - Should AI agents be allowed to install dependencies without approval?
@@ -325,7 +523,19 @@ AI agents are turning the software supply chain into one connected attack surfac
 - If a public PoC repo appears within days, how fast does your team actually need to patch?
 - Where should the line be between model capability and tool permissions?
 
-## Clickbait Title Bank
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Clickbait Title Bank
+
+### Segment Thesis
+
+Okay, so this segment is about Clickbait Title Bank.
+
+### Talking Points
 
 - Your AI Coding Agent Is a Supply-Chain Attack Surface
 - AI Agents Can Ship Malware Faster Than You Can Review It
@@ -336,7 +546,13 @@ AI agents are turning the software supply chain into one connected attack surfac
 - Every Patch Is an Exploit Tutorial Now
 - Your Security Backlog Is a Public Roadmap for Attackers
 
-## Tweet Drafts
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Tweets — Tweet Drafts
 
 > All software is hackable now. AI just found the search bar.
 >
@@ -352,10 +568,22 @@ AI agents are turning the software supply chain into one connected attack surfac
 >
 > It made them ergonomic.
 
-## Host Notes
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on: permissions, not model morality. The agent is dangerous because it can act.
 - Avoid: vague "AI will hack everything" doom. Keep returning to real workflow surfaces.
 - Pull up: TanStack postmortem first, OpenAI response second, Fireship/Theo videos third.
 - Good disagreement prompt: "Is the fix better agents, better sandboxes, or better developer discipline?"
 - Audience question: "Would you let your coding agent run `npm install` without approval?"
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

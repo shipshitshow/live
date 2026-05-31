@@ -7,9 +7,21 @@ date: "2026-05-07"
 thumbnail_prompt: null
 ---
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
 
 Trend cluster found from X + YouTube API on 2026-05-07.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Cold Open - READ THIS
 
@@ -31,11 +43,29 @@ So today we are not asking which model wins. We are asking who owns the harness.
 
 X and YouTube are converging on the same trend: Claude Code, Codex, Cursor, OpenClaw, Gemini CLI, and local models are being discussed less as isolated tools and more as interchangeable workers behind an agent harness. The strongest operator take is that the model-brand debate is becoming a distraction. The durable product surface is now routing, memory, shared skills, MCP config, cost control, review loops, and trust. The stream should frame this as the next dev platform fight: editors used to own the workflow, now harnesses do.
 
-## Segment Thesis
+## Talking Points — Segment Thesis
+
+### Segment Thesis
+
+Okay, so this segment is about Segment Thesis.
+
+### Talking Points
 
 Agent harnesses are becoming the control plane for software work, and the model is just one worker inside that system.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points - Segment 1: The Model Fight Is the Bait
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 1: The Model Fight Is the Bait.
+
+### Talking Points
 
 - Claim: Claude Code vs Codex is the visible fight, but not the real fight.
 - Receipt: Riley Brown posted a 2026 AI agents roundup: OpenClaw, Claude Code, Codex, Cursor, and the Codex vs Claude UX war all in one thread.
@@ -47,11 +77,23 @@ Agent harnesses are becoming the control plane for software work, and the model 
   - [YouTube: It's Broken... The Claude Code Vs Codex Debate Is Finally Over](https://www.youtube.com/watch?v=8ImlAQOyVTs)
   - [YouTube: Claude Code VS Codex VS GLM VS Kimi](https://www.youtube.com/watch?v=7MFdHE4jRgM)
 
-### Transition
+#### Transition
 
 "So if the model fight is the bait, what is the actual product surface? It is everything around the model: memory, routing, skills, MCP, review, and the bill."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points - Segment 2: Memory and Skills Are the Moat
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 2: Memory and Skills Are the Moat.
+
+### Talking Points
 
 - Claim: The next dev platform is the context layer around agents.
 - Receipt: RepoGems is pitching structural memory for coding agents: bi-temporal graph, MCP-native, zero LLM calls, built for Cursor, Claude Code, and Codex.
@@ -66,11 +108,23 @@ Agent harnesses are becoming the control plane for software work, and the model 
   - [X: Hung Vinh - sync MCP servers and skills across 11 agents](https://x.com/hungv47/status/2052106526178095318)
   - [X: Glaze - Shuttle manages skills across 34 AI agents](https://x.com/glazecl/status/2050308322612351198)
 
-### Transition
+#### Transition
 
 "Once the harness owns memory and skills, the editor starts looking less like the platform and more like one UI plugged into the platform."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points - Segment 3: The Editor Is Losing the Throne
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 3: The Editor Is Losing the Throne.
+
+### Talking Points
 
 - Claim: VS Code, Cursor, and Claude Code are becoming frontends to a deeper agent workflow.
 - Receipt: X posts are explicitly asking whether VS Code is still in control when Codex, Claude Code, Cursor, and Replit Agent are the actual workers.
@@ -83,11 +137,23 @@ Agent harnesses are becoming the control plane for software work, and the model 
   - [YouTube: What Is an Agent Harness?](https://www.youtube.com/watch?v=IMbcj0pySEs)
   - [YouTube: Open Design - self-hosted Claude Design killer built on your coding agent](https://www.youtube.com/watch?v=7bi4j4ObXVk)
 
-### Transition
+#### Transition
 
 "And that is where this stops being a dev-tool nerd fight. If the harness owns routing, memory, skills, and trust, it also owns the economics."
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points - Segment 4: The Bill Picks the Architecture
+
+### Segment Thesis
+
+Okay, so this segment is about Segment 4: The Bill Picks the Architecture.
+
+### Talking Points
 
 - Claim: Harness quality becomes a margin problem, not a UX preference.
 - Receipt: The trend cluster includes local model alternatives, free Codex/Gemma setups, cloud-vs-local LLM comparisons, and people moving between Codex and Claude Code based on workflow friction.
@@ -99,7 +165,19 @@ Agent harnesses are becoming the control plane for software work, and the model 
   - [YouTube: I am Switching to Codex Over Claude Code](https://www.youtube.com/watch?v=AuoCFOEqS04)
   - [YouTube: Gemma 4 + Codex free vibe coding setup](https://www.youtube.com/watch?v=8a7NvwoHKxQ)
 
-## Host Notes
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on:
   - Which part of your current workflow is actually portable?
@@ -113,6 +191,12 @@ Agent harnesses are becoming the control plane for software work, and the model 
 - Pull up:
   - The X trend cards first, then YouTube validation.
   - Your own Codex/Claude/OpenClaw setup as proof that this is already real.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Closing Take
 

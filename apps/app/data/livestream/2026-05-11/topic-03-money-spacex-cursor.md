@@ -7,13 +7,26 @@ date: "2026-05-11"
 thumbnail_prompt: null
 ---
 
-## Episode Context
+## Talking Points — Episode Context
+
+### Segment Thesis
+
+Okay, so this segment is about Episode Context.
+
+### Talking Points
+
 Segment 3 of 5. The money segment. Shows the scale of investment pouring into AI coding and compute. Connects the backlash (Seg 1) and capability (Seg 2) to the financial reality.
 
 **Thread from Seg 2:** AI capabilities are scaling → companies throwing unprecedented money at this
 **Thread to Seg 4:** "All this money. All these GPUs. All in the cloud. But 1,700 developers on HN today said: we don't want cloud AI. We want local. Why?"
 
 ---
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Sources
 
@@ -29,6 +42,12 @@ Segment 3 of 5. The money segment. Shows the scale of investment pouring into AI
 
 ## Talking Points — SpaceX Buys Cursor? (4 min)
 
+### Segment Thesis
+
+Okay, so this segment is about SpaceX Buys Cursor? (4 min).
+
+### Talking Points
+
 - Claim: Elon Musk's SpaceX has a $60 billion option to acquire Cursor — the most popular AI coding tool.
 - Receipt: Deal announced April 21. Structure: buy Cursor for $60B or pay $10B for partnership. Protects SpaceX's planned June IPO.
 - Microsoft looked at buying Cursor first. Lost to SpaceX. Microsoft owns GitHub + Copilot and STILL tried to buy the competition.
@@ -37,7 +56,19 @@ Segment 3 of 5. The money segment. Shows the scale of investment pouring into AI
 - Why it matters: A coding editor is now worth $60 billion. That's more than Salesforce was worth in 2019. AI coding isn't a feature — it's a platform.
 - Operator take: When SpaceX, Microsoft, and Amazon are all fighting over AI coding tools, the "is AI coding real" debate from Segment 1 seems quaint.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Anthropic + SpaceX Colossus (3 min)
+
+### Segment Thesis
+
+Okay, so this segment is about Anthropic + SpaceX Colossus (3 min).
+
+### Talking Points
 
 - Claim: Anthropic partnered with SpaceX's Colossus 1 to get 220,000+ GPUs, doubling Claude Code rate limits.
 - Receipt: Announced May 6. 300+ MW of compute. Pro/Max/Team/Enterprise all got doubled limits. Peak-hour throttling removed.
@@ -46,7 +77,19 @@ Segment 3 of 5. The money segment. Shows the scale of investment pouring into AI
 - Anthropic 80x YoY revenue growth. Launched autonomous managed agents for coding, finance, law.
 - Why devs care: Your Claude Code just got faster and less throttled because of a GPU deal with a rocket company. We live in the future.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The Money Picture (3 min)
+
+### Segment Thesis
+
+Okay, so this segment is about The Money Picture (3 min).
+
+### Talking Points
 
 - Nvidia: $40B+ in AI equity bets this year. $2.1B to IREN, $3.2B to Corning this week alone.
 - Sierra (Bret Taylor): $950M raise at $15B valuation. Enterprise AI agents.
@@ -56,12 +99,42 @@ Segment 3 of 5. The money segment. Shows the scale of investment pouring into AI
 - Total picture: Hundreds of billions flowing into AI infrastructure, coding tools, and agents. This is not hype cycle money — this is build-out money.
 - Clip line: "A code editor is worth $60 billion. A GPU cluster is worth more than some countries' GDP. And someone on Hacker News is going back to writing code by hand."
 
-## Transition to Segment 4
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Transition to Segment 4
+
+### Segment Thesis
+
+Okay, so this segment is about Transition to Segment 4.
+
+### Talking Points
 
 "All this money. All these GPUs. All in the cloud. Elon's cloud. Jeff's cloud. Google's cloud. But the biggest thread on Hacker News today — 1,725 points, 683 comments — says developers don't want cloud AI anymore. They want local. And four Chinese labs just made that possible."
 
-## Host Notes
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on: The absurdity of the numbers. Make the audience feel the scale shift.
 - Avoid: Don't get lost in deal structures. Keep it about what changes for the dev in the chair.
 - Pull up: CNBC SpaceX/Cursor headline, Anthropic announcement.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

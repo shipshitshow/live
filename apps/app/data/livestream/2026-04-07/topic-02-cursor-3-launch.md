@@ -8,9 +8,17 @@ thumbnail_prompt: null
 ---
 
 ## Summary
+
 Cursor 3 launched April 2, 2026 with a completely rebuilt agent-first interface. Features parallel AI agents, an "Agents Window" for orchestrating multiple coding tasks, Design Mode, and cloud-local agent handoff. Cursor hit $1.2B ARR — up 1,100% year-over-year — with a $29.3B valuation.
 
 ## Talking Points
+
+### Segment Thesis
+
+Okay, so this is the useful part of the topic.
+
+### Talking Points
+
 - Agent-first means you assign tasks to AI agents instead of writing code directly
 - Agents Window = standalone workspace for running many agents in parallel
 - Design Mode lets you visually edit UI while agents handle the code
@@ -19,10 +27,18 @@ Cursor 3 launched April 2, 2026 with a completely rebuilt agent-first interface.
 - Claude Code still wins for terminal purists, Cursor 3 wins for GUI lovers
 - $29.3B valuation for an IDE company — is this the new normal?
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Hot Take
+
 $29.3B for a text editor with AI. Let that sink in. The IDE wars are becoming the new browser wars, and indie devs are the battleground. The real question: does agent-first coding actually ship better products, or does it just ship faster garbage?
 
 ## Sources
+
 - [Creati.ai: Cursor 3 Agent-First Interface](https://creati.ai/ai-news/2026-04-06/cursor-3-agent-first-interface-claude-code-codex/)
 - [BuildFastWithAI: Cursor 3 vs Google Antigravity](https://www.buildfastwithai.com/blogs/cursor-3-vs-antigravity-ai-ide-2026)
 - [Gizmodo: Cursor Lets Users Delegate to a Team of Coding Agents](https://gizmodo.com/cursors-new-tool-lets-users-delegate-to-a-team-of-coding-agents-2000741761)

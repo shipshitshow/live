@@ -7,13 +7,26 @@ date: "2026-05-11"
 thumbnail_prompt: null
 ---
 
-## Episode Context
+## Talking Points — Episode Context
+
+### Segment Thesis
+
+Okay, so this segment is about Episode Context.
+
+### Talking Points
+
 Segment 4 of 5. The counter-movement. After all the cloud money in Seg 3, developers are pushing back. Privacy, sovereignty, cost control.
 
 **Thread from Seg 3:** Billions going into cloud AI infrastructure → developers revolt, want local
 **Thread to Seg 5:** "Local AI, cloud AI, open-weight, closed-weight — it doesn't matter which side wins. What matters is: will software engineering even exist as a career when this plays out? 481 people on HN are fighting about that right now."
 
 ---
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 
 ## Sources
 
@@ -32,6 +45,12 @@ Segment 4 of 5. The counter-movement. After all the cloud money in Seg 3, develo
 
 ## Talking Points — The HN Revolt (4 min)
 
+### Segment Thesis
+
+Okay, so this segment is about The HN Revolt (4 min).
+
+### Talking Points
+
 - Claim: The biggest developer community on the internet is demanding local-first AI.
 - Receipt: 1,725 points. 683 comments. Second-biggest thread on HN today (after hardware attestation at 2,044 pts).
 - Context: Hardware attestation thread (#1 on HN, 2,044 pts) is about GrapheneOS calling out hardware attestation as anti-competitive monopoly enabler. Same energy: control, sovereignty, who owns your compute.
@@ -40,7 +59,19 @@ Segment 4 of 5. The counter-movement. After all the cloud money in Seg 3, develo
 - Cost angle: GitHub Opus multiplier going to 27x. Cloud AI coding getting expensive fast.
 - Operator take: We use Claude Code (cloud). Honest about the tradeoff. We send our code to Anthropic every session. Most devs don't think about that.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The Chinese Open-Weight Wave (3 min)
+
+### Segment Thesis
+
+Okay, so this segment is about The Chinese Open-Weight Wave (3 min).
+
+### Talking Points
 
 - Claim: Four Chinese labs dropped frontier-competitive open-weight models in 12 days. Local AI just became viable.
 - Receipt: DeepSeek V4, Kimi K2.6, MiniMax M2.7, GLM-5.1 — all landed at roughly the same capability ceiling on agentic engineering.
@@ -50,7 +81,19 @@ Segment 4 of 5. The counter-movement. After all the cloud money in Seg 3, develo
 - Why it matters: The "local models can't compete" argument is dying. Not dead yet — but dying.
 - Stakes: If local models close the gap, the entire cloud AI business model is at risk. That's why the Segment 3 money is pouring in NOW.
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The Tension (3 min)
+
+### Segment Thesis
+
+Okay, so this segment is about The Tension (3 min).
+
+### Talking Points
 
 - Honest take: We use cloud AI because it's better. That's the truth today.
 - But: every month the gap shrinks. DeepSeek V4 is genuinely competitive. Kimi K2.6 is fast.
@@ -58,12 +101,42 @@ Segment 4 of 5. The counter-movement. After all the cloud money in Seg 3, develo
 - Open-weight models dodge most of that regulation. Another reason the market is shifting.
 - Clip line: "1,725 developers said local AI needs to be the norm. Four Chinese labs just made it possible. Your move, Anthropic."
 
-## Transition to Segment 5
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Transition to Segment 5
+
+### Segment Thesis
+
+Okay, so this segment is about Transition to Segment 5.
+
+### Talking Points
 
 "Local AI, cloud AI, open-weight, closed-weight — the tools are getting better everywhere. Which brings us to the question nobody wants to ask out loud. If AI can write code, find bugs, audit security, and run autonomously — what happens to the people who used to do that? 279 points on HN. 481 comments. More comments than upvotes. That means people are fighting. Let's talk about it."
 
-## Host Notes
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on: Honesty about using cloud AI yourself. Don't pretend to be on the local side.
 - Avoid: Don't dismiss local AI as not ready. Acknowledge the trend.
 - Pull up: The HN thread, DeepSeek/Kimi benchmarks if available.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

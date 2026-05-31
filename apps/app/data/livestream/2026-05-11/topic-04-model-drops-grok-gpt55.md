@@ -21,6 +21,12 @@ Two major model drops this week. Google I/O next week with Gemini 4 expected. Mo
 
 ## Talking Points
 
+### Segment Thesis
+
+Okay, so this is the useful part of the topic.
+
+### Talking Points
+
 - Claim: Model releases are accelerating. Two drops in 48 hours this week.
 - Receipt: Grok 4.3 (May 8), GPT-5.5 Instant (May 7). DeepSeek V4 variants still landing.
 - GPT-5.5 Instant = cheaper/faster tier. Signal that OpenAI optimizing for agent workloads where cost per task matters more than max capability.
@@ -30,8 +36,26 @@ Two major model drops this week. Google I/O next week with Gemini 4 expected. Mo
 - Operator take: The model is commoditizing. The harness is the moat. This is what we've been saying.
 - Clip line: "Google I/O next week. If they don't ship a coding agent that actually works, they're done in this race."
 
-## Host Notes
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Host Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Host Notes.
+
+### Talking Points
 
 - Push on: Cost angle. Models cheaper, platforms more expensive. Where's the money going?
 - Avoid: Don't deep-dive each model. Quick hits. Audience cares about what changes in their workflow, not benchmark numbers.
 - Pull up: Google I/O page, pricing comparison if available.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

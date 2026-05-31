@@ -9,9 +9,11 @@ thumbnail_prompt: null
 ---
 
 ## Summary
+
 People are tired of AI slop, fake AI gurus, and AI being shoved into everything. Fair enough. But a huge chunk of the backlash is still coming from people who never seriously tried modern agent workflows like Claude Code or Codex and are still arguing from a GPT-3.5 mental model. That is not where the market is anymore. AI is moving from cringe consumer layer to infrastructure layer: work, capital, state policy, and even the power grid. The backlash is real. It just does not have veto power.
 
 ## Cold Open
+
 - **If you hate AI, this video is for you.**
 - Because the bad news is: it will take parts of your job, in some cases the whole job, and no, you are not going to shame it out of existence.
 - While half the internet is still arguing about whether AI should even be allowed to exist, the people using it every day already know this is the most powerful piece of technology most of us will see in our lifetime.
@@ -21,7 +23,14 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - They are not wrong about the garbage. They are wrong about the trajectory. Their point of view is emotional first, aesthetic first, moral first. It is not utilitarian, and it is not grounded in what these tools now do in the hands of people who actually use them.
 - You can riot against it if you want. It is still happening. Let me show you why.
 
-## Pinned — Money, Growth, YC
+## Talking Points — Pinned — Money, Growth, YC
+
+### Segment Thesis
+
+Okay, so this segment is about Pinned — Money, Growth, YC.
+
+### Talking Points
+
 - If you need the shortest argument for why the backlash does not stop this, use the money first. Culture can be loud. Capital is louder.
 - Best investment numbers:
   - U.S. private AI investment hit **$109.1B in 2024**.
@@ -60,7 +69,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
   - [YC: Manufacturing and robotics startups funded by YC](https://www.ycombinator.com/companies/industry/manufacturing-and-robotics)
 - Strong line: **When YC changes the batch cadence because AI is spawning too many startups, the backlash is already losing.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Yes, The Backlash Is Real
+
+### Segment Thesis
+
+Okay, so this segment is about Yes, The Backlash Is Real.
+
+### Talking Points
+
 - The public mood is not pro-AI. It is skeptical, anxious, and often openly hostile.
   - [Pew Research: Key findings about how Americans view artificial intelligence](https://www.pewresearch.org/short-reads/2026/03/12/key-findings-about-how-americans-view-artificial-intelligence/)
 - These are not abstract complaints anymore. The backlash now shows up in artist surveys, platform cleanup, and public apologies from studios that touched the stove.
@@ -83,7 +105,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - Hit this clearly: **Do not argue with the backlash. Absorb it. Then say the harder thing: none of this stops adoption.**
 - Strong line: **In capitalism, moral disgust is not a kill switch. If the thing prints leverage, it spreads.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The Critics Are Often Behind The Product Curve
+
+### Segment Thesis
+
+Okay, so this segment is about The Critics Are Often Behind The Product Curve.
+
+### Talking Points
+
 - A lot of loud anti-AI takes still come from people benchmarking today’s agent workflows against ChatGPT 3.5-era failure modes.
 - The timeline matters here: the public argument stayed stuck on autocomplete while builder discourse moved to agentic workflows, repo awareness, and parallel execution.
   - [TWEET: @ycombinator — March 5, 2025: “vibe coding” enters the mainstream startup discourse](https://x.com/ycombinator/status/1897301568736911530)
@@ -95,7 +130,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - Strong line: **You do not have to think the tools are perfect. You just have to admit the category moved.**
 - Use this as the pivot: **the backlash sounds smarter when you realize most of it is aimed at an older generation of tools.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Slop Is the Symptom, Not the Story
+
+### Segment Thesis
+
+Okay, so this segment is about Slop Is the Symptom, Not the Story.
+
+### Talking Points
+
 - The internet is visibly filling with garbage: fake clips, AI voice-over sludge, synthetic content farms, low-effort “vibe output” everywhere.
   - [AP: Advocacy groups urge YouTube to protect kids from “AI slop” videos](https://apnews.com/article/68f866c48127222208e1d978b46cbc80)
   - [YouTube Blog: Neal Mohan’s 2026 letter says “managing AI slop” is a platform priority](https://blog.youtube/inside-youtube/the-future-of-youtube-2026/)
@@ -106,7 +154,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - Then pivot hard: **Bad AI content does not prove AI loses. It proves the first wave got cheap enough to flood the zone.**
 - Strong line: **The first industrial version of anything looks ugly. That does not stop industrialization.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The Real Story Is Infrastructure
+
+### Segment Thesis
+
+Okay, so this segment is about The Real Story Is Infrastructure.
+
+### Talking Points
+
 - AI is no longer just an app-layer trend. It is now affecting grid planning and industrial policy.
   - [IEA: Energy and AI — Executive Summary](https://www.iea.org/reports/energy-and-ai/executive-summary)
   - [EIA: February 2026 Short-Term Energy Outlook](https://www.eia.gov/outlooks/steo/archives/feb26.pdf)
@@ -123,7 +184,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - Sharper follow-up: **You can hate AI art all you want. The grid does not expand for a meme. It expands for an industrial transition.**
 - Strong line: **The minute your “annoying trend” starts changing electricity forecasts, you already lost the culture war argument.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Adoption Is Outrunning the Hate
+
+### Segment Thesis
+
+Okay, so this segment is about Adoption Is Outrunning the Hate.
+
+### Talking Points
+
 - Even while people complain, usage keeps rising.
   - [St. Louis Fed: The State of Generative AI Adoption in 2025](https://www.stlouisfed.org/on-the-economy/2025/nov/state-generative-ai-adoption-2025)
   - [Stanford HAI: AI Index 2026, economy](https://hai.stanford.edu/ai-index/2026-ai-index-report/economy)
@@ -145,7 +219,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - Strong line: **The average person says one thing, the market does another, and the market usually wins.**
 - Strong line: **People do not need to love a tool to normalize it. They just need enough incentive to stop resisting it.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — X Timeline To Scroll Live
+
+### Segment Thesis
+
+Okay, so this segment is about X Timeline To Scroll Live.
+
+### Talking Points
+
 - **January 11, 2025:** artist backlash is already concrete, not theoretical.
   - [TWEET: @MrEwanMorrison — Greg Rutkowski becomes the emblematic “you trained on us anyway” case](https://x.com/MrEwanMorrison/status/1878114195524165659)
 - **March 5, 2025:** “vibe coding” gets named, which matters because once a workflow gets a name it spreads faster.
@@ -169,7 +256,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - **April 10, 2026:** the backlash keeps firing in culture-heavy categories even while adoption keeps rising elsewhere.
   - [TWEET: @AnimeNewsNet — WIT Studio apology lands five days before this stream](https://x.com/AnimeNewsNet/status/2042544121777111128)
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Pull Up The Tweets Live
+
+### Segment Thesis
+
+Okay, so this segment is about Pull Up The Tweets Live.
+
+### Talking Points
+
 - This is where the stream gets dynamic: do not just explain the backlash, **open X and show the takes in real time**.
 - Search for combinations like:
   - **Claude Code unusable**
@@ -191,7 +291,20 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
 - Ask chat: **How many anti-AI people actually spent one week inside Claude Code or Codex instead of one afternoon in ChatGPT 3.5?**
 - Strong line: **Twitter is perfect for this topic because you can literally watch outdated priors and current reality collide in public.**
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The State and Capital Already Chose
+
+### Segment Thesis
+
+Okay, so this segment is about The State and Capital Already Chose.
+
+### Talking Points
+
 - If you want proof the backlash is not the main story, look at governments and capital allocation.
   - [White House: National AI Legislative Framework](https://www.whitehouse.gov/releases/2026/03/president-donald-j-trump-unveils-national-ai-legislative-framework/)
   - [White House: U.S. promotes AI adoption, sovereignty, and exports at the India AI Impact Summit](https://www.whitehouse.gov/releases/2026/02/u-s-promotes-ai-adoption-sovereignty-and-exports-at-india-ai-impact-summit/)
@@ -204,7 +317,14 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
   - **The board does not care if the copy feels soulless. The board cares whether cost drops and output rises.**
   - **The people deciding this are not asking “is this sacred?” They are asking “does this scale?”**
 
-## YouTube / Reaction Targets
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Sources — YouTube / Reaction Targets
+
 - Search and react to:
   - **The AI Wastelands of YouTube Shorts**
   - **What Generative AI Users Get Wrong About Artists**
@@ -220,10 +340,38 @@ People are tired of AI slop, fake AI gurus, and AI being shoved into everything.
   - Ask the chat directly: **Do you think moral outrage beats incentives? Show me one industry where that worked for long.**
 
 ## Hot Take
+
 The anti-AI crowd is mostly right about the aesthetics and still wrong about the trajectory. AI does not need to become beloved to become mandatory. It only needs to become embedded in workflows, capital spending, state strategy, and the power grid. We are already there. The future is not “AI believers versus AI haters.” It is people who learn where AI becomes industrialized versus people who waste five years acting shocked that industrial systems behave like industrial systems.
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
+
 - [YouTube Livestream](https://www.youtube.com/watch?v=kBMQnF38-RU)
 - [Restream Studio](https://studio.restream.io/eue-pcqd-vbw)
 
-## Generated Content
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
+## Talking Points — Generated Content
+
+### Segment Thesis
+
+Okay, so this segment is about Generated Content.
+
+### Talking Points
+
+- Add the useful live talking points here.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:

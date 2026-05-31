@@ -8,9 +8,17 @@ thumbnail_prompt: null
 ---
 
 ## Summary
+
 Can you leak your own source code, ban your biggest community tools, AND have your product called unusable on Hacker News — all in the same week? Apparently yes. Anthropic just speedran a PR disaster. I'm gonna show you everything — the tweets, the code, the drama.
 
 ## Talking Points — The Source Code Leak (March 31)
+
+### Segment Thesis
+
+Okay, so this segment is about The Source Code Leak (March 31).
+
+### Talking Points
+
 - EXPLAIN TO CHAT: What is a source map? When you write TypeScript and bundle it for production, the original source gets minified. A .map file maps it BACK to the original source — it's for debugging. You should NEVER ship it publicly. Anthropic left a 59.8 MB .map file in their npm package that pointed to a public R2 bucket with ALL the original TypeScript source.
 - Root cause: Anthropic acquired Bun (the JS runtime) in late 2025. Bun generates source maps BY DEFAULT. Someone forgot to add *.map to .npmignore. That's it. One missing line leaked 512K lines of code.
   - [TWEET: Matt Pocock — "~512K lines, ~1,900 files. HugOps to the Anthropic team, this is brutal"](https://x.com/mattpocockuk/status/2038933558740308017)
@@ -45,7 +53,20 @@ Can you leak your own source code, ban your biggest community tools, AND have yo
   - [TWEET: @theo — "Claude Code being closed source is the biggest bag fumble in the AI era. If CC was on GitHub, these things would be trivial to fix."](https://x.com/theo/status/2038740065300676777)
 - Elon Musk called Anthropic "misanthropic" — says they stole training data, paid settlements, and now aggressively police leaks while opposing open-source AI
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — The OpenClaw Ban (April 4)
+
+### Segment Thesis
+
+Okay, so this segment is about The OpenClaw Ban (April 4).
+
+### Talking Points
+
 - As of April 4 at 12pm PT, subscription OAuth tokens blocked in all third-party tools. Boris Cherny (Head of Claude Code) announced it himself.
   - [TWEET: Boris Cherny — "Starting tomorrow at 12pm PT, Claude subscriptions will no longer cover usage on third-party tools like OpenClaw"](https://x.com/bcherny/status/2040206440556826908)
 - 135,000+ OpenClaw instances affected globally. Users facing cost increases up to 50x.
@@ -62,7 +83,20 @@ Can you leak your own source code, ban your biggest community tools, AND have yo
   - [HN: Anthropic officially bans subscription auth](https://news.ycombinator.com/item?id=47069299)
   - [HN: Tell HN — No longer allowing subscriptions for OpenClaw](https://news.ycombinator.com/item?id=47633396)
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Talking Points — Claude Code "Unusable" (HN #1)
+
+### Segment Thesis
+
+Okay, so this segment is about Claude Code "Unusable" (HN #1).
+
+### Talking Points
+
 - GitHub issue #42796: "Claude Code is unusable for complex engineering tasks with Feb updates"
   - [GitHub Issue #42796](https://github.com/anthropics/claude-code/issues/42796)
 - Hit #1 on Hacker News with 1,252 points and 690 comments
@@ -75,8 +109,28 @@ Can you leak your own source code, ban your biggest community tools, AND have yo
 - Worst possible timing — same week as the leak AND the ban
 - Community trust taking massive hits from all three events simultaneously
 
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
+
 ## Hot Take
+
 This is Anthropic's "New Coke" moment. In one week they managed to: accidentally leak their entire codebase (revealing they secretly contribute to open source repos in "undercover mode"), ban the open-source tools that evangelized their platform, AND have their flagship product called "unusable" on the front page of Hacker News. The indie dev community that built Anthropic's developer mindshare is feeling betrayed. The question isn't whether Claude is good — it's whether Anthropic can be trusted as a platform to build on.
 
-## Livestream Notes
+## Talking Points — Livestream Notes
+
+### Segment Thesis
+
+Okay, so this segment is about Livestream Notes.
+
+### Talking Points
+
 - [Livestream Replay](https://www.youtube.com/watch?v=MJp8l5ZBlI4)
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
