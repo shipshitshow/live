@@ -5,6 +5,7 @@ const isPublicRoute = createRouteMatcher([
   '/sign-up(.*)',
   '/auth/youtube(.*)',
   '/auth/social(.*)',
+  '/talking-points(.*)',
   '/api/auth/youtube(.*)',
   '/api/auth/social(.*)',
   '/api/public(.*)',

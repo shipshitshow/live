@@ -23,6 +23,7 @@ logs/
 
 # local env files
 .env
+.env.production
 .env*.local
 
 # youtube tokens & cache

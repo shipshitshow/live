@@ -14,9 +14,11 @@ export default function ProtectedLayout({
         className="flex h-screen flex-col bg-surface text-text-primary"
       >
         <AppTitlebar />
-        <div className="flex flex-1 overflow-hidden">
+        <div className="flex min-h-0 flex-1 overflow-hidden">
           <AppSidebar />
-          <main className="min-w-0 flex-1 overflow-y-auto">{children}</main>
+          <main className="min-h-0 min-w-0 flex-1 overflow-y-auto">
+            {children}
+          </main>
         </div>
       </div>
     </SidebarStateProvider>

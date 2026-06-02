@@ -89,10 +89,11 @@ export default async function LivestreamDetailLayout({
   const youtubeUrl = getYoutubeUrl(visibleTopics, archive?.youtubeUrl);
   const restreamUrl = getRestreamUrl(visibleTopics);
   const thumbnailUrl = cards[0]?.thumbnailUrl ?? null;
+  const publicShareUrl = `/talking-points/${encodeURIComponent(streamSlug)}`;
   const transcriptScorecard = analyzeTranscriptScorecard(archive?.transcript);
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-8 p-6 lg:flex-row lg:items-start">
+    <div className="mx-auto flex min-h-full max-w-6xl flex-col gap-8 p-6 lg:flex-row lg:items-start">
       <main className="min-w-0 flex-1 space-y-6">
         <section className="overflow-hidden rounded-xl border border-surface-border bg-surface/30">
           <LivestreamTabsClient
@@ -105,8 +106,10 @@ export default async function LivestreamDetailLayout({
       </main>
       <CollapsibleSidebar>
         <StreamInfoSidebar
+          cards={cards}
           commentCount={videoStats?.commentCount ?? null}
           effectiveStatus={effectiveStatus}
+          publicShareUrl={publicShareUrl}
           resolvedDate={resolvedDate}
           restreamUrl={restreamUrl}
           scorecard={transcriptScorecard}

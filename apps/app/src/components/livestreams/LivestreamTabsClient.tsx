@@ -3,12 +3,13 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
-const ALL_TABS = {
-  'talking-points': 'Talking Points',
-  transcript: 'Transcript',
-} as const;
+const ALL_TABS = [
+  { label: 'Talking Points', tab: 'talking-points' },
+  { label: 'Resources', tab: 'resources' },
+  { label: 'Transcript', tab: 'transcript' },
+] as const;
 
-type LivestreamTab = keyof typeof ALL_TABS;
+type LivestreamTab = (typeof ALL_TABS)[number]['tab'];
 
 export function LivestreamTabsClient({
   date,
@@ -22,17 +23,19 @@ export function LivestreamTabsClient({
   const pathname = usePathname();
   const activeTab: LivestreamTab = pathname.endsWith('/transcript')
     ? 'transcript'
-    : 'talking-points';
+    : pathname.endsWith('/resources')
+      ? 'resources'
+      : 'talking-points';
 
   const pathSlug = encodeURIComponent(streamSlug ?? date);
 
-  const tabs = Object.entries(ALL_TABS).filter(
-    ([tab]) => tab !== 'transcript' || hasTranscript,
+  const tabs = ALL_TABS.filter(
+    ({ tab }) => tab !== 'transcript' || hasTranscript,
   );
 
   return (
     <div className="flex flex-wrap gap-2 border-b border-surface-border">
-      {tabs.map(([tab, label]) => {
+      {tabs.map(({ label, tab }) => {
         const isActive = tab === activeTab;
         return (
           <Link

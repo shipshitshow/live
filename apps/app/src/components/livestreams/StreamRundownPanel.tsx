@@ -1,5 +1,9 @@
 import {
-  isUsefulSection,
+  formatTimelineTitle,
+  isTimelineSection,
+  isTimelineSubSection,
+} from '@/lib/livestream-sections';
+import {
   type LivestreamCard,
   MarkdownBody,
   parseSections,
@@ -19,22 +23,22 @@ export function StreamRundownPanel({ cards }: { cards: LivestreamCard[] }) {
     <div className="space-y-4">
       {cards.map(({ topic }) => {
         const sections = parseSections(topic.content).filter((section) =>
-          isUsefulSection(section.title),
+          isTimelineSection(section.title),
         );
 
         return sections.map((section) => {
           if (section.title.toLowerCase().startsWith('talking points')) {
-            const subSections = parseSubSections(section.body);
-            return subSections.map((sub, idx) => (
+            const subSections = parseSubSections(section.body).filter((sub) =>
+              isTimelineSubSection(sub.title),
+            );
+            return subSections.map((sub) => (
               <article
-                key={`${topic.slug}-${section.title}-${idx}`}
+                key={`${topic.slug}-${section.title}-${sub.title}`}
                 className="overflow-hidden rounded-xl border border-surface-border bg-surface-card"
               >
-                {sub.title && (
-                  <h3 className="sticky top-0 z-10 border-b border-surface-border bg-surface-card px-6 py-3 text-sm font-semibold uppercase tracking-widest text-text-muted">
-                    {sub.title}
-                  </h3>
-                )}
+                <h3 className="sticky top-0 z-10 border-b border-surface-border bg-surface-card px-6 py-3 text-sm font-semibold uppercase tracking-widest text-text-muted">
+                  {formatTimelineTitle(section.title)}
+                </h3>
                 <div className="p-6">
                   <MarkdownBody body={sub.body} large />
                 </div>

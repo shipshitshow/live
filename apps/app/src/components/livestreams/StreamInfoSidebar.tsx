@@ -1,16 +1,21 @@
 import Image from 'next/image';
+import Link from 'next/link';
+import { StreamSidebarNotes } from '@/components/livestreams/StreamSidebarNotes';
 import { TranscriptScorecard } from '@/components/TranscriptScorecard';
 import { formatNumber } from '@/lib/format';
 import {
   formatLivestreamDate,
   isPastDate,
+  type LivestreamCard,
   STATUS_META,
 } from '@/lib/livestreams-ui';
 import type { TranscriptScorecard as TranscriptScorecardData } from '@/lib/transcript-scorecard';
 
 export function StreamInfoSidebar({
+  cards,
   commentCount,
   effectiveStatus,
+  publicShareUrl,
   resolvedDate,
   restreamUrl,
   scorecard,
@@ -19,8 +24,10 @@ export function StreamInfoSidebar({
   viewCount,
   youtubeUrl,
 }: {
+  cards: LivestreamCard[];
   commentCount: number | null;
   effectiveStatus: keyof typeof STATUS_META;
+  publicShareUrl: string;
   resolvedDate: string;
   restreamUrl: string | null;
   scorecard: TranscriptScorecardData | null;
@@ -30,22 +37,35 @@ export function StreamInfoSidebar({
   youtubeUrl: string | null;
 }) {
   const statusMeta = STATUS_META[effectiveStatus];
+  const hasRealThumbnail =
+    Boolean(thumbnailUrl) && !thumbnailUrl?.startsWith('/api/og/');
 
   return (
     <div className="space-y-4">
+      <Link
+        href={publicShareUrl}
+        className="flex w-full items-center justify-center rounded-xl border border-surface-border bg-surface-card px-4 py-3 text-sm font-medium text-text-secondary transition-colors hover:border-text-muted hover:text-text-primary"
+      >
+        Public link
+      </Link>
+
       <div className="overflow-hidden rounded-xl border border-surface-border bg-surface-card">
-        {thumbnailUrl ? (
-          <div className="relative aspect-video overflow-hidden bg-surface-elevated">
+        <div className="relative aspect-video overflow-hidden bg-surface-elevated">
+          {hasRealThumbnail ? (
             <Image
-              src={thumbnailUrl}
+              src={thumbnailUrl as string}
               alt={title}
               fill
               sizes="(max-width: 768px) 100vw, 320px"
               loading="eager"
               className="object-cover"
             />
-          </div>
-        ) : null}
+          ) : (
+            <div className="flex size-full items-center justify-center">
+              <Image src="/icon.svg" alt="" width={48} height={48} />
+            </div>
+          )}
+        </div>
 
         <div className="space-y-3 p-4">
           <h1 className="text-base font-semibold leading-snug text-text-primary">
@@ -114,6 +134,8 @@ export function StreamInfoSidebar({
           ) : null}
         </div>
       </div>
+
+      <StreamSidebarNotes cards={cards} />
 
       <TranscriptScorecard scorecard={scorecard} />
     </div>

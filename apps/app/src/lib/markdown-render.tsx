@@ -143,66 +143,124 @@ export function MarkdownBody({
   body: string;
   large?: boolean;
 }) {
-  const lines = body.split('\n').filter((line) => {
+  const blocks: Array<
+    { code: string; kind: 'code' } | { kind: 'text'; lines: string[] }
+  > = [];
+  let textLines: string[] = [];
+  let codeLines: string[] = [];
+  let inCodeBlock = false;
+
+  for (const line of body.split('\n')) {
+    if (line.trim().startsWith('```')) {
+      if (inCodeBlock) {
+        blocks.push({ code: codeLines.join('\n').trimEnd(), kind: 'code' });
+        codeLines = [];
+        inCodeBlock = false;
+      } else {
+        const filteredText = textLines.filter((textLine) => {
+          const t = textLine.trim();
+          return t.length > 0 && t !== '>';
+        });
+        if (filteredText.length > 0) {
+          blocks.push({ kind: 'text', lines: filteredText });
+        }
+        textLines = [];
+        inCodeBlock = true;
+      }
+      continue;
+    }
+
+    if (inCodeBlock) {
+      codeLines.push(line);
+    } else {
+      textLines.push(line);
+    }
+  }
+
+  if (inCodeBlock && codeLines.length > 0) {
+    blocks.push({ code: codeLines.join('\n').trimEnd(), kind: 'code' });
+  }
+
+  const filteredText = textLines.filter((line) => {
     const t = line.trim();
     return t.length > 0 && t !== '>';
   });
+  if (filteredText.length > 0) {
+    blocks.push({ kind: 'text', lines: filteredText });
+  }
+
   const textSize = large ? 'text-lg' : 'text-sm';
   const leading = large ? 'leading-[1.8]' : 'leading-relaxed';
 
   return (
     <div className={large ? 'space-y-4' : 'space-y-2.5'}>
-      {lines.map((line, index) => {
-        const trimmed = line.trim();
-        const bullet = trimmed.match(/^-+\s+(.+)$/);
-        const quote = trimmed.match(/^>\s?(.+)$/);
-        const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
-
-        if (headingMatch) {
-          const level = headingMatch[1].length;
-          const headingClass =
-            level <= 3
-              ? `text-base font-semibold ${leading} text-text-primary`
-              : level === 4
-                ? `text-sm font-semibold ${leading} text-text-secondary`
-                : `text-sm font-medium ${leading} text-text-muted`;
+      {blocks.map((block, blockIndex) => {
+        if (block.kind === 'code') {
           return (
-            <p key={`${index}-${trimmed}`} className={headingClass}>
-              {renderInlineMarkdown(headingMatch[2])}
-            </p>
+            <pre
+              key={`code-${blockIndex}`}
+              className="overflow-x-auto whitespace-pre-wrap rounded-lg border border-surface-border bg-surface-elevated p-4 text-sm leading-relaxed text-text-primary"
+            >
+              <code>{block.code}</code>
+            </pre>
           );
         }
 
-        if (bullet) {
+        return block.lines.map((line, index) => {
+          const trimmed = line.trim();
+          const bullet = trimmed.match(/^-+\s+(.+)$/);
+          const quote = trimmed.match(/^>\s?(.+)$/);
+          const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+
+          if (headingMatch) {
+            const level = headingMatch[1].length;
+            const headingClass =
+              level <= 3
+                ? `text-base font-semibold ${leading} text-text-primary`
+                : level === 4
+                  ? `text-sm font-semibold ${leading} text-text-secondary`
+                  : `text-sm font-medium ${leading} text-text-muted`;
+            return (
+              <p
+                key={`${blockIndex}-${index}-${trimmed}`}
+                className={headingClass}
+              >
+                {renderInlineMarkdown(headingMatch[2])}
+              </p>
+            );
+          }
+
+          if (bullet) {
+            return (
+              <p
+                key={`${blockIndex}-${index}-${trimmed}`}
+                className={`pl-5 ${textSize} ${leading} text-text-secondary before:-ml-5 before:mr-2 before:text-accent-red before:content-['-']`}
+              >
+                {renderInlineMarkdown(bullet[1])}
+              </p>
+            );
+          }
+
+          if (quote) {
+            return (
+              <blockquote
+                key={`${blockIndex}-${index}-${trimmed}`}
+                className={`border-l-2 border-accent-red/50 pl-4 ${textSize} ${leading} text-text-primary`}
+              >
+                {renderInlineMarkdown(quote[1])}
+              </blockquote>
+            );
+          }
+
           return (
             <p
-              key={`${index}-${trimmed}`}
-              className={`pl-5 ${textSize} ${leading} text-text-secondary before:-ml-5 before:mr-2 before:text-accent-red before:content-['-']`}
+              key={`${blockIndex}-${index}-${trimmed}`}
+              className={`${textSize} ${leading} text-text-secondary`}
             >
-              {renderInlineMarkdown(bullet[1])}
+              {renderInlineMarkdown(trimmed)}
             </p>
           );
-        }
-
-        if (quote) {
-          return (
-            <blockquote
-              key={`${index}-${trimmed}`}
-              className={`border-l-2 border-accent-red/50 pl-4 ${textSize} ${leading} text-text-primary`}
-            >
-              {renderInlineMarkdown(quote[1])}
-            </blockquote>
-          );
-        }
-
-        return (
-          <p
-            key={`${index}-${trimmed}`}
-            className={`${textSize} ${leading} text-text-secondary`}
-          >
-            {renderInlineMarkdown(trimmed)}
-          </p>
-        );
+        });
       })}
     </div>
   );

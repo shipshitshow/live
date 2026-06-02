@@ -3,6 +3,11 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const nextConfig = {
   images: {
+    localPatterns: [
+      {
+        pathname: "/api/og/livestreams/**",
+      },
+    ],
     remotePatterns: [
       {
         protocol: "https",
