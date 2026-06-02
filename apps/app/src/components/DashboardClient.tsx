@@ -14,6 +14,7 @@ import { Button } from '@shipshitshow/ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { ChannelSelector } from '@/components/ChannelSelector';
 import { DateRangeSelector } from '@/components/DateRangeSelector';
+import { SocialPerformance } from '@/components/SocialPerformance';
 import { StatCard } from '@/components/StatCard';
 import { type ChartLine, TimeSeriesChart } from '@/components/TimeSeriesChart';
 import { TopVideos } from '@/components/TopVideos';
@@ -363,8 +364,17 @@ export function DashboardClient() {
         ))}
       </div>
 
-      {/* Best performers */}
       {loading ? <TopVideosSkeleton /> : <TopVideos videos={videos} />}
+
+      {loading ? (
+        <TopVideosSkeleton title="Short-Form Performance" />
+      ) : (
+        <SocialPerformance
+          youtubeVideos={videos}
+          socialVideos={report?.social_videos ?? []}
+          socialStatuses={report?.social_status ?? []}
+        />
+      )}
 
       {/* Videos table */}
       {loading ? (
@@ -404,12 +414,12 @@ function ChartSkeleton() {
   );
 }
 
-function TopVideosSkeleton() {
+function TopVideosSkeleton({ title = 'Best Performers' }: { title?: string }) {
   return (
     <div className="bg-surface-card border border-surface-border rounded-xl">
       <div className="px-5 pt-5 pb-3 border-b border-surface-border">
         <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
-          Best Performers
+          {title}
         </h3>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-3 divide-y md:divide-y-0 md:divide-x divide-surface-border">

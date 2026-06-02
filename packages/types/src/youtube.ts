@@ -7,6 +7,7 @@ export interface ChannelStats {
 }
 
 export type VideoType = 'video' | 'short' | 'livestream';
+export type PerformancePlatform = 'youtube' | 'instagram' | 'tiktok';
 
 export interface VideoStats {
   video_id: string;
@@ -21,8 +22,17 @@ export interface VideoStats {
   avg_view_duration_seconds: number;
   channel_id?: string;
   channel_label?: string; // "main" | "clips"
+  platform?: PerformancePlatform;
+  shares?: number;
+  source_url?: string;
   video_type?: VideoType;
   thumbnail_url?: string;
+}
+
+export interface SocialPlatformStatus {
+  connected: boolean;
+  error?: string;
+  platform: Exclude<PerformancePlatform, 'youtube'>;
 }
 
 export interface DailyMetric {
@@ -37,6 +47,8 @@ export interface DailyMetric {
 export interface MultiChannelReport {
   channels: ChannelStats[];
   videos: VideoStats[];
+  social_videos: VideoStats[];
+  social_status: SocialPlatformStatus[];
   daily_metrics: DailyMetric[];
   per_channel: Record<
     string,

@@ -34,6 +34,8 @@ export type {
   DailyMetric,
   DateRange,
   MultiChannelReport,
+  PerformancePlatform,
+  SocialPlatformStatus,
   VideoStats,
   VideoType,
   YouTubeCommentListResponse,

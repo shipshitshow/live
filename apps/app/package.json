@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "@clerk/nextjs": "7.4.2",
     "@excalidraw/excalidraw": "0.18.1",
     "@shipshitshow/talking-points": "workspace:*",
     "@shipshitshow/types": "workspace:*",

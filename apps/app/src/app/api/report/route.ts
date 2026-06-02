@@ -7,6 +7,7 @@ import type {
 } from '@shipshitshow/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { formatLocalDate, todayLocalDate } from '@/lib/date';
+import { fetchSocialPerformance } from '@/lib/social/performance';
 import {
   fetchChannelStats,
   fetchChannelVideos,
@@ -25,6 +26,8 @@ function getEmptyReport(): MultiChannelReport {
     channels: [],
     daily_metrics: [],
     per_channel: {},
+    social_status: [],
+    social_videos: [],
     videos: [],
   };
 }
@@ -108,6 +111,7 @@ async function fetchChannelData(
         channel_label: channelConfig.label,
         ctr: a?.ctr ?? v.ctr,
         impressions: a?.impressions ?? v.impressions,
+        platform: 'youtube',
         watch_time_minutes: a?.watch_time_minutes ?? v.watch_time_minutes,
       };
     });
@@ -119,9 +123,15 @@ async function fetchChannelData(
 export async function GET(req: NextRequest) {
   const days = Number(req.nextUrl.searchParams.get('days') ?? '30');
   const channels = await getChannelConfigs();
+  const socialPerformance = fetchSocialPerformance();
 
   if (!hasYouTubeCredentials() || channels.length === 0) {
-    return NextResponse.json(getEmptyReport());
+    const social = await socialPerformance;
+    return NextResponse.json({
+      ...getEmptyReport(),
+      social_status: social.statuses,
+      social_videos: social.videos,
+    });
   }
 
   try {
@@ -129,9 +139,12 @@ export async function GET(req: NextRequest) {
     const endDate = todayDate();
 
     // Fetch all channels in parallel (each with its own token)
-    const results = await Promise.all(
-      channels.map((ch) => fetchChannelData(ch, startDate, endDate)),
-    );
+    const [results, social] = await Promise.all([
+      Promise.all(
+        channels.map((ch) => fetchChannelData(ch, startDate, endDate)),
+      ),
+      socialPerformance,
+    ]);
 
     const perChannel: MultiChannelReport['per_channel'] = {};
     const allVideos: VideoStats[] = [];
@@ -160,6 +173,8 @@ export async function GET(req: NextRequest) {
       channels: allChannelStats,
       daily_metrics: combineDailyMetrics(...allDailyMetrics),
       per_channel: perChannel,
+      social_status: social.statuses,
+      social_videos: social.videos,
       videos: allVideos,
     };
 

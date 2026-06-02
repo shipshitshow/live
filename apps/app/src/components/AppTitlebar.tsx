@@ -2,6 +2,7 @@
 
 import { PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { AppAccountButton } from '@/components/AppAccountButton';
 import { useSidebarState } from '@/components/livestreams/SidebarStateContext';
 
 const SUBTITLE_MAP: Record<string, string> = {
@@ -62,6 +63,9 @@ export function AppTitlebar() {
         </span>
         <span className="text-text-muted">/</span>
         <span className="text-text-secondary">{subtitle}</span>
+      </div>
+      <div className="ml-auto flex items-center">
+        <AppAccountButton />
       </div>
     </div>
   );

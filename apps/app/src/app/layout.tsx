@@ -1,3 +1,4 @@
+import { ClerkProvider } from '@clerk/nextjs';
 import type { Metadata } from 'next';
 import { AppSidebar } from '@/components/AppSidebar';
 import { AppTitlebar } from '@/components/AppTitlebar';
@@ -19,18 +20,22 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <SidebarStateProvider>
-          <div
-            id="app-content-shell"
-            className="flex h-screen flex-col bg-surface text-text-primary"
-          >
-            <AppTitlebar />
-            <div className="flex flex-1 overflow-hidden">
-              <AppSidebar />
-              <main className="flex-1 min-w-0 overflow-y-auto">{children}</main>
+        <ClerkProvider>
+          <SidebarStateProvider>
+            <div
+              id="app-content-shell"
+              className="flex h-screen flex-col bg-surface text-text-primary"
+            >
+              <AppTitlebar />
+              <div className="flex flex-1 overflow-hidden">
+                <AppSidebar />
+                <main className="flex-1 min-w-0 overflow-y-auto">
+                  {children}
+                </main>
+              </div>
             </div>
-          </div>
-        </SidebarStateProvider>
+          </SidebarStateProvider>
+        </ClerkProvider>
       </body>
     </html>
   );
