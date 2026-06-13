@@ -1,12 +1,12 @@
 {
-  "compilerOptions": {
-    "esModuleInterop": true,
-    "isolatedModules": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "target": "ES2022"
-  }
+  "files": [],
+  "references": [
+    { "path": "./apps/app" },
+    { "path": "./apps/desktop" },
+    { "path": "./apps/web" },
+    { "path": "./packages/talking-points" },
+    { "path": "./packages/types" },
+    { "path": "./packages/ui" },
+    { "path": "./tsconfig.scripts.json" }
+  ]
 }

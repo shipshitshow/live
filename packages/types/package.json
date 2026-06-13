@@ -5,6 +5,9 @@
   "main": "./src/index.ts",
   "name": "@shipshitshow/types",
   "private": true,
+  "scripts": {
+    "check:types": "tsc --noEmit"
+  },
   "types": "./src/index.ts",
   "version": "0.1.0"
 }

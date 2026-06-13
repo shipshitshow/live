@@ -6,6 +6,6 @@
     "types": ["node"]
   },
   "exclude": ["dist", "node_modules"],
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts"]
 }

@@ -3,6 +3,6 @@
     "jsx": "react-jsx",
     "noEmit": true
   },
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "include": ["src/**/*.ts"]
 }
