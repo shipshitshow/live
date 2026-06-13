@@ -1,0 +1,7 @@
+interface:
+  display_name: "YouTube Metadata"
+  short_description: "Create titles, descriptions, and tags"
+  default_prompt: "Use $youtube-metadata to generate Ship Shit Show YouTube metadata with transcript-backed chapters."
+
+policy:
+  allow_implicit_invocation: true
