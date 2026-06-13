@@ -18,7 +18,8 @@
     "dev:web": "turbo dev --filter=@shipshitshow/web",
     "lint": "biome check .",
     "lint:write": "biome check --write .",
-    "prepare": "bunx husky"
+    "prepare": "bunx husky",
+    "youtube:metadata": "bun scripts/generate-youtube-metadata.ts"
   },
   "workspaces": [
     "apps/*",

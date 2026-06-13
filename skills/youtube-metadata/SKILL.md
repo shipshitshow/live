@@ -10,10 +10,11 @@ Use this skill to generate upload-ready metadata in the Ship Shit Show voice. Me
 ## Quick Start
 
 1. Load the episode context: transcript, VTT, topic file, existing description, or rough brief.
-2. If a vault path is provided, compare nearby entries before writing titles.
-3. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
-4. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags`.
-5. Keep claims grounded in provided sources.
+2. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as the working context.
+3. If a vault path is provided, compare nearby entries before writing titles.
+4. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
+5. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags`.
+6. Keep claims grounded in provided sources.
 
 ## Source Priority
 
