@@ -97,16 +97,66 @@ Anthropic's safety framing does not remove capability risk; it moves the cost to
 - Connect to prior Anthropic trust-gap episodes: source maps, pricing, Claude Code bugs, policy constraints.
 - Keep the stance fair: this is not anti-Anthropic. It is builder concern from people who use the product daily.
 
+## Talking Points — Claude Dash P And Loop Engineering
+
+### Segment Thesis
+
+Fable 5 disappearing hurts because the new Claude workflow is not a chat workflow anymore. It is `claude -p`, `/goal`, `/loop`, skills, cron, and agents running while you are not watching.
+
+### Talking Points
+
+- The internet is arguing about "prompting" like the workflow is still one human typing into one box. That is the old interface.
+- The actual 2026 workflow is loops: one command, one goal, repeated execution, validation, feedback, and a stop condition.
+- `claude -p` matters because it makes Claude scriptable. That means Claude is not just an assistant. It is a process you can put inside CI, cron, GitHub Actions, agent SDK apps, repo audits, and background jobs.
+- This is why Fable 5 access matters more than a normal model switch. If the smartest model is inside your loop, the whole loop changes. If it disappears, the loop degrades or gets rerouted.
+- Matt Van Horn's loop framing is the useful version: stop being the thing in the loop. Write the loop once, give it skills and feedback, cap it so it halts, and let it run.
+- The risk is obvious: a bad loop with Fable 5 is not just expensive. It is expensive at machine speed.
+- Clip line: **"The model is not the loop. The loop is where the bill, the trust, and the damage show up."**
+- Transition: so the Fable 5 fight is not just "bring back my favorite model." It is "what happens when the work layer depends on a model that can disappear overnight?"
+
+### Host Notes
+
+- Pull up Matt Van Horn's "WTF Is a Loop?" article.
+- Pull up a `claude -p` example or Claude Code docs if needed.
+- Ask Mitchell: what would he put in a loop with Fable 5, and what would he never allow it to do unattended?
+
 ## Closing Take
 
 Fable 5 is not just a better Claude. It is a preview of the next fight: capability, cost, access, and trust all colliding at once. Builders still need the best tool for the job, but the best tool may be expensive, restricted, or policy-shaped before it reaches the terminal. So the answer is not model loyalty. It is routing, receipts, and knowing exactly when the smarter model is worth the bill.
 
-## Sources — Pull These Up
+## Sources — Anthropic And Claude
 
-- Previous Ship Shit Show Fable 5 stream / AI-native game studio usage.
-- Anthropic Fable 5 / Mythos-class announcement or model card, if available.
-- Source for the U.S. government restriction / ban claim.
-- Prior Ship Shit Show Anthropic trust-gap and Mythos coverage.
+- [Anthropic: Claude Fable 5 and Claude Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5) — official launch page. Pull up the opening claim: Fable 5 is a Mythos-class model made safe for general use.
+- [Anthropic docs: Introducing Claude Fable 5 and Claude Mythos 5](https://platform.claude.com/docs/en/about-claude/models/introducing-claude-fable-5-and-claude-mythos-5) — platform details, thinking behavior, and model usage notes.
+- [Anthropic: Claude Fable](https://www.anthropic.com/claude/fable) — availability/pricing page. Pull up the current "currently unavailable" state and pricing: `$10`/M input, `$50`/M output, prompt caching discount, US-only inference note.
+- [ClaudeDevs on X: Fable 5 suspended](https://x.com/ClaudeDevs/status/2065597942602531163) — official developer-facing suspension notice. Pull up the exact workflow impact: new sessions fall back to default/Opus 4.8, existing Fable 5 sessions error, platform requests error.
+- [Ship Shit Show: Claude Fable 5 game studio stream](https://www.youtube.com/watch?v=Ap5vza8qGy4) — our usage receipt. Use this when saying we actually tried it.
+
+## Sources — Government Restriction
+
+- [The Verge: Inside the fight over Claude Mythos 5](https://www.theverge.com/ai-artificial-intelligence/950412/anthropic-trump-adminstration-claude-mythos-fable-5-export-controls) — best narrative source for the Anthropic / administration fight, export-control angle, and Amazon red-team trigger.
+- [Business Insider: Anthropic White House Fable/Mythos drama explained](https://www.businessinsider.com/anthropic-white-house-fable-mythos-5-drama-explained-2026-6) — plain-English explainer on restrictions, foreign national access, and Anthropic response.
+- [WSJ: Anthropic, Trump officials seek deal on restoring model access](https://www.wsj.com/tech/ai/anthropic-trump-officials-seek-deal-on-restoring-powerful-model-access-d9c4ffee) — negotiation angle, Commerce Department, National Cyber Director, and restoration talks.
+- [BeInCrypto: Anthropic suspends Fable 5 and Mythos 5 after U.S. directive](https://beincrypto.com/anthropic-suspends-fable-5-mythos-5-us-directive/) — useful because it embeds/quotes the ClaudeDevs suspension post and explains export-control mechanics.
+
+## Sources — Claude Dash P, Loops, And Bring-It-Back Workarounds
+
+- [Matt Van Horn: WTF Is a Loop? Peter Steinberger vs. Boris Cherny](https://x.com/mvanhorn/article/2063865685558903149) — core loop framing. Pull the line: stop being the thing in the loop; write the loop once, give it skills/feedback, cap it so it halts.
+- [Matt Van Horn on X: all my tools](https://x.com/mvanhorn/status/2065570965161996600) — follow-up pointer to the loop article and tool stack.
+- [LinkedIn mirror: WTF Is a Loop?](https://www.linkedin.com/pulse/wtf-loop-peter-steinberger-vs-boris-cherny-matt-van-horn-cpslc) — backup if X is annoying live; includes the loop/cost/skills sections.
+- [Product Compass: Claude Fable 5 guide](https://www.productcompass.pm/p/claude-fable-5-guide) — `claude -p`, Agent SDK, GitHub Actions, third-party apps, and the credit/pricing workflow angle.
+- [Brendan Foody LinkedIn: Claude Fable 5 / `claude -p` workaround](https://www.linkedin.com/posts/brendan-foody-2995ab10b_apex-swe-claude-fable-5-activity-7470184853683044352-12tC) — `claude -p` as workaround becoming built into Claude Code.
+- [Linas: Unlock Claude Fable 5 Lite on Opus 4.8](https://linas.substack.com/p/unlock-claude-fable-5-lite-opus-48) — community "bring it back" workaround: Fable system prompt layered onto Opus 4.8. Treat carefully as a community hack, not real Fable 5.
+- [RoundtableSpace on X: 4 steps to bring Claude Fable 5 back](https://x.com/RoundtableSpace/status/2066449914033209635) — pull up only as a community reaction / workaround meme, not a source of truth.
+- [mer.vin: Claude Fable 5 self-improving agents / loop engineering](https://mer.vin/2026/06/claude-fable-5-self-improving-agents-14-step-loop-engineering-guide/) — concrete `/goal` and `claude -p` loop examples.
+
+## Sources — Prior Ship Shit Show Context
+
+- [Previous Anthropic meltdown topic](../2026-04-07/topic-01-anthropic-meltdown.md) — source maps, pricing, Claude Code trust gap.
+- [Claude Mythos system-card topic](../2026-04-07/topic-05-the-244-page-system-card-for-claude-mythos-preview-is-terrif.md) — use for "Mythos was already a security-policy story."
+- [Claude Mythos sandbox topic](../2026-04-07/topic-06-claude-mythos-was-told-to-escape-sandbox-in-testing-succeede.md) — use for the escape/safety-history callback.
+- [Token optimization topic](../2026-04-21/topic-02-token-optimization.md) — use for the cost-per-loop frame.
+- [AI game studio / DEADROT topic](../2026-06-09/topic-01-ai-game-studio-deadrot.md) — use for "the prompt is not the studio, the loop is the studio."
 
 ## Tweets — Paste Live
 
@@ -115,3 +165,7 @@ Fable 5 is not just a better Claude. It is a preview of the next fight: capabili
 > The lazy take is "AI safety killed the model." The useful take is darker: coding models are becoming national-security policy.
 
 > At demo scale, Fable 5 is a model story. At production scale, it is a margin story.
+
+> Everyone is yelling "bring back Fable 5" because they are not just missing a chat model. They are missing the smartest worker inside their `claude -p`, `/goal`, `/loop`, CI, and agent workflows.
+
+> The model is not the loop. The loop is where the bill, the trust, and the damage show up.
