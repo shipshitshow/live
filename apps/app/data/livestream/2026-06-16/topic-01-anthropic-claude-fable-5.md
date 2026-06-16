@@ -143,6 +143,7 @@ Fable 5 is not just a better Claude. It is a preview of the next fight: capabili
 
 - [Matt Van Horn: WTF Is a Loop? Peter Steinberger vs. Boris Cherny](https://x.com/mvanhorn/article/2063865685558903149) — core loop framing. Pull the line: stop being the thing in the loop; write the loop once, give it skills/feedback, cap it so it halts.
 - [Matt Van Horn on X: all my tools](https://x.com/mvanhorn/status/2065570965161996600) — follow-up pointer to the loop article and tool stack.
+- [Matt Pocock on X: Fable 5 / loop reaction](https://x.com/mattpocockuk/status/2066451514672009337) — pull this up for the exact dev-twitter reaction around loops, Claude workflows, and why builders want Fable 5 back.
 - [LinkedIn mirror: WTF Is a Loop?](https://www.linkedin.com/pulse/wtf-loop-peter-steinberger-vs-boris-cherny-matt-van-horn-cpslc) — backup if X is annoying live; includes the loop/cost/skills sections.
 - [Product Compass: Claude Fable 5 guide](https://www.productcompass.pm/p/claude-fable-5-guide) — `claude -p`, Agent SDK, GitHub Actions, third-party apps, and the credit/pricing workflow angle.
 - [Brendan Foody LinkedIn: Claude Fable 5 / `claude -p` workaround](https://www.linkedin.com/posts/brendan-foody-2995ab10b_apex-swe-claude-fable-5-activity-7470184853683044352-12tC) — `claude -p` as workaround becoming built into Claude Code.
