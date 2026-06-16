@@ -10,21 +10,24 @@ Use this skill to generate upload-ready metadata in the Ship Shit Show voice. Me
 ## Quick Start
 
 1. Load the episode context: transcript, VTT, topic file, existing description, or rough brief.
-2. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as the working context.
-3. If a vault path is provided, compare nearby entries before writing titles.
-4. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
-5. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags`.
-6. Keep claims grounded in provided sources.
+2. For upcoming livestreams, first load the current talking-point file from `apps/app/data/livestream/YYYY-MM-DD/topic-*.md` and treat it as the primary source of truth for title, angle, receipts, sources, and description. Do not substitute old transcripts or channel inventory for the current stream premise.
+3. If the user mentions "talking points", "stream prep", "topic file", or says the show context was already piped, use `$shipshitshow-talking-points` source priority before drafting metadata.
+4. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as supporting context, not a replacement for the topic file.
+5. If a vault path is provided, compare nearby entries before writing titles.
+6. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
+7. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags`.
+8. Keep claims grounded in provided sources.
 
 ## Source Priority
 
 Prefer sources in this order:
 
-1. Raw VTT transcript when chapters or exact timestamps are needed.
-2. Clean transcript for voice, thesis, and wording.
-3. Existing episode description or topic markdown.
-4. Local vault entries, when provided.
-5. Public channel patterns or external research only when explicitly requested.
+1. Current livestream topic markdown / talking points for upcoming streams.
+2. Raw VTT transcript when chapters or exact timestamps are needed for already-recorded videos.
+3. Clean transcript for voice, thesis, and wording.
+4. Existing episode description or prior YouTube inventory entry.
+5. Local vault entries, when provided.
+6. Public channel patterns or external research only when explicitly requested or when a fresh claim needs verification.
 
 Do not invent dates, metrics, benchmark numbers, source claims, or timestamps.
 
