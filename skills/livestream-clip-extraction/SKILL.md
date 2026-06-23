@@ -123,7 +123,23 @@ Clip and recap thumbnails are not livestream thumbnails.
 - **Livestream thumbnail:** two large hosts, warm parchment editorial background, centered asset/emblem, top-right episode number, no text except the episode number. Use this only for upcoming livestream topic prep.
 - **Recap/cutdown thumbnail:** one dominant proof visual from the clip or edited video, big readable 2-5 word hook text, no episode number, hosts optional and secondary. This is the default for Shorts, cutdowns, and recap videos.
 
+Mode selection is automatic:
+
+- `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or topic-file `thumbnail_prompt` means livestream style.
+- `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short` means recap/video style.
+- `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or iterative thumbnail correction means surgical re-prompt mode.
+- Do not ask which style he means when the wording matches these rules.
+
 When a clip package includes `Thumbnail prompt`, write it in recap/cutdown style unless the user explicitly asks for live-stream archive branding.
+
+When the user is iterating a thumbnail through a workflow app, use **surgical re-prompt mode**:
+
+- Return a standalone full prompt, not a delta prompt.
+- Do not say `use the provided image`, `same as before`, or depend on prior chat state.
+- Preserve all unspecified composition and style details.
+- Only change what the user asked to change.
+- If the workflow injects a logo/image, say to use the injected asset exactly and do not describe/search/recreate the logo.
+- Protect the edit with explicit negatives, e.g. no title text, no `2.0`, no blue/cyan/teal.
 
 ## YouTube Performance Check
 

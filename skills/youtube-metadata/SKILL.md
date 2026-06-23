@@ -101,7 +101,23 @@ Use the right thumbnail style for the publishing surface:
 - **Upcoming livestream:** use the Ship Shit Show live-thumbnail style: warm parchment editorial background, two large host portraits framing one centered source asset/emblem, top-right episode number, no text except the episode number.
 - **Edited recap video from a livestream:** use the recap/video style: one dominant proof visual from the edit, big readable 2-5 word title text, no episode number, hosts optional and secondary.
 
+Mode selection is automatic:
+
+- `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or topic-file `thumbnail_prompt` means livestream style.
+- `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short` means recap/video style.
+- `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or iterative thumbnail correction means surgical re-prompt mode.
+- Do not ask which style he means when the wording matches these rules.
+
 Never use the livestream two-host parchment composition for a recap video unless the user explicitly wants the archive/live branding. Never use the recap style with big title text for the livestream thumbnail unless the user explicitly overrides the live style.
+
+When the user is iterating a thumbnail in a workflow app and asks for a narrow change, use **surgical re-prompt mode**:
+
+- Return a standalone full prompt. Do not say `use the provided image`, `same as before`, or rely on prior chat context.
+- Preserve all unspecified layout details.
+- Only change what the user asked to change.
+- If a logo/image is injected by the workflow, refer to it as the injected asset and say to use it exactly. Do not ask the model to search for, recreate, or redesign it.
+- For "remove title", explicitly ban `Loops`, `2.0`, numbers, captions, labels, and all non-logo text.
+- For "Claude orange", explicitly replace blue/cyan/teal with warm Claude orange/amber and ban blue/cyan/teal.
 
 When asked for thumbnail prompts in metadata, label them clearly:
 

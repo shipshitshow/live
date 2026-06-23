@@ -30,6 +30,12 @@ There are two different Ship Shit Show thumbnail styles:
 
 Do not use recap/video style for livestream `thumbnail_prompt` unless explicitly requested. Do not use livestream two-host episode-number style for recap/video packaging unless explicitly requested.
 
+Agents should infer the mode from normal wording:
+
+- `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or topic-file `thumbnail_prompt` means livestream style.
+- `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short` means recap/video style.
+- `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or iterative thumbnail correction means surgical re-prompt mode.
+
 ## Section Structure
 
 Sections are delimited by `## Section Title` (h2). The parser (`parseSections` in `apps/app/src/lib/markdown-render.tsx`) splits on `## ` headers and passes each section body to `MarkdownBody` for rendering.

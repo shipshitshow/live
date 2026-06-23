@@ -48,6 +48,13 @@ Core point of view:
 
 Ship Shit Show has two different thumbnail styles. Do not mix them.
 
+Mode selection is automatic:
+
+- If Vincent says `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or asks for a topic-file `thumbnail_prompt`, use **Mode 1: Livestream Thumbnail**.
+- If Vincent says `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short`, use **Mode 2: Recap Video Thumbnail**.
+- If Vincent says `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or is iterating a generated thumbnail, use **Surgical Thumbnail Re-Prompt Mode**.
+- Do not ask which thumbnail style he means when the wording matches one of these modes. Pick the mode and output the prompt.
+
 ### Mode 1: Livestream Thumbnail
 
 Use for upcoming livestream topic frontmatter: `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`.
@@ -101,6 +108,55 @@ Good recap thumbnail direction:
 
 ```text
 One dominant proof visual, large 2-5 word text, strong contrast, edited-video promise, no episode number.
+```
+
+### Surgical Thumbnail Re-Prompt Mode
+
+Use when the user is iterating inside a workflow app and asks for the same thumbnail with only specific changes, e.g. "keep everything but remove the title", "same prompt but Claude orange", "change only the color", or "don't change anything else."
+
+This mode overrides the normal creative thumbnail rules.
+
+Rules:
+
+- Output one clean standalone prompt that does not depend on prior chat state or say `use the provided image`.
+- Fully restate the thumbnail architecture in the prompt: two hosts, center tablet, loop diagram, repeated injected logo placement, lighting, colors, title/text rules, negatives.
+- Preserve every unspecified element. Do not add new concepts, new icons, new composition, new logo treatment, new diagram structure, or new style.
+- If the workflow injects a logo/image asset, explicitly say to use the injected asset exactly and repeat it in the specified places. Do not tell the model to search for, recreate, describe, or redesign the logo.
+- If the desired edit is "remove title", say no title, no `Loops`, no `2.0`, no numbers, no captions, and no labels.
+- If the desired edit is "change blue to Claude orange", say replace cyan/blue/teal with Claude-like warm orange/amber, and prohibit blue/cyan/teal.
+- Do not say "reference", "previous", "same as above", or "provided image" unless the user explicitly asks for an image-edit prompt.
+
+Default surgical recap prompt skeleton:
+
+```text
+16:9 YouTube video thumbnail, 1920x1080, photoreal creator-tech thumbnail, ultra sharp, high contrast, readable at mobile size.
+
+STYLE
+[Restate exact style.]
+
+COLOR PALETTE
+[Only requested color changes.]
+
+COMPOSITION
+[Restate exact layout.]
+
+NO TITLE
+[If requested.]
+
+TABLET SCREEN
+[Restate loop diagram and repeated injected-logo placement.]
+
+LOGO USE
+[Injected asset only; repeat center and around loop if that is the requested architecture.]
+
+HOST LEFT
+[Restate host.]
+
+HOST RIGHT
+[Restate host.]
+
+NEGATIVE
+[Only constraints that protect the requested edit.]
 ```
 
 ## Default Output Contract

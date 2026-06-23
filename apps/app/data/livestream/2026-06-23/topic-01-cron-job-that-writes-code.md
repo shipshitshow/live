@@ -1,6 +1,6 @@
 ---
-title: "The Cron Job That Writes Code"
-slug: "cron-job-that-writes-code"
+title: "WTF Is Loop Engineering?"
+slug: "wtf-is-loop-engineering"
 source: "Claude Code loops, Codex Automations, Forward Future Loop Library, VincentShipsIt loops, Boris Cherny interviews, Ship Shit Show automation stack"
 status: "in_progress"
 date: "2026-06-23"
@@ -9,10 +9,10 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 
 ## Sources — Livestream Notes
 
-- Title: **[LIVE] The Cron Job That Writes Code**
+- Title: **[LIVE] WTF Is Loop Engineering?**
 - Time: 2pm, Tuesday June 23, 2026.
-- YouTube livestream: [add livestream URL]
-- Restream studio: [add Restream URL]
+- [YouTube livestream](https://youtube.com/live/vZZRx4g6tcs)
+- [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
 - Format: reaction + tool walkthrough + live implementation of one automation-loop draft.
 - Angle: do not make this a generic "loops are cool" episode. Show the actual stack: scheduler, worktree, skills, state, connectors, verification, PR boundary.
 - Core promise: by the end, viewers should understand what to put around cron so an AI agent can do useful software work without becoming scheduled slop.
@@ -266,7 +266,7 @@ Premium edited-video thumbnail, high-energy but clean, not a livestream poster. 
 - Recap/video uses the second prompt after the edited hook is known.
 - If the recap angle changes after the stream, rewrite the recap text around the result, not the planned topic.
 
-## Closing Take
+## Close — Final Take
 
 The story is not "everyone is using cron jobs now."
 
