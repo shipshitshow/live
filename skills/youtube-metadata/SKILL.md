@@ -94,6 +94,27 @@ tag one, tag two, tag three
 - Long-form target: 45-75 characters.
 - Shorts target: 35-60 characters.
 
+## Thumbnail Style Modes
+
+Use the right thumbnail style for the publishing surface:
+
+- **Upcoming livestream:** use the Ship Shit Show live-thumbnail style: warm parchment editorial background, two large host portraits framing one centered source asset/emblem, top-right episode number, no text except the episode number.
+- **Edited recap video from a livestream:** use the recap/video style: one dominant proof visual from the edit, big readable 2-5 word title text, no episode number, hosts optional and secondary.
+
+Never use the livestream two-host parchment composition for a recap video unless the user explicitly wants the archive/live branding. Never use the recap style with big title text for the livestream thumbnail unless the user explicitly overrides the live style.
+
+When asked for thumbnail prompts in metadata, label them clearly:
+
+```markdown
+### Livestream Thumbnail Prompt
+
+...
+
+### Recap Video Thumbnail Prompt
+
+...
+```
+
 ## Verification
 
 Before finalizing:
@@ -103,3 +124,4 @@ Before finalizing:
 - The first chapter starts at `0:00`.
 - `youtube_tags` contains 15-25 relevant phrase tags unless the user asks for fewer.
 - Claims and timestamps are backed by supplied context.
+- Thumbnail prompts, when included, use the correct livestream vs recap mode.

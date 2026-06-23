@@ -116,6 +116,15 @@ For standalone clip plans, use a compact table plus separate packages for the to
 - Avoid "insane", "crazy", "game-changing" unless the clip earns it with a receipt.
 - For build clips, title the observable result, not the tool: `Claude 4.8 Built CAD In One Prompt`, not `Testing Claude`.
 
+## Thumbnail Style Modes
+
+Clip and recap thumbnails are not livestream thumbnails.
+
+- **Livestream thumbnail:** two large hosts, warm parchment editorial background, centered asset/emblem, top-right episode number, no text except the episode number. Use this only for upcoming livestream topic prep.
+- **Recap/cutdown thumbnail:** one dominant proof visual from the clip or edited video, big readable 2-5 word hook text, no episode number, hosts optional and secondary. This is the default for Shorts, cutdowns, and recap videos.
+
+When a clip package includes `Thumbnail prompt`, write it in recap/cutdown style unless the user explicitly asks for live-stream archive branding.
+
 ## YouTube Performance Check
 
 When the user asks what performs best:
@@ -137,3 +146,4 @@ Before finalizing:
 - Claims copied from the stream are not "cleaned up" into stronger claims than were spoken.
 - The first publish batch includes at least one build-proof clip when the stream includes live coding.
 - The output favors discovery over archival completeness.
+- Clip thumbnail prompts use recap/cutdown style, not livestream two-host episode-number style.

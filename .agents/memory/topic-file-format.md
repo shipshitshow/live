@@ -21,6 +21,15 @@ thumbnail_prompt: null | "prompt string"
 ---
 ```
 
+### Thumbnail Style Modes
+
+There are two different Ship Shit Show thumbnail styles:
+
+- **Livestream topic thumbnail:** used in livestream topic frontmatter before the stream. Warm parchment editorial background, two large hosts cropped at left/right, centered asset/emblem or locked logo, top-right episode number, no title text except episode number.
+- **Recap/video thumbnail:** used for edited videos, recap uploads, cutdowns, and Shorts. One dominant proof visual from the final edit, big readable 2-5 word title/hook text, no episode number, hosts optional and secondary.
+
+Do not use recap/video style for livestream `thumbnail_prompt` unless explicitly requested. Do not use livestream two-host episode-number style for recap/video packaging unless explicitly requested.
+
 ## Section Structure
 
 Sections are delimited by `## Section Title` (h2). The parser (`parseSections` in `apps/app/src/lib/markdown-render.tsx`) splits on `## ` headers and passes each section body to `MarkdownBody` for rendering.
