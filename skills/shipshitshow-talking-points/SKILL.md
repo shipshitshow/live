@@ -1,6 +1,6 @@
 ---
 name: shipshitshow-talking-points
-description: Build Ship Shit Show brand voice, hooks, episode segments, talking points, cold opens, transitions, show prep, and host-ready commentary from transcripts, topic files, and AI/dev-tool research. Use when defining the show's tone, rewriting livestream/topic prep, creating segment structure, sharpening openings, or turning raw sources into Ship Shit Show talking points.
+description: Build Ship Shit Show brand voice, hooks, episode segments, talking points, cold opens, transitions, show prep, source-attached reaction decks, and host-ready commentary from transcripts, topic files, and AI/dev-tool research. Use when defining the show's tone, rewriting livestream/topic prep, creating segment structure, sharpening openings, attaching links/clips/hot takes to topics, or turning raw sources into Ship Shit Show talking points.
 ---
 
 # Ship Shit Show Talking Points
@@ -17,6 +17,8 @@ Use this skill to turn AI/dev-tool research into host-ready Ship Shit Show segme
 6. Read `references/segment-playbook.md` when building an episode arc, segment order, transitions, or talking points.
 7. Read `references/content-quality-gate.md` when judging whether a transcript, topic, or episode is worth publishing.
 8. Write output in paste-ready markdown, preserving existing topic frontmatter and source URLs.
+
+When the user says they will react live, wants links attached to the topic, or says they will not read a script, use **Live Reaction Prep Mode** below. In that mode, the topic file is a pull-up deck: each segment carries its own links, clip cues, hot takes, demo targets, and host prompts directly in the visible talking points.
 
 ## Source Priority
 
@@ -41,6 +43,121 @@ Core point of view:
 - Models matter less than harnesses, routing, agents, context, cost, and trust.
 - Legacy software does not vanish overnight. It becomes a rewrite target.
 - The audience wants operator truth: what broke, what worked, what costs money, what ships.
+
+## Thumbnail Prompt Modes
+
+Ship Shit Show has two different thumbnail styles. Do not mix them.
+
+Mode selection is automatic:
+
+- If Vincent says `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or asks for a topic-file `thumbnail_prompt`, use **Mode 1: Livestream Thumbnail**.
+- If Vincent says `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short`, use **Mode 2: Recap Video Thumbnail**.
+- If Vincent says `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or is iterating a generated thumbnail, use **Surgical Thumbnail Re-Prompt Mode**.
+- Do not ask which thumbnail style he means when the wording matches one of these modes. Pick the mode and output the prompt.
+
+### Mode 1: Livestream Thumbnail
+
+Use for upcoming livestream topic frontmatter: `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`.
+
+Default `thumbnail_prompt` to the documented two-host editorial style unless the user explicitly asks for a different art direction.
+
+Required livestream shape:
+
+- Start with `16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting.`
+- Use structured blocks in this order: `PALETTE`, `COMPOSITION`, optional `LOGO LOCK` or `CENTER ASSET`, `HOST LEFT`, `HOST RIGHT`, `BACKGROUND`, `CONTRAST RULE`, `LIGHTING`, `BRANDING`, `TEXT`, `STYLE`.
+- Two hosts are large chest-up/upper-torso, cropped by left and right edges, roughly 35% of frame each, heads readable at mobile size.
+- Host left is: bald man, light tan olive skin, stubble, green-hazel eyes, black hoodie, curious disbelief, one palm-up presenting hand.
+- Host right is: dark wavy brown hair slicked back, navy blue polo, confused wonder, subtle "wait, what?" gesture.
+- Default palette is warm parchment cream, muted beige, ivory, soft brown shadows, natural skin tones. Avoid one-note dark tech palettes.
+- For model/logo episodes, if a provided logo/image asset exists, use a `LOGO LOCK` block and explicitly preserve it exactly as a flat raster asset.
+- For non-logo episodes, use a centered simple editorial object/emblem in the same parchment/natural-history style. Do not replace the hosts with UI screenshots.
+- Top-right episode number must be present when known, e.g. `#19`, muted dark brown/grey.
+- Text rule: use no text except the episode number unless the user explicitly asks for thumbnail title text.
+- Negative rule: no neon, cyberpunk, red warning stamps, generic robot faces, cluttered terminal walls, fake logos, tiny UI text, punctuation added to locked logos, or extra symbols over a provided logo.
+
+Bad livestream thumbnail direction:
+
+```text
+Dark charcoal UI, cyan terminal glow, red warning badges, big title text, generic AI dev-tool command center.
+```
+
+Good livestream thumbnail direction:
+
+```text
+Warm parchment editorial composition, two large host portraits framing one centered asset/emblem, no title text except episode number, premium natural-history poster vibe.
+```
+
+### Mode 2: Recap Video Thumbnail
+
+Use for edited videos or main-channel recaps made from a livestream after the stream has a clear result, failure, or thesis.
+
+Recap thumbnails are discovery packaging, not live-show branding. They should sell the strongest viewer promise from the edited video.
+
+Required recap shape:
+
+- Start with `16:9 YouTube video thumbnail, 1920x1080, high-contrast editorial tech thumbnail, ultra sharp, readable at mobile size.`
+- Use one dominant visual receipt from the video: the app/result, source page, benchmark/table, terminal failure, model/tool logo, or before/after state.
+- Use big readable title text, usually 2-5 words, tied to the edited-video title: `CRON WRITES CODE`, `BAD CODE + CONFIDENCE`, `CAN IT CAD?`, `AI LOOP STACK`.
+- Do not use the livestream episode number.
+- Hosts are optional. If included, use one host reaction crop as supporting emotion, not the two-host parchment composition.
+- Palette may be high-contrast tech/editorial and can use dark UI, cyan, red/yellow warning, or product colors when the topic calls for it.
+- The thumbnail must communicate the video outcome or conflict cold, without needing the livestream context.
+- Do not use the calm parchment two-host "live" composition unless the recap is explicitly branded as a livestream archive.
+
+Good recap thumbnail direction:
+
+```text
+One dominant proof visual, large 2-5 word text, strong contrast, edited-video promise, no episode number.
+```
+
+### Surgical Thumbnail Re-Prompt Mode
+
+Use when the user is iterating inside a workflow app and asks for the same thumbnail with only specific changes, e.g. "keep everything but remove the title", "same prompt but Claude orange", "change only the color", or "don't change anything else."
+
+This mode overrides the normal creative thumbnail rules.
+
+Rules:
+
+- Output one clean standalone prompt that does not depend on prior chat state or say `use the provided image`.
+- Fully restate the thumbnail architecture in the prompt: two hosts, center tablet, loop diagram, repeated injected logo placement, lighting, colors, title/text rules, negatives.
+- Preserve every unspecified element. Do not add new concepts, new icons, new composition, new logo treatment, new diagram structure, or new style.
+- If the workflow injects a logo/image asset, explicitly say to use the injected asset exactly and repeat it in the specified places. Do not tell the model to search for, recreate, describe, or redesign the logo.
+- If the desired edit is "remove title", say no title, no `Loops`, no `2.0`, no numbers, no captions, and no labels.
+- If the desired edit is "change blue to Claude orange", say replace cyan/blue/teal with Claude-like warm orange/amber, and prohibit blue/cyan/teal.
+- Do not say "reference", "previous", "same as above", or "provided image" unless the user explicitly asks for an image-edit prompt.
+
+Default surgical recap prompt skeleton:
+
+```text
+16:9 YouTube video thumbnail, 1920x1080, photoreal creator-tech thumbnail, ultra sharp, high contrast, readable at mobile size.
+
+STYLE
+[Restate exact style.]
+
+COLOR PALETTE
+[Only requested color changes.]
+
+COMPOSITION
+[Restate exact layout.]
+
+NO TITLE
+[If requested.]
+
+TABLET SCREEN
+[Restate loop diagram and repeated injected-logo placement.]
+
+LOGO USE
+[Injected asset only; repeat center and around loop if that is the requested architecture.]
+
+HOST LEFT
+[Restate host.]
+
+HOST RIGHT
+[Restate host.]
+
+NEGATIVE
+[Only constraints that protect the requested edit.]
+```
 
 ## Default Output Contract
 
@@ -89,7 +206,7 @@ One sentence that says what this segment proves.
 ### Full episode skeleton
 
 ```markdown
-## Livestream Notes
+## Sources — Livestream Notes
 
 - Title: **[LIVE] …**
 - [YouTube livestream](https://…)
@@ -127,6 +244,52 @@ One-paragraph episode thesis.
 ## Sources — <Group Name>
 
 ## Tweets — Paste Live
+```
+
+### Live Reaction Prep Mode
+
+Use this mode when the host wants to react to articles, clips, docs, repos, or demos live instead of reading a polished essay. The output must still use the dashboard-safe `## ` headings above.
+
+Rules:
+
+- Put the source link directly beside the point it supports. Do not bury all receipts in the final Sources section.
+- Every `## Talking Points — <Segment Name>` should contain at least 3 pull-up links, clip cues, repo paths, or demo artifacts inside `### Talking Points` or `### Host Notes`.
+- Use source-first bullets that are easy to scan live:
+
+```markdown
+- Pull up [Source Title](https://example.com). Receipt: [date/number/clip cue/claim]. Take: [operator interpretation].
+```
+
+- For videos, include a clip cue when known: `Clip cue: around 7:50`.
+- For repo demos, include the exact file or template link and the line/field to point at: `rrule`, `execution_environment`, `status = "PAUSED"`, baseline state, forbidden actions, verification.
+- Include a visible `## Hot Take` section when the stream is debate/reaction-heavy.
+- End each segment with one clip line and one transition, so the host can move without rereading the whole file.
+- Keep `## Sources — <Group Name>` sections as the backup bibliography, grouped by how they will be used live: clips, docs, repos, demo targets, prior context.
+- Avoid long quotations. Use short paraphrases and pull the original source up on screen.
+
+Preferred reaction segment shape:
+
+```markdown
+## Talking Points — <Claim-Based Segment Name>
+
+### Segment Thesis
+
+One sentence that says what this source cluster proves.
+
+### Talking Points
+
+- Pull up [source](https://example.com). Receipt: concrete fact. Take: operator meaning.
+- Pull up [clip](https://youtube.com/...). Clip cue: around 7:50. Take: what changed in the workflow.
+- Show [repo/template](https://github.com/...). Point at: specific file, config key, command, or guardrail.
+- Hot take: one uncomfortable sentence.
+- Clip line: **"Standalone sentence."**
+- Transition: why the next segment follows.
+
+### Host Notes
+
+- Ask Mitchell:
+- Pull up:
+- Don't pretend:
 ```
 
 ## Hook Formula

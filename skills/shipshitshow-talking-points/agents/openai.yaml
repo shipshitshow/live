@@ -1,7 +1,7 @@
 interface:
   display_name: "Ship Shit Show Talking Points"
-  short_description: "Define brand voice and host-ready show segments"
-  default_prompt: "Use $shipshitshow-talking-points to turn this topic into a sharp Ship Shit Show hook, segment arc, and host-ready talking points."
+  short_description: "Create source-attached live reaction talking points"
+  default_prompt: "Use $shipshitshow-talking-points to turn this topic into a sharp Ship Shit Show hook, segment arc, hot takes, pull-up links, clip cues, demo targets, and host-ready talking points."
 
 policy:
   allow_implicit_invocation: true
