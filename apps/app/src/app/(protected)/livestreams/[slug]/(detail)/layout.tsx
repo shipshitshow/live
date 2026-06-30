@@ -11,7 +11,7 @@ import {
 import {
   getLivestreamArchiveByDate,
   getLivestreamArchiveByVideoId,
-  getTopicsForDate,
+  getTopicsForArchive,
   listAvailableLivestreamDates,
   listLivestreamArchive,
   resolveLivestreamDate,
@@ -72,9 +72,9 @@ export default async function LivestreamDetailLayout({
     ? requestedDate
     : await resolveLivestreamDate(requestedDate);
 
-  const topics = await getTopicsForDate(resolvedDate);
-  const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const archive = await getLivestreamArchiveByDate(resolvedDate);
+  const topics = await getTopicsForArchive(archive, resolvedDate);
+  const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const effectiveStatus = getEffectiveStatus(resolvedDate);
   const videoId = archive?.videoId ?? null;
 

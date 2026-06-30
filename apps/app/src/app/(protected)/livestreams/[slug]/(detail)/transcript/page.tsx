@@ -11,7 +11,7 @@ import {
 import {
   getLivestreamArchiveByDate,
   getLivestreamArchiveByVideoId,
-  getTopicsForDate,
+  getTopicsForArchive,
   listAvailableLivestreamDates,
   listLivestreamArchive,
   resolveLivestreamDate,
@@ -63,10 +63,8 @@ export async function generateMetadata({
   const resolvedDate = await resolveFullDate(slug);
   const defaults = buildDefaultMetadata();
 
-  const [topics, archive] = await Promise.all([
-    getTopicsForDate(resolvedDate),
-    getLivestreamArchiveByDate(resolvedDate),
-  ]);
+  const archive = await getLivestreamArchiveByDate(resolvedDate);
+  const topics = await getTopicsForArchive(archive, resolvedDate);
   const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const streamTitle = getLivestreamTitle(
     resolvedDate,
@@ -129,9 +127,9 @@ export default async function TranscriptPage({
     ? requestedDate
     : await resolveLivestreamDate(requestedDate);
 
-  const topics = await getTopicsForDate(resolvedDate);
-  const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const archive = await getLivestreamArchiveByDate(resolvedDate);
+  const topics = await getTopicsForArchive(archive, resolvedDate);
+  const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const title = getLivestreamTitle(resolvedDate, visibleTopics, archive?.title);
 
   return (

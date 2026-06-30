@@ -67,6 +67,7 @@ export interface LivestreamArchiveItem {
   date: string;
   hasTranscript: boolean;
   title: string;
+  topicDate: string;
   topicCount: number;
   topics: Topic[];
   transcriptPath: string | null;
@@ -586,6 +587,74 @@ function buildArchiveTitle(
   return `${date} Livestream Rundown`;
 }
 
+function mergeArchiveTopics(...topicGroups: Topic[][]): Topic[] {
+  const merged = new Map<string, Topic>();
+
+  for (const topics of topicGroups) {
+    for (const topic of topics) {
+      merged.set(`${topic.date}:${topic.slug}`, topic);
+    }
+  }
+
+  return Array.from(merged.values()).sort(
+    (a, b) =>
+      b.date.localeCompare(a.date) || a.fileName.localeCompare(b.fileName),
+  );
+}
+
+function mergeLivestreamArchiveItems(
+  a: LivestreamArchiveItem,
+  b: LivestreamArchiveItem,
+): LivestreamArchiveItem {
+  const transcriptItem = a.hasTranscript ? a : b.hasTranscript ? b : null;
+  const canonicalItem = transcriptItem ?? (a.date >= b.date ? a : b);
+  const topicSource = a.topics.length >= b.topics.length ? a : b;
+  const topics = mergeArchiveTopics(a.topics, b.topics);
+
+  return {
+    date: canonicalItem.date,
+    hasTranscript: a.hasTranscript || b.hasTranscript,
+    title:
+      transcriptItem?.title ??
+      (topics.length === 1 ? topics[0].title : canonicalItem.title),
+    topicCount: topics.length || Math.max(a.topicCount, b.topicCount),
+    topicDate: topics.length > 0 ? topicSource.topicDate : canonicalItem.date,
+    topics,
+    transcriptPath: transcriptItem?.transcriptPath ?? null,
+    transcriptTitle: transcriptItem?.transcriptTitle ?? null,
+    videoId: canonicalItem.videoId ?? a.videoId ?? b.videoId,
+    youtubeUrl:
+      transcriptItem?.youtubeUrl ??
+      canonicalItem.youtubeUrl ??
+      a.youtubeUrl ??
+      b.youtubeUrl,
+  };
+}
+
+function dedupeLivestreamArchiveItems(
+  items: LivestreamArchiveItem[],
+): LivestreamArchiveItem[] {
+  const byVideoId = new Map<string, LivestreamArchiveItem>();
+  const withoutVideoId: LivestreamArchiveItem[] = [];
+
+  for (const item of items) {
+    if (!item.videoId) {
+      withoutVideoId.push(item);
+      continue;
+    }
+
+    const existing = byVideoId.get(item.videoId);
+    byVideoId.set(
+      item.videoId,
+      existing ? mergeLivestreamArchiveItems(existing, item) : item,
+    );
+  }
+
+  return [...withoutVideoId, ...byVideoId.values()].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  );
+}
+
 export async function listLivestreamArchive(): Promise<
   LivestreamArchiveItem[]
 > {
@@ -613,6 +682,7 @@ export async function listLivestreamArchive(): Promise<
         hasTranscript: Boolean(historyItem),
         title: buildArchiveTitle(date, topics, historyItem),
         topicCount: topics.length,
+        topicDate: date,
         topics,
         transcriptPath: historyItem?.transcriptPath ?? null,
         transcriptTitle: historyItem?.title ?? null,
@@ -622,15 +692,19 @@ export async function listLivestreamArchive(): Promise<
     }),
   );
 
-  return items.sort((a, b) => b.date.localeCompare(a.date));
+  return dedupeLivestreamArchiveItems(items);
 }
 
 export async function getLivestreamArchiveByDate(
   date: string,
 ): Promise<(LivestreamArchiveItem & { transcript: string | null }) | null> {
   const item =
-    (await listLivestreamArchive()).find((archive) => archive.date === date) ??
-    null;
+    (await listLivestreamArchive()).find(
+      (archive) =>
+        archive.date === date ||
+        archive.topicDate === date ||
+        archive.topics.some((topic) => topic.date === date),
+    ) ?? null;
   if (!item) return null;
 
   return {
@@ -656,6 +730,14 @@ export async function getLivestreamArchiveByVideoId(
       ? fs.readFileSync(item.transcriptPath, 'utf-8')
       : null,
   };
+}
+
+export async function getTopicsForArchive(
+  archive: Pick<LivestreamArchiveItem, 'topicDate' | 'topics'> | null,
+  fallbackDate: string,
+): Promise<Topic[]> {
+  if (archive?.topics.length) return archive.topics;
+  return getTopicsForDate(archive?.topicDate ?? fallbackDate);
 }
 
 export async function getTopicsForDate(date: string): Promise<Topic[]> {

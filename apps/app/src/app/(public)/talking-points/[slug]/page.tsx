@@ -13,7 +13,7 @@ import {
 import {
   getLivestreamArchiveByDate,
   getLivestreamArchiveByVideoId,
-  getTopicsForDate,
+  getTopicsForArchive,
   listAvailableLivestreamDates,
   listLivestreamArchive,
   resolveLivestreamDate,
@@ -77,10 +77,8 @@ export async function generateMetadata({
     };
   }
 
-  const [topics, archive] = await Promise.all([
-    getTopicsForDate(resolvedDate),
-    getLivestreamArchiveByDate(resolvedDate),
-  ]);
+  const archive = await getLivestreamArchiveByDate(resolvedDate);
+  const topics = await getTopicsForArchive(archive, resolvedDate);
   const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const streamTitle = getLivestreamTitle(
     resolvedDate,
@@ -131,7 +129,8 @@ export default async function PublicTalkingPointsPage({
   const resolvedDate = await resolveFullDate(slug);
   if (!resolvedDate) notFound();
 
-  const topics = await getTopicsForDate(resolvedDate);
+  const archive = await getLivestreamArchiveByDate(resolvedDate);
+  const topics = await getTopicsForArchive(archive, resolvedDate);
   const visibleTopics = sortTopics(getVisibleTopics(topics, resolvedDate));
   const effectiveStatus = getEffectiveStatus(resolvedDate);
   const cards = await buildCards(visibleTopics, effectiveStatus);
