@@ -48,7 +48,7 @@ const YT_URL_PATTERN =
 const RESTREAM_URL_PATTERN = /https?:\/\/studio\.restream\.io\/[\w-]+/;
 
 const LIVESTREAM_NOTES_PATTERN =
-  /## Livestream Notes\s*([\s\S]*?)(?:\n## |\n?$)/;
+  /## (?:Sources\s*(?:\u2014|-)\s*)?Livestream Notes\s*([\s\S]*?)(?:\n## |\n?$)/;
 
 export function extractYouTubeUrl(raw: string): string | null {
   const notesMatch = raw.match(LIVESTREAM_NOTES_PATTERN);

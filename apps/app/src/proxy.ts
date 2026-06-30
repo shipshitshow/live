@@ -8,6 +8,7 @@ const isPublicRoute = createRouteMatcher([
   '/talking-points(.*)',
   '/api/auth/youtube(.*)',
   '/api/auth/social(.*)',
+  '/api/og(.*)',
   '/api/public(.*)',
 ]);
 

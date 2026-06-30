@@ -5,6 +5,7 @@ import { StreamPromptsPanel } from '@/components/livestreams/StreamPromptsPanel'
 import { StreamResourcesPanel } from '@/components/livestreams/StreamResourcesPanel';
 import { StreamRundownPanel } from '@/components/livestreams/StreamRundownPanel';
 import {
+  buildTopicImageUrl,
   isDateSlug,
   isYouTubeVideoId,
   resolveUpcomingLivestreamDate,
@@ -88,9 +89,16 @@ export async function generateMetadata({
   const pageTitle = `${streamTitle} - Talking Points`;
   const description = 'Public livestream talking points for Ship Shit Show.';
   const pageUrl = toAbsoluteUrl(`/talking-points/${encodeURIComponent(slug)}`);
+  const primaryTopic = visibleTopics[0];
   const imageUrl = archive?.videoId
     ? await buildYouTubeThumbnailUrl(archive.videoId)
-    : toAbsoluteUrl('/api/og');
+    : primaryTopic
+      ? await buildTopicImageUrl(
+          primaryTopic.slug,
+          primaryTopic.date,
+          primaryTopic.content,
+        )
+      : toAbsoluteUrl('/api/og');
 
   return {
     ...defaults,
