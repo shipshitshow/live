@@ -1,7 +1,7 @@
 ---
 title: "Masterclass: Set Up Open Models For AI Coding"
 slug: "open-models-escape-hatch"
-source: "Anthropic, OpenAI, AWS Bedrock, Ollama, LM Studio, vLLM, Artificial Analysis, Aider, Reddit, X, YouTube, How I AI"
+source: "Anthropic, OpenAI, AWS Bedrock, Ollama, LM Studio, vLLM, Artificial Analysis, Aider, Reddit, X, YouTube, How I AI, NVIDIA, EIA, Energy.gov, OpenRouter"
 status: "in_progress"
 date: "2026-06-30"
 announcement_tweet: null
@@ -31,7 +31,7 @@ The smartest model you cannot call is dead weight.
 - Title: **[LIVE] Masterclass: Set Up Open Models For AI Coding**
 - [YouTube livestream](https://www.youtube.com/watch?v=h0EzR9Sqkz0)
 - [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
-- Stream path: access problem -> local setup -> Bedrock setup -> benchmarks -> same repo test.
+- Stream path: access problem -> local setup -> hardware/bill check -> Bedrock setup -> benchmarks -> same repo test.
 - Live test: one small coding task, local vs hosted, score the diff.
 - Main rule: do not sell open models as magic. Sell them as a fallback layer.
 
@@ -70,6 +70,26 @@ Open models give you deployment choices.
 
 - Ask Mitchell: what would you route local-first tomorrow?
 - Do not get stuck installing live. Show the paths, then test.
+
+## Talking Points — The Bill Picks The Route
+
+### Segment Thesis
+
+Local is not free. It changes where the bill lands.
+
+### Talking Points
+
+- Pull up [OpenAI gpt-oss](https://openai.com/index/introducing-gpt-oss/). Point: 20B wants 16GB memory, 120B wants an 80GB GPU.
+- Pull up [Ollama FAQ](https://docs.ollama.com/faq). Run `ollama ps`; if it spills to CPU, the workflow is not really GPU-fast.
+- Pull up [NVIDIA RTX 4090 specs](https://www.nvidia.com/en-us/geforce/graphics-cards/40-series/rtx-4090/). Receipt: 450W total graphics power, 19W idle, 850W recommended system power.
+- Estimate: `(watts / 1000) * hours * kWh price`. Example: 450W for 4h/day at $0.14/kWh is about $7.50/month GPU-only. 800W 24/7 is about $81/month.
+- Hosted check: [AWS Bedrock pricing](https://aws.amazon.com/bedrock/pricing/) and [OpenRouter pricing](https://openrouter.ai/pricing). Token bills scale with loops; electricity scales with hours and watts.
+- Clip line: **"The local bill moved from Stripe to the power company."**
+
+### Host Notes
+
+- Ask Mitchell: would you rather debug GPU heat or token invoices?
+- Don't pretend local is cheaper until the machine is measured.
 
 ## Talking Points — Benchmarks Pick The Shortlist
 
@@ -129,15 +149,29 @@ One small repo task. Same ask. Compare the damage.
 
 ### Local
 
+- [OpenAI: Introducing gpt-oss](https://openai.com/index/introducing-gpt-oss/) — 20B memory target and 120B single-80GB-GPU framing.
+- [Ollama: gpt-oss:20b](https://ollama.com/library/gpt-oss%3A20b) — Ollama model page and local memory framing.
 - [Ollama: OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility) — local OpenAI-compatible endpoint.
+- [Ollama FAQ: check CPU/GPU split](https://docs.ollama.com/faq) — use `ollama ps` to verify whether the model is actually on GPU.
 - [LM Studio: Local server](https://lmstudio.ai/docs/developer/core/server) — local server and API docs.
 - [vLLM quickstart](https://docs.vllm.ai/en/latest/getting_started/quickstart/) — OpenAI-compatible serving path for GPU boxes.
+
+### Hardware / Electricity
+
+- [NVIDIA RTX 4090 official specs](https://www.nvidia.com/en-us/geforce/graphics-cards/40-series/rtx-4090/) — use as a concrete 450W GPU / 850W system-power receipt.
+- [NVIDIA-SMI manual](https://docs.nvidia.com/deploy/nvidia-smi/index.html) — use `power.draw`, `memory.used`, and utilization to measure the actual run.
+- [Energy.gov: estimating electronic energy use](https://www.energy.gov/energysaver/estimating-appliance-and-home-electronic-energy-use) — formula for watts, hours, kWh, and cost.
+- [EIA electricity monthly update](https://www.eia.gov/electricity/monthly/update/end-use.php) — current U.S. average revenue per kWh; use local rate for real math.
+- [Omni electricity cost calculator](https://www.omnicalculator.com/everyday-life/electricity-cost) — fast on-stream calculator for watts, hours, rate, monthly cost.
+- [Seasonic PSU wattage calculator](https://seasonic.com/wattage-calculator/) — sanity-check total system power before recommending a local GPU build.
 
 ### Hosted
 
 - [AWS Bedrock: What is Amazon Bedrock?](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html) — managed model service framing.
+- [AWS Bedrock pricing](https://aws.amazon.com/bedrock/pricing/) — model/provider/tier-specific hosted cost reference.
 - [AWS Bedrock: Supported foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html) — model catalog.
 - [AWS Bedrock: Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html) — one API surface across chat models.
+- [OpenRouter pricing](https://openrouter.ai/pricing) — pay-as-you-go hosted-routing pricing reference.
 
 ### Benchmarks
 
@@ -153,6 +187,16 @@ One small repo task. Same ask. Compare the damage.
 - [Claire Vo on GLM 5.2 as Claude Code default](https://x.com/clairevo/status/2069828122640548204) — builder switching signal.
 - [Hooeem: GLM 5.2 with Claude Code / Anthropic SDK / LM Studio](https://x.com/hooeem/status/2068989788485480682) — practical setup/social proof.
 - [Mark Watson: Claude Code with gpt-oss-20b on Ollama](https://x.com/mark_l_watson/status/2014694705288638611) — local coding workflow angle.
+- [Tomasz Tunguz: burned Claude Code credits, considered GPT-OSS local](https://x.com/ttunguz/status/1988725222309347487) — legit cost-pressure receipt.
+- [Rohit Ghumare: Claude Code locally with Ollama](https://x.com/ghumare64/status/2013974925694914941) — setup/social proof.
+- [ayemojubar: local LLM orchestration layer for Claude Code powered by Ollama](https://x.com/ayemojubar/article/2066488612745523372) — routing-layer example.
+- [rewind: AI bill to electricity bill anecdote](https://x.com/rewind02/status/2070090064453828624) — viral cost framing; verify live before treating as fact.
+
+### Credible Non-X Local Receipts
+
+- [Simon Willison: LLM 0.26 tools with local models from Ollama](https://simonw.substack.com/p/large-language-models-can-run-tools) — credible local-model tool-use receipt.
+- [Simon Willison: gpt-oss write-up](https://simonwillison.net/2025/Aug/5/gpt-oss/) — open-weight model context from a serious practitioner.
+- [Tomasz Tunguz LinkedIn mirror](https://www.linkedin.com/posts/tomasztunguz_by-monday-lunch-i-had-burned-through-my-activity-7394492130787954688-XmKE) — readable version of the Claude credits / GPT-OSS local cost post.
 
 ### Reddit Threads To Pull Up
 
