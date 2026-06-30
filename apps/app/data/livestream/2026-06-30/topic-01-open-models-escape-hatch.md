@@ -10,194 +10,114 @@ thumbnail_prompt: "YouTube livestream thumbnail, 16:9, Ship Shit Show house styl
 
 ## Cold Open — Read This
 
-> "This is the Open Model Masterclass."
+> "The best model is useless if you cannot call it."
 >
-> "The best model in the world is useless if you cannot call it."
+> "Fable is blocked. GPT-5.6 is preview. So tonight is practical."
 >
-> "Fable is still blocked. GPT-5.6 is in preview. Everyone wants the frontier model, but the builder reality is simple: sometimes the door is locked."
+> "How do we set up open models for coding?"
 >
-> "So tonight is not another benchmark worship stream. This is setup, routing, and a real coding test."
->
-> "Do you run local with Ollama or LM Studio? Do you use AWS Bedrock and let Amazon run the open weights? Do you trust GLM, DeepSeek, Qwen, Kimi, MiniMax, GPT-OSS?"
->
-> "Open models are not automatically better. They are not automatically cheaper. They are not magically private. But they are becoming the backup generator for AI builders."
->
-> "If your whole workflow depends on one gated model, you do not have an AI stack. You have a single point of failure."
+> "Local. Bedrock. Benchmarks. One real coding test."
 
 ## Summary
 
-Closed frontier models still win plenty of hard tasks, but access volatility is now part of the architecture. Fable being unavailable and GPT-5.6 sitting behind preview access makes the operator question unavoidable: how do builders actually set up and use open models when the best closed model is gated, rate-limited, too expensive, or policy-shaped? This stream should feel like an Open Model Masterclass: local setup with Ollama or LM Studio, managed setup with AWS Bedrock, benchmark triage with Aider and Artificial Analysis, and a real repo test to show where open models are useful and where frontier models still earn the bill.
+Red line: this is not "open beats closed." This is routing. Frontier for hard work. Hosted open for fallback. Local for control and cheap repetition.
 
 ## Hot Take
 
-The open-model story is not "open beats closed." That is lazy. The useful take is sharper: closed models optimize for peak capability, open models optimize for survivability. If you are building agent loops, CI jobs, repo audits, background workers, or customer-facing AI, survivability matters. The smartest unavailable model is just a screenshot.
+The smartest model you cannot call is dead weight.
 
 ## Sources — Livestream Notes
 
 - Title: **[LIVE] Masterclass: Set Up Open Models For AI Coding**
 - [YouTube livestream](https://www.youtube.com/watch?v=h0EzR9Sqkz0)
 - [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
-- Format: talk + receipts + live install/demo path.
-- Stream promise: show how to set up open models, when to use local vs Bedrock, and how to judge them against coding benchmarks.
-- Working frame: **frontier when available, hosted open fallback, local emergency path.**
-- Suggested live test: same small coding task against local model and hosted model, then compare latency, edits, failures, and cost friction.
-- Reference video: How I AI's **"GLM 5.2 is SO GOOD (and almost free)"** is the model for the vibe: real setup, real repo audit, real cost/capability receipt.
-- Don't over-sell: open models are a workbench and fallback layer, not a magic replacement for every Claude/GPT workflow.
+- Stream path: access problem -> local setup -> Bedrock setup -> benchmarks -> same repo test.
+- Live test: one small coding task, local vs hosted, score the diff.
+- Main rule: do not sell open models as magic. Sell them as a fallback layer.
 
-## Talking Points — Access Is The New Dependency Risk
+## Talking Points — Access Is The Real Problem
 
 ### Segment Thesis
 
-The model access layer is now a production dependency, not a developer preference.
+The best model only matters if your loop can use it.
 
 ### Talking Points
 
-- The lazy take is "just use the best model." Okay, what if the best model is blocked, preview-only, region-gated, rate-limited, or too expensive for the loop?
-- Fable is the clean receipt because it is not theoretical. Builders wanted it inside actual Claude Code and agent workflows, then the access story became the headline.
-- GPT-5.6 is the second receipt: even when the model exists, preview access means most builders cannot plan around it yet.
-- This matters more for agents than chat. Chat degrades when the model changes. Loops break when the model disappears.
-- Every background workflow has hidden model assumptions: context size, tool behavior, JSON reliability, refusal behavior, latency, and price.
-- Operator rule: if a model is inside CI, cron, support, code review, or autonomous repo work, you need a fallback route.
-- Clip line: **"A gated model is not infrastructure. It is a wish."**
-- Transition: if access is unstable, the next question is what "open" even buys you.
+- Pull up [Claude Fable/Mythos](https://www.anthropic.com/news/claude-fable-5-mythos-5). Point: access is the story.
+- Pull up [GPT-5.6 preview](https://openai.com/index/previewing-gpt-5-6-sol/). Point: preview is not a production plan.
+- Red line: if the model can disappear, it is a dependency risk.
+- Clip line: **"A model you can't call is not infrastructure."**
 
 ### Host Notes
 
-- Pull up the Fable page first. Make the pain concrete before definitions.
-- Ask Mitchell: where would a model swap silently damage a workflow?
-- Don't turn this into anti-Anthropic or anti-OpenAI. This is dependency management.
+- Ask Mitchell: what breaks first if the default model silently changes?
 
-## Talking Points — Open-Weight Does Not Mean Local Magic
+## Talking Points — Open Models Are Routing
 
 ### Segment Thesis
 
-Open-weight models give you deployment options, not automatic freedom.
+Open models give you deployment choices.
 
 ### Talking Points
 
-- Say the vocabulary clearly: open-source is rare, open-weight is common, local is a deployment choice, hosted open model is still a cloud dependency.
-- Open-weight does not mean cheap. If you need an 80GB GPU or pay hosted inference all day, the bill still hits.
-- Open-weight does not mean private if your toolchain still phones home, logs prompts, or routes through another provider.
-- Open-weight does not mean good at your workflow. Benchmarks can look great while repo navigation, test fixing, or agent recovery feels bad.
-- But open-weight does mean optionality: run it on a laptop, a GPU box, a private cloud, Bedrock, Together, Fireworks, Groq, OpenRouter, or whatever wins next month.
-- The founder angle is simple: optionality is leverage. You do not want your whole production workflow negotiated by a model access page.
-- Clip line: **"Open weights do not remove the bill. They give you the right to choose where the bill lands."**
-- Transition: now make that practical. What do you actually install?
+- Pull up [gpt-oss](https://openai.com/index/introducing-gpt-oss/). Point: open-weight is now mainstream.
+- Local route: [Ollama](https://docs.ollama.com/api/openai-compatibility), [LM Studio](https://lmstudio.ai/docs/developer/core/server), [vLLM](https://docs.vllm.ai/en/latest/getting_started/quickstart/).
+- Hosted route: [AWS Bedrock](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html), [Bedrock model catalog](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html), [Converse API](https://docs.aws.amazon.com/bedrock/latest/userguide/conversation-inference.html).
+- Red line: local is control. Bedrock is convenience. OpenRouter is fast routing.
+- Clip line: **"Open weights move the bill. They don't delete it."**
 
 ### Host Notes
 
-- Pull up GPT-OSS 20B / 120B as the concrete "open weights from OpenAI" example.
-- Ask Mitchell: what tasks would he accept on a weaker but controllable model?
-- Don't say "open source" when the accurate phrase is "open weight."
-
-## Talking Points — Local Models Are Control
-
-### Segment Thesis
-
-Local models are the control path: great for repeatable work, privacy, and hacking, but constrained by hardware and patience.
-
-### Talking Points
-
-- The fast path is Ollama: pull a model, run the local server, point OpenAI-compatible clients at it.
-- LM Studio is the visual path: download model, start local server, connect a coding assistant or IDE extension to the local endpoint.
-- vLLM is the serious server path: if you have a GPU box and want throughput, batching, and an OpenAI-compatible API, it is closer to production inference than a desktop toy.
-- Local is best for cheap repetitions: summarizing, classification, small code edits, log digestion, docs, synthetic data, private repo Q&A, low-risk agent subtasks.
-- Local is weakest where the frontier still matters: long-horizon coding, subtle architecture, taste-heavy UI, deep debugging, and "do not break the repo" migrations.
-- The honest local model demo is not "look, it wrote code." The honest demo is: can it inspect the repo, make a small patch, run the test, and recover from the first error?
-- Clip line: **"Local is not where you send the hardest task. Local is where you stop paying frontier prices for the boring 80%."**
-- Transition: local gives control. Bedrock gives managed deployment.
-
-### Host Notes
-
-- Pull up Ollama OpenAI-compatible API docs.
-- Pull up LM Studio local server docs.
-- Pull up vLLM quickstart if the conversation moves to serious serving.
-- Don't spend 25 minutes on install plumbing. The point is routing.
-
-## Talking Points — Bedrock Is Convenience With Contracts
-
-### Segment Thesis
-
-Bedrock is not the "open source dream," but it is a sane managed path if you want open models without owning inference.
-
-### Talking Points
-
-- AWS Bedrock is the enterprise answer: model catalog, IAM, managed inference, monitoring, regions, and one API surface for many models.
-- The appeal is boring in the good way. You do not want to debug CUDA on stream if your real problem is "ship a fallback route."
-- Bedrock also changes the security conversation: IAM, auditability, region controls, procurement, and vendor review are things companies care about.
-- The downside is obvious: you are still in a cloud provider's model catalog. Availability, regions, pricing, quotas, and model versions are still constraints.
-- Operator rule: use Bedrock when the workflow needs managed deployment and account controls. Use local when the workflow needs privacy, tinkering, or independence.
-- Do not frame Bedrock as more "open" than local. Frame it as less annoying to operate.
-- Clip line: **"Local is control. Bedrock is convenience. Neither is magic."**
-- Transition: now the audience will ask the benchmark question. Are these models actually good?
-
-### Host Notes
-
-- Pull up AWS Bedrock "model choices" and Converse API docs.
-- Ask Mitchell: when would he accept Bedrock lock-in to avoid running GPUs?
-- Don't compare Bedrock only to a MacBook. Compare it to production inference work.
+- Ask Mitchell: what would you route local-first tomorrow?
+- Do not get stuck installing live. Show the paths, then test.
 
 ## Talking Points — Benchmarks Pick The Shortlist
 
 ### Segment Thesis
 
-Benchmarks tell you who gets an interview. Your repo decides who gets the job.
+Benchmarks shortlist models. The repo decides.
 
 ### Talking Points
 
-- Use benchmarks as a filter, not a religion. Artificial Analysis, Aider, SWE-bench, LiveCodeBench, and provider evals all measure different slices of usefulness.
-- Coding leaderboards are especially dangerous because they can miss agent behavior: tool calls, file search, repo memory, tests, retries, terminal mistakes, and recovery.
-- A model can look great on a benchmark and still be painful in Claude Code-style workflows because it edits the wrong file, loses intent, or cannot fix its own broken patch.
-- The model watchlist for this stream: GLM / Z.ai, DeepSeek, Qwen, Kimi / Moonshot, MiniMax, GPT-OSS 20B and 120B.
-- Do not marry model names. The open leaderboard changes every few weeks. The architecture should survive the leaderboard changing.
-- The real test: give each model the same small repo task, cap the time and cost, run the tests, and compare the diff. That is the only benchmark that matters to builders.
-- Clip line: **"The leaderboard says smarter. The terminal still asks for receipts."**
-- Transition: so the demo should not be a chat prompt. It should be a repo task.
+- Pull up [Artificial Analysis](https://artificialanalysis.ai/leaderboards/models). Use it to filter speed, price, quality.
+- Pull up [Aider leaderboard](https://aider.chat/docs/leaderboards/). Use it for coding edits.
+- Pull up [SWE-bench](https://www.swebench.com/). Use it for repo repair context.
+- Red line: if it cannot patch your repo and recover from failure, the leaderboard does not matter.
+- Clip line: **"Benchmarks get the model an interview. Your repo hires it."**
 
 ### Host Notes
 
-- Pull up Artificial Analysis for broad model standing.
-- Pull up Aider leaderboard for code editing.
-- Pull up one Reddit thread where users complain the "best" model still fails real workflows.
-- Don't drown the stream in tables. One chart, then a terminal.
+- One chart, then terminal. Do not table-read.
 
 ## Talking Points — The Live Test
 
 ### Segment Thesis
 
-The useful demo is not which model talks better. It is which model survives the workflow.
+One small repo task. Same ask. Compare the damage.
 
 ### Talking Points
 
-- Test prompt: pick a small bug or feature in a real repo. Ask the model to inspect, patch, run tests, and explain the risk.
-- Run path A: local model through Ollama or LM Studio.
-- Run path B: hosted/open model path through Bedrock or another OpenAI-compatible provider if Bedrock setup is too slow live.
-- Score the models like an operator, not a benchmark vendor:
-- Did it find the right files?
-- Did it avoid unrelated churn?
-- Did it produce a runnable patch?
-- Did it use tests or fake confidence?
-- Did it recover when the first command failed?
-- Did the cost/latency make sense for this class of task?
-- If both fail, that is content. The failure says exactly where frontier models are still worth the bill.
-- Clip line: **"The demo that fails honestly is more useful than the model that says done and lies."**
-- Transition: close with the routing rule.
+- Task: inspect repo, patch one small thing, run test, explain risk.
+- Path A: local via Ollama / LM Studio.
+- Path B: hosted via Bedrock / OpenRouter.
+- Score: right files, clean diff, tests, recovery, latency, cost.
+- If it fails, good. That shows where frontier still earns the bill.
+- Clip line: **"The diff is the benchmark."**
 
 ### Host Notes
 
 - Keep the task small. A huge live refactor turns into setup pain.
-- Ask Mitchell: what would he route local-first tomorrow?
 - Don't let chat turn it into "my favorite model is better." Keep it workflow-scored.
 
 ## Closing Take
 
-> "Open models are not replacing the frontier overnight. But they are becoming the backup generator for AI builders."
+> "Open models are not replacing frontier models tonight."
 >
-> "The right architecture is not model loyalty. It is routing."
+> "They are the fallback layer."
 >
-> "Use frontier APIs when the work is hard and access exists. Use hosted open models when you need managed fallback. Use local models when you need control, privacy, cheap repetition, or a workflow that cannot disappear because one vendor changed a page."
+> "Use frontier when the work is hard. Use hosted open when you need managed fallback. Use local when you need control."
 >
-> "If your whole AI stack depends on one model being available tomorrow, that is not an AI strategy. That is hope with an API key."
+> "The architecture is routing, not loyalty."
 
 ## Sources — Primary Receipts
 
@@ -207,13 +127,13 @@ The useful demo is not which model talks better. It is which model survives the 
 - [OpenAI: Previewing GPT-5.6-Sol](https://openai.com/index/previewing-gpt-5-6-sol/) — official GPT-5.6 preview framing. Use this as the "exists, but not generally usable by everyone" receipt.
 - [OpenAI: Introducing gpt-oss](https://openai.com/index/introducing-gpt-oss/) — official open-weight model release. Pull up 20B/120B positioning.
 
-### Local Install Path
+### Local
 
 - [Ollama: OpenAI compatibility](https://docs.ollama.com/api/openai-compatibility) — local OpenAI-compatible endpoint.
 - [LM Studio: Local server](https://lmstudio.ai/docs/developer/core/server) — local server and API docs.
 - [vLLM quickstart](https://docs.vllm.ai/en/latest/getting_started/quickstart/) — OpenAI-compatible serving path for GPU boxes.
 
-### Bedrock / Hosted Path
+### Hosted
 
 - [AWS Bedrock: What is Amazon Bedrock?](https://docs.aws.amazon.com/bedrock/latest/userguide/what-is-bedrock.html) — managed model service framing.
 - [AWS Bedrock: Supported foundation models](https://docs.aws.amazon.com/bedrock/latest/userguide/models-supported.html) — model catalog.
@@ -229,7 +149,7 @@ The useful demo is not which model talks better. It is which model survives the 
 
 ### X / Twitter To Pull Up
 
-- [The New Stack on Fable/open-weight response](https://x.com/thenewstack/status/2067608410611229186) — use as narrative bridge from blocked Fable to open models.
+- [The New Stack on Fable/open-weight response](https://x.com/thenewstack/status/2067608410611229186) — bridge from blocked Fable to open models.
 - [Claire Vo on GLM 5.2 as Claude Code default](https://x.com/clairevo/status/2069828122640548204) — builder switching signal.
 - [Hooeem: GLM 5.2 with Claude Code / Anthropic SDK / LM Studio](https://x.com/hooeem/status/2068989788485480682) — practical setup/social proof.
 - [Mark Watson: Claude Code with gpt-oss-20b on Ollama](https://x.com/mark_l_watson/status/2014694705288638611) — local coding workflow angle.
@@ -253,12 +173,12 @@ The useful demo is not which model talks better. It is which model survives the 
 
 ## Tweets — Paste Live
 
-> Fable is blocked. GPT-5.6 is preview-only. The best model is useless if you cannot call it. Tonight we're testing the escape hatch: open models, local installs, Bedrock, benchmarks, and what actually survives a coding workflow.
+> Fable is blocked. GPT-5.6 is preview. The best model is useless if you cannot call it. Tonight: local models, Bedrock, benchmarks, one repo test.
 
-> Closed models optimize for peak capability. Open models optimize for survivability. If your whole AI stack depends on one gated model being available tomorrow, that is not architecture. That is hope with an API key.
+> Open models are not magic. They are routing. Frontier for hard work. Hosted open for fallback. Local for control.
 
-> Open weights do not remove the bill. They give you the right to choose where the bill lands: local GPU, Bedrock, hosted inference, or some weird box under your desk.
+> Open weights move the bill. They do not delete it.
 
 > Benchmarks tell you who gets an interview. Your repo decides who gets the job.
 
-> Local is control. Bedrock is convenience. Neither is magic.
+> The diff is the benchmark.
