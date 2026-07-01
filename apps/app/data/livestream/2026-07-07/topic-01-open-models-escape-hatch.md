@@ -3,9 +3,9 @@ title: "Masterclass: Set Up Open Models For AI Coding"
 slug: "open-models-escape-hatch"
 source: "Anthropic, OpenAI, AWS Bedrock, Ollama, LM Studio, vLLM, Artificial Analysis, Aider, Reddit, X, YouTube, How I AI, NVIDIA, EIA, Energy.gov, OpenRouter"
 status: "in_progress"
-date: "2026-06-30"
+date: "2026-07-07"
 announcement_tweet: null
-thumbnail_prompt: "YouTube livestream thumbnail, 16:9, Ship Shit Show house style. Two host cutouts on left and right reacting toward one central topic panel. Center panel split by lightning: left side cool blue/cyan local AI logo grid with monochrome white/off-white model icons, right side warm orange/red cloud/server inference icon. Dark charcoal background, dramatic glow, clean simple composition. Only text allowed: #21 in top-right. No title text, no model-name labels, no UI labels, no official brand wordmarks."
+thumbnail_prompt: "YouTube livestream thumbnail, 16:9, Ship Shit Show house style. Two host cutouts on left and right reacting toward one central topic panel. Center panel split by lightning: left side cool blue/cyan local AI logo grid with monochrome white/off-white model icons, right side warm orange/red cloud/server inference icon. Dark charcoal background, dramatic glow, clean simple composition. Only text allowed: #22 in top-right. No title text, no model-name labels, no UI labels, no official brand wordmarks."
 ---
 
 ## Cold Open — Read This
