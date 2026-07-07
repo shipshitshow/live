@@ -1,5 +1,5 @@
 ---
-title: "Open Models: Which Ones Can Replace Fable 5?"
+title: "Fable 5 Is Gone. What Are the Alternatives?"
 slug: "open-models-escape-hatch"
 source: "Anthropic, OpenAI, gpt-oss, GLM 5.2, Kimi, DeepSeek, Qwen, AWS Bedrock, Ollama, LM Studio, vLLM, Artificial Analysis, Aider, SWE-bench, Reddit, X, YouTube, How I AI, NVIDIA, EIA, Energy.gov, OpenRouter"
 status: "in_progress"
@@ -34,7 +34,7 @@ A measured bench of open models can replace the bad architecture of depending on
 
 ## Sources — Livestream Notes
 
-- Title: **[LIVE] Open Models: Which Ones Can Replace Fable 5?**
+- Title: **[LIVE] Fable 5 Is Gone. What Are the Alternatives?**
 - [YouTube livestream](https://www.youtube.com/watch?v=h0EzR9Sqkz0)
 - [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
 - Thumbnail Fable mark asset: `/Users/decod3rs/Desktop/thumbnails/2607/260707/fable-butterfly-question-asset.png`
