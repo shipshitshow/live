@@ -1,4 +1,10 @@
-const OPENAI_API_URL = 'https://api.openai.com/v1/chat/completions';
+// OpenAI-compatible chat endpoint. Point OPENAI_BASE_URL at OpenRouter
+// (https://openrouter.ai/api/v1) or any compatible gateway; defaults to OpenAI.
+const API_BASE_URL = (
+  process.env.OPENAI_BASE_URL?.trim() || 'https://api.openai.com/v1'
+).replace(/\/+$/, '');
+const CHAT_COMPLETIONS_URL = `${API_BASE_URL}/chat/completions`;
+const IS_OPENROUTER = API_BASE_URL.includes('openrouter.ai');
 
 interface DraftReplyInput {
   videoTitle: string;
@@ -13,7 +19,10 @@ interface DraftReplyPayload {
 
 function getOpenAIConfig() {
   const apiKey = process.env.OPENAI_API_KEY;
-  const model = process.env.OPENAI_MODEL ?? 'gpt-4o-mini';
+  // On OpenRouter, model ids are provider-prefixed (e.g. google/gemini-2.0-flash-001).
+  const model =
+    process.env.OPENAI_MODEL ??
+    (IS_OPENROUTER ? 'google/gemini-2.0-flash-001' : 'gpt-4o-mini');
   if (!apiKey) throw new Error('OPENAI_API_KEY is not configured');
   return { apiKey, model };
 }
@@ -69,7 +78,7 @@ export async function generateCommentReplyDrafts(
     `Comment: ${input.commentText}`,
   ].join('\n');
 
-  const res = await fetch(OPENAI_API_URL, {
+  const res = await fetch(CHAT_COMPLETIONS_URL, {
     body: JSON.stringify({
       messages: [
         {
@@ -85,6 +94,13 @@ export async function generateCommentReplyDrafts(
     headers: {
       Authorization: `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
+      // Optional attribution for OpenRouter's dashboard/leaderboards.
+      ...(IS_OPENROUTER
+        ? {
+            'HTTP-Referer': 'https://show.shipshit.dev',
+            'X-Title': 'Ship Shit Show',
+          }
+        : {}),
     },
     method: 'POST',
   });

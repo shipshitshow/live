@@ -23,6 +23,7 @@
         "NEXT_PUBLIC_SITE_URL",
         "OAUTH_STATE_SECRET",
         "OPENAI_API_KEY",
+        "OPENAI_BASE_URL",
         "OPENAI_MODEL",
         "PIPELINE_API_URL",
         "REDIS_URL",
