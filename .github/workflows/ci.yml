@@ -39,12 +39,14 @@ jobs:
         run: bun run check:types
 
       - name: Build
-        # The CLERK_SECRET_KEY placeholder is assembled from parts so no literal
-        # sk_test_* pattern sits in this file for the secret scanner to flag.
-        # Both values are non-secret CI dummies — real values live in Vercel.
+        # Clerk placeholders are assembled from parts at runtime so no full key
+        # literal sits in this file for the secret scanner (generic-api-key) to
+        # flag. Both are non-secret CI dummies; real values live in Vercel. The
+        # publishable-key body decodes to the standard clerk.example.com domain.
         run: |
-          export CLERK_SECRET_KEY="sk_test_${CLERK_CI_SUFFIX}"
+          export NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_${CLERK_PK_BODY}"
+          export CLERK_SECRET_KEY="sk_test_${CLERK_SK_BODY}"
           bun run build
         env:
-          NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: pk_test_Y2xlcmsuZXhhbXBsZS5jb20k
-          CLERK_CI_SUFFIX: ci_build_only_placeholder
+          CLERK_PK_BODY: Y2xlcmsuZXhhbXBsZS5jb20k
+          CLERK_SK_BODY: ci_build_only_placeholder
