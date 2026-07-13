@@ -18,7 +18,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 - Timing hook: Sol went GA in ChatGPT/Codex/API on July 9. Fable's included subscription window ends July 19, usage credits from July 20. This week is the one week both are maximally accessible. Say that out loud early.
 - Stream promise: by the end, the viewer has a routing table, a setup path, a review loop, and cost math — the full two-brain stack, demonstrated on a real repo.
 - Red line: this is not "OpenAI vs Anthropic." Both models are on the payroll. The show is about the org chart, not the war.
-- Stream path: why both -> the setup -> the routing table -> blind parallel + cross-review -> the bill and the July 19 cliff -> one live task through the full pipeline.
+- Stream path: why both -> the setup -> the routing table -> blind parallel + cross-review -> the bill and the July 19 cliff -> the war of resets -> can Anthropic actually pull Fable on the 19th -> one live task through the full pipeline.
 - Caveat discipline: verify Fable credit pricing and the July 19 date on the official Anthropic pages live before quoting. Same for Sol GA pricing on the OpenAI page. Dates and prices have moved twice already this month.
 
 ## Cold Open — Read This
@@ -154,13 +154,66 @@ The two-brain stack is only real if the bill works — and the Fable side of the
 - Subscription math beats API math: this whole stack runs on flat-rate plans, not API invoices. Quota is the real currency. Fable quota is precious — spend it on verdicts, not typing.
 - The post-July-19 playbook: routing table survives, weights shift. Fable becomes the scalpel (credits, metered, deliberate). The everyday judgment lane falls back to the best on-plan Claude. If Fable comes back to plans, promote it back. Access is part of the architecture — we said it on July 1, it's still true.
 - Clip line: **"Quota is the real currency. Spend Fable on verdicts, not on typing."**
-- Transition: enough theory. Let's run the pipeline for real.
+- Transition: and if you think these quotas and deadlines are set by careful capacity planning alone, wait until you see the last two months of reset warfare.
 
 ### Host Notes
 
 - Ask Mitchell: does metered Fable kill it for him, or does $10-in-$50-out for the hardest 5% of work actually pencil out?
 - Numbers discipline: every price quoted on stream gets its source pulled up. No pricing from memory.
 - This segment doubles as the "why tonight matters" reprise — five days left of included Fable. Say it plainly, not as fake urgency.
+
+## Talking Points — The War Of Resets: Watching Two Giants Fight Over Your Quota
+
+### Segment Thesis
+
+OpenAI and Anthropic are openly fighting for market share with usage limits as the weapon — and the reset timeline of the last two months reads like a slap fight.
+
+### Talking Points
+
+- Build the timeline on screen, one beat at a time. This is the fun segment — let it breathe.
+- **May 13:** Anthropic raises Claude Code weekly limits by +50% for Pro/Max/Team, running through July 13. Pull up [the anti-Codex read](https://pasqualepillitteri.it/en/news/2494/claude-code-weekly-limits-50-percent-anti-codex-anthropic-2026) and [Apidog's breakdown](https://apidog.com/blog/claude-code-weekly-limits-50-percent-increase-july-2026/). The defensive read: teams were splitting workloads toward Codex because of its lower token burn.
+- **July 1:** Fable 5 comes back, included up to 50% of weekly limits. Free frontier compute as a re-engagement move.
+- **July 7:** the Fable window gets extended after backlash instead of expiring. Pull up [Forbes](https://www.forbes.com/sites/sandycarter/2026/07/07/claude-fable-5-extends-by-five-more-days-10-moves-to-make-now/). Deadlines are apparently negotiable when the timeline is angry enough.
+- **July 9:** Sol goes GA — and OpenAI [resets ChatGPT Work and Codex rate limits TWICE in 24 hours](https://voice.lapaas.com/openai-reset-chatgpt-work-and-codex-rate-limits-twice-after-gpt-5-6-sol-launch/), then [temporarily removes the five-hour usage restriction for Plus/Pro/Business and wipes current usage for everyone](https://www.bleepingcomputer.com/news/artificial-intelligence/openai-temporarily-relaxes-gpt-56-sol-usage-limits/). Free refills to get everyone hooked on Sol in week one.
+- **July 10:** one day later, Anthropic [quietly resets Claude Code's 5-hour and weekly limits for every user](https://startupfortune.com/anthropic-resets-claude-code-usage-limits-again-after-a-rough-week-of-outages/). Official story: rough week of outages. Timing: 24 hours after OpenAI's double reset. Sure.
+- **July 13 — yesterday:** Anthropic's +50% weekly boost expired. Nobody has said what the ceiling is now. Check limits live on stream and find out together.
+- **July 19-20:** Fable scheduled to leave subscriptions for metered credits. The next move on the board.
+- The read: usage limits used to be boring infrastructure. Now they're a marketing channel. Both vendors discovered that a quota reset is cheaper than an ad campaign and hits harder, because it lands directly in the terminal of the exact user they're fighting over.
+- The operator angle: this war is great for us — free quota keeps falling out of the sky. But it also proves the two-brain stack thesis: your limits can change overnight in either direction, on either side, for reasons that have nothing to do with you.
+- Clip line: **"A quota reset is cheaper than an ad campaign and lands directly in your terminal. Welcome to the war of resets."**
+- Transition: which sets up the real question — with this war running hot, can Anthropic actually afford to pull Fable on the 19th?
+
+### Host Notes
+
+- Ask Mitchell: has he ever gotten a mystery quota refill and just assumed he miscounted? (Everyone has this story now.)
+- Do the timeline as a build, not a wall of text. Each beat lands as a punchline.
+- Live bit: both hosts check their actual Claude and Codex usage panels on stream after the boost expiry. Real numbers beat speculation.
+- Keep it fun but don't be naive: both vendors also have real capacity and outage pressures. The joke is the timing, not the existence of limits.
+
+## Talking Points — Can Anthropic Actually Pull Fable Off Subscriptions On The 19th?
+
+### Segment Thesis
+
+The scheduled Fable cutoff is a genuine open question: Anthropic says capacity, the extension says backlash works, and the competitive board says pulling it now is expensive.
+
+### Talking Points
+
+- Frame it as a prediction segment, clearly labeled speculation. We have receipts for the inputs, not the outcome.
+- The case for "yes, they pull it": Fable/Mythos compute is genuinely scarce — that was the entire stated reason for the redeployment structure. Credits filter the heaviest users into paying for what they burn. Sonnet 5 holds the mainstream tier fine, and Anthropic already ate one news cycle of backlash and survived it.
+- The case for "no, they blink again": they've already extended once under pressure. Sol is GA at literally half Fable's credit price, OpenAI is handing out quota refills like candy, and July 20 would be the exact moment Anthropic tells its power users "start paying per token now." Pulling your flagship off subscriptions in the middle of a market-share knife fight is a bold play.
+- The middle path to watch: another "temporary" extension, a higher included percentage, a Max-only carve-out, or a quiet 'Fable stays on Max, credits for Pro' split. Vendors love a third option that lets both sides claim they won.
+- The tell to watch this week: Anthropic keeps repeating that credits are temporary and Fable returns to plans "once capacity allows" — pull up [Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5). If they land new capacity or a big infra announcement before the 19th, the cutoff gets softer. Silence means the meter starts.
+- Make the call on stream. My lean: they ship the credits switch on time but wrap it in a "returning to plans soon" promise, because the capacity story is real even if the timing is competitive. Mitchell makes his own call. Chat votes. We check the receipts next week on stream.
+- The operator takeaway either way: plan for the meter, celebrate if it doesn't come. The routing table already has the fallback built in — that was last week's episode.
+- Clip line: **"Anthropic has to choose between its capacity math and its market share. On the 19th we find out which one wins."**
+- Transition: predictions are cheap. Let's go run the pipeline for real.
+
+### Host Notes
+
+- Ask Mitchell for a straight yes/no/extend prediction with one sentence of reasoning. Pin both predictions in chat for next week's callback.
+- Label speculation as speculation every single time. We have receipts for what happened, not for what Anthropic decides Saturday.
+- This is a callback factory: whatever happens on the 19th is an automatic cold-open beat for next week's stream.
+- Do not turn this into Anthropic hate. Capacity constraints are real; the fun is the game theory, not the outrage.
 
 ## Talking Points — Live Demo: One Task, Full Pipeline
 
@@ -196,7 +249,9 @@ One real task through the whole two-brain pipeline proves the masterclass better
 >
 > "Blind parallel for the big calls. Cross-review for everything that ships. Sandboxes for everyone."
 >
-> "And after July 19, the table survives — the weights just shift."
+> "And while the vendors fight the war of resets over your quota, the routing table is what keeps your workflow out of the crossfire."
+>
+> "Whatever Anthropic decides on the 19th, the table survives — the weights just shift."
 >
 > "Model loyalty is amateur hour. It was true two weeks ago. It's true tonight."
 
@@ -232,6 +287,17 @@ One real task through the whole two-brain pipeline proves the masterclass better
 - [Previous Ship Shit Show: Fable 5 Is Back. Sonnet 5 Is The Compromise.](../2026-07-01/topic-01-fable-5-sonnet-5-reaction.md) — routing-is-the-architecture setup.
 - [Previous Ship Shit Show: Fable 5 Is Gone. What Are the Alternatives?](../2026-07-07/topic-01-open-models-escape-hatch.md) — the bench/fallback layer below tonight's two-brain tier.
 
+## Sources — The War Of Resets
+
+- [OpenAI resets ChatGPT Work and Codex rate limits twice after Sol launch](https://voice.lapaas.com/openai-reset-chatgpt-work-and-codex-rate-limits-twice-after-gpt-5-6-sol-launch/) — the double-reset launch move.
+- [BleepingComputer: OpenAI temporarily relaxes GPT-5.6 Sol usage limits](https://www.bleepingcomputer.com/news/artificial-intelligence/openai-temporarily-relaxes-gpt-56-sol-usage-limits/) — five-hour restriction removed for Plus/Pro/Business, usage wiped for everyone.
+- [GPT-5.6 week one: usage pools, access tiers, rollout fixes](https://www.digitalapplied.com/blog/gpt-5-6-week-one-usage-pools-access-rollout-2026) — week-one access-shuffle overview.
+- [Claude Code weekly limits +50% through July 13: the anti-Codex read](https://pasqualepillitteri.it/en/news/2494/claude-code-weekly-limits-50-percent-anti-codex-anthropic-2026) — defensive framing of the May-July boost.
+- [Apidog: Claude Code weekly limits jumped 50%](https://apidog.com/blog/claude-code-weekly-limits-50-percent-increase-july-2026/) — boost mechanics, plans covered, expiry.
+- [Startup Fortune: Anthropic resets Claude Code usage limits again](https://startupfortune.com/anthropic-resets-claude-code-usage-limits-again-after-a-rough-week-of-outages/) — the July 10 quiet reset, one day after OpenAI's double reset.
+- [Codex changelog](https://developers.openai.com/codex/changelog/) — official OpenAI-side receipt to pull up for launch-week changes.
+- [Gist: Claude Code 'weekly' limit resets every 72 hours, not 7 days](https://gist.github.com/monperrus/3ac4b303a84946bbeaf2b1123ee99491) — fun community receipt that nobody actually knows how the meters work.
+
 ## Sources — The Versus Wave (React Lane)
 
 - [I Combined GPT 5.6 Sol + Fable 5 (INSANE Results)](https://www.youtube.com/watch?v=jEa_rEUL-vA) — closest video to tonight's angle; posted ~2 days ago. Skim live, then show what a real production version looks like.
@@ -257,3 +323,9 @@ One real task through the whole two-brain pipeline proves the masterclass better
 > Quota is the real currency. Spend Fable on verdicts, not on typing.
 
 > Five days left of included Fable 5. Sol just went GA. This is the exact week to learn the two-brain stack.
+
+> A quota reset is cheaper than an ad campaign and lands directly in your terminal. Welcome to the war of resets.
+
+> OpenAI reset Codex limits twice in 24 hours at Sol's launch. Anthropic wiped everyone's usage the next day. "Outages," sure. Timeline on tonight's stream.
+
+> Can Anthropic really take Fable 5 off subscriptions on the 19th, mid knife-fight with OpenAI? Making our predictions live tonight. Receipts next week.
