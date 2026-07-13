@@ -8,6 +8,8 @@ import { formatNumber, formatWatchTime } from '@/lib/format';
 type SortKey =
   | 'published_at'
   | 'views'
+  | 'impressions'
+  | 'ctr'
   | 'likes'
   | 'comments'
   | 'watch_time_minutes';
@@ -64,6 +66,8 @@ export function VideoTable({
   const cols: { key: SortKey; label: string }[] = [
     { key: 'published_at', label: 'Date' },
     { key: 'views', label: 'Views' },
+    { key: 'impressions', label: 'Impr.' },
+    { key: 'ctr', label: 'CTR' },
     { key: 'likes', label: 'Likes' },
     { key: 'comments', label: 'Comments' },
     { key: 'watch_time_minutes', label: 'Watch Time' },
@@ -74,6 +78,12 @@ export function VideoTable({
     if (Number.isNaN(timestamp)) return '—';
 
     return DATE_FORMATTER.format(timestamp);
+  }
+
+  // impressionClickThroughRate arrives as a percentage (e.g. 8.3). Zero means
+  // "not reported for this range" — show a dash rather than a misleading 0%.
+  function formatCtr(value: number) {
+    return value > 0 ? `${value.toFixed(1)}%` : '—';
   }
 
   return (
@@ -135,6 +145,12 @@ export function VideoTable({
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
                     {formatNumber(v.views)}
+                  </td>
+                  <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
+                    {v.impressions ? formatNumber(v.impressions) : '—'}
+                  </td>
+                  <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
+                    {formatCtr(v.ctr)}
                   </td>
                   <td className="py-3 px-4 text-right tabular-nums text-text-secondary">
                     {formatNumber(v.likes)}

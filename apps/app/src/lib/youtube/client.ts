@@ -135,9 +135,7 @@ export async function fetchVideoAnalytics(
   videoIds: string[],
   startDate: string,
   endDate: string,
-): Promise<
-  Map<string, { impressions: number; ctr: number; watch_time_minutes: number }>
-> {
+): Promise<Map<string, { watch_time_minutes: number }>> {
   if (!videoIds.length) return new Map();
 
   const cacheKey = `vidanalytics:${channelId}:${startDate}:${videoIds.slice(0, 5).join(',')}`;
@@ -159,18 +157,62 @@ export async function fetchVideoAnalytics(
     return res.rows ?? [];
   });
 
-  const map = new Map<
-    string,
-    { impressions: number; ctr: number; watch_time_minutes: number }
-  >();
+  const map = new Map<string, { watch_time_minutes: number }>();
   for (const row of rows) {
     map.set(String(row[0] ?? ''), {
-      ctr: 0,
-      impressions: 0,
       watch_time_minutes: Number(row[2]),
     });
   }
   return map;
+}
+
+/**
+ * Reach metrics (impressions + click-through rate) come from a separate report
+ * and are not available for every channel/date range. This is deliberately
+ * isolated and failure-tolerant: any error degrades to an empty map so the main
+ * analytics report is never taken down by a reach-metric quirk.
+ */
+export async function fetchVideoReachMetrics(
+  token: string,
+  channelId: string,
+  videoIds: string[],
+  startDate: string,
+  endDate: string,
+): Promise<Map<string, { impressions: number; ctr: number }>> {
+  if (!videoIds.length) return new Map();
+
+  try {
+    const cacheKey = `vidreach:${channelId}:${startDate}:${videoIds.slice(0, 5).join(',')}`;
+    const rows = await cachedFetch(cacheKey, TTL.VIDEO_ANALYTICS, async () => {
+      const params = new URLSearchParams({
+        dimensions: 'video',
+        endDate,
+        filters: `video==${videoIds.join(',')}`,
+        ids: `channel==${channelId}`,
+        metrics: 'impressions,impressionClickThroughRate',
+        sort: '-impressions',
+        startDate,
+      });
+
+      const res = await ytFetch<YouTubeAnalyticsResponse>(
+        `${ANALYTICS_API}?${params}`,
+        token,
+      );
+      return res.rows ?? [];
+    });
+
+    const map = new Map<string, { impressions: number; ctr: number }>();
+    for (const row of rows) {
+      map.set(String(row[0] ?? ''), {
+        // impressionClickThroughRate is returned as a percentage (e.g. 8.3).
+        ctr: Number(row[2] ?? 0),
+        impressions: Number(row[1] ?? 0),
+      });
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
 }
 
 async function ytFetch<T>(url: string, token: string): Promise<T> {

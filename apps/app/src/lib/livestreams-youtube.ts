@@ -18,25 +18,36 @@ export async function fetchVideoStats(
 
   try {
     const channels = await getChannelConfigs();
-    const channel = channels[0];
-    if (!channel) return null;
+    if (channels.length === 0) return null;
 
-    const token = await getAccessToken(channel);
     const url = `${DATA_API}/videos?part=statistics&id=${encodeURIComponent(videoId)}`;
-    const res = await fetch(url, {
-      headers: { Authorization: `Bearer ${token}` },
-      next: { revalidate: 3600 },
-    });
-    if (!res.ok) return null;
 
-    const data = await res.json();
-    const stats = data?.items?.[0]?.statistics;
-    if (!stats) return null;
+    // Video statistics are public, but a video is only visible to the OAuth
+    // token of the channel that owns it. Try each configured channel so a
+    // "clips" video isn't silently missed when "main" is first in the list.
+    for (const channel of channels) {
+      try {
+        const token = await getAccessToken(channel);
+        const res = await fetch(url, {
+          headers: { Authorization: `Bearer ${token}` },
+          next: { revalidate: 3600 },
+        });
+        if (!res.ok) continue;
 
-    return {
-      commentCount: Number(stats.commentCount ?? 0),
-      viewCount: Number(stats.viewCount ?? 0),
-    };
+        const data = await res.json();
+        const stats = data?.items?.[0]?.statistics;
+        if (!stats) continue;
+
+        return {
+          commentCount: Number(stats.commentCount ?? 0),
+          viewCount: Number(stats.viewCount ?? 0),
+        };
+      } catch {
+        // Try the next channel on a per-channel refresh/network failure.
+      }
+    }
+
+    return null;
   } catch {
     return null;
   }

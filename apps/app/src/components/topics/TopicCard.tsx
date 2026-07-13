@@ -16,15 +16,9 @@ interface TopicCardProps {
   topic: Topic;
   showDate?: boolean;
   onStatusChange: (topic: Topic, status: TopicStatus) => void;
-  onSelect: (slug: string) => void;
 }
 
-export function TopicCard({
-  topic,
-  showDate,
-  onStatusChange,
-  onSelect,
-}: TopicCardProps) {
+export function TopicCard({ topic, showDate, onStatusChange }: TopicCardProps) {
   const sources = topic.source.split(',').map((s) => s.trim());
 
   const summary =
@@ -48,16 +42,7 @@ export function TopicCard({
       onDragEnd={(e) => {
         (e.currentTarget as HTMLElement).style.opacity = '1';
       }}
-      role="button"
-      tabIndex={0}
       className="bg-surface-card border border-surface-border rounded-xl p-4 cursor-grab active:cursor-grabbing hover:border-accent-red/40 transition-colors group"
-      onClick={() => onSelect(topic.slug)}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
-          onSelect(topic.slug);
-        }
-      }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <h3 className="text-sm font-semibold text-text-primary group-hover:text-accent-red transition-colors leading-tight">

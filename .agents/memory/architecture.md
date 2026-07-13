@@ -1,6 +1,6 @@
 # Ship Shit Show — Monorepo Architecture
 
-last_verified: 2026-04-21
+last_verified: 2026-07-13
 
 ## Layout
 
@@ -16,7 +16,7 @@ Turborepo monorepo with Bun workspaces.
 - `packages/ui` (@shipshitshow/ui) — Shared React components (Button, Select, Textarea) + Tailwind v4 theme tokens + cn() utility.
 
 ### Skills
-- `skills/` (root) — Show-specific runtime skills: talking points, YT analytics, thumbnail prompts.
+- `skills/` (root) — Show-specific runtime skills: talking points, YouTube metadata/chapters, clip extraction, intro hooks.
 - `.agents/skills/` — Dev workflow skills. Symlinked from `.claude/skills` and `.codex/skills`.
 
 ### Data

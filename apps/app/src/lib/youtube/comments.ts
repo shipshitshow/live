@@ -1,7 +1,9 @@
 import type {
+  ErrorResponse,
   YouTubeCommentReply,
   YouTubeCommentThread,
 } from '@shipshitshow/types';
+import { normalizeYouTubeError } from './error';
 import type {
   ChannelConfig,
   YouTubeCommentReplyItem,
@@ -20,13 +22,21 @@ function isDefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
 }
 
+/** Throw a structured error so callers/UI get quota/auth codes, not a raw blob. */
+function throwNormalizedYouTubeError(status: number, body: string): never {
+  const normalized = normalizeYouTubeError(status, body);
+  const error = new Error(normalized.error) as Error & ErrorResponse;
+  error.code = normalized.code;
+  error.hint = normalized.hint;
+  throw error;
+}
+
 const ytFetch = async <T>(url: string, token: string): Promise<T> => {
   const res = await fetch(url, {
     headers: { Authorization: `Bearer ${token}` },
   });
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`YouTube API ${res.status}: ${body}`);
+    throwNormalizedYouTubeError(res.status, await res.text());
   }
   return (await res.json()) as T;
 };
@@ -183,8 +193,7 @@ export const replyToComment = async (
   });
 
   if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`YouTube API ${res.status}: ${body}`);
+    throwNormalizedYouTubeError(res.status, await res.text());
   }
 
   const item = (await res.json()) as YouTubeCommentReplyItem;

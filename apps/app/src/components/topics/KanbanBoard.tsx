@@ -80,10 +80,6 @@ export function KanbanBoard() {
     );
   }
 
-  function handleSelect(_slug: string) {
-    // Topic detail view — future phase
-  }
-
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full text-text-muted text-sm">
@@ -155,7 +151,7 @@ export function KanbanBoard() {
             </p>
           </div>
         ) : (
-          <div className="grid min-w-[900px] grid-cols-3 gap-6">
+          <div className="grid min-w-[1160px] grid-cols-4 gap-6">
             {COLUMNS.map((status) => (
               <KanbanColumn
                 key={status}
@@ -163,7 +159,6 @@ export function KanbanBoard() {
                 topics={topics.filter((t) => t.status === status)}
                 showDates={isAllDates}
                 onStatusChange={handleStatusChange}
-                onSelect={handleSelect}
               />
             ))}
           </div>

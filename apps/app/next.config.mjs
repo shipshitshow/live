@@ -32,10 +32,6 @@ const nextConfig = {
     ],
   },
   allowedDevOrigins: ["127.0.0.1"],
-  env: {
-    ANALYTICS_API_URL: process.env.ANALYTICS_API_URL ?? "http://localhost:8000",
-    PIPELINE_API_URL: process.env.PIPELINE_API_URL ?? "http://localhost:8001",
-  },
   experimental: isProduction
     ? {}
     : {
