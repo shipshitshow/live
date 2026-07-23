@@ -13,6 +13,7 @@ import {
   fetchChannelVideos,
   fetchDailyMetrics,
   fetchVideoAnalytics,
+  fetchVideoReachMetrics,
 } from '@/lib/youtube/client';
 import {
   getAccessToken,
@@ -96,21 +97,31 @@ async function fetchChannelData(
   let enrichedVideos: VideoStats[] = videos;
 
   if (videoIds.length > 0) {
-    const analytics = await fetchVideoAnalytics(
-      token,
-      channelConfig.id,
-      videoIds,
-      startDate,
-      endDate,
-    );
+    const [analytics, reach] = await Promise.all([
+      fetchVideoAnalytics(
+        token,
+        channelConfig.id,
+        videoIds,
+        startDate,
+        endDate,
+      ),
+      fetchVideoReachMetrics(
+        token,
+        channelConfig.id,
+        videoIds,
+        startDate,
+        endDate,
+      ),
+    ]);
 
     enrichedVideos = videos.map((v) => {
       const a = analytics.get(v.video_id);
+      const r = reach.get(v.video_id);
       return {
         ...v,
         channel_label: channelConfig.label,
-        ctr: a?.ctr ?? v.ctr,
-        impressions: a?.impressions ?? v.impressions,
+        ctr: r?.ctr ?? v.ctr,
+        impressions: r?.impressions ?? v.impressions,
         platform: 'youtube',
         watch_time_minutes: a?.watch_time_minutes ?? v.watch_time_minutes,
       };

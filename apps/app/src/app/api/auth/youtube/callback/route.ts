@@ -1,26 +1,24 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
 import {
+  OAUTH_STATE_COOKIE,
+  verifyOAuthState,
+} from '@/lib/youtube/oauth-state';
+import {
   getConfiguredChannelMeta,
   getYouTubeOAuthConfig,
   getYouTubeOAuthRedirectUri,
   saveRefreshToken,
 } from '@/lib/youtube/token';
 
-function decodeState(
-  raw: string | null,
-): { next: string; channel: string } | null {
-  if (!raw) return null;
-
-  try {
-    const decoded = Buffer.from(raw, 'base64url').toString('utf8');
-    const parsed = JSON.parse(decoded) as { next?: string; channel?: string };
-    if (typeof parsed.next !== 'string' || typeof parsed.channel !== 'string')
-      return null;
-    return { channel: parsed.channel, next: parsed.next };
-  } catch {
-    return null;
-  }
+function clearStateCookie(response: NextResponse): NextResponse {
+  response.cookies.set(OAUTH_STATE_COOKIE, '', {
+    httpOnly: true,
+    maxAge: 0,
+    path: '/api/auth/youtube',
+    sameSite: 'lax',
+  });
+  return response;
 }
 
 export async function GET(request: NextRequest) {
@@ -30,18 +28,26 @@ export async function GET(request: NextRequest) {
 
   const code = request.nextUrl.searchParams.get('code');
   const error = request.nextUrl.searchParams.get('error');
-  const state = decodeState(request.nextUrl.searchParams.get('state'));
+  const cookieNonce = request.cookies.get(OAUTH_STATE_COOKIE)?.value;
+  const state = verifyOAuthState(
+    request.nextUrl.searchParams.get('state'),
+    cookieNonce,
+  );
 
   if (error) {
     const redirectUrl = new URL('/auth/youtube', request.nextUrl.origin);
     redirectUrl.searchParams.set('error', error);
     if (state?.next) redirectUrl.searchParams.set('next', state.next);
-    return NextResponse.redirect(redirectUrl);
+    return clearStateCookie(NextResponse.redirect(redirectUrl));
   }
 
+  // A missing/invalid state means the callback wasn't initiated by this browser
+  // via /start — reject rather than trust an attacker-supplied code + channel.
   if (!code || !state) {
-    return NextResponse.redirect(
-      new URL('/auth/youtube?error=invalid_callback', request.nextUrl.origin),
+    return clearStateCookie(
+      NextResponse.redirect(
+        new URL('/auth/youtube?error=invalid_callback', request.nextUrl.origin),
+      ),
     );
   }
 
@@ -49,8 +55,10 @@ export async function GET(request: NextRequest) {
     getConfiguredChannelMeta().map((item) => item.label),
   );
   if (!allowedChannels.has(state.channel)) {
-    return NextResponse.redirect(
-      new URL('/auth/youtube?error=unknown_channel', request.nextUrl.origin),
+    return clearStateCookie(
+      NextResponse.redirect(
+        new URL('/auth/youtube?error=unknown_channel', request.nextUrl.origin),
+      ),
     );
   }
 
@@ -82,11 +90,13 @@ export async function GET(request: NextRequest) {
       body.error_description || body.error || 'token_exchange_failed',
     );
     redirectUrl.searchParams.set('next', state.next);
-    return NextResponse.redirect(redirectUrl);
+    return clearStateCookie(NextResponse.redirect(redirectUrl));
   }
 
   await saveRefreshToken(state.channel, body.refresh_token);
 
   const nextPath = state.next.startsWith('/') ? state.next : '/';
-  return NextResponse.redirect(new URL(nextPath, request.nextUrl.origin));
+  return clearStateCookie(
+    NextResponse.redirect(new URL(nextPath, request.nextUrl.origin)),
+  );
 }

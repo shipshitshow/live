@@ -31,7 +31,6 @@ interface KanbanColumnProps {
   topics: Topic[];
   showDates?: boolean;
   onStatusChange: (topic: Topic, status: TopicStatus) => void;
-  onSelect: (slug: string) => void;
 }
 
 export function KanbanColumn({
@@ -39,7 +38,6 @@ export function KanbanColumn({
   topics,
   showDates,
   onStatusChange,
-  onSelect,
 }: KanbanColumnProps) {
   const config = COLUMN_CONFIG[status];
   const [isDragOver, setIsDragOver] = useState(false);
@@ -87,7 +85,6 @@ export function KanbanColumn({
             topic={topic}
             showDate={showDates}
             onStatusChange={onStatusChange}
-            onSelect={onSelect}
           />
         ))}
         {topics.length === 0 && (

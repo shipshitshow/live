@@ -2,13 +2,12 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { kv } from '@vercel/kv';
 
-function isYouTubeAuthEnabled(): boolean {
-  return !process.env.VERCEL;
-}
-
 import type { ChannelConfig, YouTubeAuthStatus } from '@/lib/youtube/types';
 
-const TOKEN_TTL_SECONDS = 3000; // 50 min (tokens last 60 min)
+// Google access tokens last ~3600s; refresh a little early to avoid serving a
+// token that expires mid-request. Actual lifetime comes from `expires_in`.
+const TOKEN_TTL_SAFETY_MARGIN_SECONDS = 300;
+const TOKEN_TTL_FALLBACK_SECONDS = 3000;
 const TOKEN_FILE_PATH =
   process.env.TOKEN_FILE_PATH ||
   path.join(process.cwd(), 'data', 'youtube-tokens.json');
@@ -151,7 +150,9 @@ export async function getChannelConfigs(): Promise<ChannelConfig[]> {
   return channels;
 }
 
-async function refreshAccessToken(refreshToken: string): Promise<string> {
+async function refreshAccessToken(
+  refreshToken: string,
+): Promise<{ accessToken: string; expiresIn: number }> {
   const clientId = process.env.YOUTUBE_CLIENT_ID;
   const clientSecret = process.env.YOUTUBE_CLIENT_SECRET;
 
@@ -185,7 +186,13 @@ async function refreshAccessToken(refreshToken: string): Promise<string> {
   }
 
   const data: TokenResponse = await res.json();
-  return data.access_token;
+  return {
+    accessToken: data.access_token,
+    expiresIn:
+      typeof data.expires_in === 'number' && data.expires_in > 0
+        ? data.expires_in
+        : TOKEN_TTL_FALLBACK_SECONDS + TOKEN_TTL_SAFETY_MARGIN_SECONDS,
+  };
 }
 
 /** Get a valid access token for a specific channel's brand account */
@@ -203,8 +210,11 @@ export async function getAccessToken(
   }
 
   let token: string;
+  let expiresIn: number;
   try {
-    token = await refreshAccessToken(channelConfig.refreshToken);
+    ({ accessToken: token, expiresIn } = await refreshAccessToken(
+      channelConfig.refreshToken,
+    ));
   } catch (error) {
     if (error instanceof YouTubeAuthError && error.code === 'reauth_required') {
       await clearCachedAccessToken(channelConfig.id);
@@ -216,9 +226,10 @@ export async function getAccessToken(
     throw error;
   }
 
-  // Cache in KV
+  // Cache in KV until shortly before Google's stated expiry.
+  const ttl = Math.max(60, expiresIn - TOKEN_TTL_SAFETY_MARGIN_SECONDS);
   try {
-    await kv.set(cacheKey, token, { ex: TOKEN_TTL_SECONDS });
+    await kv.set(cacheKey, token, { ex: ttl });
   } catch {
     // KV not available
   }
@@ -304,13 +315,6 @@ export async function saveRefreshToken(label: string, refreshToken: string) {
 }
 
 export function getYouTubeOAuthConfig() {
-  if (!isYouTubeAuthEnabled()) {
-    throw new YouTubeAuthError(
-      'missing_credentials',
-      'YouTube auth is disabled on Vercel',
-    );
-  }
-
   const clientId = process.env.YOUTUBE_CLIENT_ID;
   const clientSecret = process.env.YOUTUBE_CLIENT_SECRET;
 
@@ -325,13 +329,6 @@ export function getYouTubeOAuthConfig() {
 }
 
 export function getYouTubeOAuthRedirectUri(origin?: string) {
-  if (!isYouTubeAuthEnabled()) {
-    throw new YouTubeAuthError(
-      'missing_credentials',
-      'YouTube auth is disabled on Vercel',
-    );
-  }
-
   const configured = process.env.YOUTUBE_OAUTH_REDIRECT_URI?.trim();
   if (configured) {
     return configured;
