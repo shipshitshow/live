@@ -1,0 +1,303 @@
+---
+title: "We Built An Autonomous Company While We Were Gone"
+slug: "autonomous-company-comeback"
+source: "GitHub public commit search, Anthropic, OpenAI, Claude Opus 5, Claude Fable 5, GPT-5.6 Sol, CornerShop.dev, Ship Shit Show operator usage"
+status: "in_progress"
+date: "2026-07-27"
+announcement_tweet: null
+thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting. PALETTE: warm parchment cream background, muted beige, ivory, soft brown shadows, natural skin tones, restrained amber and golden accents, no neon, no cyberpunk, no red warning stamp. COMPOSITION: two large host portraits cropped by left and right edges, occupying roughly 35% of frame each, framing one centered parchment editorial object. CENTER ASSET: a charming small European corner shop transformed into a precise clockwork software factory, with three large interlocking brass gears feeding a short conveyor of clean pull-request cards into the shop; one tiny founder chair sits empty beside the machine to imply autonomous operation; simple, bold, readable at mobile size, no official logos, no readable UI, no tiny text. HOST LEFT: bald man, light tan olive skin, stubble, green-hazel eyes, black hoodie, proud but slightly disbelieving expression, one palm-up presenting hand toward the autonomous shop. HOST RIGHT: man with dark wavy brown hair slicked back, navy blue polo, confused wonder, subtle wait-what gesture toward the machine. BACKGROUND: plain warm parchment paper texture with a faint technical drawing of gears and branching work queues, soft vignette and studio shadow. CONTRAST RULE: hosts are large and readable at mobile size; the corner-shop factory is the single clear center object. LIGHTING: soft warm studio lighting from front, gentle shadows, slight golden highlight around the center machine. BRANDING: top-right episode number '#24', clearly readable in muted dark brown/grey. TEXT: no title text, no model names, no UI labels, no official brand wordmarks, only '#24'. STYLE: premium natural-history technology poster, clean Ship Shit Show live-thumbnail composition."
+---
+
+## Sources — Livestream Notes
+
+- Title: **[LIVE] We Built An Autonomous Company While We Were Gone**
+- Alternate titles: **"837 Commits While We Were Gone"** / **"Opus 5, Fable 5, GPT-5.6 — Then We Built The Company"**
+- Date and time: July 27, 2026 at **14:00 Central European local time — CEST (UTC+2)**.
+- YouTube livestream: TBD
+- Restream studio: TBD
+- Episode number: **#24**
+- Format: comeback show after a two-week break. Start with the work receipt, then model news, then the autonomous-company thesis.
+- Stream promise: show exactly what shipped while the show was off-air, explain the model routing that made it possible, and define what CornerShop.dev still needs before it deserves the words "autonomous company."
+- Red line: do not call 25 repositories "25 apps." The verified claim is 25 public repositories with authored commits.
+- Red line: do not call every commit production code. The dataset includes merge commits, docs, CI, chores, tests, and refactors.
+- Data boundary: GitHub CLI authentication was unavailable during prep, so these are **public-only floor numbers**. Private repository and hidden-organization activity are not included.
+
+## Cold Open — Read This
+
+> "We disappeared for two weeks."
+>
+> "The show stopped. The software factory did not."
+>
+> "In the last ten days, my public GitHub account authored 837 commits across 25 repositories. Six hundred and eleven of those commits are tied to numbered pull requests."
+>
+> "While everyone was comparing Opus 5, Fable 5, and GPT-5.6, we were using the models as an org chart."
+>
+> "And the result is CornerShop.dev: not an autonomous company yet, but the first company I am building to become one."
+>
+> "So today, no benchmark theater. Here are the receipts, here is what broke, and here is what a company with no human writing code actually looks like."
+
+## Summary
+
+The model story moved again during the break: Anthropic launched Opus 5 on July 24 as the everyday near-Fable tier at half Fable's API price; Fable 5 remains the frontier lane for the hardest long-running work; GPT-5.6 is now generally available as Sol, Terra, and Luna with explicit max and multi-agent ultra modes. But the episode is not a launch recap. The proof is the public work ledger from July 18–27: 837 authored commits, 25 repositories, seven GitHub owners, ten active days, 110 structural merge commits, and 611 commits whose subject ends in a numbered PR. The show uses the apps shipped during the break to explain the real system—issues as work orders, isolated agent worktrees, model routing, cross-provider review, CI gates, and human attention reserved for architecture and company decisions. CornerShop.dev is the next step: moving autonomy from software production into customer acquisition, onboarding, fulfillment, monitoring, and company operations.
+
+## Hot Take
+
+The lazy take is: **the new models let one founder code faster.**
+
+The useful take is: **the founder stopped being the coder and started designing the company that produces the code.**
+
+Eight hundred and thirty-seven commits are not automatically progress. They are proof of throughput. The company begins when that throughput is attached to demand, revenue, quality gates, and a system that knows what to do next without the founder inventing every task.
+
+## Talking Points — The Show Stopped, The Factory Did Not
+
+### Segment Thesis
+
+The comeback receipt is ten consecutive active days and 837 public authored commits—not a vague claim that AI made us productive.
+
+### Talking Points
+
+- Pull up the [public GitHub commit search](https://github.com/search?q=author%3AVincentShipsIt+author-date%3A2026-07-18..2026-07-27&type=commits). Receipt: **837 unique authored SHAs** from July 18 through July 27.
+- The work touched **25 public repositories** under **seven GitHub owners**: `VincentShipsIt`, `genfeedai`, `dailydraftfun`, `shipshitgames`, `shipshitdev`, `Gateway-Ventures`, and `shipshitshow`.
+- Activity happened on all ten days: **83.7 commits per day on average**. Peak day: **July 23, 146 commits**. Second: July 19, 130. Today: 128 by the time the dataset was captured.
+- Structural breakdown: **727 non-merge commits**, **110 merge commits**, and **611 PR-numbered subjects**—about **73%** of the total.
+- Change-type receipt from conventional subjects: **222 fixes, 216 features, 84 refactors, 50 chores, 43 tests, 31 docs, 17 CI changes, and six performance changes**. The factory did not only add features; it spent almost the same amount of energy fixing them.
+- The five busiest repos account for **612 commits, 73% of the total**: Genfeed.ai 194, OpenTV Tracker 141, CornerShop.dev 137, DailyDraft 82, and MeterBar 58.
+- Do not posture: authored commits are a throughput measure, not a quality score and not a measure of human hours saved. The PR, review, test, and deployment gates are what make the number interesting.
+- Clip line: **"The show stopped. The software factory did not."**
+- Transition: the number is only useful if we can name what came out of the factory.
+
+### Host Notes
+
+- Ask Mitchell: does 837 commits sound like leverage or like a system that has learned to generate its own tech debt?
+- Pull up: the GitHub search, the daily table in the sources below, then the five busiest repositories.
+- Do not pretend: private activity is missing because the prep run had no authenticated GitHub session. Say "public floor," not "everything."
+
+## Talking Points — What Actually Shipped During The Break
+
+### Segment Thesis
+
+The break produced a portfolio of real product, infrastructure, security, and delivery work—not one giant synthetic demo.
+
+### Talking Points
+
+- Pull up [Genfeed.ai](https://github.com/genfeedai/genfeed.ai). Receipt: **194 commits**, the largest lane—Brand OS work, clip identity defaults, deletion of Mongo-era paths, dependency cleanup, and broad product hardening.
+- Pull up [OpenTV Tracker](https://github.com/VincentShipsIt/opentvtracker). Receipt: **141 commits**, including personal/shared modes, calendar, lists/import, user-controlled Up Next, episode diary, two-way Trakt sync, reactions, CloudKit sharing, privacy, and release infrastructure.
+- Pull up [DailyDraft](https://github.com/dailydraftfun/dailydraft.fun). Receipt: **82 product commits** plus four in its Solana escrow program—duel economics, receipts, refunds, RPC failure handling, provider evidence, and reveal choreography.
+- Pull up [MeterBar](https://github.com/VincentShipsIt/meterbar.dev). Receipt: **58 commits**—model-provider usage, cost rollups, currency, project aggregation, token refresh, release work, and reliability.
+- Pull up [Ship Shit Games](https://github.com/shipshitgames/shipshit.games) and [DEADROT](https://github.com/shipshitgames/deadrot.com). Receipt: **83 commits combined**—durable generation jobs, quota reservation, asset tooling, game telemetry, cutscenes, art variants, visual contracts, and studio documentation.
+- Pull up [ShipCode](https://github.com/shipshitdev/shipcode). Receipt: **35 commits**—goal-aware execution, plan-approval control, full-history secret scanning, encrypted notification credentials, rolling model aliases, and launch-at-login.
+- Pull up [MacSweep](https://github.com/VincentShipsIt/macsweep.dev), [OpenFocus](https://github.com/VincentShipsIt/openfocusdev), [Landings](https://github.com/VincentShipsIt/landings), and [Vela Shopping](https://github.com/VincentShipsIt/vela-shopping). Receipt: a native Mac cleaner was hardened, a native task manager gained Todoist-shaped product foundations, landing pages became a shared conversion system, and a SwiftUI affiliate-shopping MVP was built.
+- Pull up [PublishOps](https://github.com/shipshitdev/publishops). Receipt: **27 commits in one day**, including an AWS production API, a public landing surface, health probes, container/runtime fixes, and the rename to "the publication API for agents."
+- Clip line: **"We did not build one app with AI. We built the factory that kept touching every app."**
+- Transition: three new model tiers arrived, but the useful question is which seat each one gets in that factory.
+
+### Host Notes
+
+- Ask Mitchell: which of these sounds like a product and which still sounds like a repo?
+- Pull up: README or live product first, commit search second. Avoid scrolling through 837 rows.
+- Do not claim every listed feature launched to customers. Say "shipped to the public repository" unless deployment is independently visible.
+
+## Talking Points — Opus 5 Changed The Org Chart
+
+### Segment Thesis
+
+Opus 5 is not "Fable but worse"; it is the missing everyday judgment lane between frontier planning and volume execution.
+
+### Talking Points
+
+- Pull up [Anthropic: Introducing Claude Opus 5](https://www.anthropic.com/news/claude-opus-5). Receipt: launched **July 24**, now the default on Claude Max and strongest model on Pro.
+- Anthropic's positioning: near-Fable intelligence at half the price. Opus 5 is **$5/M input and $25/M output**; Fable 5 is **$10/M input and $50/M output**.
+- Vendor benchmark receipt, not gospel: Anthropic says Opus 5 at max lands within **0.5% of Fable 5's peak CursorBench 3.2 score** at half the cost per task. More useful behavior claim: it verifies branches, checks templates, considers tests, and does not rush the handoff.
+- Pull up [Anthropic: Claude Fable 5](https://www.anthropic.com/claude/fable). Fable remains the hardest-problem lane: large migrations, complex implementations, multi-day autonomous sessions, sub-agent delegation, and self-checking.
+- Pull up [OpenAI: GPT-5.6](https://openai.com/index/gpt-5-6/). Sol is **$5/M input and $30/M output**, with Terra and Luna below it; `max` extends single-agent reasoning and `ultra` coordinates subagents.
+- New routing table:
+
+  | Job | Default lane |
+  | --- | --- |
+  | Portfolio direction, architecture, ambiguous trade-offs | Fable 5 |
+  | Daily planning, review, root cause, high-judgment repo work | Opus 5 |
+  | Shaped implementation, migrations, long worktree runs | GPT-5.6 Sol |
+  | Routine bounded work | Terra / Sonnet-class lane |
+  | Retrieval and zero-judgment lookups | Luna / Haiku-class lane |
+
+- The model is not the product. The routing table, context, permissions, memory, CI, and review loop are the product.
+- Clip line: **"Opus 5 did not replace Fable. It replaced wasting Fable on normal work."**
+- Transition: the org chart explains model selection. The harness explains how the work kept moving while we were off-air.
+
+### Host Notes
+
+- Ask Mitchell: what is the first task he would move from Fable to Opus 5 tomorrow?
+- Pull up: only official launch pages for prices and availability. Treat every benchmark as the vendor's claim until our own accepted-diff data exists.
+- Do not turn this into another split-screen bake-off. The apps are the field test.
+
+## Talking Points — Autonomy Is A Queue, Not A Prompt
+
+### Segment Thesis
+
+The apps were built autonomously because work moved through a durable system, not because one prompt ran for ten days.
+
+### Talking Points
+
+- The issue is the work order: desired outcome, constraints, acceptance criteria, repository patterns, and verification gates live outside the model session.
+- The agent gets an isolated worktree. Parallelism without isolation is just two models corrupting the same checkout faster.
+- Fable or Opus shapes the task and owns high-judgment review. Sol executes bounded work. A different model reviews the final head so the author does not grade its own paper.
+- GitHub Actions is the broad verification lane. The laptop does not need to become a space heater because an agent wants to prove enthusiasm.
+- The pull request is the durable handoff: what changed, what was verified, what failed, what still needs judgment. The founder reviews decisions and risk, not syntax.
+- The recurring loops inspect issues, provider capacity, CI, blocked PRs, and product state. The next task comes from the system's state, not from the founder waking up and inventing a prompt.
+- The failure mode is obvious in the stats: 222 fixes against 216 features. Autonomy multiplies correction loops too. More output without review creates a faster landfill.
+- Clip line: **"Autonomy is not a long prompt. It is a queue with memory, permissions, receipts, and a stop condition."**
+- Transition: software autonomy is working. A company is a larger loop.
+
+### Host Notes
+
+- Ask Mitchell: at what point does an agent fleet become management overhead again?
+- Pull up: ShipCode goal execution, the PR queue, one isolated worktree, one CI run, and one cross-model review receipt.
+- Don't pretend: humans still choose markets, budgets, irreversible actions, and whether the work is worth doing.
+
+## Talking Points — CornerShop.dev Is The First Autonomous Company
+
+### Segment Thesis
+
+CornerShop.dev is the first deliberate attempt to extend the autonomous software factory into a company that finds, closes, serves, and retains customers.
+
+### Talking Points
+
+- Pull up [CornerShop.dev](https://github.com/VincentShipsIt/cornershopdev). The repository was created **July 18**. In ten days it accumulated **137 authored commits**. Structurally: **103 non-merges and 34 merges**. By subject prefix: **40 features, 38 fixes, 33 merge subjects, eight docs, five CI changes, five refactors, three chores, two tests, and three other commits**.
+- The product is a website factory for small businesses. First vertical: restaurants through Restofront. Give it a restaurant URL or name; it imports public content, recovers menus and integrations, preserves the source language, generates English, builds a private preview, verifies ownership, takes payment, connects the domain, and monitors the site.
+- The software already has the company-shaped surfaces: Stripe subscriptions, invitation-bound claims, owner dashboard, operator console, first-party analytics, booking leads, custom domains, durable monitoring workflows, alerts, and a first-customer validation runbook.
+- The honest line: that is an autonomous **production system**, not yet an autonomous **company**.
+- Company autonomy still needs five closed loops:
+
+  1. **Demand:** select a niche and build a qualified prospect list.
+  2. **Sales:** generate the preview, contact the owner, follow up, and measure conversion.
+  3. **Fulfillment:** claim, bill, publish, monitor, and repair without founder babysitting.
+  4. **Success:** prove leads or bookings, catch churn risk, and improve the customer's site.
+  5. **Capital allocation:** compare niches by acquisition cost, activation, retention, support load, and margin—then double down or kill them.
+
+- Guardrail: agents may recommend and execute reversible bounded actions. They do not send deceptive outreach, fabricate restaurant imagery, change customer content, spend open-ended money, or claim ownership without evidence.
+- The goal is not "no humans." The goal is that the founder provides capital, taste, policy, and judgment while the operating system does the recurring work.
+- Clip line: **"AI can already build the software company. CornerShop.dev is the test of whether it can run the company around the software."**
+- Transition: if that works, the repo stops being the product. The operating loop becomes the product.
+
+### Host Notes
+
+- Ask Mitchell: which company loop is harder to automate honestly—sales, fulfillment, customer success, or capital allocation?
+- Pull up: CornerShop README product flow, first-customer validation runbook, owner dashboard, operator console, and one real restaurant preview.
+- Don't pretend: CornerShop.dev has zero stars, zero forks, and no public proof of paid customers in the repository metadata. The next receipt must be a customer, not another hundred commits.
+
+## Closing Take
+
+> "Two weeks ago, we talked about Fable and Sol as two brains."
+>
+> "Now Opus 5 gives the system a daily judgment layer."
+>
+> "But the model launch is not the story."
+>
+> "The story is that the show stopped and the factory kept shipping."
+>
+> "Eight hundred and thirty-seven public commits prove throughput. They do not prove a business."
+>
+> "CornerShop.dev is where we stop measuring autonomy by commits and start measuring it by customers, retention, support load, and margin."
+>
+> "The next milestone is not one thousand commits."
+>
+> "It is the first customer the system found, onboarded, served, and kept."
+
+## Sources — Official Model Receipts
+
+- [Anthropic: Introducing Claude Opus 5](https://www.anthropic.com/news/claude-opus-5) — July 24 launch, positioning, effort controls, benchmark claims, safeguards, availability, and $5/$25 API pricing.
+- [Anthropic: Claude Opus](https://www.anthropic.com/claude/opus) — current Opus availability and platform pricing.
+- [Anthropic: Claude Fable](https://www.anthropic.com/claude/fable) — current Fable positioning, $10/$50 pricing, long-running agent use cases, safeguards, and data-retention note.
+- [Anthropic: Claude Fable 5 and Claude Mythos 5](https://www.anthropic.com/news/claude-fable-5-mythos-5) — original Fable launch and autonomy framing.
+- [OpenAI: GPT-5.6](https://openai.com/index/gpt-5-6/) — July 9 general availability, Sol/Terra/Luna tiers, max/ultra modes, benchmark claims, and pricing.
+- [OpenAI: GPT-5.6 Sol model docs](https://developers.openai.com/api/docs/models/gpt-5.6-sol) — current context window, output limit, and API pricing.
+
+## Sources — GitHub Activity
+
+- Dataset: public GitHub commit search for author `VincentShipsIt`, author dates **2026-07-18 through 2026-07-27**, retrieved July 27 at approximately 23:20 CEST.
+- Method: paginate all 837 search results, de-duplicate by SHA, group by repository owner and full repository name, inspect parent count for structural merges, and classify conventional-commit prefixes from the first subject line.
+- Limitation: unauthenticated public API data only. Private repositories, private forks, and hidden organization membership are excluded.
+
+### Ten-Day Daily Count
+
+| Date | Commits |
+| --- | ---: |
+| Jul 18 | 35 |
+| Jul 19 | 130 |
+| Jul 20 | 21 |
+| Jul 21 | 70 |
+| Jul 22 | 70 |
+| Jul 23 | 146 |
+| Jul 24 | 62 |
+| Jul 25 | 75 |
+| Jul 26 | 100 |
+| Jul 27 | 128 |
+
+### GitHub Owner Count
+
+| Owner | Repositories | Commits |
+| --- | ---: | ---: |
+| `VincentShipsIt` | 9 | 401 |
+| `genfeedai` | 2 | 195 |
+| `dailydraftfun` | 2 | 86 |
+| `shipshitgames` | 4 | 85 |
+| `shipshitdev` | 6 | 68 |
+| `Gateway-Ventures` | 1 | 1 |
+| `shipshitshow` | 1 | 1 |
+
+### All Public Repositories Touched
+
+| Repository | Commits |
+| --- | ---: |
+| `genfeedai/genfeed.ai` | 194 |
+| `VincentShipsIt/opentvtracker` | 141 |
+| `VincentShipsIt/cornershopdev` | 137 |
+| `dailydraftfun/dailydraft.fun` | 82 |
+| `VincentShipsIt/meterbar.dev` | 58 |
+| `shipshitgames/shipshit.games` | 44 |
+| `shipshitgames/deadrot.com` | 39 |
+| `shipshitdev/shipcode` | 35 |
+| `VincentShipsIt/macsweep.dev` | 31 |
+| `shipshitdev/publishops` | 27 |
+| `VincentShipsIt/openfocusdev` | 16 |
+| `VincentShipsIt/landings` | 11 |
+| `VincentShipsIt/loops` | 4 |
+| `dailydraftfun/escrow` | 4 |
+| `VincentShipsIt/vela-shopping` | 2 |
+| `shipshitdev/shipcode-ios` | 2 |
+| `shipshitdev/v0` | 2 |
+| `Gateway-Ventures/.github` | 1 |
+| `VincentShipsIt/.github` | 1 |
+| `genfeedai/skills` | 1 |
+| `shipshitdev/.github` | 1 |
+| `shipshitdev/skills` | 1 |
+| `shipshitgames/.github` | 1 |
+| `shipshitgames/skills` | 1 |
+| `shipshitshow/live` | 1 |
+
+## Sources — Product Receipts
+
+- [CornerShop.dev repository](https://github.com/VincentShipsIt/cornershopdev) — website-factory architecture and first autonomous-company candidate.
+- [Genfeed.ai](https://github.com/genfeedai/genfeed.ai) — content operating system and highest-volume public work lane.
+- [OpenTV Tracker](https://github.com/VincentShipsIt/opentvtracker) — open-source, privacy-minded SwiftUI TV and movie tracker.
+- [DailyDraft](https://github.com/dailydraftfun/dailydraft.fun) — Solana pack-opening duels and daily fantasy product.
+- [MeterBar](https://github.com/VincentShipsIt/meterbar.dev) — native AI usage and cost monitor.
+- [ShipCode](https://github.com/shipshitdev/shipcode) — issue-in, reviewed-PR-out agent system.
+- [Ship Shit Games](https://github.com/shipshitgames/shipshit.games) — AI-native game-studio toolbox and asset-generation system.
+- [DEADROT](https://github.com/shipshitgames/deadrot.com) — shared game universe and playable product work.
+- [PublishOps](https://github.com/shipshitdev/publishops) — publication API for agents.
+- [MacSweep](https://github.com/VincentShipsIt/macsweep.dev) — native macOS system cleaner.
+- [OpenFocus](https://github.com/VincentShipsIt/openfocusdev) — AI-native Mac and iPhone task manager.
+- [Vela Shopping](https://github.com/VincentShipsIt/vela-shopping) — native SwiftUI affiliate-shopping MVP.
+
+## Tweets — Paste Live
+
+> We disappeared for two weeks. The show stopped. The software factory did not: 837 public commits, 25 repos, 10 active days.
+
+> Opus 5 did not replace Fable. It replaced wasting Fable on normal work.
+
+> Autonomy is not a long prompt. It is a queue with memory, permissions, receipts, and a stop condition.
+
+> AI can already build the software company. CornerShop.dev is the test of whether it can run the company around the software.
+
+> The next milestone is not 1,000 commits. It is the first customer the system found, onboarded, served, and kept.
