@@ -1,7 +1,7 @@
 ---
 title: "We Built An Autonomous Company While We Were Gone"
 slug: "autonomous-company-comeback"
-source: "GitHub public commit search, Anthropic, OpenAI, Claude Opus 5, Claude Fable 5, GPT-5.6 Sol, CornerShop.dev, Ship Shit Show operator usage"
+source: "Authenticated GitHub commit search, Anthropic, OpenAI, Claude Opus 5, Claude Fable 5, GPT-5.6 Sol, CornerShop.dev, Ship Shit Show operator usage"
 status: "in_progress"
 date: "2026-07-27"
 announcement_tweet: null
@@ -11,16 +11,16 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 ## Sources — Livestream Notes
 
 - Title: **[LIVE] We Built An Autonomous Company While We Were Gone**
-- Alternate titles: **"837 Commits While We Were Gone"** / **"Opus 5, Fable 5, GPT-5.6 — Then We Built The Company"**
+- Alternate titles: **"948 Commits While We Were Gone"** / **"Opus 5, Fable 5, GPT-5.6 — Then We Built The Company"**
 - Date and time: July 27, 2026 at **14:00 Central European local time — CEST (UTC+2)**.
 - YouTube livestream: TBD
 - Restream studio: TBD
 - Episode number: **#24**
 - Format: comeback show after a two-week break. Start with the work receipt, then model news, then the autonomous-company thesis.
 - Stream promise: show exactly what shipped while the show was off-air, explain the model routing that made it possible, and define what CornerShop.dev still needs before it deserves the words "autonomous company."
-- Red line: do not call 25 repositories "25 apps." The verified claim is 25 public repositories with authored commits.
+- Red line: do not call 36 repositories "36 apps." The verified claim is 36 repositories with authored commits: 25 public and 11 private.
 - Red line: do not call every commit production code. The dataset includes merge commits, docs, CI, chores, tests, and refactors.
-- Data boundary: GitHub CLI authentication was unavailable during prep, so these are **public-only floor numbers**. Private repository and hidden-organization activity are not included.
+- Privacy boundary: the authenticated totals include private activity, but this public show document intentionally omits private repository names and descriptions. Use aggregate private counts on-air unless a project is already cleared for public discussion.
 
 ## Cold Open — Read This
 
@@ -28,7 +28,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 >
 > "The show stopped. The software factory did not."
 >
-> "In the last ten days, my public GitHub account authored 837 commits across 25 repositories. Six hundred and eleven of those commits are tied to numbered pull requests."
+> "In the last ten days, my GitHub account authored 948 commits across 36 repositories. Eight hundred and thirty-seven of those commits are public. Six hundred and eighty-two are tied to numbered pull requests."
 >
 > "While everyone was comparing Opus 5, Fable 5, and GPT-5.6, we were using the models as an org chart."
 >
@@ -38,7 +38,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 
 ## Summary
 
-The model story moved again during the break: Anthropic launched Opus 5 on July 24 as the everyday near-Fable tier at half Fable's API price; Fable 5 remains the frontier lane for the hardest long-running work; GPT-5.6 is now generally available as Sol, Terra, and Luna with explicit max and multi-agent ultra modes. But the episode is not a launch recap. The proof is the public work ledger from July 18–27: 837 authored commits, 25 repositories, seven GitHub owners, ten active days, 110 structural merge commits, and 611 commits whose subject ends in a numbered PR. The show uses the apps shipped during the break to explain the real system—issues as work orders, isolated agent worktrees, model routing, cross-provider review, CI gates, and human attention reserved for architecture and company decisions. CornerShop.dev is the next step: moving autonomy from software production into customer acquisition, onboarding, fulfillment, monitoring, and company operations.
+The model story moved again during the break: Anthropic launched Opus 5 on July 24 as the everyday near-Fable tier at half Fable's API price; Fable 5 remains the frontier lane for the hardest long-running work; GPT-5.6 is now generally available as Sol, Terra, and Luna with explicit max and multi-agent ultra modes. But the episode is not a launch recap. The proof is the authenticated work ledger from July 18–27: 948 authored commits, 36 repositories, seven GitHub owners, ten active days, 110 structural merge commits, and 682 commits whose subject ends in a numbered PR. The public/private split is 837 commits across 25 public repositories and 111 across 11 private repositories. The show uses the apps shipped during the break to explain the real system—issues as work orders, isolated agent worktrees, model routing, cross-provider review, CI gates, and human attention reserved for architecture and company decisions. CornerShop.dev is the next step: moving autonomy from software production into customer acquisition, onboarding, fulfillment, monitoring, and company operations.
 
 ## Hot Take
 
@@ -46,31 +46,31 @@ The lazy take is: **the new models let one founder code faster.**
 
 The useful take is: **the founder stopped being the coder and started designing the company that produces the code.**
 
-Eight hundred and thirty-seven commits are not automatically progress. They are proof of throughput. The company begins when that throughput is attached to demand, revenue, quality gates, and a system that knows what to do next without the founder inventing every task.
+Nine hundred and forty-eight commits are not automatically progress. They are proof of throughput. The company begins when that throughput is attached to demand, revenue, quality gates, and a system that knows what to do next without the founder inventing every task.
 
 ## Talking Points — The Show Stopped, The Factory Did Not
 
 ### Segment Thesis
 
-The comeback receipt is ten consecutive active days and 837 public authored commits—not a vague claim that AI made us productive.
+The comeback receipt is ten consecutive active days and 948 authenticated authored commits—not a vague claim that AI made us productive.
 
 ### Talking Points
 
-- Pull up the [public GitHub commit search](https://github.com/search?q=author%3AVincentShipsIt+author-date%3A2026-07-18..2026-07-27&type=commits). Receipt: **837 unique authored SHAs** from July 18 through July 27.
-- The work touched **25 public repositories** under **seven GitHub owners**: `VincentShipsIt`, `genfeedai`, `dailydraftfun`, `shipshitgames`, `shipshitdev`, `Gateway-Ventures`, and `shipshitshow`.
-- Activity happened on all ten days: **83.7 commits per day on average**. Peak day: **July 23, 146 commits**. Second: July 19, 130. Today: 128 by the time the dataset was captured.
-- Structural breakdown: **727 non-merge commits**, **110 merge commits**, and **611 PR-numbered subjects**—about **73%** of the total.
-- Change-type receipt from conventional subjects: **222 fixes, 216 features, 84 refactors, 50 chores, 43 tests, 31 docs, 17 CI changes, and six performance changes**. The factory did not only add features; it spent almost the same amount of energy fixing them.
-- The five busiest repos account for **612 commits, 73% of the total**: Genfeed.ai 194, OpenTV Tracker 141, CornerShop.dev 137, DailyDraft 82, and MeterBar 58.
+- Pull up the [public GitHub commit search](https://github.com/search?q=author%3AVincentShipsIt+author-date%3A2026-07-18..2026-07-27&type=commits). Public receipt: **837 unique authored SHAs**. Authenticated receipt: **948** after including private repositories.
+- The work touched **36 repositories** under **seven GitHub owners**: 25 public repositories and 11 private repositories. The authenticated profile is a member of 13 organizations; six organization owners plus the personal account had authored commits in this window.
+- Activity happened on all ten days: **94.8 commits per day on average**. Peak day: **July 23, 179 commits**. Second: July 19, 146. Today: 136 by the time the dataset was captured.
+- Structural breakdown: **838 non-merge commits**, **110 merge commits**, and **682 PR-numbered subjects**—about **72%** of the total.
+- Change-type receipt from conventional subjects: **257 features, 253 fixes, 100 refactors, 54 chores, 48 tests, 33 docs, 19 CI changes, and six performance changes**. The factory did not only add features; it spent almost the same amount of energy fixing them.
+- The five busiest public repos account for **612 of the 837 public commits, 73% of public activity**: Genfeed.ai 194, OpenTV Tracker 141, CornerShop.dev 137, DailyDraft 82, and MeterBar 58.
 - Do not posture: authored commits are a throughput measure, not a quality score and not a measure of human hours saved. The PR, review, test, and deployment gates are what make the number interesting.
 - Clip line: **"The show stopped. The software factory did not."**
 - Transition: the number is only useful if we can name what came out of the factory.
 
 ### Host Notes
 
-- Ask Mitchell: does 837 commits sound like leverage or like a system that has learned to generate its own tech debt?
+- Ask Mitchell: does 948 commits sound like leverage or like a system that has learned to generate its own tech debt?
 - Pull up: the GitHub search, the daily table in the sources below, then the five busiest repositories.
-- Do not pretend: private activity is missing because the prep run had no authenticated GitHub session. Say "public floor," not "everything."
+- Do not leak private repo names on-air. The cleared aggregate is **111 commits across 11 private repositories**.
 
 ## Talking Points — What Actually Shipped During The Break
 
@@ -144,7 +144,7 @@ The apps were built autonomously because work moved through a durable system, no
 - GitHub Actions is the broad verification lane. The laptop does not need to become a space heater because an agent wants to prove enthusiasm.
 - The pull request is the durable handoff: what changed, what was verified, what failed, what still needs judgment. The founder reviews decisions and risk, not syntax.
 - The recurring loops inspect issues, provider capacity, CI, blocked PRs, and product state. The next task comes from the system's state, not from the founder waking up and inventing a prompt.
-- The failure mode is obvious in the stats: 222 fixes against 216 features. Autonomy multiplies correction loops too. More output without review creates a faster landfill.
+- The failure mode is obvious in the stats: 253 fixes against 257 features. Autonomy multiplies correction loops too. More output without review creates a faster landfill.
 - Clip line: **"Autonomy is not a long prompt. It is a queue with memory, permissions, receipts, and a stop condition."**
 - Transition: software autonomy is working. A company is a larger loop.
 
@@ -195,7 +195,7 @@ CornerShop.dev is the first deliberate attempt to extend the autonomous software
 >
 > "The story is that the show stopped and the factory kept shipping."
 >
-> "Eight hundred and thirty-seven public commits prove throughput. They do not prove a business."
+> "Nine hundred and forty-eight commits prove throughput. They do not prove a business."
 >
 > "CornerShop.dev is where we stop measuring autonomy by commits and start measuring it by customers, retention, support load, and margin."
 >
@@ -214,36 +214,39 @@ CornerShop.dev is the first deliberate attempt to extend the autonomous software
 
 ## Sources — GitHub Activity
 
-- Dataset: public GitHub commit search for author `VincentShipsIt`, author dates **2026-07-18 through 2026-07-27**, retrieved July 27 at approximately 23:20 CEST.
-- Method: paginate all 837 search results, de-duplicate by SHA, group by repository owner and full repository name, inspect parent count for structural merges, and classify conventional-commit prefixes from the first subject line.
-- Limitation: unauthenticated public API data only. Private repositories, private forks, and hidden organization membership are excluded.
+- Dataset: authenticated GitHub commit search for author `VincentShipsIt`, author dates **2026-07-18 through 2026-07-27**, retrieved July 27 at approximately 23:35 CEST.
+- Method: paginate all 948 authenticated search results, de-duplicate by SHA, group by repository owner and full repository name, inspect parent count for structural merges, and classify conventional-commit prefixes from the first subject line.
+- Coverage: **948 unique SHAs across 36 repositories**. Public: **837 commits / 25 repositories**. Private: **111 commits / 11 repositories**.
+- Privacy: private repository names, descriptions, and per-project counts are deliberately excluded from this public prep file.
 
 ### Ten-Day Daily Count
 
 | Date | Commits |
 | --- | ---: |
-| Jul 18 | 35 |
-| Jul 19 | 130 |
-| Jul 20 | 21 |
-| Jul 21 | 70 |
+| Jul 18 | 48 |
+| Jul 19 | 146 |
+| Jul 20 | 35 |
+| Jul 21 | 72 |
 | Jul 22 | 70 |
-| Jul 23 | 146 |
-| Jul 24 | 62 |
-| Jul 25 | 75 |
-| Jul 26 | 100 |
-| Jul 27 | 128 |
+| Jul 23 | 179 |
+| Jul 24 | 68 |
+| Jul 25 | 90 |
+| Jul 26 | 104 |
+| Jul 27 | 136 |
 
 ### GitHub Owner Count
 
 | Owner | Repositories | Commits |
 | --- | ---: | ---: |
-| `VincentShipsIt` | 9 | 401 |
-| `genfeedai` | 2 | 195 |
+| `VincentShipsIt` | 12 | 407 |
+| `genfeedai` | 5 | 199 |
+| `shipshitdev` | 8 | 107 |
 | `dailydraftfun` | 2 | 86 |
 | `shipshitgames` | 4 | 85 |
-| `shipshitdev` | 6 | 68 |
-| `Gateway-Ventures` | 1 | 1 |
+| `Gateway-Ventures` | 4 | 63 |
 | `shipshitshow` | 1 | 1 |
+
+The owner totals include private activity. Private repository identities remain omitted.
 
 ### All Public Repositories Touched
 
@@ -292,7 +295,7 @@ CornerShop.dev is the first deliberate attempt to extend the autonomous software
 
 ## Tweets — Paste Live
 
-> We disappeared for two weeks. The show stopped. The software factory did not: 837 public commits, 25 repos, 10 active days.
+> We disappeared for two weeks. The show stopped. The software factory did not: 948 commits, 36 repos, 10 active days.
 
 > Opus 5 did not replace Fable. It replaced wasting Fable on normal work.
 
