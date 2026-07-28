@@ -18,7 +18,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal high-
 - Host refs: Vincent `/Users/decod3rs/Desktop/thumbnails/pfps/vincentshipsit/vincentshipsit.jpg`; Mitchell `/Users/decod3rs/Desktop/thumbnails/pfps/mntll_nl/mntll_nl.jpg`
 - Candidate 1 — Swiss editorial, tight zoom: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-01-swiss-editorial-zoom.jpg`
 - Candidate 2 — retro risograph, tight zoom: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-02-retro-risograph-zoom.jpg`
-- Candidate 3 — tactile 3D diorama: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-03-tactile-diorama.jpg`
+- Candidate 3 — tactile 3D diorama, Anthropic + OpenAI only: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-03-tactile-diorama-two-providers-v2.jpg`
 - Lossless versions use the same filenames with `.png`.
 - Description opener: **"Can Opus 5, Fable 5, and GPT-5.6 run a company? We used them as an org chart—Fable planning, Opus judging, and Sol executing—and Vincent's GitHub account authored 948 commits across 36 repositories in ten days. Today we show the receipts and turn CornerShop.dev into the first company deliberately built for autonomous operation."**
 - Date and time: July 27, 2026 at **14:00 Central European local time — CEST (UTC+2)**.
