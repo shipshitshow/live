@@ -1,7 +1,7 @@
 ---
 title: "Opus 5 + GPT-5.6 Build Companies While We're on the Beach"
 slug: "autonomous-company-comeback"
-source: "Authenticated GitHub commit search, YouTube packaging trend check, Anthropic, OpenAI, Claude Opus 5, Claude Fable 5, GPT-5.6 Sol, CornerShop.dev, Ship Shit Show operator usage"
+source: "Authenticated GitHub commit search, YouTube packaging trend check, Anthropic, OpenAI, Claude Opus 5, Claude Fable 5, GPT-5.6 Sol, CornerShop.dev, Restofront, Ship Shit Show operator usage"
 status: "in_progress"
 date: "2026-07-27"
 announcement_tweet: null
@@ -12,7 +12,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, bright premium 
 
 - Title: **[LIVE] Opus 5 + GPT-5.6 Build Companies While We're on the Beach**
 - Alternate title — direct question: **"[LIVE] Opus 5 vs GPT-5.6: Can AI Run a Company?"**
-- Alternate title — proof-led packaging: **"[LIVE] We Made AI Build 36 Repositories in 10 Days"**
+- Alternate title — proof-led packaging: **"[LIVE] AI Shipped 10 Projects in 10 Days"**
 - Packaging decision: combine the two current model-search hooks with a seasonal lifestyle payoff: the founders can step away while the system keeps shipping. Fable remains part of the on-air routing story and description, but the title and thumbnail stay on the simpler Anthropic-versus-OpenAI frame. Do not claim unattended revenue until there is a cleared revenue receipt.
 - Thumbnail direction: a **bright Mediterranean beach scene**. Vincent and Mitchell relax in large beach-chair crops while four finished apps dominate the center. Exactly two provider marks—Anthropic and OpenAI—shine above the portfolio. The visual says the humans are at the beach and the system is still building.
 - Host refs: Vincent `/Users/decod3rs/Desktop/thumbnails/pfps/vincentshipsit/vincentshipsit.jpg`; Mitchell `/Users/decod3rs/Desktop/thumbnails/pfps/mntll_nl/mntll_nl.jpg`
@@ -21,14 +21,15 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, bright premium 
 - Candidate 3 — tactile 3D diorama, Anthropic + OpenAI only: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-03-tactile-diorama-two-providers-v2.jpg`
 - Summer candidate — Anthropic + OpenAI building on the beach: `/Users/decod3rs/Desktop/thumbnails/2607/260727/summer-beach-anthropic-openai-live-23-v2.jpg`
 - Lossless versions use the same filenames with `.png`.
-- Description opener: **"Opus 5 and GPT-5.6 kept shipping while we stepped away. We used the models as an org chart—Fable planning, Opus judging, and Sol executing—and Vincent's GitHub account authored 948 commits across 36 repositories in ten days. Today we show the receipts and turn CornerShop.dev into the first company deliberately built for autonomous operation."**
+- Description opener: **"Opus 5 and GPT-5.6 kept shipping while we stepped away. Across ten automated projects, we used the models as an org chart—Fable planning, Opus judging, and Sol executing. The broader GitHub ledger shows more than 950 authored commits across 36 repositories in ten days. Today we show the receipts and introduce Restofront, the first autonomous-company example built on CornerShop.dev."**
 - Date and time: July 27, 2026 at **14:00 Central European local time — CEST (UTC+2)**.
 - YouTube livestream: TBD
 - Restream studio: TBD
 - Episode number: **#23**
 - Format: comeback show after a two-week break. Start with the work receipt, then model news, then the autonomous-company thesis.
-- Stream promise: show exactly what shipped while the show was off-air, explain the model routing that made it possible, and define what CornerShop.dev still needs before it deserves the words "autonomous company."
+- Stream promise: show exactly what shipped while the show was off-air, explain the model routing that made it possible, and define what Restofront still needs before it deserves the words "autonomous company."
 - Red line: do not call 36 repositories "36 apps." The verified claim is 36 repositories with authored commits: 25 public and 11 private.
+- Red line: do not call all 36 repositories autonomous projects. The automation portfolio covered ten projects; 36 repositories is the broader authored-activity footprint.
 - Red line: do not call every commit production code. The dataset includes merge commits, docs, CI, chores, tests, and refactors.
 - Privacy boundary: the authenticated totals include private activity, but this public show document intentionally omits private repository names and descriptions. Use aggregate private counts on-air unless a project is already cleared for public discussion.
 
@@ -42,13 +43,13 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, bright premium 
 >
 > "While everyone was comparing Opus 5, Fable 5, and GPT-5.6, we were using the models as an org chart."
 >
-> "And the result is CornerShop.dev: not an autonomous company yet, but the first company I am building to become one."
+> "And the first company-sized example is Restofront, built on CornerShop.dev: not autonomous yet, but designed to become autonomous."
 >
 > "So today, no benchmark theater. Here are the receipts, here is what broke, and here is what a company with no human writing code actually looks like."
 
 ## Summary
 
-The model story moved again during the break: Anthropic launched Opus 5 on July 24 as the everyday near-Fable tier at half Fable's API price; Fable 5 remains the frontier lane for the hardest long-running work; GPT-5.6 is now generally available as Sol, Terra, and Luna with explicit max and multi-agent ultra modes. But the episode is not a launch recap. The proof is the authenticated work ledger from July 18–27: 948 authored commits, 36 repositories, seven GitHub owners, ten active days, 110 structural merge commits, and 682 commits whose subject ends in a numbered PR. The public/private split is 837 commits across 25 public repositories and 111 across 11 private repositories. The show uses the apps shipped during the break to explain the real system—issues as work orders, isolated agent worktrees, model routing, cross-provider review, CI gates, and human attention reserved for architecture and company decisions. CornerShop.dev is the next step: moving autonomy from software production into customer acquisition, onboarding, fulfillment, monitoring, and company operations.
+The model story moved again during the break: Anthropic launched Opus 5 on July 24 as the everyday near-Fable tier at half Fable's API price; Fable 5 remains the frontier lane for the hardest long-running work; GPT-5.6 is now generally available as Sol, Terra, and Luna with explicit max and multi-agent ultra modes. But the episode is not a launch recap. The proof is the authenticated work ledger from July 18–27: 948 authored commits, 36 repositories, seven GitHub owners, ten active days, 110 structural merge commits, and 682 commits whose subject ends in a numbered PR. The public/private split is 837 commits across 25 public repositories and 111 across 11 private repositories. Those 36 repositories are the broader work footprint, not the automation scope: the automation portfolio covered ten projects. The show uses those projects to explain the real system—issues as work orders, isolated agent worktrees, model routing, cross-provider review, CI gates, and human attention reserved for architecture and company decisions. CornerShop.dev is the underlying website factory; Restofront is its first autonomous-company example, moving autonomy from software production into customer acquisition, onboarding, fulfillment, monitoring, and company operations.
 
 ## Hot Take
 
@@ -164,16 +165,16 @@ The apps were built autonomously because work moved through a durable system, no
 - Pull up: ShipCode goal execution, the PR queue, one isolated worktree, one CI run, and one cross-model review receipt.
 - Don't pretend: humans still choose markets, budgets, irreversible actions, and whether the work is worth doing.
 
-## Talking Points — CornerShop.dev Is The First Autonomous Company
+## Talking Points — Restofront Is The First Autonomous-Company Example
 
 ### Segment Thesis
 
-CornerShop.dev is the first deliberate attempt to extend the autonomous software factory into a company that finds, closes, serves, and retains customers.
+Restofront is the first deliberate company-sized example: a restaurant website business built on the CornerShop.dev factory and designed to find, close, serve, and retain customers autonomously.
 
 ### Talking Points
 
-- Pull up [CornerShop.dev](https://github.com/VincentShipsIt/cornershopdev). The repository was created **July 18**. In ten days it accumulated **137 authored commits**. Structurally: **103 non-merges and 34 merges**. By subject prefix: **40 features, 38 fixes, 33 merge subjects, eight docs, five CI changes, five refactors, three chores, two tests, and three other commits**.
-- The product is a website factory for small businesses. First vertical: restaurants through Restofront. Give it a restaurant URL or name; it imports public content, recovers menus and integrations, preserves the source language, generates English, builds a private preview, verifies ownership, takes payment, connects the domain, and monitors the site.
+- Pull up [CornerShop.dev](https://github.com/VincentShipsIt/cornershopdev), the underlying website factory. The repository was created **July 18**. In ten days it accumulated **137 authored commits**. Structurally: **103 non-merges and 34 merges**. By subject prefix: **40 features, 38 fixes, 33 merge subjects, eight docs, five CI changes, five refactors, three chores, two tests, and three other commits**.
+- Restofront is the first company example powered by that factory. Give it a restaurant URL or name; it imports public content, recovers menus and integrations, preserves the source language, generates English, builds a private preview, verifies ownership, takes payment, connects the domain, and monitors the site.
 - The software already has the company-shaped surfaces: Stripe subscriptions, invitation-bound claims, owner dashboard, operator console, first-party analytics, booking leads, custom domains, durable monitoring workflows, alerts, and a first-customer validation runbook.
 - The honest line: that is an autonomous **production system**, not yet an autonomous **company**.
 - Company autonomy still needs five closed loops:
@@ -186,14 +187,14 @@ CornerShop.dev is the first deliberate attempt to extend the autonomous software
 
 - Guardrail: agents may recommend and execute reversible bounded actions. They do not send deceptive outreach, fabricate restaurant imagery, change customer content, spend open-ended money, or claim ownership without evidence.
 - The goal is not "no humans." The goal is that the founder provides capital, taste, policy, and judgment while the operating system does the recurring work.
-- Clip line: **"AI can already build the software company. CornerShop.dev is the test of whether it can run the company around the software."**
+- Clip line: **"CornerShop.dev builds the product. Restofront is the test of whether AI can run the company around it."**
 - Transition: if that works, the repo stops being the product. The operating loop becomes the product.
 
 ### Host Notes
 
 - Ask Mitchell: which company loop is harder to automate honestly—sales, fulfillment, customer success, or capital allocation?
-- Pull up: CornerShop README product flow, first-customer validation runbook, owner dashboard, operator console, and one real restaurant preview.
-- Don't pretend: CornerShop.dev has zero stars, zero forks, and no public proof of paid customers in the repository metadata. The next receipt must be a customer, not another hundred commits.
+- Pull up: the CornerShop README product flow, Restofront's first-customer validation runbook, owner dashboard, operator console, and one real restaurant preview.
+- Don't pretend: Restofront has no public proof of paid customers yet. The next receipt must be a customer, not another hundred commits.
 
 ## Closing Take
 
@@ -207,7 +208,7 @@ CornerShop.dev is the first deliberate attempt to extend the autonomous software
 >
 > "Nine hundred and forty-eight commits prove throughput. They do not prove a business."
 >
-> "CornerShop.dev is where we stop measuring autonomy by commits and start measuring it by customers, retention, support load, and margin."
+> "Restofront is where we stop measuring autonomy by commits and start measuring it by customers, retention, support load, and margin."
 >
 > "The next milestone is not one thousand commits."
 >
@@ -229,13 +230,15 @@ CornerShop.dev is the first deliberate attempt to extend the autonomous software
 - GPT-5.6 shows the same pattern at larger scale: [Fireship, "OpenAI is so back... GPT 5.6 Sol first look"](https://www.youtube.com/watch?v=URKml8lgw8Y) — approximately **807K views**; [Theo, "So I've been using gpt-5.6 for awhile..."](https://www.youtube.com/watch?v=mHG7K7QmQyU) — approximately **159K**; [Theo, "GPT-5.6: The Review"](https://www.youtube.com/watch?v=IyoTJHLmClo) — approximately **109K**.
 - Fable's launch winners also used the model name and an extreme reaction: [Anthropic, "Introducing Claude Fable 5"](https://www.youtube.com/watch?v=Y9Wz2PV404E) — approximately **783K views**; [tef, "Claude Fable 5 is INSANE."](https://www.youtube.com/watch?v=0DVUjpClqgI) — approximately **542K**.
 - Thumbnail pattern: one large face, one official model mark or one concrete visual, very high contrast, and usually two to four words. The official Fable thumbnail is the useful counterexample: a distinctive editorial image can stand out without another creator-reaction face.
-- Show-specific conclusion: a generic "model is insane" verdict would enter a saturated launch cluster. The useful gap is a company-sized test: **can the three models operate as an org chart?** The 948-commit receipt supports that question inside the episode. The thumbnail should show three AI brains feeding one company rather than imitate a fake benchmark face-off.
+- Show-specific conclusion: a generic "model is insane" verdict would enter a saturated launch cluster. The useful gap is a company-sized test: **can the three models operate as an org chart?** The ten-project automation portfolio and broader commit receipt support that question inside the episode.
 
 ## Sources — GitHub Activity
 
 - Dataset: authenticated GitHub commit search for author `VincentShipsIt`, author dates **2026-07-18 through 2026-07-27**, retrieved July 27 at approximately 23:35 CEST.
 - Method: paginate all 948 authenticated search results, de-duplicate by SHA, group by repository owner and full repository name, inspect parent count for structural merges, and classify conventional-commit prefixes from the first subject line.
 - Coverage: **948 unique SHAs across 36 repositories**. Public: **837 commits / 25 repositories**. Private: **111 commits / 11 repositories**.
+- Indexing note: a July 28 recheck returned **957 unique SHAs**—846 public and 111 private—because nine additional public commits appeared after the original snapshot. Public-facing copy therefore says **"more than 950 authored commits"** instead of presenting the moving search index as a fixed total.
+- Scope note: **ten projects were under automation**. The 36-repository figure is the wider set of repositories containing authored commits during the window, not the number of automated projects or apps.
 - Privacy: private repository names, descriptions, and per-project counts are deliberately excluded from this public prep file.
 
 ### Ten-Day Daily Count
@@ -299,7 +302,7 @@ The owner totals include private activity. Private repository identities remain 
 
 ## Sources — Product Receipts
 
-- [CornerShop.dev repository](https://github.com/VincentShipsIt/cornershopdev) — website-factory architecture and first autonomous-company candidate.
+- [CornerShop.dev repository](https://github.com/VincentShipsIt/cornershopdev) — the underlying website factory; Restofront is its first autonomous-company example.
 - [Genfeed.ai](https://github.com/genfeedai/genfeed.ai) — content operating system and highest-volume public work lane.
 - [OpenTV Tracker](https://github.com/VincentShipsIt/opentvtracker) — open-source, privacy-minded SwiftUI TV and movie tracker.
 - [DailyDraft](https://github.com/dailydraftfun/dailydraft.fun) — Solana pack-opening duels and daily fantasy product.
@@ -314,12 +317,12 @@ The owner totals include private activity. Private repository identities remain 
 
 ## Tweets — Paste Live
 
-> We disappeared for two weeks. The show stopped. The software factory did not: 948 commits, 36 repos, 10 active days.
+> We disappeared for two weeks. The show stopped. Ten automated projects kept shipping: more than 950 authored commits across the wider portfolio.
 
 > Opus 5 did not replace Fable. It replaced wasting Fable on normal work.
 
 > Autonomy is not a long prompt. It is a queue with memory, permissions, receipts, and a stop condition.
 
-> AI can already build the software company. CornerShop.dev is the test of whether it can run the company around the software.
+> CornerShop.dev builds the product. Restofront is the test of whether AI can run the company around it.
 
 > The next milestone is not 1,000 commits. It is the first customer the system found, onboarded, served, and kept.
