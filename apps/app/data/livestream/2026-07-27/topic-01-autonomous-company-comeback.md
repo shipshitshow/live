@@ -1,5 +1,5 @@
 ---
-title: "Opus 5 + GPT-5.6 Build Companies While We're on the Beach"
+title: "Opus 5 GPT-5.6 Sol Build Companies While on the Beach"
 slug: "autonomous-company-comeback"
 source: "Authenticated GitHub commit search, YouTube packaging trend check, Anthropic, OpenAI, Claude Opus 5, Claude Fable 5, GPT-5.6 Sol, CornerShop.dev, Restofront, Ship Shit Show operator usage"
 status: "in_progress"
@@ -10,7 +10,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, bright premium 
 
 ## Sources — Livestream Notes
 
-- Title: **[LIVE] Opus 5 + GPT-5.6 Build Companies While We're on the Beach**
+- Title: **[LIVE] Opus 5 GPT-5.6 Sol Build Companies While on the Beach**
 - Alternate title — direct question: **"[LIVE] Opus 5 vs GPT-5.6: Can AI Run a Company?"**
 - Alternate title — proof-led packaging: **"[LIVE] AI Shipped 10 Projects in 10 Days"**
 - Packaging decision: combine the two current model-search hooks with a seasonal lifestyle payoff: the founders can step away while the system keeps shipping. Fable remains part of the on-air routing story and description, but the title and thumbnail stay on the simpler Anthropic-versus-OpenAI frame. Do not claim unattended revenue until there is a cleared revenue receipt.
@@ -21,10 +21,9 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, bright premium 
 - Candidate 3 — tactile 3D diorama, Anthropic + OpenAI only: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-03-tactile-diorama-two-providers-v2.jpg`
 - Summer candidate — Anthropic + OpenAI building on the beach: `/Users/decod3rs/Desktop/thumbnails/2607/260727/summer-beach-anthropic-openai-live-23-v2.jpg`
 - Lossless versions use the same filenames with `.png`.
-- Description opener: **"Opus 5 and GPT-5.6 kept shipping while we stepped away. Across ten automated projects, we used the models as an org chart—Fable planning, Opus judging, and Sol executing. The broader GitHub ledger shows more than 950 authored commits across 36 repositories in ten days. Today we show the receipts and introduce Restofront, the first autonomous-company example built on CornerShop.dev."**
 - Date and time: July 27, 2026 at **14:00 Central European local time — CEST (UTC+2)**.
-- YouTube livestream: TBD
-- Restream studio: TBD
+- [YouTube livestream](https://youtube.com/live/kRUwZSY7IN8)
+- [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
 - Episode number: **#23**
 - Format: comeback show after a two-week break. Start with the work receipt, then model news, then the autonomous-company thesis.
 - Stream promise: show exactly what shipped while the show was off-air, explain the model routing that made it possible, and define what Restofront still needs before it deserves the words "autonomous company."
@@ -32,6 +31,68 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, bright premium 
 - Red line: do not call all 36 repositories autonomous projects. The automation portfolio covered ten projects; 36 repositories is the broader authored-activity footprint.
 - Red line: do not call every commit production code. The dataset includes merge commits, docs, CI, chores, tests, and refactors.
 - Privacy boundary: the authenticated totals include private activity, but this public show document intentionally omits private repository names and descriptions. Use aggregate private counts on-air unless a project is already cleared for public discussion.
+
+## YouTube Description — Paste This
+
+Opus 5 is here. GPT-5.6 Sol is shipping. Fable 5 is still the frontier planning layer.
+
+While we stepped away, the models kept working.
+
+Across ten automated projects, we used them as an org chart:
+
+Fable plans.
+
+Opus judges.
+
+Sol executes.
+
+The broader GitHub ledger shows more than 950 authored commits across 36 repositories in ten days.
+
+Today we’re asking the practical question:
+
+Can these models build companies while we’re on the beach?
+
+Not in theory. In the actual workflow.
+
+We’ll show what the agents built, how the work moved from issues to reviewed pull requests, where each model fits, and what happened when the system was allowed to operate at full speed.
+
+What should Fable plan?
+
+What should Opus review?
+
+What should GPT-5.6 Sol execute?
+
+How do you stop an autonomous coding system from generating autonomous technical debt?
+
+And what has to change when the goal is no longer shipping software—but operating a business?
+
+We’ll also introduce Restofront: our first autonomous-company example, built on top of CornerShop.dev.
+
+CornerShop.dev is the factory. Restofront is the first business powered by it.
+
+The system can already generate restaurant websites, recover menus and integrations, create private previews, handle ownership verification, take payment, connect domains, and monitor what it ships.
+
+But that does not make it an autonomous company yet.
+
+The real test is whether it can find customers, sell honestly, fulfill the work, support them, retain them, and improve the business without constant founder intervention.
+
+The point is not “AI can write more code.”
+
+The point is operational leverage.
+
+If the agents stop when the pull request merges, you do not have an autonomous company.
+
+You have an autonomous software factory.
+
+Today, we start building what comes next.
+
+GitHub: https://github.com/VincentShipsIt
+
+CornerShop.dev: https://cornershop.dev
+
+Restofront: https://restofront.com
+
+#Claude #GPT56 #AIAgents
 
 ## Cold Open — Read This
 
