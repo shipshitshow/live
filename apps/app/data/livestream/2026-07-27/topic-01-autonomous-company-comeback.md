@@ -16,8 +16,10 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal high-
 - Packaging decision: lead with the current model names and the company-sized question. The answer creates the episode arc: no single model can run the company, but Fable as architect, Opus as judgment, and GPT-5.6 Sol as production can operate like an org chart. The 948-commit receipt proves this is a field report rather than benchmark speculation.
 - Thumbnail direction: a **completely new bright editorial magazine style**. Vincent folds his arms skeptically; Mitchell leans in with a thinking hand. The center shows four finished apps powered by the Fable, Claude, and OpenAI marks—no storefront machine and no recycled July 7 composition.
 - Host refs: Vincent `/Users/decod3rs/Desktop/thumbnails/pfps/vincentshipsit/vincentshipsit.jpg`; Mitchell `/Users/decod3rs/Desktop/thumbnails/pfps/mntll_nl/mntll_nl.jpg`
-- Final upload-ready thumbnail: `/Users/decod3rs/Desktop/thumbnails/2607/260727/opus-fable-gpt56-live-24-editorial-apps-v2.jpg`
-- Lossless thumbnail: `/Users/decod3rs/Desktop/thumbnails/2607/260727/opus-fable-gpt56-live-24-editorial-apps-v2.png`
+- Candidate 1 — Swiss editorial, tight zoom: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-01-swiss-editorial-zoom.jpg`
+- Candidate 2 — retro risograph, tight zoom: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-02-retro-risograph-zoom.jpg`
+- Candidate 3 — tactile 3D diorama: `/Users/decod3rs/Desktop/thumbnails/2607/260727/direction-03-tactile-diorama.jpg`
+- Lossless versions use the same filenames with `.png`.
 - Description opener: **"Can Opus 5, Fable 5, and GPT-5.6 run a company? We used them as an org chart—Fable planning, Opus judging, and Sol executing—and Vincent's GitHub account authored 948 commits across 36 repositories in ten days. Today we show the receipts and turn CornerShop.dev into the first company deliberately built for autonomous operation."**
 - Date and time: July 27, 2026 at **14:00 Central European local time — CEST (UTC+2)**.
 - YouTube livestream: TBD
