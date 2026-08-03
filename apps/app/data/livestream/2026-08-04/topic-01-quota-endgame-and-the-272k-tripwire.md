@@ -174,6 +174,37 @@ rewrite speculation is a meme now.
 - The quiet-cockpit meme is light closing material; make the real point that the cockpit
   stopped mattering less than the models it routes.
 
+## YouTube Trend Check (Data API, last 7 days, niche queries, by views)
+
+**What's pulling views in the niche:**
+- **Kimi K3 went mainstream-geopolitical.** The top niche videos are not dev channels: Korean
+  SBS news (324K), India's StudyIQ "Why is the US so rattled" (287K), Spanish "China's Trojan
+  horse" (257K), Japanese Bloomberg/TBS "US AI splits over K3 shock — Anthropic isolated as
+  the regulation faction" (177K). Open weights is now a nation-state story, not a nerd story.
+- **[Boris Cherny at YC: "We Cut 80% of Claude Code's Prompt"](https://youtu.be/qyPCVqFUyDo)**
+  (161K, Y Combinator) — spawning a derivative wave: ["Delete Your CLAUDE.md" moments video](https://youtu.be/Egd65CLmb6w) (53K),
+  ["Anthropic Engineers Just Fixed Claude Code and Nobody's Talking About it"](https://youtu.be/UBFHTHUs1wA) (82K),
+  ["Claude Just Killed Prompt Engineering"](https://youtu.be/nExo3f75EAs) (130K). Prompt-minimalism is the creator meta this week.
+- **[Diamandis: Dario vs Jensen on Open Weights, OpenAI & Anthropic in DC](https://youtu.be/O70Ff5xBnYo)** (172K)
+  — the two-front-war segment has big-name video receipts, not just Reddit threads.
+- **Fear/verdict packaging works:** [Alberta Tech "Yes, you should be scared of Claude Fable"](https://youtu.be/u6dwjXkMx_c) (94K),
+  [Julie Kaiser "I'm never opening Claude Cowork again"](https://youtu.be/us_3oEVHVAc) (92K).
+- **Limits/cost content prints:** ["Paste This Into Claude, Never Hit a Token Limit Again"](https://youtu.be/Y8vAQ1FgNbM) (116K),
+  ["MonkeyCode Gives You 30 MILLION FREE Tokens Daily"](https://youtu.be/K86-u1ddB2M) (31K) — same cost-revolt lane as the NVIDIA proxy tweet.
+- **Buzz (Jack Dorsey) is the new-tool wave:** [Greg Isenberg explainer](https://youtu.be/_jGSgzBkzrY) (71K),
+  [Riley Brown: "Claude Code + Codex Can FINALLY Work Together (Buzz AI)"](https://youtu.be/P1KpxzLVg7c) (48K).
+- **Chatter, verify before touching:** [WorldofAI "Fable 5.1 HUGE Leak"](https://youtu.be/XMpGJXm2_Ts) (48K) — rumor lane;
+  [Japanese Gizmodo unboxing "Codex Micro," OpenAI's first hardware](https://youtu.be/MaevnupV_Cc) (29K) — if real, that's a segment on its own.
+
+**Packaging implications for #24:**
+- Title lane that's working: verdict/fear + a concrete number. "Qwen just beat Fable" /
+  "2.2M files deleted" both fit the meta without inventing anything.
+- The K3 geopolitics angle means the open-weights segment can open with mainstream-news clips,
+  then land the "here's what it means for your stack" payoff nobody else in the niche does.
+- Nobody big has packaged the 272K tripwire on YouTube yet — first-mover window on the money
+  angle.
+- The Cherny/YC prompt-minimalism wave is adjacent to our skills segment — riff, don't rehash.
+
 ## Verify Live Before Quoting
 
 - Qwen3.8-Max benchmark numbers and the "$2/$6" price — quote [the announcement](https://x.com/Alibaba_Qwen/status/2084100707423289643), not screenshots
