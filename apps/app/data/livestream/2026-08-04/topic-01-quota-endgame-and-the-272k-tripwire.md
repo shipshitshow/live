@@ -1,7 +1,7 @@
 ---
-title: "[LIVE] Episode #24 — The Quota Endgame, the 272K Tripwire, and Free Max for OSS"
+title: "[LIVE] Episode #24 — Qwen Comes for Fable, the 272K Tripwire, and 2.2M Deleted Files"
 slug: "quota-endgame-and-the-272k-tripwire"
-source: "Anthropic newsroom, OpenAI, GitHub issues (openai/codex), Sophos, The New Stack, TechTimes, AI Weekly, Hacker News"
+source: "X (@Alibaba_Qwen, @Kimi_Moonshot, @OpenAI, @gdb, builder accounts), r/ClaudeAI, r/LocalLLaMA, GitHub issues (openai/codex), Sophos, Anthropic newsroom"
 status: "in_progress"
 date: "2026-08-04"
 announcement_tweet: null
@@ -10,175 +10,173 @@ thumbnail_prompt: null
 
 ## Format Note
 
-This file is sources + angles only. No scripted talking points — the talking-points skill is
-being redone. Segments below are ordered by suggested rundown, but reorder freely.
+Sources + angles only. No scripted talking points — the talking-points skill is being redone.
+Primary sourcing is X and Reddit (community receipts); legacy links only where they're the
+actual primary source. Ordered by suggested rundown; reorder freely.
 
 - Episode number: **#24**
 - Date: August 4, 2026. Time slot TBC (last episode ran 14:00 CEST).
-- Callback debt from #22/#23: the on-air Fable-cutoff predictions (Vincent + Mitchell + chat vote)
-  must be settled on stream — receipts are in Segment 1.
+- Callback debt from #22/#23: settle the on-air Fable-cutoff predictions (Segment 1).
 
-## Segment 1 — Scoreboard: The Fable Cutoff Prediction, Settled
+## Segment 1 — Headline: Qwen3.8-Max Comes for Fable, and the Weights Go Public Next Week
 
-**What happened:** On July 20 the "will they pull Fable" question resolved as a split — exactly
-the middle-path option we flagged. Max and Team Premium keep Fable 5 included at 50% of weekly
-limits permanently; Pro and Team Standard got a one-time $100 usage credit and then fall to API
-billing at $10/$50 per MTok. The credit claim window ran July 20 – August 2 (credits expire
-September 17).
+**What happened:** 9 hours before this doc, Alibaba announced Qwen3.8-Max — 2.4T params,
+their most capable model, priced ~$2/$6 per MTok — with **open weights next week**, plus
+Qwen3.8-27B going open-weights too. Community benchmarks: TerminalBench-2.1 86.6 vs Fable 5's
+84.6 (GPT-5.6 still top at 88.8). Unsloth's Daniel Han validates the 27B runs on **17GB VRAM**.
+This lands on top of Kimi K3 (2.8T MoE, 1M context, weights released last week, #1 Frontend
+Code Arena above Fable 5) and DeepSeek-V4-Flash-0731 (local models now at March-2026 frontier
+intelligence; V4-Pro "coming soon").
+
+**Sources — X:**
+- [@Alibaba_Qwen: Qwen3.8-Max announcement](https://x.com/Alibaba_Qwen/status/2084100707423289643) — the primary receipt
+- [@bridgemindai: 86.6 vs 84.6 vs 88.8 benchmark read](https://x.com/bridgemindai/status/2084225388151009405) — "not a clean sweep, but at $2/$6 the value is absurd"
+- [@Kimi_Moonshot: K3 weights + technical report](https://x.com/Kimi_Moonshot/status/2081760186235289764)
+- [@arena: K3 #1 in Frontend Code Arena, above Fable 5](https://x.com/arena/status/2077824029126504525)
+- [@UnslothAI: K3 1-bit quant, 1.56TB → 594GB, runs on a Mac Studio](https://x.com/UnslothAI/status/2082463988953367031)
+- [@jun_song: K3 on 8GB RAM at 33 seconds per token](https://x.com/jun_song/status/2083869785377673602) — the comedy beat
+- [atomic.chat: Qwen 3.8 Max beat Fable 5 at 3D physics scenes, 7× cheaper](https://x.com/search?q=from%3Aatomic_chat_hq%20qwen&f=live)
+
+**Sources — Reddit:**
+- [r/LocalLLaMA: Qwen3.8-27B announced alongside Qwen3.8-Max](https://reddit.com/r/LocalLLaMA/comments/1ve0psn/qwen3827b_announced_alongside_qwen38max/) (2,000↑ in 9 hours)
+- [r/LocalLLaMA: Kimi K3 weights released](https://reddit.com/r/LocalLLaMA/comments/1v8364f/kimi_k3_weights_now_released/) (3,250↑, top post of the week)
+- [r/LocalLLaMA: DeepSeek-V4-Flash-0731 — local models at March-2026 frontier level](https://reddit.com/r/LocalLLaMA/comments/1vchoua/deepseekv4flash0731_models_you_can_run_locally/)
+- [r/LocalLLaMA: the open-weights carousel never stops](https://reddit.com/r/LocalLLaMA/comments/1va73s6/the_openweights_carousel_never_stops/) + [place your bets for MiniMax](https://reddit.com/r/LocalLLaMA/comments/1vbr5zj/the_chinese_llm_release_carousel_never_stops/)
+- Counter-beat: [Nvidia expected to raise RTX prices up to 30%](https://www.notebookcheck.net) via r/LocalLLaMA (697↑) — the tax on the local dream
+
+**Angles:**
+- Direct sequel to #21 "Fable is gone, what are the alternatives" — the alternatives just got
+  benchmarks that beat Fable on specific lanes, at 1/5th the price, with weights you can hold.
+- The "17GB VRAM near-frontier" story is the practical one for our audience; K3-on-a-Mac-Studio
+  vs K3-at-33-seconds-per-token is the reality-check comedy pair.
+- Frame against Segments 2–3: closed vendors are metering and tiering exactly while open
+  weights go heavyweight. The escape hatch is no longer ideology, it's invoice math.
+- Possible live bit: run the atomic.chat 3D-physics prompt on stream against our own stack.
+
+## Segment 2 — Scoreboard: The Fable Cutoff Prediction, Settled
+
+**What happened:** July 20 resolved the "will they pull Fable" question as the middle-path we
+predicted: Max/Team Premium keep Fable 5 at 50% weekly cap permanently; Pro got a one-time
+$100 credit (claim window closed **Aug 2**, credits die Sep 17) then $10/$50 metered. The
+community's mood since: r/ClaudeAI's top-voted reaction to the new limits page is a joke post.
 
 **Sources:**
-- [TechTimes: Fable 5 ends subscription limbo — permanent for Max, credits-only for Pro](https://www.techtimes.com/articles/320905/20260718/claude-fable-5-ends-subscription-limbo-permanent-max-credits-only-pro.htm)
-- [Neoteo: Fable 5 stays, Pro users move to credits](https://www.neoteo.com/en/claude-fable-5-pro-credits-max-limits)
-- [webvise: what the usage credits cost now](https://www.webvise.io/blog/fable-5-leaves-subscriptions-usage-credits)
+- [r/ClaudeAI: "Finally, the usage limits page is much more transparent now"](https://reddit.com/r/ClaudeAI/comments/1v86ls8/finally_the_usage_limits_page_is_much_more/) (2,300↑, Humor) — the mood receipt
+- [TechTimes: permanent for Max, credits-only for Pro](https://www.techtimes.com/articles/320905/20260718/claude-fable-5-ends-subscription-limbo-permanent-max-credits-only-pro.htm) — the fact receipt
 - [Anthropic: Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5) — pull up live for current language
+- Builder mood on X: [@trikcode: "Fable 5 is easily the smartest model I've used... watching it think 30 seconds before a commit message is painful"](https://x.com/trikcode/status/2084216488370524166)
 
 **Angles:**
-- Score the predictions honestly. The "vendors love a third option that lets both sides claim
-  they won" call from #22 aged perfectly — say so, and say what we got wrong too.
-- The claim window closed **two days ago** (Aug 2). Anyone on Pro who didn't claim the $100 is
-  now paying $10/$50 metered. Practical segment: what Fable is still worth paying for per-token
-  (planning/review verdicts) vs what should have moved to Opus 5 / Sol already.
-- Ties directly into our routing table: this outcome is the argument for it.
+- Score the #22 predictions honestly — the "vendors love a third option" call hit; say what missed.
+- Practical: what's still worth Fable's per-token price (plans, review verdicts) now that Opus 5
+  is half price and "within 0.5% on CursorBench." Note the builder split: [@blader souring on
+  Opus 5](https://x.com/search?q=from%3Ablader%20opus%205&f=live) vs r/ClaudeAI's ["it's like a genie"](https://old.reddit.com/r/ClaudeAI/top/?t=week) post (700↑). Benchmarks vs vibes segment.
+- August deadlines to flash on screen: +50% Claude Code boost ends **Aug 19**; Sonnet 5 promo
+  ($2/$10) ends **Aug 31** — [Anthropic newsroom](https://www.anthropic.com/news) live check.
 
-## Segment 2 — The War of Resets: August Front
+## Segment 3 — The 272K Tripwire vs the 80% Price Cut
 
-**What happened:** The quota-as-marketing war continues with three dated moves on the board:
-the Claude Code +50% weekly boost is extended through **August 19**; Sonnet 5 promo pricing
-($2/$10) ends **August 31**, standard $3/$15 from September 1; Cowork expanded to mobile + web
-with doubled limits through **August 5** (Max beta first). Meanwhile Anthropic signed an AMD
-capacity deal — up to 2 GW of MI450/Helios compute, up to $5B in AMD equity — which is the
-"capacity story" tell we said to watch.
+**What happened:** Two OpenAI pricing moves in opposite directions. (1) Codex's effective
+GPT-5.6 window was cut 372K → 272K because 272K is a **billing tier**: past it, the whole
+request bills 2× input / 1.5× output — silently. (2) Days later OpenAI announced GPT-5.6 Luna
+prices cut **80%**, Terra also slashed. Meanwhile Greg Brockman is pitching "Codex for helping
+operate your business."
 
 **Sources:**
-- [Anthropic newsroom](https://www.anthropic.com/news) — verify boost/promo dates live on stream
-- [explainx: Claude usage limits 2026, every change dated](https://www.explainx.ai/blog/claude-usage-limits-2026-timeline-explained)
-- [Releasebot: Claude updates July 2026](https://releasebot.io/updates/anthropic/claude)
-- [Anthropic Sonnet 5 announcement](https://www.anthropic.com/news/claude-sonnet-5) — promo pricing terms
-- [HN: Claude Code May–July weekly limits promotion](https://news.ycombinator.com/item?id=48883064)
-- [llm-stats AI news](https://llm-stats.com/ai-news) — AMD 2 GW deal summary; find primary source before quoting numbers
+- [openai/codex#32486: default context can cross the 272K threshold](https://github.com/openai/codex/issues/32486)
+- [openai/codex#32806: Sol context cut again, 353K → 258K](https://github.com/openai/codex/issues/32806)
+- [oh-my-pi#6371: the silent 2× billing writeup](https://github.com/can1357/oh-my-pi/issues/6371)
+- [@OpenAI: Luna −80%, Terra price cuts](https://x.com/OpenAI/status/2082878156483219672) — verify exact Terra % live
+- [@gdb: "Codex for helping operate your business"](https://x.com/gdb/status/2084104354911707518)
+- [@thsottiaux: "codex a PR into existence and ship to 1B users"](https://x.com/thsottiaux/status/2084196918071357707) — the hype face of the same story
+- Steelman: [why capping at 272K is sensible engineering](https://codex.danielvaughan.com/2026/07/20/context-window-gap-codex-cli-gpt56-advertised-vs-effective-budget-compaction-strategy/)
+- Workflow gem for the audience: [@davis7's Codex config making the multiple-choice tool work outside plan mode](https://x.com/davis7/status/2083955357953446205)
 
 **Angles:**
-- Calendar segment: put the three deadlines on screen. Viewers on the fence about plans should
-  decide before Aug 19 / Aug 31 — that's genuinely useful, not filler.
-- The AMD deal is the payoff of #22's "watch for a big infra announcement" tell. Capacity math
-  drove the Fable split; 2 GW is Anthropic buying its way out of that constraint. Prediction
-  hook: does Fable return to Pro plans "once capacity allows," and when?
-- Live bit that worked last time: both hosts open their real usage panels on stream.
+- The pattern: cheap tiers get cheaper, the premium lane gets a hidden meter. Same shape as
+  Anthropic's Fable split — both vendors are teaching the market that flagship = metered.
+- Money segment: pull our own Sol session token counts on stream — did we ever cross 272K
+  without knowing? Practical mitigation: compaction, smaller scopes, worktrees.
+- "1M context" on the spec sheet vs 272K on the invoice — include the steelman, keep it fair.
 
-## Segment 3 — The 272K Tripwire: Codex Silently Doubles Your Bill
+## Segment 4 — Anthropic's Two-Front Week: Free Max for OSS, a Ban Call on Open Weights
 
-**What happened:** On July 18–19 OpenAI cut Codex's effective GPT-5.6 context window from 372K
-to 272K. The reason: 272K is a **billing tier**, not a hard cap — the raw model spec is still
-1.05M context. Prompts past 272K input are billed at 2× input / 1.5× output **for the full
-request**. Under the old 372K figure, ~81K tokens sat silently in the premium band before any
-warning. Harnesses built assuming 372K now compact earlier or bill double.
-
-**Sources:**
-- [openai/codex issue #32486: default context can cross the 272K higher-usage threshold](https://github.com/openai/codex/issues/32486)
-- [openai/codex issue #32806: Sol context cut again, 353K → 258K](https://github.com/openai/codex/issues/32806)
-- [oh-my-pi issue #6371: the silent 2× billing writeup](https://github.com/can1357/oh-my-pi/issues/6371)
-- [Medium: The 272K Tripwire](https://medium.com/@sebuzdugan/the-272k-tripwire-how-gpt-5-6-codex-silently-doubles-your-bill-6b506bf7dd80)
-- [AI Weekly: context window cut 372K → 272K](https://aiweekly.co/alerts/openai-codex-cuts-gpt-56-context-window-from-372k-to-272k)
-- [Daniel Vaughan: why the cap is sensible engineering](https://codex.danielvaughan.com/2026/07/20/context-window-gap-codex-cli-gpt56-advertised-vs-effective-budget-compaction-strategy/) — the steelman
-- [sakutto: OpenAI's explanation](https://sakutto.ai/en/articles/openai-codex-context-cut)
-
-**Angles:**
-- This is the money segment for our audience: we run Sol as the execution lane daily. Show our
-  own session token counts and whether we ever crossed 272K without knowing.
-- "1M context window" marketing vs 272K billing reality — the gap between the spec sheet and
-  the invoice. Fair to both sides: include the steelman that capping was the honest fix.
-- Practical takeaway: how to keep agent sessions under the tier (compaction, worktrees, smaller
-  scopes) — connects to our existing loop-engineering material.
-
-## Segment 4 — Anthropic Is Giving OSS Maintainers $1,200 of Free Max
-
-**What happened:** Claude for Open Source: 6 months of free Claude Max 20x (~$1,200) for
-open-source maintainers. Eligibility: public repo with 5,000+ GitHub stars OR 1M+ monthly npm
-downloads, active contributions in the last 3 months; a second "Ecosystem Impact Track" covers
-critical-but-less-visible packages by written application. Capped at 10,000 recipients, rolling
-review, individual-only, no API credits, no auto-renew.
+**What happened:** Anthropic simultaneously (a) launched Claude for Open Source — 6 months of
+free Max 20x (~$1,200) for maintainers, 10K recipients, 5K stars / 1M npm downloads or the
+written-application Ecosystem Impact Track — and (b) published a policy proposal that
+r/LocalLLaMA's top thread reads as "mandatory requirements open-weights models can never
+meet." Plus Anthropic's own report that its models "went rogue" and hacked three external
+companies in tests, a Reddit enterprise post claiming a US Government directive to discontinue
+Anthropic products, and OpenAI reportedly declining Jensen Huang's "Open Secure AI Alliance."
 
 **Sources:**
 - [Claude for Open Source — official page](https://claude.com/contact-sales/claude-for-oss)
-- [AlphaSignal: 10,000 maintainers, $1,200 of free Max](https://alphasignal.ai/news/anthropic-gives-10-000-open-source-maintainers-1-200-of-free-claude-max)
-- [Verdent guide: Max 20x for open source](https://www.verdent.ai/guides/claude-max-20x-open-source)
-- [explainx: program breakdown](https://www.explainx.ai/blog/claude-for-open-source-expanded-max-20x-july-2026)
+- [r/LocalLLaMA: Anthropic calling for a ban on open-weights models](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+ban+open-weights&restrict_sr=on&sort=top&t=week) (1,115↑) — find and read the actual policy doc before quoting
+- [r/LocalLLaMA: "our models hacked three different external companies"](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+hacked+three&restrict_sr=on&sort=top&t=week) (743↑, Guardian link inside)
+- [r/ClaudeAI: Anthropic reporting its own models went rogue](https://reddit.com/r/ClaudeAI/comments/1vbawpx/now_anthropic_reporting_its_own_models_went_rogue/) (910↑)
+- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://old.reddit.com/r/ClaudeAI/search?q=US+Government+directive+discontinue&restrict_sr=on&sort=top&t=week) (730↑, Enterprise) — unverified single account; treat as "a post claims," echoes the June export-control mess
+- [r/LocalLLaMA: "think of the children" open-source crackdown thread](https://reddit.com/r/LocalLLaMA/comments/1vapsbz/think_of_the_children_another_excuse_for_them_to/) (1,198↑)
+- [r/LocalLLaMA: OpenAI declines the Open Secure AI Alliance](https://old.reddit.com/r/LocalLLaMA/search?q=open+secure+ai+alliance&restrict_sr=on&sort=top&t=week) (760↑)
 
 **Angles:**
-- Straight service journalism: who in the audience qualifies, and the Ecosystem Impact Track is
-  the underrated door — you don't need 5K stars if your package matters.
-- The cynical read is worth one beat: this is Anthropic buying the OSS ecosystem's default
-  tooling habit for $12M of compute, right after metering its flagship. Both reads are true.
-- 10K cap + rolling review = apply this week, not eventually.
+- The tension IS the segment: $12M of free compute for OSS maintainers the same week as a
+  policy push the OSS community reads as existential. Both can be sincere; say what each buys.
+- Safety-as-moat vs safety-as-safety — steelman both. The "models hacked three companies"
+  report cuts both ways: it's the best argument for restrictions AND it's Anthropic marketing
+  its own danger. Dario's closed-vs-open quote thread (r/LocalLLaMA, 664↑) fits here.
+- Service beat: OSS maintainers in the audience should apply this week — 10K cap, rolling.
+- Verification discipline: the "US Gov directive" is one anonymous enterprise post. Frame as
+  unconfirmed chatter unless a second source shows up by stream time.
 
-## Segment 5 — Your Coding Agent Looks Like a Hacker (Because It Acts Like One)
+## Segment 5 — Agents With Root: 2.2 Million Deleted Files
 
-**What happened:** Sophos analyzed a week of its own endpoint telemetry: Claude Code, Cursor,
-and Codex are tripping detection rules written for human intruders — DPAPI browser-credential
-decryption, Windows Credential Manager enumeration, LOLBin downloads, startup-folder writes,
-obfuscation-looking PowerShell. Sophos's guidance: scope rules by agent parent process and
-workspace path, but keep credential-access rules firing regardless of who initiated.
+**What happened:** Top r/ClaudeAI drama of the week: "Fable 5 ultracode deleted 2.2M files on
+my server" (1,228↑). Same week, Sophos published telemetry showing Claude Code, Cursor, and
+Codex tripping intruder-detection rules — DPAPI browser-credential decryption, credential-store
+enumeration, LOLBin downloads, startup-folder writes.
 
 **Sources:**
-- [Sophos: when AI agents look like attackers](https://www.sophos.com/en-us/blog/2607_agents_vs_telemetry) — primary
+- [r/ClaudeAI: Fable 5 ultracode deleted 2.2M files on my server](https://reddit.com/r/ClaudeAI/comments/1vcsc7m/fable_5_ultracode_deleted_22m_files_on_my_server/) — read the comments; top replies dispute whose fault it was
+- [Sophos: when AI agents look like attackers](https://www.sophos.com/en-us/blog/2607_agents_vs_telemetry) — primary telemetry
 - [The Hacker News writeup](https://thehackernews.com/2026/07/ai-coding-agents-found-triggering.html)
-- [Technadu summary](https://www.technadu.com/ai-coding-agents-trigger-security-detection-says-sophos/)
+- Callback: Matt Shumer's "Sol deleted almost all of my Mac's files" from #22
 
 **Angles:**
-- The uncomfortable half: the detections aren't false positives in spirit — agents really do
-  read credential stores and pull down binaries. The question isn't "why is the EDR wrong,"
-  it's "why did my agent need my browser passwords."
-- Practical: what we actually sandbox in our own setup (worktrees, permission modes, no-secrets
-  rules) and where we're honestly lax. Callback to Matt Shumer's "Sol deleted my files" from #22.
-- For viewers employed at real companies: expect your security team to notice your agent soon;
-  better to bring them the Sophos piece first.
+- The uncomfortable read: EDR rules fire because agents genuinely do attacker-shaped things.
+  The question isn't "why is my EDR wrong," it's "why did my agent need my browser passwords."
+- Our own honest audit on stream: what we sandbox (worktrees, permission modes), where we're
+  lax, and what "ultracode with root on a prod server" should never look like.
+- For employed viewers: your security team will notice your agent soon — bring them the Sophos
+  piece before they bring it to you.
 
-## Segment 6 — Open Weights Went Heavyweight: Kimi K3, DeepSeek V4-Pro, Qwen 3.6
+## Segment 6 — Community Corner: The Skill Economy and the Quiet Cockpit
 
-**What happened:** The open-model lane escalated hard. Moonshot's Kimi K3 is the biggest
-open-weights release ever at 2.8T parameters; Thinking Machines shipped Inkling at 975B.
-DeepSeek V4-Pro (1.6T MoE / 49B active, MIT) leads open coding at 80.6% SWE-bench Verified.
-Qwen 3.6-27B is the sleeper: a 27B dense model at 77.2% SWE-bench that beats Alibaba's own
-397B flagship and runs on 22GB VRAM, Apache 2.0.
+**What happened:** The community's workflow culture had a big week. The "adversarial reviewer"
+skill pattern hit r/ClaudeAI's front page (812↑) — the exact pattern we run on the show. The
+ADHD skill thread (2,842↑) shows skills going beyond code. A "scroll-world" landing-page skill
+pulled 340K views on X. And both X and Reddit noticed Claude Code shipped nothing for 7 days —
+rewrite speculation is a meme now.
 
 **Sources:**
-- [llm-stats AI news](https://llm-stats.com/ai-news) — K3 / Inkling summaries; chase primary announcements before quoting param counts
-- [SpectrumAILab: best open models ranked](https://spectrumailab.com/blog/best-open-source-ai-models-ranked-2026)
-- [HuggingFace blog: open-source LLMs 2026](https://huggingface.co/blog/daya-shankar/open-source-llms)
-- [MindStudio: best OSS LLMs for agentic coding](https://www.mindstudio.ai/blog/best-open-source-llms-agentic-coding-2026)
+- [r/ClaudeAI: the adversarial reviewer skill pattern](https://reddit.com/r/ClaudeAI/comments/1vc11nl/whoever_popularized_the_adversarial_reviewer/)
+- [r/ClaudeAI: the ADHD skill](https://reddit.com/r/ClaudeAI/comments/1v8o1jn/whoever_created_the_adhd_skill_god_bless_you/)
+- [Nav Toor: scroll-world skill, 340K views](https://x.com/search?q=from%3Aheynavtoor%20scroll-world&f=live)
+- [@thdxr: "claude code has been a bit quiet, i wonder if they're rewriting"](https://x.com/thdxr/status/2083725857215132139) + [r/ClaudeAI: 7 days without an update, rust rewrite?](https://reddit.com/r/ClaudeAI/comments/1vdk55g/7_days_without_a_claude_code_update_are_they/)
+- [@ClaudeDevs: iOS simulator panel in Claude Code desktop](https://x.com/ClaudeDevs/status/2079674432038248611) — two weeks old but underexposed, demo-able
 
 **Angles:**
-- Direct callback to the #21 "Fable 5 is gone, what are the alternatives" episode — the escape
-  hatch got materially better in one month. Update the verdict, don't rehash it.
-- Qwen 3.6-27B on 22GB VRAM is the first "actually runs on hardware you own" model with
-  near-frontier SWE-bench — revisit our local-hardware cost receipts from the June episode.
-- Frame against Segment 1–3: as the closed vendors meter and tier, the open lane's pitch stops
-  being ideology and starts being invoice math.
-
-## Segment 7 (Flex/Short) — The Stack Nobody Planned
-
-**What happened:** The New Stack argues Cursor, Claude Code, and Codex are converging into one
-composable stack (orchestration / execution / review layers) rather than winner-take-all.
-Codex hit 8M users within days of Sol GA. Cursor v3.11 added Side Chats for parallel agent
-conversations.
-
-**Sources:**
-- [The New Stack: the AI coding stack nobody planned](https://thenewstack.io/ai-coding-tool-stack/)
-- [The New Stack: Codex hits 8 million users](https://thenewstack.io/gpt-5-6-codex-user-surge/)
-
-**Angles:**
-- Press catching up to what we've run on-air for a month — the two-brain/routing-table thesis
-  is now the industry's framing. One victory-lap beat, then what composability breaks (billing
-  visibility across three vendors — links back to Segment 3).
-- Cut this segment first if running long.
+- Victory lap with receipts: adversarial review as a skill is now front-page meta — we've been
+  preaching exactly this; show our version live in 90 seconds.
+- Skills-as-distribution: a skill with 340K views is content marketing now. What that means
+  for indie devs shipping tools.
+- The quiet-cockpit meme is light closing material; make the real point that the cockpit
+  stopped mattering less than the models it routes.
 
 ## Verify Live Before Quoting
 
-Dates and prices moved twice a month all summer. On-stream, pull up the primary page before
-quoting any of these:
-
-- Boost expiry (Aug 19) and Sonnet promo end (Aug 31) — [Anthropic newsroom](https://www.anthropic.com/news)
-- Fable metered rates $10/$50 and Max 50% cap — [Redeploying Fable 5](https://www.anthropic.com/news/redeploying-fable-5)
-- 272K tier language — [OpenAI pricing docs](https://openai.com/api/pricing/) and the open Codex issues
-- Kimi K3 / Inkling parameter counts — secondary-source only so far; find the primary release posts
-- OSS program cap and eligibility — [official page](https://claude.com/contact-sales/claude-for-oss)
+- Qwen3.8-Max benchmark numbers and the "$2/$6" price — quote [the announcement](https://x.com/Alibaba_Qwen/status/2084100707423289643), not screenshots
+- Exact Terra price-cut % — [@OpenAI post](https://x.com/OpenAI/status/2082878156483219672)
+- Boost expiry (Aug 19) / Sonnet promo end (Aug 31) — [Anthropic newsroom](https://www.anthropic.com/news)
+- The Anthropic open-weights policy doc — read the primary before characterizing it as a "ban"
+- "US Gov directive" Reddit post — unverified; needs a second source or gets the "chatter" label
+- 2.2M-files thread — read top comments for the counter-narrative before taking the OP at face value
