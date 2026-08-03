@@ -163,6 +163,8 @@ rewrite speculation is a meme now.
 - [Nav Toor: scroll-world skill, 340K views](https://x.com/search?q=from%3Aheynavtoor%20scroll-world&f=live)
 - [@thdxr: "claude code has been a bit quiet, i wonder if they're rewriting"](https://x.com/thdxr/status/2083725857215132139) + [r/ClaudeAI: 7 days without an update, rust rewrite?](https://reddit.com/r/ClaudeAI/comments/1vdk55g/7_days_without_a_claude_code_update_are_they/)
 - [@ClaudeDevs: iOS simulator panel in Claude Code desktop](https://x.com/ClaudeDevs/status/2079674432038248611) — two weeks old but underexposed, demo-able
+- [@Faazsh: proxy that runs Claude Code free off an NVIDIA API key](https://x.com/Faazsh/status/2083818511600939309) — the cost-revolt lane; verify it's real before endorsing
+- [@axelmolist: same PRD to Claude Code and Codex simultaneously](https://x.com/axelmolist/status/2083509224693227791) — "one-shot big builds → Codex, iteration → Claude Code"; community arriving at our routing table independently
 
 **Angles:**
 - Victory lap with receipts: adversarial review as a skill is now front-page meta — we've been
