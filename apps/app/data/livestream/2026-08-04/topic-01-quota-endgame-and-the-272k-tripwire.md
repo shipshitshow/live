@@ -106,7 +106,7 @@ community's mood since: r/ClaudeAI's top-voted reaction to the new limits page i
 - Practical: what's still worth Fable's per-token price (plans, review verdicts) now that Opus 5
   is half price and "within 0.5% on CursorBench." Note the builder split: [@blader souring on
   Opus 5](https://x.com/i/status/2082275046937292859) (1,398♥, "the more time i spent with it, the more infuriating") vs r/ClaudeAI's
-  ["it's like a genie"](https://old.reddit.com/r/ClaudeAI/top/?t=week) post (700↑). Benchmarks vs vibes segment.
+  ["it's like a genie"](https://reddit.com/r/ClaudeAI/comments/1vae3md/i_was_never_a_fan_of_claude_but_opus_5_really_is/) post (700↑). Benchmarks vs vibes segment.
 - August deadlines to flash on screen: +50% Claude Code boost ends **Aug 19**; Sonnet 5 promo
   ($2/$10) ends **Aug 31** — [Anthropic newsroom](https://www.anthropic.com/news) live check.
 
@@ -161,9 +161,11 @@ Alliance."
 - [ppc.land: 77 firms sign letter accusing Anthropic of an open-weights ban push](https://ppc.land/anthropic-faces-open-weights-ban-accusations-as-77-firms-sign-letter/)
 
 **Sources — community reaction:**
-- [r/LocalLLaMA: "Anthropic calling for a ban on open-weights models"](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+open-weights&restrict_sr=on&sort=top&t=week) (1,115↑) — the hostile read, quote as "how the community took it"
+- [r/LocalLLaMA: "Anthropic is calling for a ban on open-weights models"](https://reddit.com/r/LocalLLaMA/comments/1v8hk6b/anthropic_is_calling_for_a_ban_on_openweights/) (1,115↑) — the hostile read, quote as "how the community took it"
+- [r/LocalLLaMA: community thread on the hacked-three disclosure](https://reddit.com/r/LocalLLaMA/comments/1vbcmtn/anthropic_our_models_hacked_three_different/) (743↑)
+- [r/LocalLLaMA: Jensen Huang — "during the Hugging Face incident, closed AI blocked essential forensics"](https://reddit.com/r/LocalLLaMA/comments/1v7yand/jensen_huang_during_the_hugging_face_incident/) — Jensen's side of Dario-vs-Jensen
 - [r/ClaudeAI: Anthropic reporting its own models went rogue](https://reddit.com/r/ClaudeAI/comments/1vbawpx/now_anthropic_reporting_its_own_models_went_rogue/) (910↑)
-- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://old.reddit.com/r/ClaudeAI/search?q=US+Government+directive+discontinue&restrict_sr=on&sort=top&t=week) (730↑, Enterprise) — the post as a NEW event is unverified, but the backstory is real and litigated:
+- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://reddit.com/r/ClaudeAI/comments/1v932su/the_company_i_work_for_received_a_us_government/) (730↑, Enterprise) — the post as a NEW event is unverified, but the backstory is real and litigated:
   Trump ordered all federal agencies off Anthropic on **Feb 27** after the Pentagon standoff
   over autonomous-weapons/surveillance guardrails; Anthropic sued **Mar 9**; Judge Rita Lin
   granted a preliminary injunction **Mar 26**, calling the ban "designed to punish Anthropic"
@@ -175,7 +177,7 @@ Alliance."
   suspension hit and resolved. On-air frame: "can't verify the new post — but here's why it's
   plausible, and if a second source lands this is the story of the month."
 - [r/LocalLLaMA: "think of the children" crackdown thread](https://reddit.com/r/LocalLLaMA/comments/1vapsbz/think_of_the_children_another_excuse_for_them_to/) (1,198↑)
-- [r/LocalLLaMA: OpenAI declines the Open Secure AI Alliance](https://old.reddit.com/r/LocalLLaMA/search?q=open+secure+ai+alliance&restrict_sr=on&sort=top&t=week) (760↑)
+- [r/LocalLLaMA: OpenAI declines the Open Secure AI Alliance](https://reddit.com/r/LocalLLaMA/comments/1v8e36c/openai_management_decided_earlier_today_not_to/) (760↑)
 
 **Angles:**
 - The real story is the gap between the paper and the reaction: Anthropic says "test everything,
