@@ -1,5 +1,5 @@
 ---
-title: "[LIVE] Episode #24 — Qwen Comes for Fable, the 272K Tripwire, and 2.2M Deleted Files"
+title: "[LIVE] AI Is Now Cheaper Than Hiring Engineers"
 slug: "quota-endgame-and-the-272k-tripwire"
 source: "X (@Alibaba_Qwen, @Kimi_Moonshot, @OpenAI, @gdb, builder accounts), r/ClaudeAI, r/LocalLLaMA, GitHub issues (openai/codex), Sophos, Anthropic newsroom"
 status: "in_progress"
@@ -164,8 +164,10 @@ operate your business."
 - Workflow gem for the audience: [@davis7's Codex config making the multiple-choice tool work outside plan mode](https://x.com/davis7/status/2083955357953446205)
 
 **Angles:**
-- The pattern: cheap tiers get cheaper, the premium lane gets a hidden meter. Same shape as
-  Anthropic's Fable split — both vendors are teaching the market that flagship = metered.
+- The pattern: cheap tiers get cheaper, the premium lane gets gated. Same shape as Anthropic's
+  Fable split — metered on Pro ($10/$50), capped at 50% on Max. Precision matters on air:
+  Fable did NOT "go metered" for us; it stayed included on Max. Don't contradict #23's
+  "Fable is still the frontier planning layer" framing.
 - Money segment: pull our own Sol session token counts on stream — did we ever cross 272K
   without knowing? Practical mitigation: compaction, smaller scopes, worktrees.
 - "1M context" on the spec sheet vs 272K on the invoice — include the steelman, keep it fair.
@@ -301,6 +303,28 @@ rewrite speculation is a meme now.
 - Nobody big has packaged the 272K tripwire on YouTube yet — first-mover window on the money
   angle.
 - The Cherny/YC prompt-minimalism wave is adjacent to our skills segment — riff, don't rehash.
+
+## YouTube Description — Paste This
+
+AI software engineering is now cheaper than hiring engineers.
+
+This week: GPT-5.6 Luna dropped 80%.
+
+Qwen3.8-Max hit frontier benchmarks at $2/$6 per million tokens.
+
+Kimi K3's weights went public.
+
+DeepSeek V4 runs on a gaming PC.
+
+Meanwhile the other direction: Fable 5 left Pro plans — credits burned, now $10/$50 per million tokens unless you're on Max. Codex silently bills 2x past 272K tokens. The Claude Code boost dies August 19.
+
+Cheap got cheaper. Flagships got gates. Whether you're on the right side of that gap is a routing decision, and most people are getting it wrong.
+
+So tonight we price AI like you'd price a hire: cost per merged PR. Real bills, real shipped pull requests, against what a junior dev actually costs. Live math, no vibes.
+
+Subscribe so you don't miss it.
+
+*(Optional one-liner before the CTA if we want the live-tune-in hook: "OpenAI, Anthropic, and Google are at the White House today — we cover the fallout live.")*
 
 ## Verify Live Before Quoting
 
