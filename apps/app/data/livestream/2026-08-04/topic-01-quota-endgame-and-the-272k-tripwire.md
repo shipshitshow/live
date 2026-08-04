@@ -66,6 +66,28 @@ each with at least one designed shorts moment (30–60s, self-contained). Capsul
   hours old, not the week-old blader tweet alone. Also
   ["As soon as I hit 90% of the limit"](https://old.reddit.com/r/ClaudeAI/comments/1veoqdk/as_soon_as_i_hit_90_of_the_limit/) for the limits mood.
 
+## Last-48h Sweep (YouTube + Reddit, Aug 2–4)
+
+- **STREAM-DAY ITEM: [Trump admin invited OpenAI, Anthropic and Google to the White House on Tuesday](https://old.reddit.com/r/singularity/comments/1vehiq5/trump_admin_invited_openai_anthropic_and_google/)**
+  — the day of the stream, five months after the Feb ban and March injunction. Détente or
+  pressure? Check for outcomes before going live; this caps Capsule 3 either way.
+- **The "AI bubble" wave went mainstream on YouTube:** [JayzTwoCents — "The AI Bubble may be approaching Pop status"](https://youtu.be/wKpYz2nGMSQ)
+  (162K, PC-hardware audience) · [Two Minute Papers — "Another DeepSeek Moment Has Arrived"](https://youtu.be/bm1BjOjS7sQ) (86K)
+  · [Matthew Berman — "Open-source is WINNING"](https://youtu.be/CVlKp9Ld-Zg) (30K in hours).
+  The "end of token maxxing" thesis has a mainstream tailwind — reference, then differentiate:
+  we're not doom-posting, we're re-pricing the workflow.
+- **Codex Micro is real enough for reviews now:** [Kingy AI — "Codex Micro Review (2026): Is It Worth Buying?"](https://youtu.be/ybjP2CBG4kw)
+  (27K) — second independent source after the Japanese unboxing; upgrade from "verify" to a
+  real news beat. OpenAI shipping hardware for Codex is a story on its own.
+- **Qwen3.8-Max same-day creator coverage:** [Bijan Bowen — "Is THIS the Best Open Model Yet?"](https://youtu.be/jz2wF4m7YWE) (32K)
+  · [Devsplainers — "How DeepSeek Is Running AI Coding Costs Into the Ground"](https://youtu.be/F3rmpMNoZP4) (28K) — cost-collapse framing matches Capsule 1.
+- **Cherny-derivative wave still running:** [RoboNuggets — "Claude Code Just Changed Forever (6 NEW Rules by Anthropic Engineers)"](https://youtu.be/gQeRjkb_Hlc) (41K)
+  · [David Ondrej — skills repo, "how I build 100x faster"](https://youtu.be/clrUbBtD2j4) (26K) — skill economy receipts for Capsule 5.
+- **Kimi K3 international shorts wave continues:** JP short at 90K, KR explainer at 74K — the
+  geopolitics framing from the trend check holds.
+- Color for Capsule 2: [r/singularity — "The U.S. lead over China in AI is all but gone"](https://old.reddit.com/r/singularity/comments/1veoeho/the_us_lead_over_china_in_ai_is_all_but_gone/)
+  · [Musk: "get rid of source code entirely"](https://old.reddit.com/r/singularity/comments/1veslal/elon_musk_the_next_step_is_getting_rid_of_source/) — chatter beat.
+
 ## Segment 1 — Headline: Qwen3.8-Max Comes for Fable, and the Weights Go Public Next Week
 
 **What happened:** 9 hours before this doc, Alibaba announced Qwen3.8-Max — 2.4T params,
