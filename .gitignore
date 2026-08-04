@@ -47,3 +47,6 @@ yarn.lock
 # Added by code-review-graph
 .code-review-graph/
 .gstack/
+
+# Livestream thumbnail working files (kept local, never committed)
+assets/
