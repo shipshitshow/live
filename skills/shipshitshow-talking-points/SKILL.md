@@ -85,17 +85,29 @@ CRITICAL: The producer dashboard (`apps/app`) filters topic sections via `isUsef
 
 ### Required top-level (`##`) section names
 
-| Section | Allowed heading forms |
-|---|---|
-| Episode thesis | `## Summary` |
-| Cold open script | `## Cold Open — Read This` (or `## Cold Open - READ THIS`) |
-| Each segment | `## Talking Points — <Segment Name>` |
-| Sources to pull up live | `## Sources — <Group Name>` |
-| Tweets to paste live | `## Tweets — Paste Live` |
-| Closing take | `## Closing Take` |
-| Hot take / debate side | `## Hot Take` |
+| Section | Allowed heading forms | Renders in |
+|---|---|---|
+| Episode thesis | `## Summary` | Talking Points |
+| Cold open script | `## Cold Open — Read This` (or `## Cold Open - READ THIS`) | Talking Points |
+| Each segment | `## Talking Points — <Segment Name>`, `## Segment <N> — <Headline>`, `## Capsule <N> — <Name>` | Talking Points |
+| Closing take | `## Closing Take` | Talking Points |
+| Hot take / debate side | `## Hot Take` | Talking Points |
+| Demo prompts | any heading containing `/goal`, `goal prompt`, or `copy paste` | Prompts |
+| Everything else | `## Sources — <Group>`, `## Tweets — Paste Live`, `## YouTube Description — Paste This`, `## Announcement Tweet`, `## Verify Live Before Quoting`, … | Ressources |
 
-Anything else (e.g. `## Episode Thesis`, `## Segment 1 — X`, `## Demo Videos`, `## Verification Checklist`) WILL NOT RENDER. Either rename to a useful section or accept it stays prep-only metadata.
+**One card per news story.** Each segment heading becomes exactly one card in the
+Talking Points tab, and that card carries the *whole* section — thesis, points,
+sources, angles, host notes. Do not split a story's receipts into a separate
+top-level section; nest them under `### Sources` inside the segment so the host
+reads one card per story instead of cross-referencing tabs.
+
+**Keep publishing artifacts out of segments.** The YouTube description, announcement
+tweet, thumbnail prompts, trend checks and verification checklists are production
+material, not talking points. Give them their own top-level heading (they land in
+Ressources automatically) — never bury them inside a segment.
+
+`## Segment <N> — Headline: <text>` is accepted; the `Segment <N>` half renders as the
+card's label and the `Headline:` prefix is stripped from the title.
 
 ### Sub-section (`###`) format inside each `## Talking Points — X`
 
