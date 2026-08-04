@@ -52,6 +52,19 @@ each with at least one designed shorts moment (30–60s, self-contained). Capsul
   [@OpenAI thread](https://x.com/i/status/2084378415818579975)
 - **Qwen3.8-Max live on OpenRouter**, weights still "dropping soon" —
   [@Alibaba_Qwen](https://x.com/i/status/2084473121818779668)
+- **Today's r/LocalLLaMA front page (capsule 2 receipts):**
+  [More Qwen 3.8 sizes coming](https://old.reddit.com/r/LocalLLaMA/comments/1vevsv9/more_qwen_38_sizes_coming/) ·
+  ["I CANNOT believe I've got DeepSeek-V4-Flash running on my home PC"](https://old.reddit.com/r/LocalLLaMA/comments/1vehn87/i_cannot_believe_ive_got_deepseekv4flash0731_a/) ·
+  [Qwen3.8-Max matches Kimi K3 and V4 Flash](https://old.reddit.com/r/LocalLLaMA/comments/1vellf2/qwen38max_matches_kimi_k3_and_deepseek_v4_flash/) ·
+  [insider: "the Chinese labs everyone lumps together are making four different bets"](https://old.reddit.com/r/LocalLLaMA/comments/1veipya/the_chinese_labs_everyone_lumps_together_are/) — strong segment color ·
+  [GLM 5.3 spotted](https://old.reddit.com/r/LocalLLaMA/comments/1ve9ms0/glm_53_spotted/)
+- **Today's r/ClaudeAI front page — the Opus 5 backlash is live:**
+  ["Opus 5 is just annoying to work with. Back to Opus 4.8 for me"](https://old.reddit.com/r/ClaudeAI/comments/1vephjv/opus_5_is_just_annoying_to_work_with_back_to_opus/) ·
+  ["Opus 5 is driving me crazy"](https://old.reddit.com/r/ClaudeAI/comments/1velwq3/opus_5_is_driving_me_crazy/) ·
+  vs ["Opus Ultracode is great"](https://old.reddit.com/r/ClaudeAI/comments/1veykzm/opus_ultracode_is_great/) —
+  today's front page IS the benchmarks-vs-vibes split from Capsule 1; quote these, they're
+  hours old, not the week-old blader tweet alone. Also
+  ["As soon as I hit 90% of the limit"](https://old.reddit.com/r/ClaudeAI/comments/1veoqdk/as_soon_as_i_hit_90_of_the_limit/) for the limits mood.
 
 ## Segment 1 — Headline: Qwen3.8-Max Comes for Fable, and the Weights Go Public Next Week
 
