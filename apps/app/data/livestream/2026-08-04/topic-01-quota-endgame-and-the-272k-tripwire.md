@@ -18,6 +18,41 @@ actual primary source. Ordered by suggested rundown; reorder freely.
 - Date: August 4, 2026. Time slot TBC (last episode ran 14:00 CEST).
 - Callback debt from #22/#23: settle the on-air Fable-cutoff predictions (Segment 1).
 
+## Editorial Spine + Capsule Format (decided 2026-08-03 evening)
+
+**Spine: the end of token maxxing.** The free-compute era closed this month — Fable metered,
+272K tripwire, boosts expiring, promos ending — exactly while open weights reached consumer
+hardware. Every segment feeds this one thesis: stop maxxing tokens, start engineering for cost.
+
+**Format: 5 standalone capsules, 10–15 min each,** cut as individual videos after the stream,
+each with at least one designed shorts moment (30–60s, self-contained). Capsule order:
+
+1. **The Bill Arrived** (thesis capsule) — Segments 2+3 below merged. Shorts moment: the 272K
+   silent-2× explainer; the August deadlines calendar.
+2. **Qwen & Kimi Come for Fable** — Segment 1 below + MiniMax H3. Shorts moment: the
+   17GB-VRAM/RTX-5090 "frontier on hardware you own" math; K3 at 33s/tok on 8GB as the gag.
+3. **Anthropic's Two-Front War** — Segment 4 below. Shorts moment: the contradiction in 45s
+   (free Max for OSS vs open-weights ban call).
+4. **Agents With Root** — Segment 5 below. Shorts moment: "your agent looks like a hacker
+   because it acts like one."
+5. **The Skill Economy** — Segment 6 below. Shorts moment: live 60-second adversarial-review
+   demo.
+
+## Last-12h Additions (overnight Aug 3→4)
+
+- **MiniMax H3 open weights dropped** — SOTA open video-generation model on both Arena and
+  ArtificialAnalysis; runs on a single RTX 5090; on Mac + ComfyUI within a day. The
+  r/LocalLLaMA "place your bets for MiniMax next week" thread called it. Belongs in Capsule 2.
+  [Announcement thread](https://x.com/i/status/2084447186742345753) ·
+  [RTX 5090 demo "WE HAVE CROSSED A LINE"](https://x.com/i/status/2084387967981011326) ·
+  [SOTA claim](https://x.com/i/status/2084410437618352386) ·
+  [licensing clarification (US/EU/UK/KR)](https://x.com/i/status/2084490811652333633)
+- **OpenAI GPT-Live** — rebuilt ChatGPT Voice stack, listens while speaking, 1 round-trip
+  session start (7.3K likes overnight). Not our lane; one-beat news mention only.
+  [@OpenAI thread](https://x.com/i/status/2084378415818579975)
+- **Qwen3.8-Max live on OpenRouter**, weights still "dropping soon" —
+  [@Alibaba_Qwen](https://x.com/i/status/2084473121818779668)
+
 ## Segment 1 — Headline: Qwen3.8-Max Comes for Fable, and the Weights Go Public Next Week
 
 **What happened:** 9 hours before this doc, Alibaba announced Qwen3.8-Max — 2.4T params,
