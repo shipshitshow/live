@@ -8,6 +8,15 @@ announcement_tweet: null
 thumbnail_prompt: null
 ---
 
+## Sources — Livestream Notes
+
+- Title: **[LIVE] AI Is Now Cheaper Than Hiring Engineers**
+- Episode number: **#24**
+- Date: August 4, 2026. Time slot TBC (last episode ran 14:00 CEST).
+- [YouTube livestream](https://www.youtube.com/watch?v=ppcMDBiJ5xc)
+- [Restream studio](https://studio.restream.io/eue-pcqd-vbw)
+- Thumbnail: not generated yet (`thumbnail_prompt` still null).
+
 ## Format Note
 
 Sources + angles only. No scripted talking points — the talking-points skill is being redone.
@@ -325,6 +334,41 @@ So tonight we price AI like you'd price a hire: cost per merged PR. Real bills, 
 Subscribe so you don't miss it.
 
 *(Optional one-liner before the CTA if we want the live-tune-in hook: "OpenAI, Anthropic, and Google are at the White House today — we cover the fallout live.")*
+
+## Announcement Tweet — Post This (@shipshitdev)
+
+**Primary (252 chars with the t.co link — safe under 280):**
+
+```
+AI software engineering is now cheaper than hiring engineers.
+
+Luna -80%. Qwen3.8-Max at $2/$6. Kimi K3 weights public. DeepSeek V4 on a gaming PC.
+
+Codex quietly bills 2x past 272K tokens.
+
+Tonight we price AI per merged PR. Live:
+https://www.youtube.com/watch?v=ppcMDBiJ5xc
+```
+
+**Reply in-thread (adds the counter-narrative hook without bloating the main post):**
+
+```
+Everyone's posting "AI got more expensive than the workers it replaced."
+
+Wrong half of the market. Cheap got cheaper — flagships got gated.
+
+Which side you're on is a routing decision. We do the math live.
+```
+
+**Go-live reply (post when the stream starts):**
+
+```
+We're live. Real bills, real merged PRs, one number: cost per PR.
+https://www.youtube.com/watch?v=ppcMDBiJ5xc
+```
+
+Set `announcement_tweet` in this file's frontmatter to the posted URL once it's up — the topic
+page renders an "Open Announcement Tweet" CTA from that field.
 
 ## Verify Live Before Quoting
 
