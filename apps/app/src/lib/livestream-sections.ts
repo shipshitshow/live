@@ -50,6 +50,15 @@ export function isPromptSection(title: string): boolean {
   );
 }
 
+/**
+ * The `Livestream Notes` block is stream metadata — title, episode number,
+ * date, YouTube and Restream links. It is already surfaced by the page header
+ * and the stream sidebar, so it never renders as a card.
+ */
+export function isStreamMetadataSection(title: string): boolean {
+  return title.toLowerCase().includes('livestream notes');
+}
+
 export function isUtilityTalkingPointSection(title: string): boolean {
   const normalized = title.toLowerCase();
   return (
@@ -69,6 +78,7 @@ export function isTimelineSection(title: string): boolean {
   )
     return false;
   if (isPromptSection(title)) return false;
+  if (isStreamMetadataSection(title)) return false;
   return SEGMENT_TITLE_PATTERNS.some((pattern) => pattern.test(normalized));
 }
 
@@ -162,6 +172,7 @@ export function getStreamResourceSections(
   return cards.flatMap((card) =>
     getTopicSections(card).flatMap((section) => {
       if (isPromptSection(section.title)) return [];
+      if (isStreamMetadataSection(section.title)) return [];
       if (isTimelineSection(section.title)) return [];
 
       return [
