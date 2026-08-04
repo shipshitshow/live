@@ -136,6 +136,65 @@ export function renderInlineMarkdown(text: string) {
   });
 }
 
+type TextItem =
+  | { kind: 'bullet'; text: string }
+  | { kind: 'heading'; level: number; text: string }
+  | { kind: 'paragraph'; text: string }
+  | { kind: 'quote'; text: string };
+
+/**
+ * Prep markdown is hard-wrapped at ~95 columns, so one sentence arrives as
+ * three lines and a bullet's links trail on indented continuations. Only a
+ * blank line is a real break: everything else folds back into the block it
+ * continues, so a paragraph renders as a paragraph.
+ */
+function groupTextLines(lines: string[]): TextItem[] {
+  const items: TextItem[] = [];
+  let isOpen = false;
+
+  for (const rawLine of lines) {
+    const trimmed = rawLine.trim();
+
+    if (trimmed === '' || trimmed === '>') {
+      isOpen = false;
+      continue;
+    }
+
+    const heading = trimmed.match(/^(#{1,6})\s+(.+)$/);
+    if (heading) {
+      items.push({
+        kind: 'heading',
+        level: heading[1].length,
+        text: heading[2],
+      });
+      isOpen = false;
+      continue;
+    }
+
+    const bullet = trimmed.match(/^-+\s+(.+)$/);
+    if (bullet) {
+      items.push({ kind: 'bullet', text: bullet[1] });
+      isOpen = true;
+      continue;
+    }
+
+    const last = items[items.length - 1];
+    const quote = trimmed.match(/^>\s?(.+)$/);
+    if (quote) {
+      if (isOpen && last?.kind === 'quote') last.text += ` ${quote[1]}`;
+      else items.push({ kind: 'quote', text: quote[1] });
+      isOpen = true;
+      continue;
+    }
+
+    if (isOpen && last && last.kind !== 'heading') last.text += ` ${trimmed}`;
+    else items.push({ kind: 'paragraph', text: trimmed });
+    isOpen = true;
+  }
+
+  return items;
+}
+
 export function MarkdownBody({
   body,
   large,
@@ -157,12 +216,8 @@ export function MarkdownBody({
         codeLines = [];
         inCodeBlock = false;
       } else {
-        const filteredText = textLines.filter((textLine) => {
-          const t = textLine.trim();
-          return t.length > 0 && t !== '>';
-        });
-        if (filteredText.length > 0) {
-          blocks.push({ kind: 'text', lines: filteredText });
+        if (textLines.some((textLine) => textLine.trim().length > 0)) {
+          blocks.push({ kind: 'text', lines: textLines });
         }
         textLines = [];
         inCodeBlock = true;
@@ -181,12 +236,8 @@ export function MarkdownBody({
     blocks.push({ code: codeLines.join('\n').trimEnd(), kind: 'code' });
   }
 
-  const filteredText = textLines.filter((line) => {
-    const t = line.trim();
-    return t.length > 0 && t !== '>';
-  });
-  if (filteredText.length > 0) {
-    blocks.push({ kind: 'text', lines: filteredText });
+  if (textLines.some((line) => line.trim().length > 0)) {
+    blocks.push({ kind: 'text', lines: textLines });
   }
 
   const textSize = large ? 'text-lg' : 'text-sm';
@@ -206,58 +257,51 @@ export function MarkdownBody({
           );
         }
 
-        return block.lines.map((line, index) => {
-          const trimmed = line.trim();
-          const bullet = trimmed.match(/^-+\s+(.+)$/);
-          const quote = trimmed.match(/^>\s?(.+)$/);
-          const headingMatch = trimmed.match(/^(#{1,6})\s+(.+)$/);
+        return groupTextLines(block.lines).map((item, index) => {
+          const key = `${blockIndex}-${index}`;
 
-          if (headingMatch) {
-            const level = headingMatch[1].length;
+          if (item.kind === 'heading') {
             const headingClass =
-              level <= 3
+              item.level <= 3
                 ? `text-base font-semibold ${leading} text-text-primary`
-                : level === 4
+                : item.level === 4
                   ? `text-sm font-semibold ${leading} text-text-secondary`
                   : `text-sm font-medium ${leading} text-text-muted`;
             return (
-              <p
-                key={`${blockIndex}-${index}-${trimmed}`}
-                className={headingClass}
-              >
-                {renderInlineMarkdown(headingMatch[2])}
+              <p key={key} className={headingClass}>
+                {renderInlineMarkdown(item.text)}
               </p>
             );
           }
 
-          if (bullet) {
+          if (item.kind === 'bullet') {
             return (
               <p
-                key={`${blockIndex}-${index}-${trimmed}`}
+                key={key}
                 className={`pl-5 ${textSize} ${leading} text-text-secondary before:-ml-5 before:mr-2 before:text-accent-red before:content-['-']`}
               >
-                {renderInlineMarkdown(bullet[1])}
+                {renderInlineMarkdown(item.text)}
               </p>
             );
           }
 
-          if (quote) {
+          if (item.kind === 'quote') {
             return (
               <blockquote
-                key={`${blockIndex}-${index}-${trimmed}`}
+                key={key}
                 className={`border-l-2 border-accent-red/50 pl-4 ${textSize} ${leading} text-text-primary`}
               >
-                {renderInlineMarkdown(quote[1])}
+                {renderInlineMarkdown(item.text)}
               </blockquote>
             );
           }
 
           return (
             <p
-              key={`${blockIndex}-${index}-${trimmed}`}
+              key={key}
               className={`${textSize} ${leading} text-text-secondary`}
             >
-              {renderInlineMarkdown(trimmed)}
+              {renderInlineMarkdown(item.text)}
             </p>
           );
         });
