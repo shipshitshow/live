@@ -6,6 +6,12 @@ export interface SidebarNote {
   title: string;
 }
 
+export interface StreamSegmentSection {
+  body: string;
+  eyebrow: string | null;
+  title: string;
+}
+
 export interface StreamResourceSection {
   body: string;
   title: string;
@@ -16,6 +22,25 @@ export interface StreamPromptSection {
   title: string;
 }
 
+/**
+ * Segment headings across every prep format the show has used:
+ * legacy `## Talking Points — <name>`, the capsule format's
+ * `## Segment N — <headline>` / `## Capsule N — <name>`, and the
+ * standalone rundown beats.
+ */
+const SEGMENT_TITLE_PATTERNS = [
+  /^talking points\b/,
+  /^segment\s+\d+\b/,
+  /^capsule\s+\d+\b/,
+  /^cold open\b/,
+  /^clos(?:e|ing)\b/,
+  /^hot take$/,
+  /^summary$/,
+];
+
+/** `Segment 3 — <headline>` / `Capsule 2 — <name>`: the label half is the rundown index. */
+const INDEXED_SEGMENT = /^((?:segment|capsule)\s+\d+)\s+[—–-]\s+(.+)$/i;
+
 export function isPromptSection(title: string): boolean {
   const normalized = title.toLowerCase();
   return (
@@ -23,6 +48,15 @@ export function isPromptSection(title: string): boolean {
     normalized.includes('copy paste') ||
     normalized.includes('goal prompt')
   );
+}
+
+/**
+ * The `Livestream Notes` block is stream metadata — title, episode number,
+ * date, YouTube and Restream links. It is already surfaced by the page header
+ * and the stream sidebar, so it never renders as a card.
+ */
+export function isStreamMetadataSection(title: string): boolean {
+  return title.toLowerCase().includes('livestream notes');
 }
 
 export function isUtilityTalkingPointSection(title: string): boolean {
@@ -36,14 +70,16 @@ export function isUtilityTalkingPointSection(title: string): boolean {
 
 export function isTimelineSection(title: string): boolean {
   const normalized = title.toLowerCase();
-  return (
-    normalized.startsWith('cold open') ||
-    normalized.startsWith('close') ||
-    normalized.startsWith('closing') ||
-    normalized === 'hot take' ||
-    (normalized.startsWith('talking points') &&
-      !isUtilityTalkingPointSection(title))
-  );
+  // `Talking Points — Thumbnail Prompts` / `— Clip Cues` are production
+  // helpers wearing a segment heading; they belong in Ressources.
+  if (
+    normalized.startsWith('talking points') &&
+    isUtilityTalkingPointSection(title)
+  )
+    return false;
+  if (isPromptSection(title)) return false;
+  if (isStreamMetadataSection(title)) return false;
+  return SEGMENT_TITLE_PATTERNS.some((pattern) => pattern.test(normalized));
 }
 
 export function isTimelineSubSection(title: string): boolean {
@@ -52,7 +88,29 @@ export function isTimelineSubSection(title: string): boolean {
 }
 
 export function formatTimelineTitle(title: string): string {
-  return title.replace(/^Talking Points\s+[—-]\s+/i, '');
+  return title.replace(/^Talking Points\s+[—–-]\s+/i, '');
+}
+
+/**
+ * Splits `Segment 1 — Headline: Qwen Comes for Fable` into the small rundown
+ * label (`Segment 1`) and the headline the card is actually about. Legacy
+ * `Talking Points — X` keeps its stripped title with no label, and standalone
+ * beats (`Cold Open — Read This`, `Hot Take`) render their heading as written.
+ */
+function splitSegmentTitle(title: string): {
+  eyebrow: string | null;
+  title: string;
+} {
+  const indexed = title.match(INDEXED_SEGMENT);
+  if (indexed) {
+    const [, label, headline] = indexed;
+    return {
+      eyebrow: label,
+      title: headline.replace(/^headline:\s*/i, '').trim(),
+    };
+  }
+
+  return { eyebrow: null, title: formatTimelineTitle(title) };
 }
 
 function formatSegmentTitle(title: string, subTitle: string): string {
@@ -62,6 +120,24 @@ function formatSegmentTitle(title: string, subTitle: string): string {
 
 function getTopicSections(card: LivestreamCard): MarkdownSection[] {
   return parseSections(card.topic.content);
+}
+
+/**
+ * One card per news segment, carrying the whole segment body — thesis,
+ * talking points, sources and angles together — so the host reads a single
+ * card per story instead of hunting across tabs.
+ */
+export function getStreamSegmentSections(
+  cards: LivestreamCard[],
+): StreamSegmentSection[] {
+  return cards.flatMap((card) =>
+    getTopicSections(card)
+      .filter((section) => isTimelineSection(section.title))
+      .map((section) => ({
+        body: section.body,
+        ...splitSegmentTitle(section.title),
+      })),
+  );
 }
 
 export function getSidebarNotes(cards: LivestreamCard[]): SidebarNote[] {
@@ -84,28 +160,24 @@ export function getSidebarNotes(cards: LivestreamCard[]): SidebarNote[] {
   );
 }
 
+/**
+ * Everything that is not a news segment and not a demo prompt: publishing
+ * artifacts (YouTube description, announcement tweet), prep sweeps, trend
+ * checks and verification checklists. These are show-production material,
+ * not talking points, so they never belong on a segment card.
+ */
 export function getStreamResourceSections(
   cards: LivestreamCard[],
 ): StreamResourceSection[] {
   return cards.flatMap((card) =>
     getTopicSections(card).flatMap((section) => {
-      if (
-        section.title.toLowerCase().startsWith('talking points') &&
-        isUtilityTalkingPointSection(section.title)
-      ) {
-        if (isPromptSection(section.title)) return [];
-
-        return [
-          {
-            body: section.body,
-            title: formatTimelineTitle(section.title),
-          },
-        ];
-      }
-
+      if (isPromptSection(section.title)) return [];
+      if (isStreamMetadataSection(section.title)) return [];
       if (isTimelineSection(section.title)) return [];
 
-      return [{ body: section.body, title: section.title }];
+      return [
+        { body: section.body, title: formatTimelineTitle(section.title) },
+      ];
     }),
   );
 }
@@ -115,19 +187,11 @@ export function getStreamPromptSections(
 ): StreamPromptSection[] {
   return cards.flatMap((card) =>
     getTopicSections(card).flatMap((section) => {
-      if (
-        section.title.toLowerCase().startsWith('talking points') &&
-        isPromptSection(section.title)
-      ) {
-        return [
-          {
-            body: section.body,
-            title: formatTimelineTitle(section.title),
-          },
-        ];
-      }
+      if (!isPromptSection(section.title)) return [];
 
-      return [];
+      return [
+        { body: section.body, title: formatTimelineTitle(section.title) },
+      ];
     }),
   );
 }

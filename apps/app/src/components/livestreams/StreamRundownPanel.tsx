@@ -1,17 +1,10 @@
-import {
-  formatTimelineTitle,
-  isTimelineSection,
-  isTimelineSubSection,
-} from '@/lib/livestream-sections';
-import {
-  type LivestreamCard,
-  MarkdownBody,
-  parseSections,
-  parseSubSections,
-} from '@/lib/livestreams-ui';
+import { getStreamSegmentSections } from '@/lib/livestream-sections';
+import { type LivestreamCard, MarkdownBody } from '@/lib/livestreams-ui';
 
 export function StreamRundownPanel({ cards }: { cards: LivestreamCard[] }) {
-  if (cards.length === 0) {
+  const segments = getStreamSegmentSections(cards);
+
+  if (segments.length === 0) {
     return (
       <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/40 p-6 text-base text-text-muted">
         No talking points have been selected for this livestream yet.
@@ -21,44 +14,26 @@ export function StreamRundownPanel({ cards }: { cards: LivestreamCard[] }) {
 
   return (
     <div className="space-y-4">
-      {cards.map(({ topic }) => {
-        const sections = parseSections(topic.content).filter((section) =>
-          isTimelineSection(section.title),
-        );
-
-        return sections.map((section) => {
-          if (section.title.toLowerCase().startsWith('talking points')) {
-            const subSections = parseSubSections(section.body).filter((sub) =>
-              isTimelineSubSection(sub.title),
-            );
-            return subSections.map((sub) => (
-              <article
-                key={`${topic.slug}-${section.title}-${sub.title}`}
-                className="overflow-hidden rounded-xl border border-surface-border bg-surface-card"
-              >
-                <h3 className="sticky top-0 z-10 border-b border-surface-border bg-surface-card px-6 py-3 text-sm font-semibold uppercase tracking-widest text-text-muted">
-                  {formatTimelineTitle(section.title)}
-                </h3>
-                <div className="p-6">
-                  <MarkdownBody body={sub.body} large />
-                </div>
-              </article>
-            ));
-          }
-
-          return (
-            <article
-              key={`${topic.slug}-${section.title}`}
-              className="rounded-xl border border-surface-border bg-surface-card p-6"
-            >
-              <h3 className="mb-4 text-sm font-semibold uppercase tracking-widest text-text-muted">
-                {section.title}
-              </h3>
-              <MarkdownBody body={section.body} large />
-            </article>
-          );
-        });
-      })}
+      {segments.map((segment) => (
+        <article
+          key={`${segment.eyebrow ?? ''}-${segment.title}`}
+          className="overflow-hidden rounded-xl border border-surface-border bg-surface-card"
+        >
+          <header className="sticky top-0 z-10 border-b border-surface-border bg-surface-card px-6 py-4">
+            {segment.eyebrow ? (
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-accent-red">
+                {segment.eyebrow}
+              </p>
+            ) : null}
+            <h3 className="mt-1 text-lg font-semibold text-text-primary">
+              {segment.title}
+            </h3>
+          </header>
+          <div className="p-6">
+            <MarkdownBody body={segment.body} large />
+          </div>
+        </article>
+      ))}
     </div>
   );
 }
