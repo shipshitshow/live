@@ -122,7 +122,7 @@ operate your business."
 - [openai/codex#32486: default context can cross the 272K threshold](https://github.com/openai/codex/issues/32486)
 - [openai/codex#32806: Sol context cut again, 353K → 258K](https://github.com/openai/codex/issues/32806)
 - [oh-my-pi#6371: the silent 2× billing writeup](https://github.com/can1357/oh-my-pi/issues/6371)
-- [@OpenAI: Luna −80%, Terra price cuts](https://x.com/OpenAI/status/2082878156483219672) (19.2K♥) — verify exact Terra % live; thread also has [Sol Fast mode at 2.5× speed](https://x.com/i/status/2082878168764207230) and [Auto-review upgraded to Luna](https://x.com/i/status/2082878180478910571)
+- [@OpenAI: Luna −80%, Terra −20%](https://x.com/OpenAI/status/2082878156483219672) (19.2K♥, percentages verified from full tweet text); thread also has [Sol Fast mode at 2.5× speed](https://x.com/i/status/2082878168764207230) and [Auto-review upgraded to Luna](https://x.com/i/status/2082878180478910571)
 - [@gdb: "Codex for helping operate your business"](https://x.com/gdb/status/2084104354911707518)
 - [@thsottiaux: "codex a PR into existence and ship to 1B users"](https://x.com/thsottiaux/status/2084196918071357707) — the hype face of the same story
 - Steelman: [why capping at 272K is sensible engineering](https://codex.danielvaughan.com/2026/07/20/context-window-gap-codex-cli-gpt56-advertised-vs-effective-budget-compaction-strategy/)
@@ -163,7 +163,17 @@ Alliance."
 **Sources — community reaction:**
 - [r/LocalLLaMA: "Anthropic calling for a ban on open-weights models"](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+open-weights&restrict_sr=on&sort=top&t=week) (1,115↑) — the hostile read, quote as "how the community took it"
 - [r/ClaudeAI: Anthropic reporting its own models went rogue](https://reddit.com/r/ClaudeAI/comments/1vbawpx/now_anthropic_reporting_its_own_models_went_rogue/) (910↑)
-- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://old.reddit.com/r/ClaudeAI/search?q=US+Government+directive+discontinue&restrict_sr=on&sort=top&t=week) (730↑, Enterprise) — unverified single account; "a post claims" only
+- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://old.reddit.com/r/ClaudeAI/search?q=US+Government+directive+discontinue&restrict_sr=on&sort=top&t=week) (730↑, Enterprise) — the post as a NEW event is unverified, but the backstory is real and litigated:
+  Trump ordered all federal agencies off Anthropic on **Feb 27** after the Pentagon standoff
+  over autonomous-weapons/surveillance guardrails; Anthropic sued **Mar 9**; Judge Rita Lin
+  granted a preliminary injunction **Mar 26**, calling the ban "designed to punish Anthropic"
+  ([NBC](https://www.nbcnews.com/news/us-news/anthropic-trump-national-security-rcna265399),
+  [CNN](https://www.cnn.com/2026/03/26/business/anthropic-pentagon-injunction-supply-chain-risk),
+  [CBS](https://www.cbsnews.com/news/anthropic-ruling-judge-trump-pentagon-ai/),
+  [FedScoop](https://fedscoop.com/district-court-temporarily-blocks-anthropic-ban-supply-chain-risk-designation/),
+  [CRS explainer](https://www.congress.gov/crs-product/IF13217)). Then the June export-control
+  suspension hit and resolved. On-air frame: "can't verify the new post — but here's why it's
+  plausible, and if a second source lands this is the story of the month."
 - [r/LocalLLaMA: "think of the children" crackdown thread](https://reddit.com/r/LocalLLaMA/comments/1vapsbz/think_of_the_children_another_excuse_for_them_to/) (1,198↑)
 - [r/LocalLLaMA: OpenAI declines the Open Secure AI Alliance](https://old.reddit.com/r/LocalLLaMA/search?q=open+secure+ai+alliance&restrict_sr=on&sort=top&t=week) (760↑)
 
@@ -258,7 +268,6 @@ rewrite speculation is a meme now.
 ## Verify Live Before Quoting
 
 - Qwen3.8-Max benchmark numbers and the "$2/$6" price — quote [the announcement](https://x.com/Alibaba_Qwen/status/2084100707423289643), not screenshots
-- Exact Terra price-cut % — [@OpenAI post](https://x.com/OpenAI/status/2082878156483219672)
 - Boost expiry (Aug 19) / Sonnet promo end (Aug 31) — [Anthropic newsroom](https://www.anthropic.com/news)
 - Open-weights position: quote [the paper itself](https://www.anthropic.com/news/position-open-weights-models) — it rejects a ban; the "ban" line is the community's read, attribute it as such
 - "US Gov directive" Reddit post — unverified; needs a second source or gets the "chatter" label
