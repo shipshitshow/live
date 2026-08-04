@@ -23,7 +23,7 @@ bun run lint          # biome check
 ```
 
 ## Skills
-- `skills/` — show-specific runtime skills (talking-points, yt-analytics, thumbnails)
+- `skills/` — show-specific runtime skills (shipshitshow-talking-points, thumbnails, youtube-metadata, youtube-chapters, livestream-clip-extraction, livestream-intro-hooks)
 - `.agents/skills/` — dev workflow skills (symlinked to .claude/skills, .codex/skills)
 - `scripts/skills.sh` — skill installer (pulls from github.com/shipshitshow/skills)
 

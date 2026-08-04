@@ -44,120 +44,40 @@ Core point of view:
 - Legacy software does not vanish overnight. It becomes a rewrite target.
 - The audience wants operator truth: what broke, what worked, what costs money, what ships.
 
-## Thumbnail Prompt Modes
+## Thumbnails Are a Separate Skill
 
-Ship Shit Show has two different thumbnail styles. Do not mix them.
+Thumbnail prompts, art direction, image output paths, and the topic file's `thumbnail_prompt`
+field are owned by the `thumbnails` skill. Do not write thumbnail prompts from here — invoke that
+skill instead. It covers livestream, recap, and surgical re-prompt modes.
 
-Mode selection is automatic:
+## Capsule Format (default since #24)
 
-- If Vincent says `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or asks for a topic-file `thumbnail_prompt`, use **Mode 1: Livestream Thumbnail**.
-- If Vincent says `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short`, use **Mode 2: Recap Video Thumbnail**.
-- If Vincent says `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or is iterating a generated thumbnail, use **Surgical Thumbnail Re-Prompt Mode**.
-- Do not ask which thumbnail style he means when the wording matches one of these modes. Pick the mode and output the prompt.
+The show is distributed as Shorts and standalone cuts, not just one long VOD. Build every episode as
+**4–6 standalone capsules of 10–15 minutes**, each of which survives being cut as its own video.
 
-### Mode 1: Livestream Thumbnail
+Per capsule:
 
-Use for upcoming livestream topic frontmatter: `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`.
+- One thesis it proves. If a capsule needs the previous capsule to make sense, it is not a capsule.
+- Its own cold context: name the tool/company/number inside the capsule, never "as we said earlier".
+- **At least one designed shorts moment** — 30–60 seconds, self-contained, with a stated hook and
+  payoff. Write it as a shorts moment in the prep, do not hope the editor finds one.
+- Its own receipt on screen: link, bill, benchmark, diff, or demo.
 
-Default `thumbnail_prompt` to the documented two-host editorial style unless the user explicitly asks for a different art direction.
+Capsules map onto `## Talking Points — <Capsule Name>` sections. Put the shorts moment in
+`### Host Notes` as `Shorts moment:` so the editor can grep for it.
 
-Required livestream shape:
+## Two Passes Over the Topic File
 
-- Start with `16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting.`
-- Use structured blocks in this order: `PALETTE`, `COMPOSITION`, optional `LOGO LOCK` or `CENTER ASSET`, `HOST LEFT`, `HOST RIGHT`, `BACKGROUND`, `CONTRAST RULE`, `LIGHTING`, `BRANDING`, `TEXT`, `STYLE`.
-- Two hosts are large chest-up/upper-torso, cropped by left and right edges, roughly 35% of frame each, heads readable at mobile size.
-- Host left is: bald man, light tan olive skin, stubble, green-hazel eyes, black hoodie, curious disbelief, one palm-up presenting hand.
-- Host right is: dark wavy brown hair slicked back, navy blue polo, confused wonder, subtle "wait, what?" gesture.
-- Default palette is warm parchment cream, muted beige, ivory, soft brown shadows, natural skin tones. Avoid one-note dark tech palettes.
-- For model/logo episodes, if a provided logo/image asset exists, use a `LOGO LOCK` block and explicitly preserve it exactly as a flat raster asset.
-- For non-logo episodes, use a centered simple editorial object/emblem in the same parchment/natural-history style. Do not replace the hosts with UI screenshots.
-- Top-right episode number must be present when known, e.g. `#19`, muted dark brown/grey.
-- Text rule: use no text except the episode number unless the user explicitly asks for thumbnail title text.
-- Negative rule: no neon, cyberpunk, red warning stamps, generic robot faces, cluttered terminal walls, fake logos, tiny UI text, punctuation added to locked logos, or extra symbols over a provided logo.
+The topic markdown gets written twice, by two different jobs. Know which one you are doing.
 
-Bad livestream thumbnail direction:
+1. **Research pass** — sources, permalinks, angles, freshness sweeps, verification flags. Prose
+   headings are fine here; this pass is for Vincent's reading, not the dashboard.
+2. **Talking-points pass** — this skill. Turns that research into host-ready segments using the
+   dashboard-safe headings below.
 
-```text
-Dark charcoal UI, cyan terminal glow, red warning badges, big title text, generic AI dev-tool command center.
-```
-
-Good livestream thumbnail direction:
-
-```text
-Warm parchment editorial composition, two large host portraits framing one centered asset/emblem, no title text except episode number, premium natural-history poster vibe.
-```
-
-### Mode 2: Recap Video Thumbnail
-
-Use for edited videos or main-channel recaps made from a livestream after the stream has a clear result, failure, or thesis.
-
-Recap thumbnails are discovery packaging, not live-show branding. They should sell the strongest viewer promise from the edited video.
-
-Required recap shape:
-
-- Start with `16:9 YouTube video thumbnail, 1920x1080, high-contrast editorial tech thumbnail, ultra sharp, readable at mobile size.`
-- Use one dominant visual receipt from the video: the app/result, source page, benchmark/table, terminal failure, model/tool logo, or before/after state.
-- Use big readable title text, usually 2-5 words, tied to the edited-video title: `CRON WRITES CODE`, `BAD CODE + CONFIDENCE`, `CAN IT CAD?`, `AI LOOP STACK`.
-- Do not use the livestream episode number.
-- Hosts are optional. If included, use one host reaction crop as supporting emotion, not the two-host parchment composition.
-- Palette may be high-contrast tech/editorial and can use dark UI, cyan, red/yellow warning, or product colors when the topic calls for it.
-- The thumbnail must communicate the video outcome or conflict cold, without needing the livestream context.
-- Do not use the calm parchment two-host "live" composition unless the recap is explicitly branded as a livestream archive.
-
-Good recap thumbnail direction:
-
-```text
-One dominant proof visual, large 2-5 word text, strong contrast, edited-video promise, no episode number.
-```
-
-### Surgical Thumbnail Re-Prompt Mode
-
-Use when the user is iterating inside a workflow app and asks for the same thumbnail with only specific changes, e.g. "keep everything but remove the title", "same prompt but Claude orange", "change only the color", or "don't change anything else."
-
-This mode overrides the normal creative thumbnail rules.
-
-Rules:
-
-- Output one clean standalone prompt that does not depend on prior chat state or say `use the provided image`.
-- Fully restate the thumbnail architecture in the prompt: two hosts, center tablet, loop diagram, repeated injected logo placement, lighting, colors, title/text rules, negatives.
-- Preserve every unspecified element. Do not add new concepts, new icons, new composition, new logo treatment, new diagram structure, or new style.
-- If the workflow injects a logo/image asset, explicitly say to use the injected asset exactly and repeat it in the specified places. Do not tell the model to search for, recreate, describe, or redesign the logo.
-- If the desired edit is "remove title", say no title, no `Loops`, no `2.0`, no numbers, no captions, and no labels.
-- If the desired edit is "change blue to Claude orange", say replace cyan/blue/teal with Claude-like warm orange/amber, and prohibit blue/cyan/teal.
-- Do not say "reference", "previous", "same as above", or "provided image" unless the user explicitly asks for an image-edit prompt.
-
-Default surgical recap prompt skeleton:
-
-```text
-16:9 YouTube video thumbnail, 1920x1080, photoreal creator-tech thumbnail, ultra sharp, high contrast, readable at mobile size.
-
-STYLE
-[Restate exact style.]
-
-COLOR PALETTE
-[Only requested color changes.]
-
-COMPOSITION
-[Restate exact layout.]
-
-NO TITLE
-[If requested.]
-
-TABLET SCREEN
-[Restate loop diagram and repeated injected-logo placement.]
-
-LOGO USE
-[Injected asset only; repeat center and around loop if that is the requested architecture.]
-
-HOST LEFT
-[Restate host.]
-
-HOST RIGHT
-[Restate host.]
-
-NEGATIVE
-[Only constraints that protect the requested edit.]
-```
+When Vincent says "just links and sources, no talking points", stop after pass 1 and do not invent
+on-camera lines. When he asks for talking points on an existing prep doc, read the whole file first
+and convert its research sections into capsules — do not restart the research.
 
 ## Default Output Contract
 
