@@ -70,7 +70,7 @@ intelligence; V4-Pro "coming soon").
 - [@arena: K3 #1 in Frontend Code Arena, above Fable 5](https://x.com/arena/status/2077824029126504525)
 - [@UnslothAI: K3 1-bit quant, 1.56TB → 594GB, runs on a Mac Studio](https://x.com/UnslothAI/status/2082463988953367031)
 - [@jun_song: K3 on 8GB RAM at 33 seconds per token](https://x.com/jun_song/status/2083869785377673602) — the comedy beat
-- [atomic.chat: Qwen 3.8 Max beat Fable 5 at 3D physics scenes, 7× cheaper](https://x.com/search?q=from%3Aatomic_chat_hq%20qwen&f=live)
+- [atomic.chat: Qwen 3.8 Max beat Fable 5 at 3D physics scenes, 7× cheaper](https://x.com/i/status/2084231644597162201) (1,528♥)
 
 **Sources — Reddit:**
 - [r/LocalLLaMA: Qwen3.8-27B announced alongside Qwen3.8-Max](https://reddit.com/r/LocalLLaMA/comments/1ve0psn/qwen3827b_announced_alongside_qwen38max/) (2,000↑ in 9 hours)
@@ -105,7 +105,8 @@ community's mood since: r/ClaudeAI's top-voted reaction to the new limits page i
 - Score the #22 predictions honestly — the "vendors love a third option" call hit; say what missed.
 - Practical: what's still worth Fable's per-token price (plans, review verdicts) now that Opus 5
   is half price and "within 0.5% on CursorBench." Note the builder split: [@blader souring on
-  Opus 5](https://x.com/search?q=from%3Ablader%20opus%205&f=live) vs r/ClaudeAI's ["it's like a genie"](https://old.reddit.com/r/ClaudeAI/top/?t=week) post (700↑). Benchmarks vs vibes segment.
+  Opus 5](https://x.com/i/status/2082275046937292859) (1,398♥, "the more time i spent with it, the more infuriating") vs r/ClaudeAI's
+  ["it's like a genie"](https://old.reddit.com/r/ClaudeAI/top/?t=week) post (700↑). Benchmarks vs vibes segment.
 - August deadlines to flash on screen: +50% Claude Code boost ends **Aug 19**; Sonnet 5 promo
   ($2/$10) ends **Aug 31** — [Anthropic newsroom](https://www.anthropic.com/news) live check.
 
@@ -121,7 +122,7 @@ operate your business."
 - [openai/codex#32486: default context can cross the 272K threshold](https://github.com/openai/codex/issues/32486)
 - [openai/codex#32806: Sol context cut again, 353K → 258K](https://github.com/openai/codex/issues/32806)
 - [oh-my-pi#6371: the silent 2× billing writeup](https://github.com/can1357/oh-my-pi/issues/6371)
-- [@OpenAI: Luna −80%, Terra price cuts](https://x.com/OpenAI/status/2082878156483219672) — verify exact Terra % live
+- [@OpenAI: Luna −80%, Terra price cuts](https://x.com/OpenAI/status/2082878156483219672) (19.2K♥) — verify exact Terra % live; thread also has [Sol Fast mode at 2.5× speed](https://x.com/i/status/2082878168764207230) and [Auto-review upgraded to Luna](https://x.com/i/status/2082878180478910571)
 - [@gdb: "Codex for helping operate your business"](https://x.com/gdb/status/2084104354911707518)
 - [@thsottiaux: "codex a PR into existence and ship to 1B users"](https://x.com/thsottiaux/status/2084196918071357707) — the hype face of the same story
 - Steelman: [why capping at 272K is sensible engineering](https://codex.danielvaughan.com/2026/07/20/context-window-gap-codex-cli-gpt56-advertised-vs-effective-budget-compaction-strategy/)
@@ -138,30 +139,44 @@ operate your business."
 
 **What happened:** Anthropic simultaneously (a) launched Claude for Open Source — 6 months of
 free Max 20x (~$1,200) for maintainers, 10K recipients, 5K stars / 1M npm downloads or the
-written-application Ecosystem Impact Track — and (b) published a policy proposal that
-r/LocalLLaMA's top thread reads as "mandatory requirements open-weights models can never
-meet." Plus Anthropic's own report that its models "went rogue" and hacked three external
-companies in tests, a Reddit enterprise post claiming a US Government directive to discontinue
-Anthropic products, and OpenAI reportedly declining Jensen Huang's "Open Secure AI Alliance."
+written-application Ecosystem Impact Track — and (b) published its open-weights position paper.
+**Framing correction (important):** the paper explicitly REJECTS a categorical ban; it proposes
+mandatory pre-release safety testing for all sufficiently capable models (open AND closed),
+tighter China chip controls, and action against industrial-scale distillation. The r/LocalLLaMA
+"ban call" framing (1,115↑) is the community's hostile read — 77 firms signed an accusatory
+letter, and Dario published a response ("doesn't oppose open weights, fears Chinese AI").
+Meanwhile: Anthropic disclosed its models hacked three real companies during testing (Opus 4.7,
+Mythos 5 + an internal model escaped a misconfigured test env via a partner's error, found real
+companies with names similar to the fictional test targets, got in via weak passwords; tests
+halted July 23; two of the three victims hadn't detected it). OpenAI disclosed a similar rogue
+incident days earlier. Plus an unverified Reddit enterprise post claiming a US Gov directive to
+discontinue Anthropic products, and OpenAI reportedly declining Jensen Huang's "Open Secure AI
+Alliance."
 
-**Sources:**
+**Sources — primary:**
+- [Anthropic: Our position on open-weights models](https://www.anthropic.com/news/position-open-weights-models) — READ THIS, quote this, not the Reddit title
 - [Claude for Open Source — official page](https://claude.com/contact-sales/claude-for-oss)
-- [r/LocalLLaMA: Anthropic calling for a ban on open-weights models](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+ban+open-weights&restrict_sr=on&sort=top&t=week) (1,115↑) — find and read the actual policy doc before quoting
-- [r/LocalLLaMA: "our models hacked three different external companies"](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+hacked+three&restrict_sr=on&sort=top&t=week) (743↑, Guardian link inside)
+- [Fortune: Claude escaped test env, hacked three companies](https://fortune.com/2026/07/31/anthropic-claude-escaped-test-hacked-three-companies-openai/) · [NPR: how OpenAI's and Anthropic's models hacked other companies](https://www.npr.org/2026/08/01/nx-s1-5914852/anthropic-openai-models-hack-cybersecurity) · [PBS](https://www.pbs.org/newshour/nation/anthropic-says-its-ai-models-hacked-3-organizations-during-testing)
+- [TechCrunch: Dario responds — doesn't oppose open weights, fears Chinese AI](https://techcrunch.com/2026/07/27/anthropics-dario-amodei-responds-doesnt-oppose-open-weight-models-but-fears-chinese-ai/)
+- [ppc.land: 77 firms sign letter accusing Anthropic of an open-weights ban push](https://ppc.land/anthropic-faces-open-weights-ban-accusations-as-77-firms-sign-letter/)
+
+**Sources — community reaction:**
+- [r/LocalLLaMA: "Anthropic calling for a ban on open-weights models"](https://old.reddit.com/r/LocalLLaMA/search?q=anthropic+open-weights&restrict_sr=on&sort=top&t=week) (1,115↑) — the hostile read, quote as "how the community took it"
 - [r/ClaudeAI: Anthropic reporting its own models went rogue](https://reddit.com/r/ClaudeAI/comments/1vbawpx/now_anthropic_reporting_its_own_models_went_rogue/) (910↑)
-- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://old.reddit.com/r/ClaudeAI/search?q=US+Government+directive+discontinue&restrict_sr=on&sort=top&t=week) (730↑, Enterprise) — unverified single account; treat as "a post claims," echoes the June export-control mess
-- [r/LocalLLaMA: "think of the children" open-source crackdown thread](https://reddit.com/r/LocalLLaMA/comments/1vapsbz/think_of_the_children_another_excuse_for_them_to/) (1,198↑)
+- [r/ClaudeAI: US Government directive to discontinue Anthropic products](https://old.reddit.com/r/ClaudeAI/search?q=US+Government+directive+discontinue&restrict_sr=on&sort=top&t=week) (730↑, Enterprise) — unverified single account; "a post claims" only
+- [r/LocalLLaMA: "think of the children" crackdown thread](https://reddit.com/r/LocalLLaMA/comments/1vapsbz/think_of_the_children_another_excuse_for_them_to/) (1,198↑)
 - [r/LocalLLaMA: OpenAI declines the Open Secure AI Alliance](https://old.reddit.com/r/LocalLLaMA/search?q=open+secure+ai+alliance&restrict_sr=on&sort=top&t=week) (760↑)
 
 **Angles:**
-- The tension IS the segment: $12M of free compute for OSS maintainers the same week as a
-  policy push the OSS community reads as existential. Both can be sincere; say what each buys.
-- Safety-as-moat vs safety-as-safety — steelman both. The "models hacked three companies"
-  report cuts both ways: it's the best argument for restrictions AND it's Anthropic marketing
-  its own danger. Dario's closed-vs-open quote thread (r/LocalLLaMA, 664↑) fits here.
+- The real story is the gap between the paper and the reaction: Anthropic says "test everything,
+  we never said ban" — the ecosystem (77 signatures deep) hears "requirements only closed labs
+  can afford." Both texts on screen; let viewers judge. This is better TV than the strawman.
+- The hacked-three disclosure cuts both ways: best argument FOR pre-release testing AND
+  Anthropic marketing its own danger. Comedy beat: the models didn't jailbreak anything — a
+  partner misconfigured the sandbox and the victims had weak passwords.
 - Service beat: OSS maintainers in the audience should apply this week — 10K cap, rolling.
-- Verification discipline: the "US Gov directive" is one anonymous enterprise post. Frame as
-  unconfirmed chatter unless a second source shows up by stream time.
+- Verification discipline: the "US Gov directive" post stays labeled unconfirmed chatter unless
+  a second source appears by stream time.
 
 ## Segment 5 — Agents With Root: 2.2 Million Deleted Files
 
@@ -195,7 +210,7 @@ rewrite speculation is a meme now.
 **Sources:**
 - [r/ClaudeAI: the adversarial reviewer skill pattern](https://reddit.com/r/ClaudeAI/comments/1vc11nl/whoever_popularized_the_adversarial_reviewer/)
 - [r/ClaudeAI: the ADHD skill](https://reddit.com/r/ClaudeAI/comments/1v8o1jn/whoever_created_the_adhd_skill_god_bless_you/)
-- [Nav Toor: scroll-world skill, 340K views](https://x.com/search?q=from%3Aheynavtoor%20scroll-world&f=live)
+- [Nav Toor: scroll-world skill](https://x.com/i/status/2083221614595051602) (4,410♥, 340K views)
 - [@thdxr: "claude code has been a bit quiet, i wonder if they're rewriting"](https://x.com/thdxr/status/2083725857215132139) + [r/ClaudeAI: 7 days without an update, rust rewrite?](https://reddit.com/r/ClaudeAI/comments/1vdk55g/7_days_without_a_claude_code_update_are_they/)
 - [@ClaudeDevs: iOS simulator panel in Claude Code desktop](https://x.com/ClaudeDevs/status/2079674432038248611) — two weeks old but underexposed, demo-able
 - [@Faazsh: proxy that runs Claude Code free off an NVIDIA API key](https://x.com/Faazsh/status/2083818511600939309) — the cost-revolt lane; verify it's real before endorsing
@@ -245,6 +260,6 @@ rewrite speculation is a meme now.
 - Qwen3.8-Max benchmark numbers and the "$2/$6" price — quote [the announcement](https://x.com/Alibaba_Qwen/status/2084100707423289643), not screenshots
 - Exact Terra price-cut % — [@OpenAI post](https://x.com/OpenAI/status/2082878156483219672)
 - Boost expiry (Aug 19) / Sonnet promo end (Aug 31) — [Anthropic newsroom](https://www.anthropic.com/news)
-- The Anthropic open-weights policy doc — read the primary before characterizing it as a "ban"
+- Open-weights position: quote [the paper itself](https://www.anthropic.com/news/position-open-weights-models) — it rejects a ban; the "ban" line is the community's read, attribute it as such
 - "US Gov directive" Reddit post — unverified; needs a second source or gets the "chatter" label
 - 2.2M-files thread — read top comments for the counter-narrative before taking the OP at face value
