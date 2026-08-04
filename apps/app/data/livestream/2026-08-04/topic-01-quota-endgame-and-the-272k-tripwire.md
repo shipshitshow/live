@@ -34,7 +34,9 @@ actual primary source. Ordered by suggested rundown; reorder freely.
 hardware. Every segment feeds this one thesis: stop maxxing tokens, start engineering for cost.
 
 **Format: 5 standalone capsules, 10–15 min each,** cut as individual videos after the stream,
-each with at least one designed shorts moment (30–60s, self-contained). Capsule order:
+each with at least one designed shorts moment (30–60s, self-contained). The **What Did You
+Ship This Week** opener runs cold before Capsule 1 — build log, not news, 6–8 min, and it
+cuts as its own standalone video. Capsule order:
 
 1. **The Bill Arrived** (thesis capsule) — Segments 2+3 below merged. Shorts moment: the 272K
    silent-2× explainer; the August deadlines calendar.
@@ -96,6 +98,41 @@ each with at least one designed shorts moment (30–60s, self-contained). Capsul
   geopolitics framing from the trend check holds.
 - Color for Capsule 2: [r/singularity — "The U.S. lead over China in AI is all but gone"](https://old.reddit.com/r/singularity/comments/1veoeho/the_us_lead_over_china_in_ai_is_all_but_gone/)
   · [Musk: "get rid of source code entirely"](https://old.reddit.com/r/singularity/comments/1veslal/elon_musk_the_next_step_is_getting_rid_of_source/) — chatter beat.
+
+## Talking Points — What Did You Ship This Week
+
+Opener. Runs before Segment 1. Not a news beat — this is the build log that earns the
+right to have opinions about everyone else's models for the next hour. Keep it to 6–8
+minutes, one artifact on screen, no roadmap talk.
+
+**The thesis:** this week the harness changed, not the model. I ran Grok as the main agent
+instead of the thing I bolt onto the side, and the interesting part isn't "is Grok smart" —
+it's what happens to a workflow when the orchestrator changes hands.
+
+**Talking points:**
+- Open with the artifact, not the tool. What shipped, what it does, where it's running.
+  Screen share the actual thing before saying a single model name.
+- Then the swap: Grok Build is xAI's terminal coding agent, same lane as Claude Code and
+  Codex ([launch coverage](https://www.eweek.com/news/xai-grok-build-coding-agent/)). Say
+  plainly what it did well and where it fell over. No scores, no benchmark cosplay — the
+  receipt is the diff and the bill.
+- The operator take: with Grok driving, its own children do the volume work. You don't
+  cross-wire providers mid-loop just because you like one vendor's subagent. Whoever holds
+  the main loop holds the routing.
+- Where it broke. Name the failure honestly — that's the whole reason anyone watches this
+  segment instead of a launch video.
+- Bridge into Segment 1: everything after this is about models getting cheaper and weights
+  going public. This segment is the reminder that the harness is what actually decides
+  whether any of that reaches production.
+
+**Host notes:**
+- Pull up: the shipped artifact first, then the terminal, then the invoice. In that order.
+- Ask Mitchell: what did *you* ship, and did the tool choice change anything or did you just
+  swap logos?
+- Don't pretend: don't turn this into a Grok review. It's a week in the loop, one datapoint.
+- Clip line: **"The model got cheaper. The harness is still the thing that decides if it ships."**
+- Shorts moment (30–60s): the swap-and-break story — "I handed the main loop to Grok, here's
+  the exact place it fell over." Hook is the handoff, payoff is the failure.
 
 ## Segment 1 — Headline: Qwen3.8-Max Comes for Fable, and the Weights Go Public Next Week
 
