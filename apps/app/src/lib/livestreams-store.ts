@@ -10,12 +10,12 @@ import type {
   TopicUpdate,
 } from '@shipshitshow/types';
 import { CONTENT_FIELDS } from '@shipshitshow/types';
-import { list } from '@vercel/blob';
 import {
   createWritableStorageError,
   isBlobPersistenceEnabled,
   isReadOnlyVercelRuntime,
   listAllBlobs,
+  listBlobDates,
   putBlobJson,
   readBlobJson,
 } from '@/lib/blob-storage';
@@ -383,35 +383,6 @@ function listFilesystemLivestreamHistory(): LivestreamHistoryItem[] {
     },
     [],
   );
-}
-
-async function listBlobDates(prefix: string): Promise<string[]> {
-  if (!isBlobPersistenceEnabled()) return [];
-
-  try {
-    const folders = new Set<string>();
-    let cursor: string | undefined;
-
-    do {
-      const result = await list({
-        cursor,
-        mode: 'folded',
-        prefix: `${prefix}/`,
-      });
-      for (const folder of result.folders) {
-        const parts = folder.split('/').filter(Boolean);
-        const date = parts.at(-1);
-        if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
-          folders.add(date);
-        }
-      }
-      cursor = result.hasMore ? result.cursor : undefined;
-    } while (cursor);
-
-    return Array.from(folders);
-  } catch {
-    return [];
-  }
 }
 
 function applyTopicUpdate(topic: Topic, updates: TopicUpdate): Topic {

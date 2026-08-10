@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const ALL_TABS = [
   { label: 'Talking Points', tab: 'talking-points' },
   { label: 'Resources', tab: 'resources' },
+  { label: 'Distribution', tab: 'distribution' },
   { label: 'Transcript', tab: 'transcript' },
 ] as const;
 
@@ -25,7 +26,9 @@ export function LivestreamTabsClient({
     ? 'transcript'
     : pathname.endsWith('/resources')
       ? 'resources'
-      : 'talking-points';
+      : pathname.endsWith('/distribution')
+        ? 'distribution'
+        : 'talking-points';
 
   const pathSlug = encodeURIComponent(streamSlug ?? date);
 

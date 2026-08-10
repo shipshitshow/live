@@ -8,7 +8,7 @@ export function isReadOnlyVercelRuntime(): boolean {
   return Boolean(process.env.VERCEL) && !isBlobPersistenceEnabled();
 }
 
-export function createWritableStorageError(label: string): Error {
+export function createWritableStorageError(label = 'livestream'): Error {
   return new Error(
     `Writable ${label} storage requires BLOB_READ_WRITE_TOKEN on Vercel`,
   );
@@ -61,6 +61,34 @@ export async function listAllBlobs(
     } while (cursor);
 
     return blobs;
+  } catch {
+    return [];
+  }
+}
+export async function listBlobDates(prefix: string): Promise<string[]> {
+  if (!isBlobPersistenceEnabled()) return [];
+
+  try {
+    const folders = new Set<string>();
+    let cursor: string | undefined;
+
+    do {
+      const result = await list({
+        cursor,
+        mode: 'folded',
+        prefix: `${prefix}/`,
+      });
+      for (const folder of result.folders) {
+        const parts = folder.split('/').filter(Boolean);
+        const date = parts.at(-1);
+        if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+          folders.add(date);
+        }
+      }
+      cursor = result.hasMore ? result.cursor : undefined;
+    } while (cursor);
+
+    return Array.from(folders);
   } catch {
     return [];
   }
