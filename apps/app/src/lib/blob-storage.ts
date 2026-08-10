@@ -1,11 +1,5 @@
 import { get, list, put } from '@vercel/blob';
 
-/**
- * Shared Vercel Blob helpers for livestream-scoped storage. Locally the stores
- * fall back to the filesystem; on Vercel they need BLOB_READ_WRITE_TOKEN
- * because the runtime filesystem is read-only.
- */
-
 export function isBlobPersistenceEnabled(): boolean {
   return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
 }
@@ -14,9 +8,9 @@ export function isReadOnlyVercelRuntime(): boolean {
   return Boolean(process.env.VERCEL) && !isBlobPersistenceEnabled();
 }
 
-export function createWritableStorageError(): Error {
+export function createWritableStorageError(label = 'livestream'): Error {
   return new Error(
-    'Writable livestream storage requires BLOB_READ_WRITE_TOKEN on Vercel',
+    `Writable ${label} storage requires BLOB_READ_WRITE_TOKEN on Vercel`,
   );
 }
 
@@ -71,7 +65,6 @@ export async function listAllBlobs(
     return [];
   }
 }
-
 export async function listBlobDates(prefix: string): Promise<string[]> {
   if (!isBlobPersistenceEnabled()) return [];
 

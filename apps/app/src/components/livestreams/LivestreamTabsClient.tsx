@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 const ALL_TABS = [
   { label: 'Talking Points', tab: 'talking-points' },
   { label: 'Resources', tab: 'resources' },
+  { label: 'Distribution', tab: 'distribution' },
   { label: 'X Posts', tab: 'x-posts' },
   { label: 'Transcript', tab: 'transcript' },
 ] as const;

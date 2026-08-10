@@ -16,7 +16,7 @@ import {
   isReadOnlyVercelRuntime,
   putBlobJson,
   readBlobJson,
-} from '@/lib/livestreams-blob';
+} from '@/lib/blob-storage';
 import { getEpisodeXPostsFile } from '@/lib/livestreams-files';
 import {
   fetchXPostMetrics,

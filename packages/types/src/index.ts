@@ -1,6 +1,40 @@
 export type { ErrorResponse, ReauthRequiredResponse } from './api';
 export { isErrorResponse, isReauthRequiredResponse } from './api';
 export type {
+  DistributionAssetPlan,
+  DistributionAssetStatus,
+  DistributionAssetType,
+  DistributionPlatform,
+  EpisodeDistribution,
+  EpisodeDistributionAsset,
+  EpisodeDistributionAssetUpdate,
+  EpisodeDistributionResponse,
+} from './distribution';
+export {
+  DISTRIBUTION_ASSET_STATUSES,
+  DISTRIBUTION_ASSET_TYPES,
+  DISTRIBUTION_PLAN,
+  isDistributionAssetStatus,
+  isDistributionAssetType,
+} from './distribution';
+export type {
+  Lead,
+  LeadEpisodeOption,
+  LeadInput,
+  LeadListResponse,
+  LeadResponse,
+  LeadSource,
+  LeadStatus,
+  LeadUpdate,
+} from './leads';
+export {
+  isLeadSource,
+  isLeadStatus,
+  LEAD_SOURCES,
+  LEAD_STATUSES,
+  UNATTRIBUTED_EPISODE,
+} from './leads';
+export type {
   ContentField,
   LivestreamListResponse,
   Topic,
