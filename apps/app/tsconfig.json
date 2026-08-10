@@ -12,7 +12,8 @@
       {
         "name": "next"
       }
-    ]
+    ],
+    "types": ["node", "bun"]
   },
   "exclude": ["node_modules", ".next", "out"],
   "extends": "../../tsconfig.base.json",

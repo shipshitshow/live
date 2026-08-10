@@ -19,6 +19,7 @@ bun run dev:app       # producer dashboard only
 bun run dev:web       # landing page only
 bun run dev:desktop   # electron app only
 bun run check:types   # typecheck all packages
+bun run test          # bun test across packages
 bun run lint          # biome check
 ```
 

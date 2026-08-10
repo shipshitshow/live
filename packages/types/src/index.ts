@@ -35,6 +35,20 @@ export {
   UNATTRIBUTED_EPISODE,
 } from './leads';
 export type {
+  EpisodeCampaign,
+  EpisodeLinkedInMeasurement,
+  EpisodeUtmClicks,
+  LinkedInAuthor,
+  LinkedInPostEntry,
+  LinkedInPostMetrics,
+  LinkedInPostsUpdate,
+  MetricProvenance,
+  UtmClickCounts,
+  UtmClickStatus,
+  UtmSource,
+} from './linkedin';
+export { LINKEDIN_AUTHORS, UTM_MEDIUM, UTM_SOURCES } from './linkedin';
+export type {
   ContentField,
   LivestreamListResponse,
   Topic,
