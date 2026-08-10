@@ -3,7 +3,12 @@ import path from 'node:path';
 import type { PerformancePlatform } from '@shipshitshow/types';
 import { kv } from '@vercel/kv';
 
-export type SocialTokenPlatform = Exclude<PerformancePlatform, 'youtube'>;
+/**
+ * Platforms whose metrics need a stored OAuth token. YouTube uses its own
+ * token file and X reads with an app-only bearer token (`X_BEARER_TOKEN`), so
+ * neither goes through this store.
+ */
+export type SocialTokenPlatform = Exclude<PerformancePlatform, 'youtube' | 'x'>;
 
 export interface SocialTokenSet {
   accessToken: string;

@@ -62,6 +62,17 @@ export type {
   TrendsSearchResponse,
 } from './trends';
 export type {
+  XApiAvailability,
+  XEpisodeMetrics,
+  XEpisodeMetricsUpdate,
+  XEpisodePost,
+  XEpisodePostInput,
+  XMetricsEntryMode,
+  XPostMetrics,
+  XPostTotals,
+} from './x';
+export { X_EPISODE_POST_SLOTS } from './x';
+export type {
   ChannelFilter,
   ChannelStats,
   CommentReplyDraftResponse,

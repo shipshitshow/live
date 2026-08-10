@@ -22,6 +22,7 @@ const PLATFORM_CONFIG: Record<
 > = {
   instagram: { accent: 'bg-pink-500/20 text-pink-300', label: 'Instagram' },
   tiktok: { accent: 'bg-cyan-400/20 text-cyan-200', label: 'TikTok' },
+  x: { accent: 'bg-slate-400/20 text-slate-200', label: 'X' },
   youtube: { accent: 'bg-purple-500/20 text-purple-300', label: 'YT Shorts' },
 };
 
