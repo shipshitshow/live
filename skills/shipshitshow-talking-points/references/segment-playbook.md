@@ -15,6 +15,17 @@ If a segment cannot produce a receipt, downgrade it to a discussion prompt.
 
 ## Episode Arc Templates
 
+### Problem -> Build -> Artifact (default)
+
+Use for every build episode. This is the house format; the arcs below are variants for episodes that cannot be built.
+
+1. **The problem, in the operator's words.** Who has it, what it costs them, why the obvious fix has not worked. One receipt that it is real: a market number, a first-hand deployment, a bill.
+2. **The build.** What gets made, the decision points, and the parts that fail. Failures stay in — they are the proof the demo is real.
+3. **The demo.** It runs. State plainly what is rough and what running it for real would take: cost per month, who maintains it, where it breaks.
+4. **The artifact.** What is published, where, and who should reach out. The close points at the link.
+
+Segment naming under this arc still follows the claim rule below: `## Talking Points — The Phone Is A Solved Problem Now`, not `## Talking Points — The Build`.
+
 ### Broken Platform -> Replacement -> Systemic Shift
 
 Use for GitHub, SaaS, issue trackers, dev tooling.
@@ -25,10 +36,10 @@ Use for GitHub, SaaS, issue trackers, dev tooling.
 
 ### Launch -> Field Test -> Workflow Rule
 
-Use for new models and tools.
+Use for new models and tools — **as a contained segment inside a build episode, not as an episode arc.** A launch cannot carry an episode; see "Model News Is Never The Spine" in SKILL.md.
 
 1. What launched and what the vendor claims.
-2. What happened when builders used it.
+2. What happened when we used it on the build in this episode.
 3. The new routing or harness rule.
 
 ### Panic -> Reality -> Operator Playbook
@@ -152,21 +163,36 @@ Build prompts that let the second host challenge, not just agree.
 
 Useful host prompts:
 
+- "Where does this break in a real business?"
+- "Would a client pay for this, and how much?"
+- "What would it cost to run this every month?"
+- "Who maintains it after we log off?"
+- "What would you never let it do unsupervised?"
+- "What does the customer notice when it goes wrong?"
 - "Where does this break in a real repo?"
-- "Would you pay for this every day?"
-- "What did the benchmark miss?"
-- "What would you route to this model?"
 - "What would you never trust it with?"
-- "What changed since last week?"
+
+Mitchell's lens is the client and agency side — point his prompts at deliverability, pricing, and maintenance, not at model internals.
 
 ## Close
 
-The close should land the thesis, not summarize every segment.
+The close should land the thesis and point at the artifact. Never summarize every segment.
 
-Default close:
+Default close for a build episode:
+
+```text
+So the problem was [problem].
+It took [honest effort/time] and it costs [honest running cost].
+It's published at [artifact link] — take it.
+If that's your problem too, [reach-out CTA].
+```
+
+Fallback close when an episode genuinely produced no artifact:
 
 ```text
 So the story is not [lazy topic].
 The story is [episode thesis].
-If you build software, [action or warning].
+If you run a business on this, [action or warning].
 ```
+
+An episode taking the fallback close twice in a row is a format failure — flag it rather than shipping it quietly.
