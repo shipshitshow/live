@@ -22,6 +22,46 @@ export function AnalyticsContentSkeleton() {
   );
 }
 
+/**
+ * Shared by the episode rollup's Suspense fallback and its in-card refetch
+ * state, so both spell the same table shape: one wide episode column followed by
+ * the eight surface metrics.
+ */
+export function EpisodeRollupTableSkeleton() {
+  return (
+    <div className="divide-y divide-surface-border/50">
+      {Array.from({ length: 6 }, (_, rowIndex) => (
+        <div key={rowIndex} className="flex items-center gap-4 px-4 py-4">
+          <SkeletonBlock className="h-3 max-w-xs flex-1 rounded-md border-none bg-surface-elevated" />
+          {Array.from({ length: 8 }, (_, cellIndex) => (
+            <SkeletonBlock
+              key={cellIndex}
+              className="h-3 w-10 rounded-md border-none bg-surface-elevated"
+            />
+          ))}
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function EpisodeRollupContentSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="space-y-2">
+          <SkeletonBlock className="h-6 w-48 rounded-md border-none bg-surface-elevated" />
+          <SkeletonBlock className="h-3 w-64 rounded-md border-none bg-surface-elevated" />
+        </div>
+        <SkeletonBlock className="h-9 w-10" />
+      </div>
+      <div className="rounded-xl border border-surface-border bg-surface-card">
+        <EpisodeRollupTableSkeleton />
+      </div>
+    </div>
+  );
+}
+
 export function CommentsContentSkeleton() {
   return (
     <div
@@ -208,6 +248,14 @@ export function AnalyticsPageSkeleton() {
   return (
     <main className="mx-auto max-w-7xl px-6 py-8">
       <AnalyticsContentSkeleton />
+    </main>
+  );
+}
+
+export function EpisodeRollupPageSkeleton() {
+  return (
+    <main className="mx-auto max-w-7xl px-6 py-8">
+      <EpisodeRollupContentSkeleton />
     </main>
   );
 }

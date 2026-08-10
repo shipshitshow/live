@@ -85,6 +85,15 @@ export function extractVideoId(url: string): string | null {
   const liveMatch = url.match(/youtube\.com\/live\/([\w-]+)/);
   if (liveMatch) return liveMatch[1];
 
+  // Shorts and embeds show up in the distribution checklist (#17) as the
+  // published URL for an asset, so the rollup can only join them by ID if they
+  // are parsed here too.
+  const shortsMatch = url.match(/youtube\.com\/shorts\/([\w-]+)/);
+  if (shortsMatch) return shortsMatch[1];
+
+  const embedMatch = url.match(/youtube\.com\/embed\/([\w-]+)/);
+  if (embedMatch) return embedMatch[1];
+
   const shortMatch = url.match(/youtu\.be\/([\w-]+)/);
   return shortMatch?.[1] ?? null;
 }

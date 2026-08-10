@@ -7,6 +7,7 @@ import {
   LayoutGrid,
   MessageSquare,
   Radio,
+  Table2,
   TrendingUp,
 } from 'lucide-react';
 import Link from 'next/link';
@@ -27,6 +28,7 @@ interface NavSection {
 
 const OVERVIEW_ITEMS: NavItemDef[] = [
   { href: '/analytics', icon: BarChart3, label: 'Analytics' },
+  { href: '/analytics/episodes', icon: Table2, label: 'Episodes' },
 ];
 
 const SECTIONS: NavSection[] = [

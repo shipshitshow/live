@@ -1,6 +1,13 @@
 export type { ErrorResponse, ReauthRequiredResponse } from './api';
 export { isErrorResponse, isReauthRequiredResponse } from './api';
 export type {
+  DistributionAsset,
+  DistributionAssetStatus,
+  DistributionAssetType,
+  EpisodeDistribution,
+} from './distribution';
+export { DISTRIBUTION_ASSET_TYPES } from './distribution';
+export type {
   ContentField,
   LivestreamListResponse,
   Topic,
@@ -20,6 +27,21 @@ export type {
   ReviewAction,
 } from './pipeline';
 export type { UnlistedVideo } from './review';
+export type {
+  EpisodeAssetLink,
+  EpisodeMetric,
+  EpisodeRollupResponse,
+  EpisodeRollupRow,
+  FlagshipSurface,
+  LeadsSurface,
+  LinkedInSurface,
+  LivestreamSurface,
+  NotTrackedMetric,
+  NotTrackedReason,
+  ShortsSurface,
+  TrackedMetric,
+  XSurface,
+} from './rollup';
 export type {
   TrendItem,
   TrendSource,
