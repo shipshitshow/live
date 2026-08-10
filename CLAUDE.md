@@ -19,11 +19,12 @@ bun run dev:app       # producer dashboard only
 bun run dev:web       # landing page only
 bun run dev:desktop   # electron app only
 bun run check:types   # typecheck all packages
+bun run test          # bun test across packages
 bun run lint          # biome check
 ```
 
 ## Skills
-- `skills/` — show-specific runtime skills (shipshitshow-talking-points, thumbnails, youtube-metadata, youtube-chapters, livestream-clip-extraction, livestream-intro-hooks)
+- `skills/` — show-specific runtime skills (shipshitshow-talking-points, thumbnails, youtube-metadata, youtube-chapters, livestream-clip-extraction, livestream-intro-hooks, linkedin-pipeline)
 - `.agents/skills/` — dev workflow skills (symlinked to .claude/skills, .codex/skills)
 - `scripts/skills.sh` — skill installer (pulls from github.com/shipshitshow/skills)
 

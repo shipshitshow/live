@@ -1,19 +1,24 @@
 import type {
-  DistributionAsset,
   DistributionAssetType,
   EpisodeAssetLink,
   EpisodeDistribution,
+  EpisodeDistributionAsset,
+  EpisodeLinkedInMeasurement,
   EpisodeMetric,
   EpisodeRollupResponse,
   EpisodeRollupRow,
   NotTrackedReason,
+  XEpisodeMetrics,
 } from '@shipshitshow/types';
 import { todayLocalDate } from '@/lib/date';
 import { readEpisodeDistributions } from '@/lib/distribution-store';
+import { countLeadsByEpisode, listLeads } from '@/lib/leads-store';
+import { getEpisodeLinkedInMeasurement } from '@/lib/linkedin-measurement';
 import {
   type LivestreamArchiveItem,
   listLivestreamArchive,
 } from '@/lib/livestreams-store';
+import { listEpisodeXMetrics } from '@/lib/livestreams-x-posts';
 import { extractVideoId } from '@/lib/livestreams-youtube';
 import {
   fetchVideoReachMetrics,
@@ -34,13 +39,13 @@ import {
  * YouTube video IDs are parsed back out of them and matched against the Data and
  * Analytics APIs.
  *
- * Only YouTube-backed columns can report numbers today. X, LinkedIn and leads
- * stay not-tracked until their ingestion issues land, and per epic #9 that state
- * is reported honestly rather than rendered as zero.
+ * Each platform integration keeps unknown data as null. The rollup converts a
+ * real measured zero to `tracked(0)` and every missing value to a not-tracked
+ * reason, preserving epic #9's no-zero-faking contract.
  */
 
 /** An asset the checklist marks as live, narrowed so `url` is non-null. */
-type PublishedAsset = DistributionAsset & { url: string };
+type PublishedAsset = EpisodeDistributionAsset & { url: string };
 
 interface YouTubeVideoMetrics {
   views: number;
@@ -85,6 +90,34 @@ function toAssetLinks(assets: PublishedAsset[]): EpisodeAssetLink[] {
         : ASSET_LABELS[asset.type]),
     url: asset.url,
   }));
+}
+
+function mergeAssetLinks(...groups: EpisodeAssetLink[][]): EpisodeAssetLink[] {
+  const byUrl = new Map<string, EpisodeAssetLink>();
+  for (const group of groups) {
+    for (const link of group) {
+      if (!byUrl.has(link.url)) byUrl.set(link.url, link);
+    }
+  }
+  return Array.from(byUrl.values());
+}
+
+function toXAssetLinks(
+  metrics: XEpisodeMetrics | undefined,
+): EpisodeAssetLink[] {
+  return (metrics?.posts ?? []).flatMap((post, index) =>
+    post.url ? [{ label: `X post ${index + 1}`, url: post.url }] : [],
+  );
+}
+
+function toLinkedInAssetLinks(
+  measurement: EpisodeLinkedInMeasurement | undefined,
+): EpisodeAssetLink[] {
+  return (measurement?.posts ?? []).flatMap((post, index) =>
+    post.postUrl
+      ? [{ label: `LinkedIn post ${index + 1}`, url: post.postUrl }]
+      : [],
+  );
 }
 
 /**
@@ -221,7 +254,10 @@ function getLivestreamAssets(
 
   return [
     {
-      label: null,
+      id: 'livestream-fallback-1',
+      isOptional: false,
+      label: 'Livestream',
+      platform: 'youtube',
       publishedAt: null,
       status: 'published',
       type: 'livestream',
@@ -235,6 +271,9 @@ function buildRow(
   distribution: EpisodeDistribution | undefined,
   metrics: Map<string, YouTubeVideoMetrics>,
   isYouTubeConnected: boolean,
+  xMetrics: XEpisodeMetrics | undefined,
+  linkedinMeasurement: EpisodeLinkedInMeasurement | undefined,
+  leadCount: number,
 ): EpisodeRollupRow {
   const hasChecklist = distribution !== undefined;
 
@@ -254,13 +293,29 @@ function buildRow(
   const livestreamMetrics = findMetrics(livestreamAssets, metrics);
   const shortMetrics = collectMetrics(shortAssets, metrics);
 
-  // X and LinkedIn ingestion has not landed, so it is never available yet.
-  const xMissing = resolveNotTrackedReason(hasChecklist, xAssets.length, false);
+  const xAssetLinks = mergeAssetLinks(
+    toAssetLinks(xAssets),
+    toXAssetLinks(xMetrics),
+  );
+  const linkedinAssetLinks = mergeAssetLinks(
+    toAssetLinks(linkedinAssets),
+    toLinkedInAssetLinks(linkedinMeasurement),
+  );
+  const xMissing = resolveNotTrackedReason(
+    hasChecklist,
+    xAssetLinks.length,
+    true,
+  );
   const linkedinMissing = resolveNotTrackedReason(
     hasChecklist,
-    linkedinAssets.length,
-    false,
+    linkedinAssetLinks.length,
+    true,
   );
+  const xImpressions = xMetrics?.totals.impressions;
+  const linkedinClicks =
+    linkedinMeasurement?.utmClicks.status === 'ok'
+      ? linkedinMeasurement.utmClicks.clicks?.linkedin
+      : undefined;
 
   return {
     date: episode.date,
@@ -283,12 +338,13 @@ function buildRow(
       ),
     },
     href: buildEpisodeHref(episode),
-    // The lead log has no ingestion yet, so leads is never an asset count — it
-    // is always the integration that is missing.
-    leads: { count: notTracked('no_integration') },
+    leads: { count: tracked(leadCount) },
     linkedin: {
-      assets: toAssetLinks(linkedinAssets),
-      clicks: notTracked(linkedinMissing),
+      assets: linkedinAssetLinks,
+      clicks:
+        linkedinClicks === undefined
+          ? notTracked(linkedinMissing)
+          : tracked(linkedinClicks),
     },
     livestream: {
       assets: toAssetLinks(livestreamAssets),
@@ -316,8 +372,11 @@ function buildRow(
     },
     title: episode.title,
     x: {
-      assets: toAssetLinks(xAssets),
-      impressions: notTracked(xMissing),
+      assets: xAssetLinks,
+      impressions:
+        xImpressions === null || xImpressions === undefined
+          ? notTracked(xMissing)
+          : tracked(xImpressions),
     },
   };
 }
@@ -335,9 +394,21 @@ export async function buildEpisodeRollup(): Promise<EpisodeRollupResponse> {
     return { episodes: [], generatedAt, isYouTubeConnected };
   }
 
-  const distributions = await readEpisodeDistributions(
-    episodes.map((episode) => episode.date),
+  const dates = episodes.map((episode) => episode.date);
+  const [distributions, xMetrics, linkedinMeasurements, leads] =
+    await Promise.all([
+      readEpisodeDistributions(dates),
+      listEpisodeXMetrics(dates),
+      Promise.all(dates.map(getEpisodeLinkedInMeasurement)),
+      listLeads(),
+    ]);
+  const xMetricsByDate = new Map(
+    xMetrics.map((entry) => [entry.date, entry] as const),
   );
+  const linkedinByDate = new Map(
+    linkedinMeasurements.map((entry) => [entry.date, entry] as const),
+  );
+  const leadsByEpisode = countLeadsByEpisode(leads);
 
   const videoIds = new Set<string>();
   for (const episode of episodes) {
@@ -365,6 +436,9 @@ export async function buildEpisodeRollup(): Promise<EpisodeRollupResponse> {
         distributions.get(episode.date),
         metrics,
         isYouTubeConnected,
+        xMetricsByDate.get(episode.date),
+        linkedinByDate.get(episode.date),
+        leadsByEpisode[episode.date] ?? 0,
       ),
     ),
     generatedAt,

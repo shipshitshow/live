@@ -1,5 +1,6 @@
 export { Button, buttonVariants } from './button';
 export { cn } from './cn';
+export { Input } from './input';
 export {
   Select,
   SelectContent,

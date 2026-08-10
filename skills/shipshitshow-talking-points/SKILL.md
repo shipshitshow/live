@@ -1,24 +1,25 @@
 ---
 name: shipshitshow-talking-points
-description: Build Ship Shit Show brand voice, hooks, episode segments, talking points, cold opens, transitions, show prep, source-attached reaction decks, and host-ready commentary from transcripts, topic files, and AI/dev-tool research. Use when defining the show's tone, rewriting livestream/topic prep, creating segment structure, sharpening openings, attaching links/clips/hot takes to topics, or turning raw sources into Ship Shit Show talking points.
+description: Build Ship Shit Show brand voice, hooks, episode segments, talking points, cold opens, transitions, show prep, live-build rundowns, source-attached reaction decks, and host-ready commentary from transcripts, topic files, business-problem briefs, and AI/dev-tool research. Use when defining the show's tone, rewriting livestream/topic prep, structuring a build episode, creating segment structure, sharpening openings, attaching links/clips/hot takes to topics, or turning raw sources into Ship Shit Show talking points.
 ---
 
 # Ship Shit Show Talking Points
 
-Use this skill to turn AI/dev-tool research into host-ready Ship Shit Show segments that sound like Vincent live, not like vendor-analysis markdown.
+Use this skill to turn a business problem — plus whatever research and tooling it takes to solve it — into a host-ready Ship Shit Show build episode that sounds like Vincent live, not like vendor-analysis markdown.
 
 ## Quick Start
 
 1. Load the current topic file, usually `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`.
-2. Run `scripts/show-context.sh <topic-file>` from this skill to inspect transcript coverage and nearby prep.
-3. Run `scripts/extract-live-voice.sh` to sample recent transcript lines before writing tone-sensitive sections.
-4. Read `references/live-voice-extraction.md` when the user asks for Vincent's voice, less robotic copy, better talking points, or more natural live phrasing.
-5. Read `references/brand-voice.md` when the task involves tone, brand, cold opens, or rewrites.
-6. Read `references/segment-playbook.md` when building an episode arc, segment order, transitions, or talking points.
-7. Read `references/content-quality-gate.md` when judging whether a transcript, topic, or episode is worth publishing.
-8. Write output in paste-ready markdown, preserving existing topic frontmatter and source URLs.
+2. Fill the four **Episode Spine** beats below before writing any segment. If the brief is a model launch, convert it first — see "Model News Is Never The Spine".
+3. Run `scripts/show-context.sh <topic-file>` from this skill to inspect transcript coverage and nearby prep.
+4. Run `scripts/extract-live-voice.sh` to sample recent transcript lines before writing tone-sensitive sections.
+5. Read `references/live-voice-extraction.md` when the user asks for Vincent's voice, less robotic copy, better talking points, or more natural live phrasing.
+6. Read `references/brand-voice.md` when the task involves tone, brand, cold opens, or rewrites.
+7. Read `references/segment-playbook.md` when building an episode arc, segment order, transitions, or talking points.
+8. Read `references/content-quality-gate.md` when judging whether a transcript, topic, or episode is worth publishing.
+9. Write output in paste-ready markdown, preserving existing topic frontmatter and source URLs.
 
-When the user says they will react live, wants links attached to the topic, or says they will not read a script, use **Live Reaction Prep Mode** below. In that mode, the topic file is a pull-up deck: each segment carries its own links, clip cues, hot takes, demo targets, and host prompts directly in the visible talking points.
+The **build episode is the default**. When the user says they will react live, wants links attached to the topic, or says they will not read a script, use **Live Reaction Prep Mode** below — but a reaction episode still opens on a problem and still owes an artifact wherever one is possible. In that mode, the topic file is a pull-up deck: each segment carries its own links, clip cues, hot takes, demo targets, and host prompts directly in the visible talking points.
 
 ## Source Priority
 
@@ -34,15 +35,62 @@ Do not invent dates, metrics, benchmarks, quotes, launches, outages, or money nu
 
 ## Brand Thesis
 
-Ship Shit Show is not generic AI news. It is two builders stress-testing the new software economy in public.
+Ship Shit Show is not AI news. It is two builders taking a real business problem and solving it live, then publishing the thing they built.
 
 Core point of view:
 
 - AI is not a feature wave. It is a labor, cost, and software-production reset.
-- The useful question is not "is this impressive?" It is "what does this change in the workflow?"
-- Models matter less than harnesses, routing, agents, context, cost, and trust.
-- Legacy software does not vanish overnight. It becomes a rewrite target.
+- The useful question is not "is this impressive?" It is "what business problem does this now solve, and what does it cost to run?"
+- Models matter less than the problem, the workflow around them, and whether the result survives contact with a real operator.
+- The proof is the artifact. An episode that ends without something publishable is an episode that did not happen.
 - The audience wants operator truth: what broke, what worked, what costs money, what ships.
+
+### Who is watching
+
+The viewer is a professional who runs or works in a normal business — agency owner, operations lead, founder, technical decision-maker. They want AI outcomes and do not follow AI news. They will hire whoever demonstrates competence in language they understand.
+
+They are **not** the AI-native developer who can already build everything on the stream. That viewer is welcome, but the episode is not designed for them, and topics chosen for their approval are the failure mode this format exists to prevent.
+
+## Episode Spine
+
+Every episode runs on the same four beats. If a prep doc cannot fill all four, the topic is not ready.
+
+1. **Problem** — a business problem stated the way the person with the problem would state it. "Calls go unanswered and the business loses the job", not "voice agent orchestration".
+2. **Build** — the thing gets built live, in the open, including the parts that fail. The failure is content, not an embarrassment to edit around.
+3. **Demo** — it runs. Show the working result and say plainly what is rough and what it would take to run for real.
+4. **Artifact + CTA** — something publishable exists at the end (repo, template, playbook, deployed demo) and the close points at it plus "reach out if this is your problem".
+
+Map the spine onto capsules: usually one capsule for problem framing, two to three for the build, one for the demo and what it would cost to run.
+
+### Model News Is Never The Spine
+
+A model release, benchmark, price change, or timeline drama is **never** the episode topic. It can be:
+
+- the **tool** the build uses ("we built this with Anthropic's newest model, Claude Fable 5"), or
+- a contained **reaction segment** of roughly five minutes, one capsule maximum, placed after the build.
+
+It can never be the problem, the thesis, or the title. If a brief arrives that is only a model launch, convert it: find the business problem that release now makes solvable, and build that. If no such problem exists, the release is a reaction segment inside an episode about something else.
+
+This rule exists because model-launch episodes select for an audience that will never become a customer. Prior episodes titled after model versions are the pattern being replaced — do not reproduce them.
+
+## Say It In Plain Language
+
+The show is clipped and distributed to people outside the AI bubble. A clip full of insider shorthand is unusable no matter how good the take is.
+
+On air:
+
+- **Spell out every name on first mention, then simplify.** "Claude Fable 5, Anthropic's newest model" → afterwards just "the model". Never open with a bare version number: "4.8", "4.6", "K2", "Sol".
+- **Translate the vocabulary** the first time it appears: a connector that lets the AI drive our tools (not "MCP"), the AI running multi-step work on its own (not "agentic"), we took the open-source code and built on top of it (not "we forked it"), usage costs (not "token spend").
+- Once a term has been introduced properly, use it freely — the rule is about first contact, not permanent avoidance.
+- Write `### Host Notes` reminders where a segment is likely to drift into shorthand.
+
+Swearing stays as-is for the show itself. The LinkedIn register is different and is owned by a separate skill — see below.
+
+## Distribution Copy Is A Separate Skill
+
+This skill owns the spoken show: segments, talking points, cold opens, hot takes, closes.
+
+LinkedIn post sets, the buyer-register rewrite, and the UTM link convention are owned by the `linkedin-pipeline` skill. Do not draft LinkedIn copy from here — invoke that skill after the episode. Announcement tweets and paste-live tweets stay here as production artifacts in Ressources sections.
 
 ## Thumbnails Are a Separate Skill
 
@@ -228,21 +276,23 @@ One sentence that says what this source cluster proves.
 
 Use this first-45-seconds structure:
 
-1. **Claim:** Say the uncomfortable thesis immediately.
-2. **Receipt:** Give one concrete proof point.
-3. **Stakes:** Explain what changes for builders, devs, founders, or agent workflows.
-4. **Promise:** Say what the stream will prove, build, compare, or tear down.
+1. **Problem:** Name the business problem in the viewer's own words.
+2. **Receipt:** Give one concrete proof it is real and expensive — a number, a market signal, a first-hand story.
+3. **Stakes:** Say what it costs the business to keep living with it.
+4. **Promise:** Say what gets built on this stream and that it ships publicly by the end.
 5. **Turn:** Bridge cleanly into the first segment.
 
 Default shape:
 
 ```text
-Everyone thinks [lazy take].
-But [specific receipt] means [sharper interpretation].
-If you build software, this changes [workflow/cost/trust].
-So today we're going to [stream promise].
+[Business problem stated plainly].
+[Receipt: number, cost, or first-hand story].
+Every week that stays broken, it costs [stake].
+So today we're building [the thing], live, and publishing it before we log off.
 Let's go.
 ```
+
+Reaction-heavy episodes may still use the older claim-first hook shapes in `references/segment-playbook.md`, but the build episode is the default and its hook opens on the problem, never on a launch.
 
 ## Editing Rules
 
@@ -250,7 +300,8 @@ Let's go.
 - Cut stream logistics, greetings, audio checks, retweeting, and "are we live?"
 - Keep banter as seasoning after the hook, not before it.
 - Make every segment prove one thing.
-- Prefer hard nouns over hype adjectives: bill, queue, harness, PR, outage, benchmark, token, agent, margin.
+- Prefer hard nouns over hype adjectives: bill, queue, missed call, invoice, headcount, outage, margin, hourly rate.
+- Translate insider shorthand on first mention (see "Say It In Plain Language"). If a bullet only makes sense to someone who reads AI Twitter, rewrite it for the operator.
 - Use swearing rarely and only when it releases real tension.
 - Keep the French/Dutch/European roughness as rhythm, but remove filler that blocks the point.
 - Do a final Vincent voice pass: shorter sentences, more "okay, so", more "what are you doing?", more "it works until it doesn't", fewer polished consulting phrases.
@@ -262,8 +313,13 @@ Let's go.
 
 Before finalizing:
 
-- Topic is named in the first 10 seconds.
+- The business problem is named in the first 10 seconds, in the viewer's language.
 - The cold open contains one receipt and one stake.
+- All four spine beats are present: problem, build, demo, artifact + CTA.
+- The prep names the artifact that will exist at the end and where it gets published.
+- The close contains a CTA — the artifact link plus a reason to reach out.
+- No model release is carrying the episode thesis or title.
+- Every insider term has a spelled-out first mention; no bare version numbers anywhere in the spoken lines.
 - Every segment has a claim, receipt, operator take, and transition.
 - There is at least one clip line per segment.
 - The output sounds like two builders who actually use the tools, not a news recap.

@@ -7,7 +7,7 @@ export interface ChannelStats {
 }
 
 export type VideoType = 'video' | 'short' | 'livestream';
-export type PerformancePlatform = 'youtube' | 'instagram' | 'tiktok';
+export type PerformancePlatform = 'youtube' | 'instagram' | 'tiktok' | 'x';
 
 export interface VideoStats {
   video_id: string;
@@ -32,7 +32,8 @@ export interface VideoStats {
 export interface SocialPlatformStatus {
   connected: boolean;
   error?: string;
-  platform: Exclude<PerformancePlatform, 'youtube'>;
+  /** X reads with an app-only bearer token, so it has no connect flow. */
+  platform: Exclude<PerformancePlatform, 'youtube' | 'x'>;
 }
 
 export interface DailyMetric {

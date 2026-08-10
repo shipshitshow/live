@@ -4,6 +4,7 @@ import path from 'node:path';
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
 const DRAWINGS_DIR = 'drawings';
+const X_POSTS_FILE = 'x-posts.json';
 
 export function findTopicFile(slug: string, date: string): string | null {
   const dir = path.join(DATA_DIR, date);
@@ -29,6 +30,11 @@ export function getTopicDrawingFile(slug: string, date: string): string | null {
     DRAWINGS_DIR,
     `${slug}.excalidraw.json`,
   );
+}
+
+/** Episode-level X author-post metrics live next to that date's topic files. */
+export function getEpisodeXPostsFile(date: string): string {
+  return path.join(DATA_DIR, date, X_POSTS_FILE);
 }
 
 export function ensureTopicDrawingDir(

@@ -1,146 +1,227 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import type {
-  DistributionAsset,
   DistributionAssetStatus,
   DistributionAssetType,
   EpisodeDistribution,
+  EpisodeDistributionAsset,
+  EpisodeDistributionAssetUpdate,
 } from '@shipshitshow/types';
-import { DISTRIBUTION_ASSET_TYPES } from '@shipshitshow/types';
-import { get } from '@vercel/blob';
-
-/**
- * Read side of the per-episode distribution checklist (#17).
- *
- * The rollup (#18) shipped first, so this module exists to consume checklist
- * records the moment they appear — from the filesystem in dev and Vercel Blob in
- * production, mirroring `livestreams-store.ts`. It is deliberately read-only:
- * the checklist UI and its write path belong to #17, and keeping the write side
- * out of here leaves that issue a clean surface to land on.
- *
- * Every parse is defensive. A malformed or absent record degrades to `null`, and
- * the rollup renders those surfaces as not-tracked rather than as zeros.
- */
+import {
+  DISTRIBUTION_PLAN,
+  isDistributionAssetStatus,
+  isDistributionAssetType,
+} from '@shipshitshow/types';
+import {
+  createWritableStorageError,
+  isBlobPersistenceEnabled,
+  isReadOnlyVercelRuntime,
+  putBlobJson,
+  readBlobJson,
+} from '@/lib/blob-storage';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
-const DISTRIBUTION_FILE = 'distribution.json';
 const BLOB_DISTRIBUTION_PREFIX = 'livestream/distribution';
+const DISTRIBUTION_FILE_NAME = 'distribution.json';
 
-const ASSET_STATUSES: DistributionAssetStatus[] = [
-  'pending',
-  'published',
-  'skipped',
-];
+/**
+ * Persisted shape. Only the producer-owned fields are stored — labels,
+ * platform and optionality are re-derived from `DISTRIBUTION_PLAN` on read so
+ * plan copy changes apply to every saved episode.
+ */
+interface StoredDistributionAsset {
+  id: string;
+  type: DistributionAssetType;
+  status: DistributionAssetStatus;
+  url: string | null;
+  publishedAt: string | null;
+}
 
-function isBlobPersistenceEnabled(): boolean {
-  return Boolean(process.env.BLOB_READ_WRITE_TOKEN);
+interface StoredEpisodeDistribution {
+  assets: StoredDistributionAsset[];
+  updatedAt: string;
 }
 
 function getBlobDistributionPath(date: string): string {
   return `${BLOB_DISTRIBUTION_PREFIX}/${date}.json`;
 }
 
-function getFilesystemDistributionPath(date: string): string {
-  return path.join(DATA_DIR, date, DISTRIBUTION_FILE);
+function getDistributionFilePath(date: string): string {
+  return path.join(DATA_DIR, date, DISTRIBUTION_FILE_NAME);
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
+export function buildAssetId(
+  type: DistributionAssetType,
+  slot: number,
+): string {
+  return `${type}-${slot}`;
 }
 
-function asNullableString(value: unknown): string | null {
-  return typeof value === 'string' && value.length > 0 ? value : null;
-}
-
-function parseAsset(value: unknown): DistributionAsset | null {
-  if (!isRecord(value)) return null;
-
-  const type = value.type;
-  if (
-    typeof type !== 'string' ||
-    !DISTRIBUTION_ASSET_TYPES.includes(type as DistributionAssetType)
-  ) {
-    return null;
-  }
-
-  const status = value.status;
-  const parsedStatus =
-    typeof status === 'string' &&
-    ASSET_STATUSES.includes(status as DistributionAssetStatus)
-      ? (status as DistributionAssetStatus)
-      : 'pending';
-
-  return {
-    label: asNullableString(value.label),
-    publishedAt: asNullableString(value.publishedAt),
-    status: parsedStatus,
-    type: type as DistributionAssetType,
-    url: asNullableString(value.url),
-  };
-}
-
-function parseDistribution(
-  date: string,
+function isStoredDistributionAsset(
   value: unknown,
-): EpisodeDistribution | null {
-  if (!isRecord(value)) return null;
+): value is StoredDistributionAsset {
+  if (typeof value !== 'object' || value === null) return false;
 
-  const rawAssets = Array.isArray(value.assets) ? value.assets : [];
-  const assets = rawAssets
-    .map(parseAsset)
-    .filter((asset): asset is DistributionAsset => asset !== null);
+  const asset = value as Partial<StoredDistributionAsset>;
+  return (
+    typeof asset.id === 'string' &&
+    isDistributionAssetType(asset.type) &&
+    isDistributionAssetStatus(asset.status) &&
+    (asset.url === null || typeof asset.url === 'string') &&
+    (asset.publishedAt === null || typeof asset.publishedAt === 'string')
+  );
+}
 
-  if (assets.length === 0) return null;
+function parseStored(value: unknown): StoredEpisodeDistribution | null {
+  if (typeof value !== 'object' || value === null) return null;
+
+  const stored = value as Partial<StoredEpisodeDistribution>;
+  if (!Array.isArray(stored.assets)) return null;
 
   return {
-    assets,
-    date: asNullableString(value.date) ?? date,
-    updatedAt: asNullableString(value.updatedAt),
+    assets: stored.assets.filter(isStoredDistributionAsset),
+    updatedAt:
+      typeof stored.updatedAt === 'string'
+        ? stored.updatedAt
+        : new Date(0).toISOString(),
   };
 }
 
-function readFilesystemDistribution(date: string): EpisodeDistribution | null {
-  try {
-    const filePath = getFilesystemDistributionPath(date);
-    if (!fs.existsSync(filePath)) return null;
+function readFilesystemDistribution(
+  date: string,
+): StoredEpisodeDistribution | null {
+  const filePath = getDistributionFilePath(date);
+  if (!fs.existsSync(filePath)) return null;
 
-    return parseDistribution(
-      date,
-      JSON.parse(fs.readFileSync(filePath, 'utf-8')),
-    );
+  try {
+    return parseStored(JSON.parse(fs.readFileSync(filePath, 'utf-8')));
   } catch {
     return null;
   }
 }
 
-async function readBlobDistribution(
+async function readStoredDistribution(
   date: string,
-): Promise<EpisodeDistribution | null> {
-  if (!isBlobPersistenceEnabled()) return null;
-
-  try {
-    const result = await get(getBlobDistributionPath(date), {
-      access: 'private',
-      useCache: false,
-    });
-    if (!result || result.statusCode !== 200) return null;
-
-    const text = await new Response(result.stream).text();
-    return parseDistribution(date, JSON.parse(text));
-  } catch {
-    return null;
+): Promise<StoredEpisodeDistribution | null> {
+  if (!isBlobPersistenceEnabled()) {
+    return readFilesystemDistribution(date);
   }
+
+  const blob = await readBlobJson<unknown>(getBlobDistributionPath(date));
+  return blob ? parseStored(blob.data) : null;
+}
+
+async function writeStoredDistribution(
+  date: string,
+  stored: StoredEpisodeDistribution,
+): Promise<void> {
+  if (isReadOnlyVercelRuntime()) {
+    throw createWritableStorageError();
+  }
+
+  if (!isBlobPersistenceEnabled()) {
+    const filePath = getDistributionFilePath(date);
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, `${JSON.stringify(stored, null, 2)}\n`, 'utf-8');
+    return;
+  }
+
+  await putBlobJson(getBlobDistributionPath(date), stored);
+}
+
+function buildPlanAssets(): StoredDistributionAsset[] {
+  return DISTRIBUTION_PLAN.flatMap((plan) =>
+    Array.from({ length: plan.slotCount }, (_unused, index) => ({
+      id: buildAssetId(plan.type, index + 1),
+      publishedAt: null,
+      status: 'pending' as DistributionAssetStatus,
+      type: plan.type,
+      url: null,
+    })),
+  );
+}
+
+function toEpisodeAsset(
+  stored: StoredDistributionAsset,
+  slot: number,
+  slotCount: number,
+): EpisodeDistributionAsset {
+  const plan = DISTRIBUTION_PLAN.find((entry) => entry.type === stored.type);
+
+  return {
+    id: stored.id,
+    isOptional: plan?.isOptional ?? true,
+    label:
+      slotCount > 1
+        ? `${plan?.label ?? stored.type} ${slot}`
+        : (plan?.label ?? stored.type),
+    platform: plan?.platform ?? 'web',
+    publishedAt: stored.publishedAt,
+    status: stored.status,
+    type: stored.type,
+    url: stored.url,
+  };
 }
 
 /**
- * Blob wins over the filesystem: the checklist is edited in the dashboard, and
- * those edits land in blob storage while the filesystem copy is seed data.
+ * Merge the current plan with what is stored. Plan slots always appear (so a
+ * new asset type shows up on old episodes as pending) and stored assets the
+ * plan no longer defines are kept, because their URLs are already joined
+ * against by downstream metric rollups.
+ */
+function mergeWithPlan(
+  stored: StoredEpisodeDistribution | null,
+): StoredDistributionAsset[] {
+  const storedById = new Map(
+    (stored?.assets ?? []).map((asset) => [asset.id, asset]),
+  );
+  const planAssets = buildPlanAssets();
+  const planIds = new Set(planAssets.map((asset) => asset.id));
+
+  const merged = planAssets.map((asset) => storedById.get(asset.id) ?? asset);
+  const extras = (stored?.assets ?? []).filter(
+    (asset) => !planIds.has(asset.id),
+  );
+
+  return [...merged, ...extras];
+}
+
+function toEpisodeDistribution(
+  date: string,
+  assets: StoredDistributionAsset[],
+  updatedAt: string | null,
+): EpisodeDistribution {
+  const slotCounts = new Map<DistributionAssetType, number>();
+  for (const asset of assets) {
+    slotCounts.set(asset.type, (slotCounts.get(asset.type) ?? 0) + 1);
+  }
+
+  const slotByType = new Map<DistributionAssetType, number>();
+
+  return {
+    assets: assets.map((asset) => {
+      const slot = (slotByType.get(asset.type) ?? 0) + 1;
+      slotByType.set(asset.type, slot);
+      return toEpisodeAsset(asset, slot, slotCounts.get(asset.type) ?? 1);
+    }),
+    date,
+    updatedAt,
+  };
+}
+
+/**
+ * Read only an existing checklist. Unlike `getEpisodeDistribution`, this
+ * returns null when an episode has never been saved so analytics can distinguish
+ * "no checklist" from a checklist whose assets are still pending.
  */
 export async function readEpisodeDistribution(
   date: string,
 ): Promise<EpisodeDistribution | null> {
-  return (await readBlobDistribution(date)) ?? readFilesystemDistribution(date);
+  const stored = await readStoredDistribution(date);
+  return stored
+    ? toEpisodeDistribution(date, mergeWithPlan(stored), stored.updatedAt)
+    : null;
 }
 
 export async function readEpisodeDistributions(
@@ -152,9 +233,74 @@ export async function readEpisodeDistributions(
     ),
   );
 
-  const byDate = new Map<string, EpisodeDistribution>();
-  for (const [date, distribution] of entries) {
-    if (distribution) byDate.set(date, distribution);
+  return new Map(
+    entries.filter(
+      (entry): entry is readonly [string, EpisodeDistribution] =>
+        entry[1] !== null,
+    ),
+  );
+}
+
+export async function getEpisodeDistribution(
+  date: string,
+): Promise<EpisodeDistribution> {
+  const stored = await readStoredDistribution(date);
+  return toEpisodeDistribution(
+    date,
+    mergeWithPlan(stored),
+    stored?.updatedAt ?? null,
+  );
+}
+
+function applyAssetUpdate(
+  asset: StoredDistributionAsset,
+  update: EpisodeDistributionAssetUpdate,
+  now: string,
+): StoredDistributionAsset {
+  const next: StoredDistributionAsset = { ...asset };
+
+  if (update.url !== undefined) {
+    next.url = update.url;
   }
-  return byDate;
+
+  if (update.status !== undefined) {
+    next.status = update.status;
+  }
+
+  // The publish timestamp is derived, never client-supplied: stamp it on the
+  // transition into `published` and drop it when the asset leaves that state.
+  if (next.status === 'published') {
+    next.publishedAt = asset.publishedAt ?? now;
+  } else {
+    next.publishedAt = null;
+  }
+
+  return next;
+}
+
+export async function saveEpisodeDistributionAsset(
+  date: string,
+  assetId: string,
+  update: EpisodeDistributionAssetUpdate,
+): Promise<EpisodeDistribution | null> {
+  if (isReadOnlyVercelRuntime()) {
+    throw createWritableStorageError();
+  }
+
+  const stored = await readStoredDistribution(date);
+  const assets = mergeWithPlan(stored);
+  const index = assets.findIndex((asset) => asset.id === assetId);
+  if (index === -1) return null;
+
+  const now = new Date().toISOString();
+  assets[index] = applyAssetUpdate(assets[index], update, now);
+
+  const nextStored: StoredEpisodeDistribution = { assets, updatedAt: now };
+  await writeStoredDistribution(date, nextStored);
+
+  return toEpisodeDistribution(date, assets, now);
+}
+
+export function isDistributionWritable(): boolean {
+  return !isReadOnlyVercelRuntime();
 }

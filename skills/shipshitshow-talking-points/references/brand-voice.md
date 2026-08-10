@@ -2,7 +2,7 @@
 
 ## Positioning
 
-Ship Shit Show is operator commentary for people building software with AI every day.
+Ship Shit Show is two builders solving a real business problem live with AI, then publishing what they built.
 
 The show is not:
 
@@ -11,40 +11,43 @@ The show is not:
 - benchmark reading
 - SaaS founder theater
 - generic dev news
+- a model-launch reaction channel
 
 The show is:
 
-- two builders trying the tools before judging them
-- blunt analysis of what changes in real workflows
-- cost-aware, agent-aware, repo-aware, founder-aware
+- two builders shipping something that works, on air, including the parts that break
+- blunt about what it costs to build and what it costs to run
 - funny because the reality is absurd, not because jokes are forced
 - willing to say the useful impolite thing
+
+The viewer is a professional who wants AI outcomes and does not follow AI news. Developers are welcome; they are not who the episode is designed for. See "Who is watching" in SKILL.md.
 
 ## Audience Promise
 
 Viewers should leave with one of these:
 
-- a workflow they can copy
-- a model/tool judgment they can use
-- a sharper way to think about AI and software
+- a working artifact they can take and run
+- an approach they can copy for their own business problem
+- an honest cost and maintenance picture for that kind of build
 - a concrete risk they should stop ignoring
-- a clip-worthy line that explains the week in AI/dev tools
+- a clip-worthy line that survives being watched by someone outside the AI bubble
 
 ## Core Beliefs
 
-- The model is not the product. The harness is.
-- Cheaper per task is not the same as cheaper per token.
-- Every pre-AI codebase is a pile of undiscovered bug reports.
-- Issue trackers are becoming API surfaces for agents.
+- The model is not the product. The thing you built with it is.
+- A demo nobody can run is a screenshot with extra steps.
+- Cheaper per task is not the same as cheaper per token. The monthly bill is the real spec.
+- Most business problems worth solving are boring, expensive, and already costing someone money today.
 - Software companies are not dying because software is useless. They are dying because the old wrapper is expensive.
-- AI does not need everyone to agree. It only needs enough builders to keep shipping.
-- Trust is the bottleneck after capability: secrets, merges, hallucinated fixes, fake stars, broken CI, silent reversions.
+- Nobody buys the model. They buy the missed call that stops being missed.
+- Trust is the bottleneck after capability: who maintains it, what it does unsupervised, what the customer sees when it breaks.
 
 ## Voice Attributes
 
 - **Blunt:** Lead with the conclusion.
-- **Operator-first:** Tie everything to shipping, cost, reliability, or workflow.
-- **Specific:** Use named tools, dates, numbers, repos, prompts, bills, incidents.
+- **Business-first:** Tie everything to a cost, a customer, a bill, or a job someone is paid to do.
+- **Plain:** Say it the way the person with the problem would say it. Spell out every term on first use.
+- **Specific:** Use named tools, dates, numbers, bills, incidents, and what the build actually cost.
 - **Skeptical:** Challenge vendor narratives and timeline consensus.
 - **Self-aware:** Admit when the tools are broken, expensive, or ridiculous.
 - **Fast-moving:** "This was true last week" is a recurring frame.
@@ -87,6 +90,15 @@ Use only when the transcript/topic has actual first-hand usage.
 We tried it all week. Real repos. Real bills. Real failures.
 ```
 
+### We Built It, Here It Is
+
+The house move. Use in the demo and the close of every build episode.
+
+```text
+That is the problem. Here is the thing we built for it.
+It runs, it costs [amount] a month, and it is published at [link].
+```
+
 ### Corporate Story vs Builder Reality
 
 Use for announcements and launches.
@@ -98,12 +110,14 @@ The builder reality is [workflow consequence].
 
 ## Good Ship Shit Lines
 
-- "The model is not the product. The harness is."
-- "GitHub is now just the input queue. Codex is the output machine."
-- "A giant context window is not permission to stop thinking."
-- "You can ship the smartest model on Earth and still nerf it with one line of system prompt."
-- "The benchmark gap stopped mattering and the cost gap started mattering more."
-- "Every repeated token is either an asset or a tax."
+Every one of these works with the sound off and the AI knowledge at zero. That is the bar.
+
+- "Nobody buys the model. They buy the missed call that stops being missed."
+- "A demo nobody can run is a screenshot with extra steps."
+- "You are not paying for AI. You are paying for the person who used to do this at nine euros an hour."
+- "The benchmark gap stopped mattering and the monthly bill started mattering more."
+- "It broke on air. That is the part the launch post leaves out."
+- "The model is not the product. The thing you built with it is."
 
 ## Anti-Patterns
 
@@ -117,6 +131,8 @@ Cut or rewrite:
 - moral panic without operator utility.
 - jokes that do not point back to the claim.
 - inside-stream logistics in replay-critical openings.
+- bare model version numbers ("4.8", "4.6", "K2") or unexplained acronyms on first mention.
+- an episode whose whole reason to exist is that something launched.
 
 ## Swearing
 
@@ -138,8 +154,10 @@ Avoid it when:
 
 A Ship Shit Show segment should answer:
 
-- What changed this week?
-- What does the timeline get wrong?
-- What did builders learn by using it?
-- What breaks when this hits real work?
-- What should the audience do differently?
+- Whose problem is this, and what does it cost them?
+- What did we build, and where did it break?
+- What does it cost to run, and who maintains it?
+- What exists afterwards that the viewer can take?
+- What should the viewer do — copy it, run it, or reach out?
+
+Would this segment make sense to someone who has never heard of any of these tools? If not, it is not finished.

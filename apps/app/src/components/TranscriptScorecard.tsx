@@ -59,7 +59,7 @@ export function TranscriptScorecard({
           ))}
         </div>
 
-        <div className="grid grid-cols-2 gap-2 border-y border-surface-border py-3 text-[11px] text-text-muted">
+        <div className="grid grid-cols-3 gap-2 border-y border-surface-border py-3 text-[11px] text-text-muted">
           <div>
             <p className="text-text-secondary">Questions</p>
             <p>{scorecard.stats.questionCount}</p>
@@ -68,7 +68,35 @@ export function TranscriptScorecard({
             <p className="text-text-secondary">Filler / 1K</p>
             <p>{scorecard.stats.fillerPerThousand}</p>
           </div>
+          <div>
+            <p className="text-text-secondary">Jargon / 1K</p>
+            <p>{scorecard.stats.jargonPerThousand}</p>
+          </div>
         </div>
+
+        {scorecard.jargonFlags.length > 0 && (
+          <div className="space-y-2">
+            <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">
+              Say It Plainly
+            </p>
+            {scorecard.jargonFlags.map((flag) => (
+              <p
+                key={flag.term}
+                className="text-xs leading-relaxed text-text-secondary"
+              >
+                <span className="font-medium text-accent-red">{flag.term}</span>
+                {flag.examples[0] !== flag.term.toLowerCase() && (
+                  <span className="text-text-muted">
+                    {' '}
+                    ({flag.examples.join(', ')})
+                  </span>
+                )}
+                <span className="text-text-muted"> ×{flag.count}</span> →{' '}
+                {flag.say}
+              </p>
+            ))}
+          </div>
+        )}
 
         <div className="space-y-2">
           <p className="text-[10px] uppercase tracking-[0.18em] text-text-muted">

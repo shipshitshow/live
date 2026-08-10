@@ -12,15 +12,28 @@ Use this gate to decide whether a Ship Shit Show topic, transcript, livestream, 
 
 ## Minimum Publish Gate
 
-The piece must answer all five:
+The piece must answer all six:
 
-1. **What changed?** A launch, outage, model shift, workflow change, market signal, or live build result.
-2. **What is the lazy take?** The obvious timeline/news interpretation.
-3. **What is our take?** The sharper operator interpretation.
+1. **Whose problem is this?** A business problem, stated the way the person with it would state it.
+2. **What did we build?** The thing made on air, including what failed.
+3. **Does it run?** A demo result, plus an honest account of what is rough.
 4. **What is the receipt?** A number, quote, demo, bill, transcript moment, failure, or first-hand test.
-5. **What should builders do differently?** Route, trust, avoid, test, spend, build, migrate, or rethink.
+5. **What is the artifact?** The repo, template, playbook, or deployed demo that exists afterwards, and where it is published.
+6. **What should the viewer do?** Take the artifact, copy the approach, or reach out.
 
 If any answer is missing, fix the segment before publishing.
+
+An episode with a great take and no artifact is **Clip only** at best under this gate. Under the previous format it would have passed — that is the change.
+
+## Jargon Gate
+
+Applies to every piece, and hard-blocks clips.
+
+- Any spoken line containing a bare model version ("4.8", "4.6", "K2") or an unexplained acronym (MCP, RAG, CLI) is not clippable. Clip selection must skip it or the clip is unusable outside the AI audience.
+- A first mention that spells the term out, followed by shorthand, is fine.
+- If more than a handful of lines in a transcript fail this, mark the piece **Publish after trim** and list the offending terms so the next episode fixes them at the source.
+
+The producer dashboard scores this automatically once the plain-language criterion lands in the transcript scorecard.
 
 ## Scoring Lens
 
@@ -81,7 +94,7 @@ When a piece is good but buried:
 
 ## Editorial Bar
 
-Worth viewing means the audience gets access to builder experience they cannot get from the launch post.
+Worth viewing means the audience gets proof of competence they cannot get from a launch post or a consultant's deck.
 
 The show should never merely say:
 
@@ -92,5 +105,7 @@ This launched. Here are the features. It is cool.
 It should say:
 
 ```text
-This launched. We tried it. Here is where the launch post lies, here is where the bill changes, here is where trust breaks, and here is how builders should route around it.
+Here is a problem that costs businesses money. We built the fix live, it broke here, it runs like this, it costs this much a month, and the code is public — take it.
 ```
+
+The old bar — "we tried the launch and here is where it lies" — is still valid **inside** a build episode as a reaction segment. It is no longer sufficient on its own.
