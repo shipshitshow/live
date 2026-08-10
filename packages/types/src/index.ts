@@ -1,6 +1,20 @@
 export type { ErrorResponse, ReauthRequiredResponse } from './api';
 export { isErrorResponse, isReauthRequiredResponse } from './api';
 export type {
+  EpisodeCampaign,
+  EpisodeLinkedInMeasurement,
+  EpisodeUtmClicks,
+  LinkedInAuthor,
+  LinkedInPostEntry,
+  LinkedInPostMetrics,
+  LinkedInPostsUpdate,
+  MetricProvenance,
+  UtmClickCounts,
+  UtmClickStatus,
+  UtmSource,
+} from './linkedin';
+export { LINKEDIN_AUTHORS, UTM_MEDIUM, UTM_SOURCES } from './linkedin';
+export type {
   ContentField,
   LivestreamListResponse,
   Topic,

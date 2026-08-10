@@ -26,6 +26,9 @@
         "OPENAI_BASE_URL",
         "OPENAI_MODEL",
         "PIPELINE_API_URL",
+        "POSTHOG_API_KEY",
+        "POSTHOG_HOST",
+        "POSTHOG_PROJECT_ID",
         "REDIS_URL",
         "SOCIAL_TOKEN_FILE_PATH",
         "TIKTOK_ACCESS_TOKEN",
@@ -55,6 +58,9 @@
       "cache": false,
       "persistent": true
     },
-    "lint": {}
+    "lint": {},
+    "test": {
+      "dependsOn": ["^build"]
+    }
   }
 }
