@@ -84,9 +84,14 @@ function formatRecordedAt(value: string | null): string {
 
 function UtmClicks({ clicks }: { clicks: EpisodeUtmClicks }) {
   if (clicks.status !== 'ok' || !clicks.clicks) {
+    const message =
+      clicks.status === 'ok'
+        ? 'PostHog returned no click counts, so click-through is unknown.'
+        : CLICK_STATUS_MESSAGES[clicks.status];
+
     return (
       <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/40 p-5 text-sm text-text-muted">
-        <p>{CLICK_STATUS_MESSAGES[clicks.status]}</p>
+        <p>{message}</p>
         {clicks.error && (
           <p className="mt-2 text-xs text-accent-red">{clicks.error}</p>
         )}

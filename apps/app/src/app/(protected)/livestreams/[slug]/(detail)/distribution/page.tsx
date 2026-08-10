@@ -1,6 +1,11 @@
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { LinkedInMeasurementPanel } from '@/components/livestreams/LinkedInMeasurementPanel';
+import { StreamDistributionPanel } from '@/components/livestreams/StreamDistributionPanel';
+import {
+  getEpisodeDistribution,
+  isDistributionWritable,
+} from '@/lib/distribution-store';
 import { getEpisodeLinkedInMeasurement } from '@/lib/linkedin-measurement';
 import {
   isDateSlug,
@@ -74,7 +79,7 @@ export async function generateMetadata({
   );
   const pageTitle = `${streamTitle} — Distribution · Ship Shit Show`;
   const description =
-    'LinkedIn and X distribution measurement: UTM click-through and manually recorded post metrics.';
+    'Published episode assets, URLs, UTM click-through, and manually recorded LinkedIn post metrics.';
   const pageUrl = toAbsoluteUrl(
     `/livestreams/${encodeURIComponent(slug)}/distribution`,
   );
@@ -118,7 +123,19 @@ export default async function DistributionPage({
   }
 
   const resolvedDate = await resolveFullDate(slug);
-  const measurement = await getEpisodeLinkedInMeasurement(resolvedDate);
+  const [distribution, measurement] = await Promise.all([
+    getEpisodeDistribution(resolvedDate),
+    getEpisodeLinkedInMeasurement(resolvedDate),
+  ]);
 
-  return <LinkedInMeasurementPanel measurement={measurement} />;
+  return (
+    <div className="space-y-8">
+      <StreamDistributionPanel
+        date={resolvedDate}
+        initialDistribution={distribution}
+        isWritable={isDistributionWritable()}
+      />
+      <LinkedInMeasurementPanel measurement={measurement} />
+    </div>
+  );
 }

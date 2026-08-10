@@ -30,6 +30,9 @@ logs/
 apps/app/data/youtube-tokens.json
 apps/app/data/youtube-cache/
 
+# lead log (contact details — dev entries stay local, prod lives in Vercel Blob)
+apps/app/data/leads/
+
 # vercel
 .vercel
 

@@ -18,7 +18,7 @@ import {
   listBlobDates,
   putBlobJson,
   readBlobJson,
-} from '@/lib/blob-json';
+} from '@/lib/blob-storage';
 import { findTopicFile, getTopicDrawingFile } from '@/lib/livestreams-files';
 import {
   extractLivestreamYouTubeUrl,
@@ -707,7 +707,7 @@ export async function saveTopicUpdate(
   updates: TopicUpdate,
 ): Promise<boolean> {
   if (isReadOnlyVercelRuntime()) {
-    throw createWritableStorageError();
+    throw createWritableStorageError('livestream');
   }
 
   if (!isBlobPersistenceEnabled()) {
@@ -770,7 +770,7 @@ export async function createTopic(input: {
   title: string;
 }): Promise<{ fileName: string; slug: string; status: TopicStatus }> {
   if (isReadOnlyVercelRuntime()) {
-    throw createWritableStorageError();
+    throw createWritableStorageError('livestream');
   }
 
   const topics = await getTopicsForDate(input.date);
@@ -858,7 +858,7 @@ export async function saveTopicDrawing(
   content: string,
 ): Promise<string> {
   if (isReadOnlyVercelRuntime()) {
-    throw createWritableStorageError();
+    throw createWritableStorageError('livestream');
   }
 
   if (!isBlobPersistenceEnabled()) {

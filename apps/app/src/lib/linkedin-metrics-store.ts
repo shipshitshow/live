@@ -13,7 +13,7 @@ import {
   isReadOnlyVercelRuntime,
   putBlobJson,
   readBlobJson,
-} from '@/lib/blob-json';
+} from '@/lib/blob-storage';
 
 /**
  * Manually entered LinkedIn post metrics, one record per episode date.
