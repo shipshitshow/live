@@ -210,6 +210,37 @@ function toEpisodeDistribution(
   };
 }
 
+/**
+ * Read only an existing checklist. Unlike `getEpisodeDistribution`, this
+ * returns null when an episode has never been saved so analytics can distinguish
+ * "no checklist" from a checklist whose assets are still pending.
+ */
+export async function readEpisodeDistribution(
+  date: string,
+): Promise<EpisodeDistribution | null> {
+  const stored = await readStoredDistribution(date);
+  return stored
+    ? toEpisodeDistribution(date, mergeWithPlan(stored), stored.updatedAt)
+    : null;
+}
+
+export async function readEpisodeDistributions(
+  dates: string[],
+): Promise<Map<string, EpisodeDistribution>> {
+  const entries = await Promise.all(
+    dates.map(
+      async (date) => [date, await readEpisodeDistribution(date)] as const,
+    ),
+  );
+
+  return new Map(
+    entries.filter(
+      (entry): entry is readonly [string, EpisodeDistribution] =>
+        entry[1] !== null,
+    ),
+  );
+}
+
 export async function getEpisodeDistribution(
   date: string,
 ): Promise<EpisodeDistribution> {

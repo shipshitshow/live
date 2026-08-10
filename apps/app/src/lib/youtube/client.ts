@@ -16,8 +16,55 @@ import { normalizeYouTubeError } from './error';
 const DATA_API = 'https://www.googleapis.com/youtube/v3';
 const ANALYTICS_API = 'https://youtubeanalytics.googleapis.com/v2/reports';
 
+/** The Data API `videos.list` endpoint accepts at most 50 IDs per request. */
+const MAX_VIDEO_IDS_PER_REQUEST = 50;
+
 function isDefined<T>(value: T | null | undefined): value is T {
   return value !== null && value !== undefined;
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  const chunks: T[][] = [];
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size));
+  }
+  return chunks;
+}
+
+async function fetchVideoItems(
+  token: string,
+  videoIds: string[],
+): Promise<YouTubeVideoItem[]> {
+  const url = `${DATA_API}/videos?part=snippet,statistics,contentDetails,liveStreamingDetails&id=${videoIds.join(',')}`;
+  const res = await ytFetch<{ items?: YouTubeVideoItem[] }>(url, token);
+  return res.items ?? [];
+}
+
+function toVideoStats(item: YouTubeVideoItem, channelId: string): VideoStats {
+  const durationSec = parseDuration(item.contentDetails?.duration);
+  const isLive = !!item.liveStreamingDetails;
+  const isShort = durationSec > 0 && durationSec <= 60;
+  const videoType = isLive ? 'livestream' : isShort ? 'short' : 'video';
+  const thumbnail =
+    item.snippet?.thumbnails?.medium?.url ??
+    item.snippet?.thumbnails?.default?.url ??
+    '';
+
+  return {
+    avg_view_duration_seconds: durationSec,
+    channel_id: channelId,
+    comments: Number(item.statistics?.commentCount ?? 0),
+    ctr: 0,
+    impressions: 0,
+    likes: Number(item.statistics?.likeCount ?? 0),
+    published_at: item.snippet?.publishedAt ?? '',
+    thumbnail_url: thumbnail,
+    title: item.snippet?.title ?? item.id,
+    video_id: item.id,
+    video_type: videoType,
+    views: Number(item.statistics?.viewCount ?? 0),
+    watch_time_minutes: 0,
+  };
 }
 
 export async function fetchChannelStats(
@@ -57,38 +104,35 @@ export async function fetchChannelVideos(
 
     if (!videoIds?.length) return [];
 
-    const videosUrl = `${DATA_API}/videos?part=snippet,statistics,contentDetails,liveStreamingDetails&id=${videoIds.join(',')}`;
-    const videosRes = await ytFetch<{ items?: YouTubeVideoItem[] }>(
-      videosUrl,
-      token,
+    const items = await fetchVideoItems(token, videoIds);
+    return items.map((item) => toVideoStats(item, channelId));
+  });
+}
+
+/**
+ * Look up specific videos by ID, regardless of how far back they were
+ * published. `fetchChannelVideos` only reaches the most recent 50 uploads, which
+ * is fine for a rolling dashboard but not for the per-episode rollup, where an
+ * old episode's video must still resolve.
+ */
+export async function fetchVideosByIds(
+  token: string,
+  channelId: string,
+  videoIds: string[],
+): Promise<VideoStats[]> {
+  if (!videoIds.length) return [];
+
+  const sortedIds = [...new Set(videoIds)].sort();
+  const cacheKey = `videosbyid:${channelId}:${sortedIds.length}:${sortedIds.slice(0, 5).join(',')}`;
+
+  return cachedFetch(cacheKey, TTL.VIDEO_LIST, async () => {
+    const batches = await Promise.all(
+      chunk(sortedIds, MAX_VIDEO_IDS_PER_REQUEST).map((ids) =>
+        fetchVideoItems(token, ids),
+      ),
     );
 
-    return (videosRes.items ?? []).map((item): VideoStats => {
-      const durationSec = parseDuration(item.contentDetails?.duration);
-      const isLive = !!item.liveStreamingDetails;
-      const isShort = durationSec > 0 && durationSec <= 60;
-      const videoType = isLive ? 'livestream' : isShort ? 'short' : 'video';
-      const thumbnail =
-        item.snippet?.thumbnails?.medium?.url ??
-        item.snippet?.thumbnails?.default?.url ??
-        '';
-
-      return {
-        avg_view_duration_seconds: durationSec,
-        channel_id: channelId,
-        comments: Number(item.statistics?.commentCount ?? 0),
-        ctr: 0,
-        impressions: 0,
-        likes: Number(item.statistics?.likeCount ?? 0),
-        published_at: item.snippet?.publishedAt ?? '',
-        thumbnail_url: thumbnail,
-        title: item.snippet?.title ?? item.id,
-        video_id: item.id,
-        video_type: videoType,
-        views: Number(item.statistics?.viewCount ?? 0),
-        watch_time_minutes: 0,
-      };
-    });
+    return batches.flat().map((item) => toVideoStats(item, channelId));
   });
 }
 
@@ -207,6 +251,53 @@ export async function fetchVideoReachMetrics(
         // impressionClickThroughRate is returned as a percentage (e.g. 8.3).
         ctr: Number(row[2] ?? 0),
         impressions: Number(row[1] ?? 0),
+      });
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
+}
+
+/**
+ * Average view percentage per video. Isolated and failure-tolerant for the same
+ * reason as `fetchVideoReachMetrics`: retention is not reported for every
+ * channel/date range, and a quirk there must not take down its caller. Errors
+ * degrade to an empty map, which the rollup renders as not-tracked.
+ */
+export async function fetchVideoRetentionMetrics(
+  token: string,
+  channelId: string,
+  videoIds: string[],
+  startDate: string,
+  endDate: string,
+): Promise<Map<string, { avg_view_percentage: number }>> {
+  if (!videoIds.length) return new Map();
+
+  try {
+    const cacheKey = `vidretention:${channelId}:${startDate}:${videoIds.slice(0, 5).join(',')}`;
+    const rows = await cachedFetch(cacheKey, TTL.VIDEO_ANALYTICS, async () => {
+      const params = new URLSearchParams({
+        dimensions: 'video',
+        endDate,
+        filters: `video==${videoIds.join(',')}`,
+        ids: `channel==${channelId}`,
+        metrics: 'averageViewPercentage',
+        sort: '-averageViewPercentage',
+        startDate,
+      });
+
+      const res = await ytFetch<YouTubeAnalyticsResponse>(
+        `${ANALYTICS_API}?${params}`,
+        token,
+      );
+      return res.rows ?? [];
+    });
+
+    const map = new Map<string, { avg_view_percentage: number }>();
+    for (const row of rows) {
+      map.set(String(row[0] ?? ''), {
+        avg_view_percentage: Number(row[1] ?? 0),
       });
     }
     return map;

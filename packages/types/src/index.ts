@@ -69,6 +69,21 @@ export type {
 } from './pipeline';
 export type { UnlistedVideo } from './review';
 export type {
+  EpisodeAssetLink,
+  EpisodeMetric,
+  EpisodeRollupResponse,
+  EpisodeRollupRow,
+  FlagshipSurface,
+  LeadsSurface,
+  LinkedInSurface,
+  LivestreamSurface,
+  NotTrackedMetric,
+  NotTrackedReason,
+  ShortsSurface,
+  TrackedMetric,
+  XSurface,
+} from './rollup';
+export type {
   TrendItem,
   TrendSource,
   TrendSourceStatus,
