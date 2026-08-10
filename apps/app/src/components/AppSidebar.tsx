@@ -4,6 +4,7 @@ import { cn } from '@shipshitshow/ui';
 import {
   BarChart3,
   Film,
+  Inbox,
   LayoutGrid,
   MessageSquare,
   Radio,
@@ -27,6 +28,7 @@ interface NavSection {
 
 const OVERVIEW_ITEMS: NavItemDef[] = [
   { href: '/analytics', icon: BarChart3, label: 'Analytics' },
+  { href: '/leads', icon: Inbox, label: 'Leads' },
 ];
 
 const SECTIONS: NavSection[] = [
