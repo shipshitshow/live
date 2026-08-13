@@ -84,6 +84,7 @@ tag one, tag two, tag three
 - Use short paragraphs.
 - Include links only when provided or already known from the episode context.
 - Add a call to action only if it fits naturally.
+- Never include hashtags in a YouTube description.
 - Never call YouTube tags `tags`; use `youtube_tags`.
 
 ## Title Rules
@@ -138,6 +139,7 @@ Before finalizing:
 - The description includes chapters when VTT/timestamped transcript exists.
 - Every chapter title is 3 words max.
 - The first chapter starts at `0:00`.
+- The description contains no hashtags.
 - `youtube_tags` contains 15-25 relevant phrase tags unless the user asks for fewer.
 - Claims and timestamps are backed by supplied context.
 - Thumbnail prompts, when included, use the correct livestream vs recap mode.
