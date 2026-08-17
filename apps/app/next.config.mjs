@@ -3,6 +3,8 @@ const isProduction = process.env.NODE_ENV === "production";
 
 const nextConfig = {
   images: {
+    // Assets are already delivered by the configured CDN/origin.
+    unoptimized: true,
     localPatterns: [
       {
         pathname: "/api/og/livestreams/**",
