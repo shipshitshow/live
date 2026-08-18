@@ -1,6 +1,6 @@
 ---
 name: thumbnails
-description: Generate Ship Shit Show thumbnail prompts and images for livestreams, recap videos, and Shorts, and write them back to the topic file. Use when Vincent asks for a thumbnail, a live thumbnail, a recap/video thumbnail, a topic-file thumbnail_prompt, or is iterating an already-generated thumbnail ("keep everything but…", "same but Claude orange", "remove the title").
+description: Generate Ship Shit Show thumbnail prompts and images for livestreams, recap videos, and Shorts, and write them back to the topic file. Use when Vincent asks for a thumbnail, a live thumbnail, a recap/video thumbnail, a topic-file thumbnail_prompt, or is iterating an already-generated thumbnail ("keep everything but…", "same but cobalt", "remove the title").
 ---
 
 # Ship Shit Show Thumbnails
@@ -40,7 +40,7 @@ Vincent, nothing more. Once the thumbnail is uploaded to YouTube, the dashboard 
 ## Quick Start
 
 1. Identify the stream: `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`. Read its frontmatter
-   `title`, `date`, and the `## Sources — Livestream Notes` section for the episode number.
+   `title`, `date`, and the `## Sources — Livestream Notes` section for the episode angle.
 2. Pick the mode from the table below. Do not ask which mode when the wording matches.
 3. Write the prompt using that mode's required shape.
 4. Write the prompt into the topic file's `thumbnail_prompt` frontmatter field (Mode 1 only).
@@ -81,36 +81,37 @@ Required shape:
 
 - Open with `16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting.`
 - Blocks in this order: `PALETTE`, `COMPOSITION`, optional `LOGO LOCK` or `CENTER ASSET`,
-  `HOST LEFT`, `HOST RIGHT`, `BACKGROUND`, `CONTRAST RULE`, `LIGHTING`, `BRANDING`, `TEXT`, `STYLE`.
+  `HOST LEFT`, `HOST RIGHT`, `BACKGROUND`, `CONTRAST RULE`, `LIGHTING`, `TEXT`, `STYLE`.
 - Two hosts large chest-up, cropped by the left and right edges, ~35% of frame each, heads readable
   at mobile size.
-- Default palette: warm parchment cream, muted beige, ivory, soft brown shadows, natural skin tones.
-  Avoid one-note dark tech palettes.
+- Default palette: deep graphite or black, crisp white, brushed silver, natural skin tones, and
+  restrained electric cobalt, cyan, or violet accents. Do not default to orange, amber, brown,
+  beige, sepia, or parchment; use those colors only if Vincent explicitly reverses this rule in
+  the current request.
 - Model/logo episodes: if a logo asset is provided, use a `LOGO LOCK` block and preserve it exactly
   as a flat raster asset.
-- Non-logo episodes: one centered simple editorial object/emblem in the same parchment
-  natural-history style. Do not replace the hosts with UI screenshots.
-- `BRANDING`: top-right episode number when known, e.g. `#24`, muted dark brown/grey.
-- `TEXT`: no text except the episode number, unless Vincent explicitly asks for title text.
+- Non-logo episodes: one centered simple editorial object/emblem in the same clean premium
+  editorial style. Do not replace the hosts with UI screenshots.
+- `TEXT`: never include an episode number. Use no text unless Vincent explicitly asks for title
+  text; when he does, keep the headline short and mobile-readable.
 - `NEGATIVE`: no neon, cyberpunk, red warning stamps, generic robot faces, cluttered terminal walls,
   fake logos, tiny UI text, punctuation added to locked logos, extra symbols over a provided logo.
 
 Bad direction:
 
 ```text
-Dark charcoal UI, cyan terminal glow, red warning badges, big title text, generic AI dev-tool command center.
+Warm parchment, amber/orange accents, brown shadows, a top-right episode number, generic natural-history poster.
 ```
 
 Good direction:
 
 ```text
-Warm parchment editorial composition, two large host portraits framing one centered asset/emblem,
-no title text except episode number, premium natural-history poster vibe.
+Cool graphite editorial composition, two large host portraits framing one centered asset/emblem,
+crisp silver and cobalt/cyan accents, no episode number, premium creator-tech finish.
 ```
 
-Seasonal or concept variants (e.g. the #23 Mediterranean beach direction) are allowed when the
-episode thesis justifies them, but they must keep the two-host framing, the centered payoff object,
-the top-right episode number, and the no-text rule.
+Seasonal or concept variants are allowed when the episode thesis justifies them, but they must keep
+the two-host framing, the centered payoff object, and the no-episode-number rule.
 
 ### Write it back to the topic file
 
@@ -138,16 +139,16 @@ Required shape:
   `BAD CODE + CONFIDENCE`, `CAN IT CAD?`, `AI LOOP STACK`.
 - **No episode number.**
 - Hosts optional. If included, one host reaction crop as supporting emotion — not the two-host
-  parchment composition.
+  livestream composition.
 - Palette may be high-contrast tech/editorial: dark UI, cyan, red/yellow warning, product colors.
 - Must communicate the outcome or conflict cold, without livestream context.
-- Do not use the calm parchment two-host live composition unless the recap is explicitly branded as
-  a livestream archive.
+- Do not use the calm two-host live composition unless the recap is explicitly branded as a
+  livestream archive.
 
 ## Mode 3: Surgical Re-Prompt
 
-For iterating inside a workflow app: "keep everything but remove the title", "same prompt but Claude
-orange", "change only the color", "don't change anything else."
+For iterating inside a workflow app: "keep everything but remove the title", "same prompt but
+cobalt", "change only the color", "don't change anything else."
 
 This mode overrides the normal creative rules.
 
@@ -160,8 +161,10 @@ This mode overrides the normal creative rules.
 - If the workflow injects a logo/image asset, say to use the injected asset exactly and repeat it in
   the specified places. Never tell the model to search for, recreate, describe, or redesign a logo.
 - "Remove title" means: no title, no product numbers, no captions, no labels — enumerate them.
-- "Change blue to Claude orange" means: replace cyan/blue/teal with warm Claude-like orange/amber,
-  and explicitly prohibit blue/cyan/teal.
+- Color-change requests must enumerate the replacement palette and explicitly prohibit the old
+  palette. Never introduce orange, amber, brown, beige, sepia, or parchment unless Vincent asks
+  for those colors in the current request.
+- Never add an episode number, even when one appeared in an earlier thumbnail or prompt.
 - Never say "reference", "previous", "same as above", or "provided image" unless Vincent explicitly
   asked for an image-edit prompt.
 
@@ -181,6 +184,9 @@ COMPOSITION
 
 NO TITLE
 [If requested.]
+
+NO EPISODE NUMBER
+Never render an episode number or number badge.
 
 CENTER ASSET
 [Restate center content and repeated injected-logo placement.]
@@ -204,7 +210,10 @@ Before handing back:
 
 - Mode matches what Vincent asked for; Mode 1 and Mode 2 direction are not blended.
 - Both hosts are identity-locked to the reference photos.
-- Mode 1 has the episode number and no other text. Mode 2 has title text and no episode number.
+- No mode includes an episode number. Mode 1 has no text unless Vincent explicitly asks for a
+  short title; Mode 2 has title text.
+- Orange, amber, brown, beige, sepia, and parchment are absent unless Vincent explicitly requested
+  them in the current conversation.
 - Filenames use the **locked** title slug, not a draft title.
 - Images are under `~/Desktop/thumbnails/<YYMM>/<YYMMDD>/`, with intermediates in `sources/`.
   Nothing was written inside the repo.

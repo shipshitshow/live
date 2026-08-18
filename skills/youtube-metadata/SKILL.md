@@ -10,13 +10,14 @@ Use this skill to generate upload-ready metadata in the Ship Shit Show voice. Me
 ## Quick Start
 
 1. Load the episode context: transcript, VTT, topic file, existing description, or rough brief.
-2. For upcoming livestreams, first load the current talking-point file from `apps/app/data/livestream/YYYY-MM-DD/topic-*.md` and treat it as the primary source of truth for title, angle, receipts, sources, and description. Do not substitute old transcripts or channel inventory for the current stream premise.
-3. If the user mentions "talking points", "stream prep", "topic file", or says the show context was already piped, use `$shipshitshow-talking-points` source priority before drafting metadata.
-4. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as supporting context, not a replacement for the topic file.
-5. If a vault path is provided, compare nearby entries before writing titles.
-6. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
-7. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags`.
-8. Keep claims grounded in provided sources.
+2. Before drafting a description, read `references/description-template.md` and follow its concise human opener, utility-block order, optional-hashtag rule, and paste-ready formatting contract.
+3. For upcoming livestreams, first load the current talking-point file from `apps/app/data/livestream/YYYY-MM-DD/topic-*.md` and treat it as the primary source of truth for title, angle, receipts, sources, and description. Do not substitute old transcripts or channel inventory for the current stream premise.
+4. If the user mentions "talking points", "stream prep", "topic file", or says the show context was already piped, use `$shipshitshow-talking-points` source priority before drafting metadata.
+5. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as supporting context, not a replacement for the topic file.
+6. If a vault path is provided, compare nearby entries before writing titles.
+7. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
+8. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags` when the user requests a complete metadata package. If the user requests only one artifact, return only that artifact.
+9. Keep claims grounded in provided sources.
 
 ## Source Priority
 
@@ -52,6 +53,10 @@ CHAPTERS:
 
 ## Output Contract
 
+Use the full structure below only when the user requests a complete metadata package. When the user
+asks only for a title, description, chapters, or `youtube_tags`, return only that requested artifact.
+When the user asks for copy/paste text, return only one fenced `text` block containing the final copy.
+
 Return this exact structure:
 
 ```markdown
@@ -78,13 +83,18 @@ tag one, tag two, tag three
 
 ## Description Rules
 
+- Follow `references/description-template.md`.
 - Open with the concrete hook or operator thesis.
 - Name the model, tool, company, package, repo, or game early.
 - Keep the voice direct and builder-native.
 - Use short paragraphs.
+- Keep the custom narrative opener to 35-80 words. It is a human explanation of why the video
+  exists, not a section outline or exhaustive agenda.
+- Lead with first-hand usage when available: what we used, built, spent, shipped, or broke.
 - Include links only when provided or already known from the episode context.
 - Add a call to action only if it fits naturally.
-- Never include hashtags in a YouTube description.
+- Use zero to three highly specific hashtags at the bottom only when they add a useful discovery
+  path. Never add generic hashtag stuffing. `youtube_tags` remain separate metadata.
 - Never call YouTube tags `tags`; use `youtube_tags`.
 
 ## Title Rules
@@ -139,7 +149,7 @@ Before finalizing:
 - The description includes chapters when VTT/timestamped transcript exists.
 - Every chapter title is 3 words max.
 - The first chapter starts at `0:00`.
-- The description contains no hashtags.
+- Any description hashtags are limited to zero to three specific terms on the final line.
 - `youtube_tags` contains 15-25 relevant phrase tags unless the user asks for fewer.
 - Claims and timestamps are backed by supplied context.
 - Thumbnail prompts, when included, use the correct livestream vs recap mode.
