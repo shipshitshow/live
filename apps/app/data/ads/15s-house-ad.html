@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ship Shit Show — 15s House Ad</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --red: #ff2d20;
+    --red-dim: rgba(255, 45, 32, 0.15);
+    --bg: #0d0d0d;
+    --card: #1a1a1a;
+    --border: #2a2a2a;
+    --text: #f0f0f0;
+    --text-2: #a0a0a0;
+    --muted: #606060;
+    --t: 15s; /* total ad duration */
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+    font-family: 'Space Grotesk', 'Helvetica Neue', Arial, sans-serif;
+    color: var(--text);
+  }
+
+  /* Fixed 1920x1080 stage, scaled to fit the window (OBS browser source: set 1920x1080 and it fills exactly). */
+  #stage {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 1920px;
+    height: 1080px;
+    transform: translate(-50%, -50%) scale(var(--scale, 1));
+    background: var(--bg);
+  }
+
+  .scene {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    opacity: 0;
+    animation: scene var(--t) linear var(--d, 0s) 1 both;
+  }
+
+  /* Each scene fades in fast, holds, fades out. Percentages are of the FULL 15s
+     timeline; per-scene windows are carved out with animation-delay tricks below. */
+  @keyframes pop-hold {
+    0%   { opacity: 0; transform: translateY(40px) scale(0.96); }
+    6%   { opacity: 1; transform: translateY(0) scale(1); }
+    88%  { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 0; transform: translateY(-30px) scale(1.02); }
+  }
+  @keyframes pop-hold-end {
+    0%   { opacity: 0; transform: translateY(40px) scale(0.96); }
+    8%   { opacity: 1; transform: translateY(0) scale(1); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+  }
+
+  /* Scene windows (seconds): 1: 0–2.5, 2: 2.5–6, 3: 6–9.5, 4: 9.5–12, 5: 12–15 (holds) */
+  .s1 { animation: pop-hold     2.5s cubic-bezier(.2,.8,.2,1) 0s    1 both; }
+  .s2 { animation: pop-hold     3.5s cubic-bezier(.2,.8,.2,1) 2.5s  1 both; }
+  .s3 { animation: pop-hold     3.5s cubic-bezier(.2,.8,.2,1) 6s    1 both; }
+  .s4 { animation: pop-hold     2.5s cubic-bezier(.2,.8,.2,1) 9.5s  1 both; }
+  .s5 { animation: pop-hold-end 3s   cubic-bezier(.2,.8,.2,1) 12s   1 both; }
+
+  .kicker {
+    font-size: 34px;
+    font-weight: 500;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    color: var(--red);
+  }
+
+  .logo {
+    font-size: 150px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1;
+    text-align: center;
+  }
+  .logo .shit { color: var(--red); }
+
+  .tag {
+    font-size: 42px;
+    color: var(--text-2);
+    font-weight: 400;
+  }
+
+  .domain {
+    font-size: 128px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+  .domain .tld { color: var(--red); }
+
+  .pitch {
+    font-size: 52px;
+    color: var(--text-2);
+    font-weight: 400;
+  }
+
+  .chip {
+    font-size: 30px;
+    font-weight: 500;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 2px solid var(--border);
+    border-radius: 999px;
+    padding: 14px 36px;
+  }
+
+  .cta-row {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+  .cta-btn {
+    font-size: 76px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    padding: 28px 64px;
+    border-radius: 20px;
+  }
+  .cta-like { background: var(--card); border: 3px solid var(--border); }
+  .cta-sub  { background: var(--red); color: #fff; }
+  .cta-plus { font-size: 76px; font-weight: 700; color: var(--muted); }
+
+  .cta-line { font-size: 46px; color: var(--text-2); }
+  .cta-line em { font-style: normal; color: var(--red); }
+  .handle { font-size: 38px; color: var(--muted); letter-spacing: 0.08em; }
+
+  /* Red slash wipe between scenes */
+  .wipe {
+    position: absolute;
+    top: -10%;
+    left: -30%;
+    width: 30%;
+    height: 120%;
+    background: var(--red);
+    transform: skewX(-12deg) translateX(0);
+    opacity: 0;
+  }
+  @keyframes slash {
+    0%   { opacity: 1; transform: skewX(-12deg) translateX(-45%); }
+    100% { opacity: 1; transform: skewX(-12deg) translateX(720%); }
+  }
+  .w1 { animation: slash 0.45s cubic-bezier(.5,0,.2,1) 2.3s  1 both; }
+  .w2 { animation: slash 0.45s cubic-bezier(.5,0,.2,1) 5.8s  1 both; }
+  .w3 { animation: slash 0.45s cubic-bezier(.5,0,.2,1) 9.3s  1 both; }
+  .w4 { animation: slash 0.45s cubic-bezier(.5,0,.2,1) 11.8s 1 both; }
+
+  /* Progress bar */
+  .progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 8px;
+    width: 100%;
+    background: var(--red);
+    transform-origin: left;
+    animation: fill var(--t) linear 0s 1 both;
+  }
+  @keyframes fill {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
+
+  /* Subtle grain-free vignette for depth */
+  .vignette {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,0.55) 100%);
+  }
+
+  .hint {
+    position: fixed;
+    bottom: 14px;
+    right: 18px;
+    font-size: 13px;
+    color: var(--muted);
+    z-index: 10;
+    opacity: 0.7;
+  }
+</style>
+</head>
+<body>
+<div id="stage">
+  <section class="scene s1">
+    <div class="kicker">A word from the shop floor</div>
+    <div class="logo">SHIP <span class="shit">SHIT</span> SHOW</div>
+    <div class="tag">Everything on this show gets built live.</div>
+  </section>
+
+  <section class="scene s2">
+    <div class="domain">genfeed<span class="tld">.ai</span></div>
+    <div class="pitch">One stream in. Content everywhere.</div>
+    <div class="chip">The content OS</div>
+  </section>
+
+  <section class="scene s3">
+    <div class="domain">mantella<span class="tld">.nl</span></div>
+    <div class="pitch">Support tickets that handle themselves.</div>
+    <div class="chip">Calls in. Tickets out.</div>
+  </section>
+
+  <section class="scene s4">
+    <div class="domain">shipshit<span class="tld">.dev</span></div>
+    <div class="pitch">Watch it all ship. Live, every week.</div>
+  </section>
+
+  <section class="scene s5">
+    <div class="cta-row">
+      <div class="cta-btn cta-like">LIKE</div>
+      <div class="cta-plus">+</div>
+      <div class="cta-btn cta-sub">SUBSCRIBE</div>
+    </div>
+    <div class="cta-line">…if you're <em>not braindead</em>.</div>
+    <div class="handle">youtube.com/@shipshitshow</div>
+  </section>
+
+  <div class="wipe w1"></div>
+  <div class="wipe w2"></div>
+  <div class="wipe w3"></div>
+  <div class="wipe w4"></div>
+
+  <div class="vignette"></div>
+  <div class="progress"></div>
+</div>
+<div class="hint">click to replay · 15s · 1920×1080</div>
+
+<script>
+  // Scale the fixed 1920x1080 stage to fit whatever window it's shown in.
+  const stage = document.getElementById('stage');
+  function fit() {
+    const s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    stage.style.setProperty('--scale', s);
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  // Click anywhere to replay from 0s (restarts every CSS animation).
+  document.addEventListener('click', () => {
+    stage.querySelectorAll('.scene, .wipe, .progress').forEach((el) => {
+      el.style.animation = 'none';
+      void el.offsetWidth; // force reflow so the animation restarts
+      el.style.animation = '';
+    });
+  });
+</script>
+</body>
+</html>
