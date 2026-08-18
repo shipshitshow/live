@@ -149,6 +149,7 @@ Before finalizing:
 - The description includes chapters when VTT/timestamped transcript exists.
 - Every chapter title is 3 words max.
 - The first chapter starts at `0:00`.
+- Any description hashtags are limited to zero to three specific terms on the final line.
 - `youtube_tags` contains 15-25 relevant phrase tags unless the user asks for fewer.
 - Claims and timestamps are backed by supplied context.
 - Thumbnail prompts, when included, use the correct livestream vs recap mode.
