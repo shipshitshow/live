@@ -20,6 +20,9 @@ The stable shared pattern is:
 4. Optional chapters for long videos and podcasts.
 5. A small evergreen link block.
 
+Hashtag use was mixed: 43 of 77 descriptions used them, while Ben Davis used none in all 20
+sampled uploads. Treat hashtags as an optional discovery aid, not part of the editorial opener.
+
 The custom opener does the editorial work. The rest is utility. Do not turn the opener into a
 table of contents.
 
@@ -50,7 +53,9 @@ exact phrase `This is what worked, what broke` into every description.
 - Do not write `In this video`, `Today we're going to`, `deep dive`, `game-changing`, or generic
   subscribe filler.
 - Do not add headings, bullet lists, chapters, or links inside the core description.
-- Never add hashtags to a Ship Shit Show YouTube description.
+- Use zero to three highly specific hashtags only when they add a useful discovery path. Put them
+  on the final line, never inside the core copy. Prefer product or topic terms such as `#Grok46`,
+  `#GrokBot`, or `#CursorOrigin`; avoid generic stuffing such as `#AI #Tech #Programming`.
 - Keep `youtube_tags` separate from the public description; tags are metadata, not hashtags.
 
 ## Optional YouTube Utility Blocks
@@ -67,21 +72,32 @@ CHAPTERS:
 0:00 [Three words max]
 
 [Optional artifact, repository, or channel link]
+
+[Optional final line: zero to three specific hashtags]
 ```
 
 - Do not add empty labels or placeholder links.
 - Use chapters only when a timestamped transcript or VTT exists.
 - Keep source labels short. A bare URL is acceptable when the destination is obvious.
 - One useful artifact link is better than a wall of social links.
+- YouTube may surface up to three description hashtags near the title, but they remain secondary to
+  the title, thumbnail, and unique description. More is not better.
 
 ## LinkedIn Reuse
 
 When the same copy must work on LinkedIn:
 
 - Reuse the core description unchanged.
-- Do not include YouTube-only utility blocks, `subscribe`, or hashtags.
+- Do not include YouTube-only utility blocks or `subscribe`.
+- Decide LinkedIn hashtags separately; do not copy YouTube hashtags automatically.
 - Add at most one final link, using the repository's LinkedIn UTM convention.
 - Keep the first line under 200 characters so it survives the `see more` fold.
+
+## Official YouTube Guidance
+
+- [Find playlists and videos using hashtags](https://support.google.com/youtube/answer/6390658)
+- [Tips for video descriptions](https://support.google.com/youtube/answer/12948449)
+- [Add tags to YouTube videos](https://support.google.com/youtube/answer/146402)
 
 ## Paste-Ready Output
 

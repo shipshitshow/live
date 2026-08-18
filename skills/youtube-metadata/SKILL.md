@@ -10,7 +10,7 @@ Use this skill to generate upload-ready metadata in the Ship Shit Show voice. Me
 ## Quick Start
 
 1. Load the episode context: transcript, VTT, topic file, existing description, or rough brief.
-2. Before drafting a description, read `references/description-template.md` and follow its concise human opener, utility-block order, no-hashtag rule, and paste-ready formatting contract.
+2. Before drafting a description, read `references/description-template.md` and follow its concise human opener, utility-block order, optional-hashtag rule, and paste-ready formatting contract.
 3. For upcoming livestreams, first load the current talking-point file from `apps/app/data/livestream/YYYY-MM-DD/topic-*.md` and treat it as the primary source of truth for title, angle, receipts, sources, and description. Do not substitute old transcripts or channel inventory for the current stream premise.
 4. If the user mentions "talking points", "stream prep", "topic file", or says the show context was already piped, use `$shipshitshow-talking-points` source priority before drafting metadata.
 5. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as supporting context, not a replacement for the topic file.
@@ -93,7 +93,8 @@ tag one, tag two, tag three
 - Lead with first-hand usage when available: what we used, built, spent, shipped, or broke.
 - Include links only when provided or already known from the episode context.
 - Add a call to action only if it fits naturally.
-- Never add hashtags to the public description. `youtube_tags` remain separate metadata.
+- Use zero to three highly specific hashtags at the bottom only when they add a useful discovery
+  path. Never add generic hashtag stuffing. `youtube_tags` remain separate metadata.
 - Never call YouTube tags `tags`; use `youtube_tags`.
 
 ## Title Rules
