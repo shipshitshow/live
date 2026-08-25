@@ -14,6 +14,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 - Build: a YouTube distiller — link in, transcript and ranked clips out — written entirely by free OpenRouter models
 - Shape: a small **local web UI**, not a bare CLI. Paste a link, watch the transcript land, watch clip cards pop in as they finish encoding.
 - Start: **4:00 PM**
+- **Demo machine: the Mac Studio.** All pre-show checks must be run there, not on the laptop.
 - Format: live build, English only, 60–90 minutes
 - Artifact: a public repository anyone can clone and run on a free API key
 - Harness: **plain OpenCode 1.18.23 in the terminal.** Model set to a `:free` OpenRouter route on camera.
@@ -228,14 +229,51 @@ brew install ffmpeg-full
 ffmpeg -hide_banner -filters | grep -E "subtitles|drawtext"
 ```
 
-### Verified Green As Of This Morning
+### Demo Machine — The Mac Studio
+
+**The demo runs on the Mac Studio, not the laptop.** Everything below was probed on the Studio itself. Do not trust a laptop check for a Studio demo.
+
+**Green on the Studio:**
+
+| Tool | Version |
+|---|---|
+| `bun` | 1.3.14 |
+| `yt-dlp` | 2026.08.19 |
+| `ffmpeg` | 9.0.1, `h264_videotoolbox` present |
+| `node` | v26.7.0 |
+| `gh` | 2.98.0 |
+| `opencode` | 1.18.20 at `~/.opencode/bin/opencode` |
+
+- OpenRouter authenticated on the Studio, **19 free routes** visible in `opencode models`
+- Account confirmed from the Studio: `is_free_tier: false`, lifetime usage ~$0.12 → **1,000 requests/day tier**
+- 218 GB free disk — video downloads are not a concern
+
+**Three blocking items on the Studio:**
+
+1. **`OPENROUTER_API_KEY` is not exported and is not in `.zshrc` or `.zprofile`.** The built tool reads `process.env.OPENROUTER_API_KEY`. OpenCode has its own stored auth, so the agent will work without it while the tool we are building silently will not. Export it in the shell you will demo from, and verify:
+
+   ```bash
+   [ -n "$OPENROUTER_API_KEY" ] && echo "set (${#OPENROUTER_API_KEY} chars)" || echo "NOT SET"
+   ```
+
+2. **`ffmpeg` on the Studio has no libass** — zero `subtitles`, `ass`, or `drawtext` filters. Blocks the subtitle stretch only, but fix it now:
+
+   ```bash
+   brew install ffmpeg-full
+   ```
+
+3. **`opencode` on the Studio is 1.18.20**, one patch behind the laptop, and its catalogue is missing `minimax/minimax-m3:free`. Not fatal — the distiller calls the OpenRouter API directly, so the missing route only affects what the agent itself can be pointed at — but update it anyway so the on-camera model list matches what we say:
+
+   ```bash
+   opencode upgrade
+   ```
+
+### Verified Green — Both Machines
 
 - OpenRouter lists **419 models, 21 free**
-- **18 free routes** visible in `opencode models`
-- `opencode 1.18.23` installed, OpenRouter authenticated
-- `yt-dlp 2026.08.19` working against our own channel
 - `json3` auto-captions confirmed carrying per-word millisecond timings — **no whisper needed**
-- `ffmpeg 9.0.1` has `scdet`, `silencedetect`, `ebur128`, `h264_videotoolbox`
+- `yt-dlp 2026.08.19` working against our own channel
+- Same key, probed from both machines minutes apart, returned **different** availability — `poolside/laguna-s-2.1:free` was 429 on the laptop and 200 from the Studio. Transient shared-pool throttling, confirmed twice. **This is the segment. Show both results side by side.**
 
 ### Free Model Shortlist — Set On Camera
 
@@ -637,6 +675,7 @@ bun run src/cli.ts "https://www.youtube.com/watch?v=QoQjddWCnKA" --clips 4
 - **yt-dlp blocked:** local transcripts already exist in `apps/app/data/transcripts/`. Fall back to a local file and keep going.
 - **Tempted to reach for a paid model:** do not. The rule is the episode. Failing on free tokens is the honest result and better content than quietly winning on paid ones.
 - **The UI is not done and time is running out:** ship the CLI, then build the UI as the stretch instead of subtitles. The page is the clip-worthy moment, so it outranks every other stretch item.
+- **The tool says the key is missing but OpenCode works fine:** classic Studio trap. OpenCode reads its own stored auth; the tool reads `OPENROUTER_API_KEY` from the environment. Export it and re-run. Do not debug the tool.
 - **SSE does not connect:** do not debug transport live. Poll a status endpoint every second instead. The audience cannot tell the difference and it costs two minutes, not fifteen.
 - **A private path appears on camera:** stop, close it, move on.
 
