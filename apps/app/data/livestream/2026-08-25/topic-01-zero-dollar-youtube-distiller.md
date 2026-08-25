@@ -1,5 +1,5 @@
 ---
-title: "[LIVE] Never Pay For AI Models Again. We Built This For $0."
+title: "[LIVE] Stop Paying For AI. Use OpenRouter Stealth & Free Models."
 slug: "zero-dollar-youtube-distiller"
 source: "OpenRouter free model catalogue, OpenRouter rate-limit documentation, OpenCode 1.18.23, yt-dlp, ffmpeg"
 status: "in_progress"
@@ -10,7 +10,7 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 
 ## Sources — Livestream Notes
 
-- Title: **[LIVE] Never Pay For AI Models Again. We Built This For $0.**
+- Title: **[LIVE] Stop Paying For AI. Use OpenRouter Stealth & Free Models.**
 - Build: a YouTube distiller — link in, transcript and ranked clips out — written entirely by free OpenRouter models
 - Shape: a small **local web UI**, not a bare CLI. Paste a link, watch the transcript land, watch clip cards pop in as they finish encoding.
 - Start: **4:00 PM**
