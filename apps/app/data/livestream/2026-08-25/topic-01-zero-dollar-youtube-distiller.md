@@ -219,17 +219,20 @@ done
 
 Eight requests, one token each. Run it on camera — the probe output **is** the segment.
 
-### Blocking — ffmpeg With Subtitle Support
+### Resolved — ffmpeg With Subtitle Support
 
-Stock homebrew ffmpeg has no `libass`, no `freetype`, no `drawtext`. Only needed for the stretch subtitle render, but install it now:
+Stock homebrew ffmpeg has no `libass`, no `freetype`, no `drawtext`. **`ffmpeg-full` 9.0.1_1 is installed on the Studio.** The trap: it is **keg-only**, so it does not replace the stock `ffmpeg` symlink. Without the PATH line, `ffmpeg` still resolves to the build with no subtitle filters and the burn step fails silently.
 
 ```bash
 brew install ffmpeg-full
+echo 'export PATH="/opt/homebrew/opt/ffmpeg-full/bin:$PATH"' >> ~/.zshrc
 ```
 
 ```bash
 ffmpeg -hide_banner -filters | grep -E "subtitles|drawtext"
 ```
+
+Verified on the Studio: `which ffmpeg` → `/opt/homebrew/opt/ffmpeg-full/bin/ffmpeg`, all three filters present, and both a `drawtext` clip and a `{\k}` karaoke `.ass` clip encoded end-to-end through `h264_videotoolbox` at 1080x1920. The subtitle stretch is no longer a stretch — the render chain is proven.
 
 ### Demo Machine — The Mac Studio
 
@@ -241,34 +244,27 @@ ffmpeg -hide_banner -filters | grep -E "subtitles|drawtext"
 |---|---|
 | `bun` | 1.3.14 |
 | `yt-dlp` | 2026.08.19 |
-| `ffmpeg` | 9.0.1, `h264_videotoolbox` present |
+| `ffmpeg` | `ffmpeg-full` 9.0.1_1 on PATH — `libass`, `drawtext`, `h264_videotoolbox` |
 | `node` | v26.7.0 |
 | `gh` | 2.98.0 |
-| `opencode` | 1.18.20 at `~/.opencode/bin/opencode` |
+| `opencode` | 1.18.23 at `~/.opencode/bin/opencode` |
 
-- OpenRouter authenticated on the Studio, **19 free routes** visible in `opencode models`
+- OpenRouter authenticated on the Studio, **17 free routes** visible in `opencode models`, including `minimax/minimax-m3:free` — every model on both ladders is present
+- `OPENROUTER_API_KEY` exported in the demo shell, **73 chars**, and confirmed authenticating over HTTP (`200` on `stealth/ox-alpha` and `openrouter/free`)
 - Account confirmed from the Studio: `is_free_tier: false`, lifetime usage ~$0.12 → **1,000 requests/day tier**
 - 218 GB free disk — video downloads are not a concern
 
-**Three blocking items on the Studio:**
+**All three blocking items are cleared.** Recorded here because each one fails in a way that looks like something else on camera:
 
-1. **`OPENROUTER_API_KEY` is not exported and is not in `.zshrc` or `.zprofile`.** The built tool reads `process.env.OPENROUTER_API_KEY`. OpenCode has its own stored auth, so the agent will work without it while the tool we are building silently will not. Export it in the shell you will demo from, and verify:
+1. **`OPENROUTER_API_KEY` was not exported** — it was set in OpenCode's own auth store, not the shell. That is the nastiest of the three: the agent authenticates fine and writes working code, while the tool it just wrote dies on a missing key. Now sourced from `~/.zshrc`. Verify before going live, and never echo the value on camera:
 
    ```bash
    [ -n "$OPENROUTER_API_KEY" ] && echo "set (${#OPENROUTER_API_KEY} chars)" || echo "NOT SET"
    ```
 
-2. **`ffmpeg` on the Studio has no libass** — zero `subtitles`, `ass`, or `drawtext` filters. Blocks the subtitle stretch only, but fix it now:
+2. **`ffmpeg` had no libass** — fixed with `ffmpeg-full` plus the PATH line above. Keg-only, so the install alone does nothing.
 
-   ```bash
-   brew install ffmpeg-full
-   ```
-
-3. **`opencode` on the Studio is 1.18.20**, one patch behind the laptop, and its catalogue is missing `minimax/minimax-m3:free`. Not fatal — the distiller calls the OpenRouter API directly, so the missing route only affects what the agent itself can be pointed at — but update it anyway so the on-camera model list matches what we say:
-
-   ```bash
-   opencode upgrade
-   ```
+3. **`opencode` was behind** — now 1.18.23, matching the laptop, and `minimax/minimax-m3:free` is back in the catalogue.
 
 ### Verified Green — Both Machines
 
