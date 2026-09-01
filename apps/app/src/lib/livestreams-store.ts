@@ -19,7 +19,11 @@ import {
   putBlobJson,
   readBlobJson,
 } from '@/lib/blob-storage';
-import { findTopicFile, getTopicDrawingFile } from '@/lib/livestreams-files';
+import {
+  findTopicFile,
+  getTopicDrawingFile,
+  isTopicMarkdownFile,
+} from '@/lib/livestreams-files';
 import {
   extractLivestreamYouTubeUrl,
   extractVideoId,
@@ -346,7 +350,7 @@ function getFilesystemTopicsForDate(dateStr: string): Topic[] {
 
   return fs
     .readdirSync(dir)
-    .filter((file) => file.endsWith('.md'))
+    .filter(isTopicMarkdownFile)
     .sort()
     .map((fileName) => {
       const raw = fs.readFileSync(path.join(dir, fileName), 'utf-8');
