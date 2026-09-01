@@ -1,21 +1,22 @@
 ---
-title: "[LIVE] How The SpaceX Team Actually Runs Grok Bot"
+title: "[LIVE] How The SpaceX Team Actually Ships Grok Bot"
 slug: "grok-bot-team-setup"
 source: "lauren @poteto live X, Lingxi X article Grok Bot for Engineering, restofront.com, cornershop.dev"
 status: "in_progress"
 date: "2026-09-01"
-announcement_tweet: null
-thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting. PALETTE: deep graphite black, crisp white, brushed silver, natural skin tones, restrained electric cobalt and a single warm yolk-gold accent only on the centered egg; no orange, amber, beige, brown, sepia, or parchment. COMPOSITION: two identity-locked hosts large chest-up and cropped by the left and right edges, each roughly 32-35% of frame, framing one centered payoff. CENTER ASSET: one huge cracked editorial egg, white shell, cobalt inner glow, a small white Grok Bot face mark on the yolk; no extra bots, no org chart, no island map, no UI. HOST LEFT: preserve Vincent from the injected reference photo exactly, bald with light tan olive skin, stubble, green-hazel eyes, black hoodie, skeptical delighted expression, one palm-up presenting gesture toward the egg. HOST RIGHT: preserve Mitchell from the injected reference photo exactly, dark slicked-back hair, fair skin, blue eyes, navy polo, surprised impressed expression, subtle pointing gesture toward the egg. BACKGROUND: deep matte graphite editorial studio, very subtle agent-card silhouettes receding into darkness, no readable UI and no terminal wall. CONTRAST RULE: host faces and the egg are large, separated, and instantly readable at mobile size. LIGHTING: soft cinematic frontal studio key light, natural skin, crisp silver edge lighting, subtle cobalt separation. TEXT: none. STYLE: premium high-contrast creator-tech editorial thumbnail, photoreal cinematic render, ultra sharp, uncluttered. NEGATIVE: no episode number, no neon scene, no red warning stamps, no generic robot faces, no org-chart of four named roles, no island, no fake logos, no YouTube branding, no tiny UI text, no terminal walls, no extra people, no duplicated faces, no distorted hands, no watermark."
+announcement_tweet: "The combined SpaceXAI x Cursor team built Grok Bot with Grok Bot. Five engineer bots. Screenshot proof. 200+ cloud agents. We're rebuilding the setup live, then shipping a real product with it. 14:00 CEST: https://www.youtube.com/watch?v=LbCRcGRLYaU"
+thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal hosts integrated into a warm handcrafted Poteto workshop, ultra sharp, readable at mobile size. PALETTE: warm ivory paper, dark teal drafting ink, walnut wood, brass and restrained yolk-gold accents, natural skin tones. COMPOSITION: two identity-locked hosts large chest-up at the left and right edges, framing one huge exact injected Grok Bot form in the center with smaller workshop bots around it. POTETO CHARACTER: transform the exact injected Poteto avatar into a small full-body anime workshop character with black hair, round glasses, black hoodie, and the sweet-potato motif; seat her on the upper edge of the center bot with a pencil and long blueprint unrolling toward the smaller bots; keep her clearly illustrated, not a real third guest. HOST LEFT: preserve Vincent exactly; intrigued discovery expression, controlled wide eyes, raised brows, mouth slightly open, gaze on the setup; not comedic shock. HOST RIGHT: preserve Mitchell exactly; skeptical technical appraisal, one eyebrow raised, restrained questioning half-smirk, gaze on the workflow; not broadly smiling. CENTER ASSET: preserve the exact injected Grok Bot design, smooth white rounded form with two black diagonal pill-shaped eyes; no blue eyes or redesign. BACKGROUND: one continuous illustrated bot-building workshop with paper blueprints, brass tools, wood workbenches, and subtle botanical corners; no pasted rectangular source card. CONTRAST RULE: both faces, the Poteto character, and the center bot are separated and readable at mobile size. TEXT: none. STYLE: premium creator-tech editorial thumbnail blending photoreal hosts with a detailed warm anime workshop. NEGATIVE: no episode number, no title, no framed avatar, no extra real people, no fake logos, no tiny UI text, no terminal wall, no generic humanoid robots, no duplicated faces, no distorted hands, no watermark."
 ---
 
 ## Sources — Livestream Notes
 
-- Title locked: **[LIVE] How The SpaceX Team Actually Runs Grok Bot**
+- Title locked: **[LIVE] How The SpaceX Team Actually Ships Grok Bot**
 - Build: add Dr Eggbot live, walk the Aug 28 child shares, walk Lingxi's setup article, then show cornershop.dev / restofront as GTM for an autonomous company
 - Shape: live Grok Bot.app on the **MBP**. Talking points live in this worktree. Clone nothing until Vincent is on stream.
 - Demo machine: **MacBook Pro** (`DeCodersLabs`). Grok Bot.app is here. Not Studio.
 - Talking-point Premiere: `/Users/decod3rs/www/shipshitshow/live` on the MBP. This file is the worktree cut. Do not invent a second talking-points folder.
 - Format: live build, English only, 60–90 minutes
+- Start: **14:00 CEST (UTC+2)**
 - Artifact: Dr Eggbot installed on camera. Then restofront / cornershop.dev on screen as the product, not a second company.
 - Hard rule: **do not clone Chief of Staff, Inbox Manager, Calendar Scheduler, or To-Do Organizer.**
 - Hard rule: **do not play Luthra as her.**
@@ -31,12 +32,34 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 - porshe: https://x.ai/bot/BXDRX1jaURkI4Tx70zLg6 — https://x.com/poteto/status/2093518231235686589
 - X2 (named, no share): https://x.com/poteto/status/2093827590192529534
 - Lingxi article: https://x.com/i/article/2090147220838588416 — tweet https://x.com/lingxi/status/2094493172516966781
+- Lauren pstack guide: https://x.com/poteto/status/2094457600259842065
 - @shaoruu: no X article. Tips: https://x.com/shaoruu/status/2087235466278101368
 - @baltaaazr: no X article. Launch-week post: https://x.com/baltaaazr/status/2087251248315875726
 - Carnage: https://x.com/0xCarnagee/status/2093861750416265686
 - Product: https://cornershop.dev — live restaurant brand https://restofront.com (€49/month founding, private preview first)
 - Restream studio: https://studio.restream.io/eue-pcqd-vbw
-- YouTube live URL: fill when the event exists.
+- YouTube livestream: https://www.youtube.com/watch?v=LbCRcGRLYaU
+- Thumbnail 1 — analytical blueprint guide: `/Users/decod3rs/Desktop/thumbnails/2609/260901/how-the-spacex-team-actually-runs-grok-bot-character-v1-analytical.jpg`
+- Thumbnail 2 — discovery, character builds the bot (**recommended**): `/Users/decod3rs/Desktop/thumbnails/2609/260901/how-the-spacex-team-actually-runs-grok-bot-character-v2-discovery.jpg`
+- Thumbnail 3 — inspection with magnifying glass: `/Users/decod3rs/Desktop/thumbnails/2609/260901/how-the-spacex-team-actually-runs-grok-bot-character-v3-inspection.jpg`
+
+## YouTube Description — Paste This
+
+The combined SpaceXAI x Cursor team built Grok Bot with Grok Bot. The real setup is Dr Eggbot creating focused bots, five engineer bots running a screenshot-proof loop, and a fleet that grew from 15 cloud agents by hand to more than 200.
+
+We are recreating that workflow live, then putting it against a real product: https://cornershop.dev. Something customers can actually buy.
+
+Sources:
+Lauren's Dr Eggbot: https://x.com/poteto/status/2093392701005946931
+Lauren's pstack guide: https://x.com/poteto/status/2094457600259842065
+Lingxi's Grok Bot setup: https://x.com/i/article/2090147220838588416
+https://cornershop.dev
+https://restofront.com
+
+Subscribe so you don't miss the next build.
+Follow us: https://x.com/shipshitdev
+
+#GrokBot #pstack
 
 ## Cold Open — Read This
 
@@ -44,9 +67,9 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinem
 
 ## Summary
 
-Locked title: How The SpaceX Team Actually Runs Grok Bot. Open on Lauren Tan's Dr Eggbot, the one share she published. Walk two or three eggbot-made shares from the Aug 28 thread (loom, jobs, porshe). X2 named, no share. Then Lingxi Li's 31 Aug X article is the setup: five engineer bots, Jenny ops at 5 a.m., before/after screenshot proof, 15 cloud agents by hand to 200 in the fleet. @baltaaazr and @shaoruu built the foundation in four weeks; they have no X articles yet, so name them, don't invent a doc. Do not clone CoS / Inbox / Calendar / To-Do. Luthra is not her. Close the loop on cornershop.dev: restofront is GTM for an autonomous company, 11 live Malta previews, show the product not a second company. Mail stays on hold. Clone nothing until he's live.
+Locked title: How The SpaceX Team Actually Ships Grok Bot. Open on Lauren Tan's Dr Eggbot, the one share she published. Walk two or three eggbot-made shares from the Aug 28 thread (loom, jobs, porshe). X2 named, no share. Then Lingxi Li's 31 Aug X article is the setup: five engineer bots, Jenny ops at 5 a.m., before/after screenshot proof, 15 cloud agents by hand to 200 in the fleet. @baltaaazr and @shaoruu built the foundation in four weeks; they have no X articles yet, so name them, don't invent a doc. Do not clone CoS / Inbox / Calendar / To-Do. Luthra is not her. Close the loop on cornershop.dev: restofront is GTM for an autonomous company, 11 live Malta previews, show the product not a second company. Mail stays on hold. Clone nothing until he's live.
 
-## Talking Points — How The SpaceX Team Actually Runs Grok Bot
+## Talking Points — How The SpaceX Team Actually Ships Grok Bot
 
 ### Segment Thesis
 
@@ -54,7 +77,7 @@ The title is the promise. Lauren is the open, not the whole show.
 
 ### Talking Points
 
-- Read the title: How The SpaceX Team Actually Runs Grok Bot.
+- Read the title: How The SpaceX Team Actually Ships Grok Bot.
 - Pull up https://x.com/poteto. Spell out Lauren Tan. Grok Bot at SpaceXAI.
 - Recap four-pack: Chief of Staff, Inbox, Calendar, To-Do. Say it once. It is not on her X. Drop it.
 - Pull up https://x.com/poteto/status/2093392701005946931 then https://x.ai/bot/93gOz3op1UQdBdbekQFLK
@@ -191,7 +214,7 @@ The SpaceX setup is the factory. Cornershop / restofront is what you sell with i
 
 ## Announcement Tweet
 
-> How the SpaceX team actually runs Grok Bot. Lauren posted one share. Lingxi posted the setup. Then we put it on a real storefront. Live Malta restofront previews. No pack. One egg.
+> The combined SpaceXAI x Cursor team built Grok Bot with Grok Bot. Five engineer bots. Screenshot proof. 200+ cloud agents. We're rebuilding the setup live, then shipping a real product with it. 14:00 CEST: https://www.youtube.com/watch?v=LbCRcGRLYaU
 
 ## Tweets — Paste Live
 
@@ -206,3 +229,38 @@ The SpaceX setup is the factory. Cornershop / restofront is what you sell with i
 > "That's not her."
 
 > "Show the product. Not a second company."
+
+## X Pipeline
+
+### Pre-stream Announcement
+
+> The combined SpaceXAI x Cursor team built Grok Bot with Grok Bot.
+>
+> Five engineer bots. Screenshot proof. More than 200 cloud agents.
+>
+> We're rebuilding the real setup live, then putting it on a real storefront.
+>
+> 14:00 CEST: https://www.youtube.com/watch?v=LbCRcGRLYaU
+
+### Live Now
+
+> Lauren published Dr Eggbot. Lingxi published the real setup: five engineer bots, screenshot proof, more than 200 cloud agents.
+>
+> No viral four-bot fantasy. We're building the actual workflow now: https://www.youtube.com/watch?v=LbCRcGRLYaU
+
+### Quote Lauren's pstack Guide
+
+Quote: https://x.com/poteto/status/2094457600259842065
+
+> The bot is not the point. The operating system around it is.
+>
+> Lauren says pstack let her ship 2,000 PRs in a month. The important bit is the verification loop, not the number.
+>
+> We're pulling that loop apart live.
+
+### Cadence
+
+- Publish the pre-stream announcement as soon as the YouTube event exists.
+- Publish Live Now only after the broadcast is actually live.
+- Use the six `Tweets — Paste Live` lines one at a time when each segment lands; do not stack them in one hour.
+- YouTube livestream: https://www.youtube.com/watch?v=LbCRcGRLYaU

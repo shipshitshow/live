@@ -1,4 +1,4 @@
-LOCKED: 1. [LIVE] How The SpaceX Team Actually Runs Grok Bot
+LOCKED: 1. [LIVE] How The SpaceX Team Actually Ships Grok Bot
 
 # Title options — 2026-09-01 (recut)
 
@@ -20,7 +20,7 @@ Four-pack still stays off. Frontmatter `title` stays killed until Vincent picks.
 
 ## Options (setup recut)
 
-1. `[LIVE] How The SpaceX Team Actually Runs Grok Bot` (49)
+1. `[LIVE] How The SpaceX Team Actually Ships Grok Bot` (50)
 2. `[LIVE] They Built Grok Bot With Grok Bot. Here's The Setup.` (59)
 3. `[LIVE] Five Engineer Bots. One Screenshot Proof Loop.` (53)
 4. `[LIVE] 200 Cloud Agents. That's How They Ship Grok Bot.` (55)

@@ -6,11 +6,15 @@ const DATA_DIR =
 const DRAWINGS_DIR = 'drawings';
 const X_POSTS_FILE = 'x-posts.json';
 
+export function isTopicMarkdownFile(fileName: string): boolean {
+  return /^topic-\d{2}-.+\.md$/.test(fileName);
+}
+
 export function findTopicFile(slug: string, date: string): string | null {
   const dir = path.join(DATA_DIR, date);
   if (!fs.existsSync(dir)) return null;
 
-  const files = fs.readdirSync(dir).filter((file) => file.endsWith('.md'));
+  const files = fs.readdirSync(dir).filter(isTopicMarkdownFile);
   for (const file of files) {
     const raw = fs.readFileSync(path.join(dir, file), 'utf-8');
     if (raw.includes(`slug: "${slug}"`)) {
