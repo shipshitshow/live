@@ -51,16 +51,17 @@ exact phrase `This is what worked, what broke` into every description.
 - Prefer one honest contrast: `It works, but...`, `The demo looked easy. The real workflow was...`.
 - End on the viewer's decision, lesson, or saved effort.
 - Do not write `In this video`, `Today we're going to`, `deep dive`, `game-changing`, or generic
-  subscribe filler.
+  subscribe filler inside the core description. Use the exact required subscription footer below.
 - Do not add headings, bullet lists, chapters, or links inside the core description.
 - Use zero to three highly specific hashtags only when they add a useful discovery path. Put them
   on the final line, never inside the core copy. Prefer product or topic terms such as `#Grok46`,
   `#GrokBot`, or `#CursorOrigin`; avoid generic stuffing such as `#AI #Tech #Programming`.
 - Keep `youtube_tags` separate from the public description; tags are metadata, not hashtags.
 
-## Optional YouTube Utility Blocks
+## YouTube Utility Blocks And Footer
 
-Append only the blocks the episode actually needs, in this order:
+Append the blocks the episode needs in this order. When a timestamped transcript or VTT exists,
+the `CHAPTERS:` block is required. Every YouTube description ends with the exact two-line footer.
 
 ```text
 [Optional sponsor sentence and one sponsor link]
@@ -73,13 +74,20 @@ CHAPTERS:
 
 [Optional artifact, repository, or channel link]
 
-[Optional final line: zero to three specific hashtags]
+Subscribe so you don't miss the next build.
+Follow us: https://x.com/shipshitdev
+
+[Final line when applicable: zero to three specific hashtags]
 ```
 
 - Do not add empty labels or placeholder links.
 - Use chapters only when a timestamped transcript or VTT exists.
 - Keep source labels short. A bare URL is acceptable when the destination is obvious.
 - One useful artifact link is better than a wall of social links.
+- Keep the subscription and follow lines verbatim. Do not rewrite, expand, or move them before the
+  chapters.
+- Put the description hashtag list after the follow link. Keep the comma-separated `youtube_tags`
+  field separate as upload metadata; never paste it into the public description.
 - YouTube may surface up to three description hashtags near the title, but they remain secondary to
   the title, thumbnail, and unique description. More is not better.
 
