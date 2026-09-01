@@ -51,5 +51,8 @@ yarn.lock
 .code-review-graph/
 .gstack/
 
+# Repository-local Git worktrees
+.worktrees/
+
 # Livestream thumbnail working files (kept local, never committed)
 assets/
