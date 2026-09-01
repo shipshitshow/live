@@ -253,3 +253,45 @@ So the story is not that Elon bought another company. The story is that the codi
 > "First they gave you the editor free. Now they'd like your repos."
 
 > "One prompt gets you an app. It doesn't get you a customer."
+
+## LinkedIn Pipeline
+
+### Build Recap — Vincent (primary, flagship day)
+
+> We gave Grok Bot one job: find us a paying customer for our website business.
+>
+> It found a qualified lead in three minutes.
+>
+> Every small business has the same gap. You finish the client work, you look up, and the pipeline is empty. Outreach is the first thing that gets dropped and the last thing anyone wants to do.
+>
+> So we tested whether that job can actually be handed off.
+>
+> Grok Bot gets its own computer in the cloud — Cursor Cloud Agents, the product underneath it. It opens a browser, searches, reads pages and fills in forms the way a person does. We named ours King and gave it one role: find work.
+>
+> In under 30 minutes it:
+>
+> - Reasoned about which trades have money but neglect their websites — plumbers, electricians, small IT shops
+> - Searched Google itself and came back with a real local business with a weak site
+> - Wrote the brief for a replacement website
+> - Drafted the proposal email and stopped for review before sending anything
+> - Turned the whole sequence into a routine that runs every weekday morning
+>
+> But the boring, every-morning half of the job now runs without us. That half was never getting done anyway.
+>
+> If your business has a job like that sitting undone every week, reach out — that is the conversation we want to have.
+>
+> #aiautomation #leadgeneration
+
+Link goes in the first comment (LinkedIn suppresses in-body links):
+`https://youtu.be/zyQEwa5IYvk?utm_source=linkedin&utm_medium=social&utm_campaign=ep-21-grok-week-stack-consolidation`
+
+### Campaign
+
+- UTM campaign: `ep-21-grok-week-stack-consolidation` (episode number derived from the 21 dated livestream folders — confirm before first publish)
+- Flagship: https://youtu.be/zyQEwa5IYvk
+- Livestream: https://youtube.com/live/-qsSddwzjpY
+- Still to draft: Playbook post (day +2), Lesson post (day +4), Mitchell variants
+
+## X Article — "I Gave a Bot One Job: Find Me a Customer"
+
+Full draft lives at `.agents/drafts/2026-08-18-x-article-grok-bot.md`.

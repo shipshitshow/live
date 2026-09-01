@@ -10,14 +10,15 @@ Use this skill to generate upload-ready metadata in the Ship Shit Show voice. Me
 ## Quick Start
 
 1. Load the episode context: transcript, VTT, topic file, existing description, or rough brief.
-2. Before drafting a description, read `references/description-template.md` and follow its concise human opener, utility-block order, optional-hashtag rule, and paste-ready formatting contract.
-3. For upcoming livestreams, first load the current talking-point file from `apps/app/data/livestream/YYYY-MM-DD/topic-*.md` and treat it as the primary source of truth for title, angle, receipts, sources, and description. Do not substitute old transcripts or channel inventory for the current stream premise.
-4. If the user mentions "talking points", "stream prep", "topic file", or says the show context was already piped, use `$shipshitshow-talking-points` source priority before drafting metadata.
-5. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as supporting context, not a replacement for the topic file.
-6. If a vault path is provided, compare nearby entries before writing titles.
-7. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
-8. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags` when the user requests a complete metadata package. If the user requests only one artifact, return only that artifact.
-9. Keep claims grounded in provided sources.
+2. Before drafting a title or description, read `../shipshitshow-talking-points/references/brand-voice.md`. Titles and descriptions use the show voice (blunt, operator, first-hand), not SEO filler and not the LinkedIn buyer register.
+3. Then read `references/description-template.md` and follow its concise human opener, chapter and utility-block order, required subscription footer, final-hashtag rule, and paste-ready formatting contract.
+4. For upcoming livestreams, first load the current talking-point file from `apps/app/data/livestream/YYYY-MM-DD/topic-*.md` and treat it as the primary source of truth for title, angle, receipts, sources, and description. Do not substitute old transcripts or channel inventory for the current stream premise.
+5. If the user mentions "talking points", "stream prep", "topic file", or says the show context was already piped, use `$shipshitshow-talking-points` source priority before drafting metadata.
+6. In this repo, run `bun scripts/generate-youtube-metadata.ts <video-id-or-query>` when a YouTube inventory entry, transcript, or topic file exists; use its orchestration packet as supporting context, not a replacement for the topic file.
+7. If a vault path is provided, compare nearby entries before writing titles.
+8. If VTT or timestamped transcript exists, use `$youtube-chapters` to generate chapter lines for the description.
+9. Draft one recommended title, title candidates, one description, chapters, and `youtube_tags` when the user requests a complete metadata package. If the user requests only one artifact, return only that artifact.
+10. Keep claims grounded in provided sources.
 
 ## Source Priority
 
@@ -86,51 +87,40 @@ tag one, tag two, tag three
 - Follow `references/description-template.md`.
 - Open with the concrete hook or operator thesis.
 - Name the model, tool, company, package, repo, or game early.
-- Keep the voice direct and builder-native.
+- Keep the voice direct and builder-native. If a line fails the brand-voice test (would a non-AI viewer understand it? is the take first-hand?), rewrite it.
 - Use short paragraphs.
 - Keep the custom narrative opener to 35-80 words. It is a human explanation of why the video
   exists, not a section outline or exhaustive agenda.
 - Lead with first-hand usage when available: what we used, built, spent, shipped, or broke.
 - Include links only when provided or already known from the episode context.
-- Add a call to action only if it fits naturally.
+- End every YouTube description with this exact subscription footer, after chapters and any source
+  or artifact links:
+
+  ```text
+  Subscribe so you don't miss the next build.
+  Follow us: https://x.com/shipshitdev
+  ```
+
+- Put the final description hashtag list immediately after the footer. Keep `youtube_tags` as
+  separate upload metadata; do not paste the comma-separated `youtube_tags` field into the public
+  description.
 - Use zero to three highly specific hashtags at the bottom only when they add a useful discovery
   path. Never add generic hashtag stuffing. `youtube_tags` remain separate metadata.
 - Never call YouTube tags `tags`; use `youtube_tags`.
 
 ## Title Rules
 
-- Prefer conflict, proof, or operator consequence.
+- Read `../shipshitshow-talking-points/references/brand-voice.md` before naming the title. Prefer conflict, proof, or operator consequence.
 - Avoid vague hype: `insane`, `crazy`, `game-changing`, unless the source earns it.
 - Do not stuff every AI lab into one title.
 - Long-form target: 45-75 characters.
 - Shorts target: 35-60 characters.
 
-## Thumbnail Style Modes
+## Thumbnails
 
-Use the right thumbnail style for the publishing surface:
+Thumbnail prompts, art direction, image paths, and livestream vs recap vs surgical modes are owned by `$thumbnails`. Do not restate those rules here and do not freestyle a plate. Invoke that skill.
 
-- **Upcoming livestream:** use the Ship Shit Show live-thumbnail style: warm parchment editorial background, two large host portraits framing one centered source asset/emblem, top-right episode number, no text except the episode number.
-- **Edited recap video from a livestream:** use the recap/video style: one dominant proof visual from the edit, big readable 2-5 word title text, no episode number, hosts optional and secondary.
-
-Mode selection is automatic:
-
-- `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or topic-file `thumbnail_prompt` means livestream style.
-- `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short` means recap/video style.
-- `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or iterative thumbnail correction means surgical re-prompt mode.
-- Do not ask which style he means when the wording matches these rules.
-
-Never use the livestream two-host parchment composition for a recap video unless the user explicitly wants the archive/live branding. Never use the recap style with big title text for the livestream thumbnail unless the user explicitly overrides the live style.
-
-When the user is iterating a thumbnail in a workflow app and asks for a narrow change, use **surgical re-prompt mode**:
-
-- Return a standalone full prompt. Do not say `use the provided image`, `same as before`, or rely on prior chat context.
-- Preserve all unspecified layout details.
-- Only change what the user asked to change.
-- If a logo/image is injected by the workflow, refer to it as the injected asset and say to use it exactly. Do not ask the model to search for, recreate, or redesign it.
-- For "remove title", explicitly ban `Loops`, `2.0`, numbers, captions, labels, and all non-logo text.
-- For "Claude orange", explicitly replace blue/cyan/teal with warm Claude orange/amber and ban blue/cyan/teal.
-
-When asked for thumbnail prompts in metadata, label them clearly:
+When a metadata package includes thumbnail prompts, invoke `$thumbnails` and label its output:
 
 ```markdown
 ### Livestream Thumbnail Prompt
@@ -149,7 +139,9 @@ Before finalizing:
 - The description includes chapters when VTT/timestamped transcript exists.
 - Every chapter title is 3 words max.
 - The first chapter starts at `0:00`.
+- Every YouTube description ends with `Subscribe so you don't miss the next build.` followed by
+  `Follow us: https://x.com/shipshitdev`.
 - Any description hashtags are limited to zero to three specific terms on the final line.
 - `youtube_tags` contains 15-25 relevant phrase tags unless the user asks for fewer.
 - Claims and timestamps are backed by supplied context.
-- Thumbnail prompts, when included, use the correct livestream vs recap mode.
+- Thumbnail prompts, when included, came from `$thumbnails` and use that skill's livestream vs recap mode.

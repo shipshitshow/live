@@ -11,12 +11,13 @@ Use this skill to turn a Ship Shit Show topic into a host-ready opening that lan
 
 1. Load the topic file, usually `apps/app/data/livestream/YYYY-MM-DD/topic-*.md`.
 2. Run `scripts/show-context.sh <topic-file>` from this skill to inspect local transcript coverage and nearby show prep.
-3. Read `references/shipshitshow-hooks.md` for the voice, quality bar, and output contract.
-4. Write or replace the topic's intro sections in this order:
+3. Voice source of truth is `$shipshitshow-talking-points`: read `../shipshitshow-talking-points/references/brand-voice.md` and `../shipshitshow-talking-points/references/live-voice-extraction.md`. This skill is the cold-open specialist, not a second brand voice.
+4. Read `references/shipshitshow-hooks.md` for the cold-open quality bar and output contract.
+5. Write or replace the topic's intro sections in this order:
    - `## Cold Open - READ THIS`
    - `## Summary`
    - `## Intro Talking Points`
-5. Keep existing sources, URLs, and factual claims unless you verify new ones.
+6. Keep existing sources, URLs, and factual claims unless you verify new ones.
 
 ## Source Priority
 
@@ -59,9 +60,11 @@ Default shape:
 Everyone thinks [comfortable story].
 But [specific event/fact] means [sharper interpretation].
 If you build software, this changes [concrete consequence].
-So today we're going to [stream promise].
+We'll [prove / build / decide the thing].
 Let's go.
 ```
+
+Do not open with "Today we're going to talk about..." — that is a brand-voice anti-pattern unless there is no stronger claim.
 
 ### Write Host-Ready Output
 
@@ -93,7 +96,7 @@ Make the cold open spoken, not essay-like. A good cold open should read naturall
 - Keep the hosts' blunt/operator voice, but remove transcript filler.
 - Prefer concrete claims over hype words.
 - Use one strong swear only when it earns its place; do not spray profanity as seasoning.
-- Avoid generic YouTube language like "in this video" unless it is part of a joke.
+- Avoid generic YouTube language like "in this video" or "today we're going to" unless it is part of a joke or there is no stronger claim.
 - Do not invent numbers, dates, quotes, launch details, or benchmark claims.
 - If the topic file has a `Cold Open - READ THIS`, improve it instead of duplicating it under a new heading.
 - If rewriting a file, preserve frontmatter and unrelated sections.

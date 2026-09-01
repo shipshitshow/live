@@ -90,7 +90,11 @@ Swearing stays as-is for the show itself. The LinkedIn register is different and
 
 This skill owns the spoken show: segments, talking points, cold opens, hot takes, closes.
 
-LinkedIn post sets, the buyer-register rewrite, and the UTM link convention are owned by the `linkedin-pipeline` skill. Do not draft LinkedIn copy from here — invoke that skill after the episode. Announcement tweets and paste-live tweets stay here as production artifacts in Ressources sections.
+LinkedIn post sets, the buyer-register rewrite, and the UTM link convention are owned by the `linkedin-pipeline` skill. Do not draft LinkedIn copy from here — invoke that skill after the episode.
+
+X recap posts, threads, announcement tweets, and X Articles are owned by the `x-pipeline` skill. Do not draft those from here — invoke that skill after the episode.
+
+This skill keeps **paste-live clip lines only** in `## Tweets — Paste Live`: short on-air lines the host can read or drop. Not recaps, not articles, not announcement copy.
 
 ## Thumbnails Are a Separate Skill
 
@@ -149,10 +153,11 @@ sources, angles, host notes. Do not split a story's receipts into a separate
 top-level section; nest them under `### Sources` inside the segment so the host
 reads one card per story instead of cross-referencing tabs.
 
-**Keep publishing artifacts out of segments.** The YouTube description, announcement
-tweet, thumbnail prompts, trend checks and verification checklists are production
-material, not talking points. Give them their own top-level heading (they land in
-Ressources automatically) — never bury them inside a segment.
+**Keep publishing artifacts out of segments.** The YouTube description, X drafts
+(owned by `x-pipeline`), thumbnail prompts, trend checks and verification
+checklists are production material, not talking points. Give them their own
+top-level heading (they land in Ressources automatically) — never bury them
+inside a segment. Paste-live clip lines stay in `## Tweets — Paste Live`.
 
 `## Segment <N> — Headline: <text>` is accepted; the `Segment <N>` half renders as the
 card's label and the `Headline:` prefix is stripped from the title.
