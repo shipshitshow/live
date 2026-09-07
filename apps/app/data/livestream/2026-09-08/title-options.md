@@ -23,10 +23,20 @@ Frontmatter `title` holds option 1 as a placeholder. Vincent picks. Draft only. 
 5. `[LIVE] Two Best Models, One Price. Selling Access Is Over.` (57)
 6. `[LIVE] Same Price, Same Scores. So What Are You Selling?` (55)
 
+## Segmentation correction (Vincent, 2026-09-07)
+
+This is not "subscriptions are dead". The SaaS line stays. The target is selling **access** —
+seats, licences, resold usage. Savings-share needs a baseline, reachable data, and a saving
+worth more than the measurement; enterprise passes all three, a local restaurant fails all
+three. Two customers, two pricing models, both correct. Titles must not imply we abandoned
+recurring revenue.
+
 ## Notes for the pick
 
 - Options 1 to 4 keep the format rule cleanly: the business change carries the title, the model launches are the evidence inside.
 - Options 5 and 6 buy the launch-week search traffic but risk reading as another model-comparison video, which is the crowded lane this week.
+- Option 1 is now the most accurate of the set: "seats" is the precise target, where
+  "subscriptions" would overclaim.
 - Option 3 is the most specific and the most exposed. Only pick it if the 15% / zero-fee terms are confirmed as what we actually offer, per `## Verify Live Before Quoting` in the topic file.
 
 Do not pick in this file. Vincent picks.

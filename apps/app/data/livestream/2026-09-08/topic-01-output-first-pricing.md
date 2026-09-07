@@ -4,7 +4,7 @@ slug: "output-first-pricing"
 source: "Vincent's output-first article, Anthropic launch post, OpenAI launch post, DataCamp head-to-head, Artificial Analysis, Hacker News, benchmark.shipshit.dev, github.com/cornershopdev/cornershop.dev"
 status: "draft"
 date: "2026-09-08"
-announcement_tweet: "Claude Fable 5.1 and GPT-6 Astra both cost $10 in / $50 out. Same price, scores inside scaffold noise. When the best intelligence costs everyone the same, you cannot sell access to it any more. So we stopped selling subscriptions and started taking a cut of the savings. The deal, the risk, and the proof: 14:00 CEST [YOUTUBE_URL]"
+announcement_tweet: "Claude Fable 5.1 and GPT-6 Astra both cost $10 in / $50 out. Same price, scores inside scaffold noise. When the best intelligence costs everyone the same, you cannot sell access to it any more. So for buyers who can prove a baseline we stopped quoting seats and take a cut of the savings instead. For the ones who can't, we still sell a product. Which is which, and why: 14:00 CEST [YOUTUBE_URL]"
 thumbnail_prompt: null
 ---
 
@@ -13,7 +13,8 @@ thumbnail_prompt: null
 - Title placeholder: **[LIVE] Stop Selling Seats. Take A Cut Of The Savings.** Vincent picks from `title-options.md`.
 - Episode: **24**. UTM campaign: `ep-24-output-first-pricing`.
 - Start: **14:00 CEST (UTC+2)** — confirm. Format: 60–90 minutes, English only.
-- **Spine, locked with Vincent:** the two model launches are the setup, not the subject. Both frontier models now cost the same and score inside noise of each other, so access to intelligence has stopped being a differentiator. The episode is what you sell instead: output, and a share of the savings.
+- **Spine, locked with Vincent:** the two model launches are the setup, not the subject. Both frontier models now cost the same and score inside noise of each other, so access to intelligence has stopped being a differentiator. The episode is what you sell instead: output, and where the buyer supports it, a share of the savings.
+- **Correction locked with Vincent, do not drift back:** this is **not** "subscriptions are dead". We keep selling software. The target is selling *access* — seats, licences, resold usage. The rule is a segmentation rule: savings-share needs a baseline, reachable data, and a saving worth more than the measurement. Enterprise passes, a local restaurant fails all three. Two customers, two pricing models, both correct. Say "access", not "subscriptions", on air.
 - This puts the episode back inside the format rule. The model news is a contained reaction that sets up the thesis. It is not the spine and it is not the title.
 - Source article: Vincent's output-first piece, saved to `.agents/drafts/2026-09-08-article-output-first-pricing.md`. The X and LinkedIn cuts live in `## X Pipeline` and `## LinkedIn Pipeline` in this file.
 - Three acts. Act 1: the input is a commodity, two capsules. Act 2: the deal, two capsules. Act 3: the proof, two capsules. Hard reset on camera between acts so each half cuts as a standalone video.
@@ -40,7 +41,9 @@ Two frontier AI models shipped three days apart at the exact same price. Ten dol
 
 That is the whole story, and almost nobody drew the conclusion: if the best intelligence available costs everyone the same, then having it is not a business. Selling access to it is not a business either.
 
-So we changed how we charge. No seats. No subscription as the product. We take the old cost of a process, we change how the work gets done, and when the savings hold we take a share of the difference. Around fifteen percent of the performance, no management fee. We only get paid when the number moves.
+So we changed how we charge, for the buyers who can support it. No seats, no licence count. We take the old cost of a process, we change how the work gets done, and when the savings hold we take a share of the difference. Around fifteen percent, no management fee. We only get paid when the number moves.
+
+That is not a rule against recurring revenue. We also sell a restaurant website for forty-nine euros a month and we are keeping it. The episode is the test that decides which of the two a customer gets: is there a baseline, can we reach the data, and is the saving worth more than measuring it. Enterprise passes. A restaurant fails all three.
 
 This episode is that argument, the deal mechanics, the risk we are taking on, and the proof: cornershop.dev went from an empty folder on 18 July to a paid product in fifty days on 136 merged changes, and our own benchmark measures what a finished task actually costs.
 
@@ -58,11 +61,11 @@ Follow us: https://x.com/shipshitdev
 
 ## Cold Open — Read This
 
-> "Two new AI models landed this week, three days apart, and they cost exactly the same. Ten dollars in, fifty out, both of them. Pull up the benchmark tables and they barely overlap, and where they do the gap is two points, which is what a better setup buys you anyway. Everybody spent the weekend arguing about which one won. Nobody said the obvious thing. If the best intelligence on earth is the same price for you, for me, and for the company you are pitching against, then having it is not a business. Selling access to it definitely is not a business. So we stopped. No seats, no subscription, no billable hours with a chatbot bolted on. We take the old cost of a process, we change how the work gets done, and when the savings stick we take about fifteen percent of the difference. Zero management fee. We eat the risk. Today: why that is now the only honest way to sell this, what it costs us when a model stalls, and the proof that we can actually deliver it. Let's go."
+> "Two new AI models landed this week, three days apart, and they cost exactly the same. Ten dollars in, fifty out. Their benchmark tables barely overlap, and where they do the gap is two points, which is what a better setup buys you anyway. Everybody argued about which one won. Nobody said the obvious thing: if the best intelligence on earth is the same price for you, for me, and for the company you are pitching against, then selling access to it is finished. So on our enterprise work we stopped quoting seats. We baseline what the process costs today, we change how the work gets done, and we take about fifteen percent of the savings. No management fee. We eat the risk. And we still charge a restaurant forty-nine euros a month for a website, because that buyer has no baseline, no data to give us, and no board asking where the money went. Two customers, two pricing models, both correct. Today: how to tell which room you are in. Let's go."
 
 ## Summary
 
-The thesis is a pricing argument, and the week supplied the receipt for it. Claude Fable 5.1 and GPT-6 Astra both list at $10 per million in and $50 out; their published benchmark tables share only a handful of rows, and on those the gap is roughly two points, which our own design notes put inside the swing you get from scaffold choice alone. When the input is that commoditised, nobody can sell "we use the best AI" and nobody can defend a margin on access. Act 2 is the alternative: baseline the old cost of a process, get data access, change how the work is done, and take roughly 15% of the verified savings with no management fee, which moves the risk from the buyer to us. That risk is real and now includes model behaviour: both vendors ship a gated public model, and OpenAI's own launch post warns of pauses "sometimes during unrelated work". Act 2 also covers the engineering discipline that makes savings survive: one unbroken chain from context to data to output to result to productivity, and deterministic software written by experts with AI rather than task-agents that improvise the same job daily and drift. Act 3 is proof of delivery: cornershop.dev, created 18 July, 211 commits and 136 merged pull requests in 50 days from one human, selling restaurant sites at €49/month through restofront.com — including the honest question of whether that subscription contradicts the thesis. Then benchmark.shipshit.dev, because you cannot invoice a saving you cannot measure.
+The thesis is a pricing argument, and the week supplied the receipt for it. Claude Fable 5.1 and GPT-6 Astra both list at $10 per million in and $50 out; their published benchmark tables share only a handful of rows, and on those the gap is roughly two points, which our own design notes put inside the swing you get from scaffold choice alone. When the input is that commoditised, nobody can sell "we use the best AI" and nobody can defend a margin on access. Act 2 is the alternative for the buyer who can support it: baseline the old cost of a process, get data access, change how the work is done, and take roughly 15% of the verified savings with no management fee, which moves the risk from the buyer to us. The episode's real rule is the segmentation underneath that, and it is not "subscriptions bad": you can only sell a share of savings when a baseline exists, the data is reachable, and the saving is worth more than the cost of measuring it. Enterprise passes on all three. A Valletta restaurant fails on all three, so it buys a finished product at a flat price. Two customers, two pricing models, one company. That risk is real and now includes model behaviour: both vendors ship a gated public model, and OpenAI's own launch post warns of pauses "sometimes during unrelated work". Act 2 also covers the engineering discipline that makes savings survive: one unbroken chain from context to data to output to result to productivity, and deterministic software written by experts with AI rather than task-agents that improvise the same job daily and drift. Act 3 is proof of delivery: cornershop.dev, created 18 July, 211 commits and 136 merged pull requests in 50 days from one human, selling restaurant sites at €49/month through restofront.com — including the honest question of whether that subscription contradicts the thesis. Then benchmark.shipshit.dev, because you cannot invoice a saving you cannot measure.
 
 ## Talking Points — Act 1, The Intelligence Just Became A Commodity
 
@@ -91,29 +94,32 @@ Two vendors landed on the same price in the same week with scores inside noise o
 - Don't pretend: attribute the $1.67 vs $3.76 to DataCamp every single time. Read vendor numbers off vendor pages on camera.
 - Shorts moment: two pricing pages, identical sticker, then the two benchmark tables with the shared rows highlighted. "That is everything they both agreed to be tested on." Forty seconds.
 
-## Talking Points — Act 1, The Subscription Is The Wrapper Now
+## Talking Points — Act 1, Access Is The Wrapper Now
 
 ### Segment Thesis
 
-Every vendor in the room is selling the same commoditised input with a different wrapper around it, and the wrapper is where the margin is hiding.
+Selling access to a commodity input has no defensible margin. That is a narrower claim than "subscriptions are dead", and the difference is the whole business.
 
 ### Talking Points
 
+- Say the precise target early so nobody mishears it: the thing with no margin left is **access**. Seats, licences, per-user fees, usage resold at a markup. Not every recurring charge. We charge one ourselves and we defend it in Act 3.
 - Name the pitches the buyer is actually getting, in their words: seats, subscriptions, agent workflows, billable hours. Process stacked on process, and a promise the profit line moves later.
-- Tool is wrapper, said plainly: the subscription is not the job. It is the packaging around a job that a commodity model now does. Take: when the thing inside the box costs your competitor the same as it costs you, the box is the only thing you are selling, and boxes get cheap.
+- Tool is wrapper, said plainly: a licence is not the job. It is the packaging around a job that a commodity model now does. Take: when the thing inside the box costs your competitor the same as it costs you, the box is the only thing you are selling, and boxes get cheap.
+- The test that separates a real product from a seat tax: **is the customer paying for entry, or for a finished thing?** A licence to use a model is entry. A website that stays current is a finished thing. Both can recur. Only one of them survives the competitor who buys the same model at the same price.
 - The uncomfortable version, and say it about our own industry: most AI offers today are a seat tax with a chatbot wrapped around it. Nobody in the room can point at the profit line and say the money moved.
 - The buyer's real problem is never "we need AI." It is "this process is expensive and nobody can tell me exactly where the money goes." Take: that is an accounting problem before it is a model problem, and it is why the demo never closes.
 - Why demos do not close, in one line: a demo proves the tool works. It does not prove the cost went away. Nobody signs a cheque for a capability, they sign for a number that moved.
 - Lazy take vs useful take, straight from the article. Lazy: more software, more agents, more hours. Useful: share the performance check when the savings stick.
 - Clip line: **"A seat tax with a chatbot wrapped around it."**
 - Clip line: **"Nobody buys a capability. They buy a number that moved."**
-- Transition: so we stopped quoting subscriptions. Here is the contract we ask for instead.
+- Clip line: **"Is the customer paying for entry, or for a finished thing?"**
+- Transition: so we stopped quoting seats to that kind of buyer. Here is the contract we ask for instead.
 
 ### Host Notes
 
 - Ask Mitchell: from the agency side, how many AI proposals has he seen that could name the cost being removed? Let him answer honestly, even if it is zero.
 - Pull up: nothing. This capsule is two people talking. Keep it under ten minutes and keep it concrete.
-- Don't pretend: we sell software too. Acknowledge cornershop charges a subscription and promise to deal with it in Act 3 rather than dodging it now.
+- Don't pretend: we sell recurring software too and we are not apologising for it. Say "access" not "subscriptions" every time, and promise the full segmentation rule in Act 3 rather than fudging it here.
 - Shorts moment: the four pitches a buyer gets, then "not one of them names the cost being removed." Thirty seconds.
 
 ## Talking Points — Act 2, The Performance Check
@@ -181,16 +187,22 @@ A savings-share contract is a promise to deliver software fast enough to matter.
 - Second receipt, same week: https://github.com/shipshitdev/benchmark was created **6 September** and the entire benchmark — harness, adapters, scoring, website — is 24 commits from that single day. Take: that is the delivery speed the contract is underwritten by. Check the timestamps yourself.
 - Pull up https://cornershop.dev. Receipt: four verticals and they are not equal. Restaurants launched and sell; food retail and local service can claim a plan on a subdomain; beauty is a non-chargeable preview with no billing. The page says so. Take: shipping means publishing the table honestly. Most AI-built products fake it.
 - The guardrail that matters commercially: lead creation **never** sends mail. An operator must record a verified consent basis with recipient, controller, purpose, timestamp and evidence first, and a public listing authorizes nothing. Take: if you are taking a share of a client's performance, the fastest way to lose it is a fine.
-- **Now the honest contradiction, do not dodge it.** Pull up https://restofront.com. Receipt: €49 a month. That is a subscription, and this episode just spent thirty minutes saying stop selling subscriptions. Take: the resolution is that €49 buys an output — a finished, hosted, maintained website — not a seat and not usage. Nobody is billed per login. But it is still not savings-share, and the honest version is that a restaurant site could be priced on bookings recovered instead. Say on air that we have not done that yet.
-- Where the two business lines actually sit: cornershop is a product where the output is the thing sold; the performance check is a services contract where the output is a number on someone's profit line. The thesis applies to both, differently. Take: the test is not "is there a recurring charge", it is "is the customer paying for a seat or for a result".
+- **Now the segment that makes the whole episode make sense, and it is not a confession.** Pull up https://restofront.com. Receipt: €49 a month, recurring, and we are keeping it. Take: we sell software and we sell savings, and both are correct, because they are two different customers. The mistake people make with this thesis is turning it into a religion.
+- Give the rule out loud, slowly, because this is the transferable part. **You can only sell a share of savings when three things exist: a baseline the buyer will sign off on, access to the data that proves it, and a saving worth more than the cost of measuring it.**
+- Run a restaurant through the test on camera. Baseline: there is no documented cost of "our website is bad." Data: there is no data, there is a PDF menu and a phone number. Size: the whole contract is forty-nine euros a month, and any honest measurement costs more than the contract. Take: nought for three. Savings-share here is not merely wrong, it is arithmetically impossible.
+- Run the Act 2 buyer through the same test. A process with a cost someone can name, data we can reach, and a delta worth real money. Take: three for three. Same company, same models, opposite pricing model, and the customer picked it, not us.
+- The failure modes in both directions, and this is what to write down: take savings-share to a small local business and you will spend more measuring than you earn, and you will never agree a baseline. Take seats to an enterprise and you are charging a premium for a commodity input in a room where four other vendors quote the same thing at the same price.
+- What actually stays constant across both lines: **nobody ever pays us for access to a model.** The restaurant pays for a finished website. The enterprise pays for a number that moved. Neither is billed per login or per token. That is the rule; the pricing shape is downstream of the customer.
 - Clip line: **"Fifty days. One human. A hundred and thirty-six merged changes."**
-- Clip line: **"The test isn't whether it recurs. It's whether they're paying for a seat or a result."**
-- Transition: and none of this is invoiceable unless we can measure it.
+- Clip line: **"Two customers, two pricing models. The mistake is having one and taking it to every room."**
+- Clip line: **"No baseline, no data, no size. Savings-share isn't wrong there, it's impossible."**
+- Transition: notice what decided that — whether the saving could be measured at all. So here is how we measure.
 
 ### Host Notes
 
-- Ask Mitchell: does €49 a month for a finished restaurant site break our own rule? Let him argue it. If he wins, say he won.
+- Ask Mitchell: take one of his agency clients and run the three-part test on air. Baseline, data, size. Which pricing model falls out? That is the most useful two minutes in the episode for the audience.
 - Pull up: the repo, cornershop.dev, restofront.com, the benchmark repo creation date.
+- Don't pretend: do not stage this as us confessing hypocrisy. It is a segmentation decision and it should sound like one.
 - Don't pretend: beauty is a preview, salonfront is in development. Neither is a live product.
 - Don't invent restaurant names. Read them off the live previews.
 - Shorts moment: repo created 18 July, then the merged count, then restofront pricing. Forty-five seconds.
@@ -229,11 +241,11 @@ bun run bench run --release v2026.09 --agents claude:fable@high,codex:gpt-6-astr
 
 ## Hot Take
 
-We charge €49 a month for a restaurant website, and we just spent half an episode telling you subscriptions are the wrapper. Both things are defensible, but only one of them is finished thinking. The €49 buys an output, not a seat, so it passes the test as written. The version we have not built yet is the one where a restaurant pays a share of the bookings it recovered instead of a flat monthly fee — because that is the same contract we ask enterprise buyers to sign, and we have not yet asked ourselves to sign it. If output-based pricing is right, it is right for our own product too, and we are one iteration behind our own argument.
+Everyone is having the wrong pricing argument. It is not subscriptions versus outcomes. It is: can this buyer's saving be measured, by whom, and is it worth more than the measurement costs. Answer that and the pricing model picks itself. A restaurant fails on all three counts, so it buys a product at a flat price, and anyone selling that owner a savings-share deal is running a science project with the customer's money. An enterprise with a named process cost passes on all three, so anyone selling it seats is charging a premium for a commodity that costs their competitor exactly the same. The mistake is not picking the wrong model. It is having only one model and taking it into every room.
 
 ## Closing Take
 
-Two of the best models on earth shipped this week at the same price with scores you cannot separate without arguing about scaffolds. That is the end of selling access. It is not the end of selling outcomes, it is the beginning of it. So: ask what the process cost before, ask for the data, and put your fee on the difference. Fifteen percent of a saving you helped prove beats a hundred percent of a retainer nobody can justify. It only works if the chain holds — context, data, output, result, productivity — and if what you leave behind is deterministic software your client's experts own, not an agent that improvises the same job every morning until it drifts. The proof that we can build at that speed is public: cornershop, fifty days, 136 merged changes, one human. The instrument that measures the saving is public too, MIT licensed, at benchmark.shipshit.dev, including the runs that failed. If your process is expensive and nobody can tell you where the money goes, that is the conversation. Reach out. I do this every week.
+Two of the best models on earth shipped this week at the same price with scores you cannot separate without arguing about scaffolds. That is the end of selling access. It is not the end of recurring revenue, and it is not a rule that every price must be a percentage. It is the beginning of one question you now have to answer per customer: is there a baseline, can you reach the data, and is the saving worth more than measuring it. Three yeses and you should be taking fifteen percent of the difference instead of a retainer nobody can justify. Three noes and you should be selling a finished product at a flat price and never mentioning the word savings. It only works if the chain holds — context, data, output, result, productivity — and if what you leave behind is deterministic software your client's experts own, not an agent that improvises the same job every morning until it drifts. The proof that we can build at that speed is public: cornershop, fifty days, 136 merged changes, one human. The instrument that measures the saving is public too, MIT licensed, at benchmark.shipshit.dev, including the runs that failed. If your process is expensive and nobody can tell you where the money goes, that is the conversation. Reach out. I do this every week.
 
 ## Verify Live Before Quoting
 
@@ -270,13 +282,17 @@ Two of the best models on earth shipped this week at the same price with scores 
 
 > "If the job is the same every morning, it deserves code, not dice."
 
-> "The test isn't whether it recurs. It's whether they're paying for a seat or a result."
+> "Is the customer paying for entry, or for a finished thing?"
+
+> "Two customers, two pricing models. The mistake is having one and taking it to every room."
+
+> "No baseline, no data, no size. Savings-share isn't wrong there, it's impossible."
 
 > "Fifty days. One human. A hundred and thirty-six merged changes."
 
 ## Announcement Tweet
 
-> Claude Fable 5.1 and GPT-6 Astra both cost $10 in / $50 out. Same price, scores inside scaffold noise. When the best intelligence costs everyone the same, you cannot sell access to it any more. So we stopped selling subscriptions and started taking a cut of the savings. The deal, the risk, and the proof: 14:00 CEST [YOUTUBE_URL]
+> Claude Fable 5.1 and GPT-6 Astra both cost $10 in / $50 out. Same price, scores inside scaffold noise. When the best intelligence costs everyone the same, you cannot sell access to it any more. So for buyers who can prove a baseline we stopped quoting seats and take a cut of the savings instead. For the ones who can't, we still sell a product. Which is which, and why: 14:00 CEST [YOUTUBE_URL]
 
 ## X Pipeline
 
@@ -296,7 +312,7 @@ Trend check, 2026-09-07: four X trend cards on the Astra versus Fable fight, Hac
 
 ### Live Now (@shipshitdev, only after broadcast is live)
 
-> Live now. Why we stopped quoting subscriptions: two models, one price, and a contract that pays us ~15% of the savings with no management fee.
+> Live now. Two models, one price, so selling access is over. What replaces it depends entirely on the customer: ~15% of verified savings for one, a flat product price for the other.
 >
 > Plus the risk nobody prices in — on an outcome contract, a stalled model is our margin, not the client's annoyance.
 >
@@ -312,7 +328,7 @@ Trend check, 2026-09-07: four X trend cards on the Astra versus Fable fight, Hac
 
 ### Single post — the deal (@vincentshipsit, later sitting)
 
-> We stopped quoting subscriptions.
+> We stopped quoting seats to anyone who can prove a baseline.
 >
 > Three asks instead: what the process cost before, access to the data, and a contract that pays only when the spend drops and the result holds.
 >
@@ -383,6 +399,8 @@ The same argument as the X article, rewritten for an operator who does not follo
 >
 > Here is why we can do that now: the two best AI systems available both launched this week, three days apart, at exactly the same price. When the tool costs your competitor what it costs you, nobody can charge a premium for having it. The only thing left worth paying for is the result.
 >
+> One caveat, because the internet version of this argument goes too far. This does not work for every customer. It needs three things: a cost figure someone will stand behind, access to the data that proves the change, and a saving large enough to be worth measuring. We also sell a small monthly product to businesses that have none of those, and that is the right price for them. The test tells you which one you are buying.
+>
 > The full session, including the parts of this that are still unfinished:
 > [YOUTUBE_URL]?utm_source=linkedin&utm_medium=social&utm_campaign=ep-24-output-first-pricing
 >
@@ -397,6 +415,8 @@ The same argument as the X article, rewritten for an operator who does not follo
 > 3. Give them the data, or accept that nothing can be measured.
 > 4. Insist that what gets left behind is ordinary software your own experts own. Systems that improvise the same job every morning drift, and the savings go with them.
 > 5. Agree who verifies the number before anyone signs. Not the supplier. Not the budget holder.
+>
+> And if the saving would cost more to measure than it is worth, do not buy this way at all. Buy a finished product at a fixed price and stop talking about savings. Half of good pricing is knowing which of the two you are in.
 >
 > We run our own measurement in the open, including the runs that failed:
 > https://benchmark.shipshit.dev?utm_source=linkedin&utm_medium=social&utm_campaign=ep-24-output-first-pricing

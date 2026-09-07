@@ -10,6 +10,13 @@ Edits made against `skills/x-pipeline` article contract:
 - products/layers separated before the story so the take cannot be misread
 - close carries the rule the reader can run tomorrow, plus the artifact
 - clip lines extracted at the bottom
+- SEGMENTATION FIX (Vincent, 2026-09-07): the original said "stop selling subscriptions as
+  the product" and an earlier draft framed restofront's EUR49/month as us being one
+  iteration behind our own thesis. Both were too broad. The target is selling ACCESS
+  (seats, licences, resold usage), and the SaaS line stays because it serves a different
+  customer. Added the three-part test (baseline / data access / saving worth measuring)
+  as the rule that picks the pricing model per ICP. Vincent's closing line was changed
+  from "subscriptions" to "access" for this reason - revert if you disagree.
 
 BEFORE PUBLISHING — resolve the tense. The piece is written in the past tense about a
 buyer. Decide which is true and edit accordingly: delivered engagement / live pilot /
@@ -33,7 +40,7 @@ Everyone spent the week arguing about which one won. That is the wrong question,
 
 If the best intelligence available costs everyone the same, then having it is not a business. Selling access to it is definitely not a business.
 
-So we stopped.
+So we stopped selling access. Not recurring revenue — access. The difference between those two is the second half of this piece, and it is where most people take this argument too far.
 
 ---
 
@@ -119,11 +126,25 @@ If we would not accept a vendor's self-graded exam, we cannot hand a client a se
 
 ---
 
-## Where we are still one iteration behind
+## The part everyone gets wrong: this is a segmentation rule, not a religion
 
-We sell a subscription too.
+We sell software on a monthly fee too, and we are keeping it.
 
-Our restaurant product charges forty-nine euros a month for a finished, hosted, maintained website. By the test in this piece it passes: the customer pays for an output, not a seat, and nobody is billed per login.
+Our restaurant product charges forty-nine euros a month for a finished, hosted, maintained website. That is not a contradiction of anything above, and the reason matters more than the thesis does.
+
+You can only sell a share of savings when three things exist:
+
+A baseline the buyer will sign off on. Access to the data that proves it. And a saving worth more than the cost of measuring it.
+
+Run a restaurant through that. There is no documented cost of "our website is bad." There is no data, there is a PDF menu and a phone number. And the entire contract is forty-nine euros a month, so any honest measurement costs more than the deal is worth. Nought for three. Savings-share there is not merely a bad idea, it is arithmetically impossible.
+
+Run the enterprise buyer through the same test. A process cost someone can name. Data we can reach. A delta worth real money. Three for three.
+
+Same company, same models, opposite pricing model, and the customer chose it, not us.
+
+The failure modes run in both directions, and that is the part worth writing down. Take savings-share to a small local business and you will spend more measuring than you earn, and you will never agree a baseline. Take seats to an enterprise and you are charging a premium for a commodity input, in a room where four other vendors quote the same thing at the same price.
+
+What stays constant across both lines is narrower than "no subscriptions," and it is the only rule I would actually defend: nobody ever pays us for access to a model. The restaurant pays for a finished website. The enterprise pays for a number that moved. Neither is billed per login or per token.
 
 But it is not savings-share, and the honest version of our own argument would price it on bookings recovered. We have not done that yet. If outcome pricing is right, it is right for our own products, and we are one iteration behind our own thesis.
 
@@ -133,7 +154,9 @@ Saying so is cheaper than being caught.
 
 ## The rule you can run tomorrow
 
-Stop selling process. Stop selling subscriptions as the product. Sell the output, align incentives, and get paid on what AI removed from the cost of the old process. Everything else is decoration.
+Stop selling process. Stop selling access as the product. Sell the output, align incentives, and get paid on what AI removed from the cost of the old process. Everything else is decoration.
+
+And stop before you take that to every room. Run the three-part test first. Where it passes, price on the difference. Where it fails, sell a finished product at a flat price and never say the word savings.
 
 If you are buying rather than selling, five questions in order. What does this process cost today, and if nobody knows, that is project one. Will the supplier be paid on the difference instead of on access. Do they get the data, or is nothing measurable. Is what gets left behind ordinary software your own experts own. And who verifies the number — not the supplier, not the budget holder.
 
@@ -153,3 +176,5 @@ The measurement instrument is public and MIT licensed at benchmark.shipshit.dev,
 - "On a subscription, a stalled model is the client's annoyance. On our contract, it's our margin."
 - "Prototypes die in production when nondeterministic tokens sit where you needed a fixed path."
 - "If we wouldn't accept a self-graded exam, we can't hand a client a self-graded saving."
+- "Two customers, two pricing models. The mistake is having one and taking it to every room."
+- "No baseline, no data, no size. Savings-share isn't wrong there, it's impossible."
