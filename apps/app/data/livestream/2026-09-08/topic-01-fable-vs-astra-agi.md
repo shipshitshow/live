@@ -10,7 +10,7 @@ thumbnail_prompt: null
 
 ## Sources — Livestream Notes
 
-- Title placeholder from `title-options.md`. Vincent picks.
+- **Title LOCKED by Vincent: Fable 5.1 vs GPT-6 Astra: Did We Just Reach AGI?**
 - Episode: **24**. UTM campaign: `ep-24-fable-vs-astra-agi`.
 - Start: **14:00 CEST (UTC+2)**. Format: comparison stream, 60–90 minutes, English only.
 - **Spine:** OpenAI's president floated the word AGI. Three careful testers published three different winners in the same week. We ran the one test none of them ran, and it changes the answer. Then: what a working developer should actually buy today.
@@ -34,7 +34,7 @@ Ran on the Mac Studio, release `v2026.09`, `codex:gpt-6-astra@high`, all 7 tasks
 **$65.50 total, 67.2 minutes, 5 of 7 clean, 2 gate failures, and two of the three failed gates are accessibility.** Objective 100 on the bug fix, 55.6 on the frontend build.
 
 - **Hard caveat, say it before showing the table:** Astra ran at **high** effort. The smoke release ran Codex on the previous model at **low** effort for $18.45. Those are not comparable. Do not put them side by side without saying so.
-- **Fable 5.1 has NOT been run.** The Studio has no Claude CLI installed. Pre-show task for Vincent: install and log in `claude` on the Studio, then `bun run bench run --release v2026.09 --agents claude:fable@high --tasks all --repeat 1`. If that does not happen before air, say plainly that we have one side of our own benchmark and not the other.
+- **Fable 5.1 will NOT be run. Vincent is out of Fable credits.** Our own benchmark has one side only, and that is final for this episode. Say it plainly on air: we published the Astra numbers and we could not buy the other half. Use the three published videos for the Fable side.
 - No blind rubric either — the judge panel needs claude and grok on the Studio. Gates, objective scores and cost only.
 
 ### The three videos (transcripts saved in the repo)
@@ -172,7 +172,7 @@ Every reviewer judged the front-end by eye. We ran an automated accessibility ga
 - Land the contrast, this is the segment's whole reason to exist. Chase AI called Astra's landing page clean and professional and gave it the win. Our gate ran an automated accessibility audit over the same class of work and it did not pass. Both are true. It looks good and a screen reader cannot use it.
 - The most expensive task was the pricing page at $18.11 and 19.5 minutes, and it is one of the two that failed. Take: the most money bought the least trustworthy result.
 - The good news, said fairly: the bug fix scored a perfect 100 objective in 1.9 minutes for $3.04, and the frontend build passed all four gates. Astra is genuinely strong at contained, well-specified work.
-- **State the limits before anyone in chat does.** This is Astra at high effort; the earlier smoke run was the previous model at low effort for $18.45, so those totals are not comparable. There is no blind rubric because the judge panel needs the Claude and Grok tools installed on that machine and they are not. And **Fable has not been run on our suite yet** — say that plainly, it is the honest gap in this episode.
+- **State the limits before anyone in chat does.** This is Astra at high effort; the earlier smoke run was the previous model at low effort for $18.45, so those totals are not comparable. There is no blind rubric because the judge panel needs the Claude and Grok tools on that machine and they are not installed. And **Fable was not run and will not be — we are out of Fable credits.** Say it straight: we published one side and we could not afford the other. That admission is worth more than a fake head-to-head.
 - Clip line: **"Every reviewer judged it by eye. We ran the accessibility audit. It failed."**
 - Clip line: **"Sixty-five dollars, sixty-seven minutes, five out of seven."**
 - Transition: so, the question in the title.
@@ -196,7 +196,7 @@ Did we reach AGI? Brockman said it could eventually be seen that way, and the ma
 
 - **Our own numbers are the one thing we own. Read them off the results table or the Studio log, not from memory.** Astra high effort, one attempt: $65.50, 67.2 min, 5 of 7 ok, failed gates `migrate`, `axe-themes`, `axe-pricing`.
 - Say the effort-level caveat every single time the smoke run's $18.45 appears next to our $65.50. High versus low effort. Not comparable.
-- Fable 5.1 has not been run on our suite. If Vincent installs and logs in the Claude tool on the Studio before air, run it and use real numbers. If not, say the gap out loud.
+- Fable 5.1 was not run on our suite and will not be: no Fable credits left. Never imply our $65.50 is a head-to-head. It is one side, published as one side.
 - Terminal-Bench 4.0 for Astra: sources give 56.7, 57.7 and 57.9. Read OpenAI's page live or say "about 57".
 - Cost-per-task figures: $10.35/$19.50 is Chase AI reading OpenAI's chart. $1.67/$3.76 is Artificial Analysis. $2.57/$6.12 and the 21k/64k token figures are BridgeMind's screen. Attribute each one; we reproduced none of them.
 - Hallucination figures (Fable 5.1 73%, Astra 51%) are read off BridgeMind's screen. The 51% at max effort is corroborated by Artificial Analysis; the 73% is not independently confirmed. Attribute it to him or skip it.

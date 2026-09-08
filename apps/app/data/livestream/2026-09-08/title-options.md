@@ -4,7 +4,7 @@ Format is now a **comparison stream**: Claude Fable 5.1 vs GPT-6 Astra. Vincent'
 
 The AGI hook is real and sourced. OpenAI shipped Astra on 3 September and Greg Brockman called it a generational leap that could eventually be seen as the arrival of artificial general intelligence. Chase AI, who tested it first-hand, refuses the word: "I'm not going to say like AGI, because who even like the definition of AGI changes day by day." That tension is the episode.
 
-Frontmatter holds option 1 as a placeholder. Vincent picks. Draft only.
+**LOCKED: option 1 — `Fable 5.1 vs GPT-6 Astra: Did We Just Reach AGI?`** Set in frontmatter 8 Sep.
 
 ## The ten
 
