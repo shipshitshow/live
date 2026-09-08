@@ -2,10 +2,10 @@
 title: "[LIVE] Fable 5.1 vs GPT-6 Astra: Did We Just Reach AGI?"
 slug: "fable-vs-astra-agi"
 source: "OpenAI launch post, Anthropic launch post, Axios/Brockman, Chase AI, Bijan Bowen, BridgeMind, Code Arena, Artificial Analysis, benchmark.shipshit.dev first-hand run"
-status: "draft"
+status: "in_progress"
 date: "2026-09-08"
-announcement_tweet: "OpenAI's president says GPT-6 Astra might be the arrival of AGI. Three testers ran it against Claude Fable 5.1 this week and published three different winners. So we ran Astra on our own suite: $65.50, 67 minutes, and the prettiest output failed the accessibility gate. Live at 14:00 CEST: [YOUTUBE_URL]"
-thumbnail_prompt: null
+announcement_tweet: "OpenAI's president says GPT-6 Astra might be the arrival of AGI. Three testers ran it against Claude Fable 5.1 this week and published three different winners. So we ran Astra on our own suite: $65.50, 67 minutes, and the prettiest output failed the accessibility gate. Live at 14:00 CEST: https://www.youtube.com/watch?v=KPAyE6KSrQU"
+thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting. PALETTE: deep graphite, crisp white, brushed silver, natural skin, restrained cobalt and violet. COMPOSITION: two large chest-up hosts framing a centered head-to-head matchup, each host occupying approximately 35% of the frame and cropped at the outer edge. LOGO LOCK: use the actual flat white Claude starburst and OpenAI knot logo assets from ~/Desktop/thumbnails/2609/260908/sources/claude-logo.webp and openai-logo.png. Preserve logo geometry exactly; exclude the checkerboard preview background. Claude at center-left and OpenAI at center-right, large and equally prominent, separated by a narrow white vertical line for an unmistakable faceoff. No chips, processors, metallic frames, doors, cubes or metaphor objects. HOST LEFT: identity locked to ~/Desktop/thumbnails/pfps/vincentshipsit/vincentshipsit.jpg, Vincent, bald, olive skin, stubble, hazel eyes, black hoodie, curious disbelief, one palm-up presenting hand. HOST RIGHT: identity locked to ~/Desktop/thumbnails/pfps/mntll_nl/mntll_nl.jpg, Mitchell, swept-back brown hair, blue eyes, navy polo, skeptical wonder. BACKGROUND: minimal premium graphite studio. CONTRAST RULE: bright natural faces separated from the dark background, central object readable at mobile size. LIGHTING: soft white editorial keys and restrained cool rim lighting. TEXT: no title, letters, numbers, captions or episode badge. STYLE: premium creator-tech photography, believable skin, simple editorial composition. NEGATIVE: no neon, cyberpunk, orange, amber, beige, brown background, parchment, robot faces, fake logos, terminal walls, clutter or watermarks."
 ---
 
 ## Sources — Livestream Notes
@@ -14,7 +14,7 @@ thumbnail_prompt: null
 - Episode: **24**. UTM campaign: `ep-24-fable-vs-astra-agi`.
 - Start: **14:00 CEST (UTC+2)**. Format: comparison stream, 60–90 minutes, English only.
 - **Spine:** OpenAI's president floated the word AGI. Three careful testers published three different winners in the same week. We ran the one test none of them ran, and it changes the answer. Then: what a working developer should actually buy today.
-- YouTube livestream: create the event, paste the URL here. `[YOUTUBE_URL]` is a placeholder throughout.
+- YouTube livestream: https://www.youtube.com/watch?v=KPAyE6KSrQU
 - Restream studio: https://studio.restream.io/eue-pcqd-vbw
 
 ### First-hand run — done this morning, use these numbers
@@ -226,7 +226,7 @@ Did we reach AGI? Brockman said it could eventually be seen that way, and the ma
 
 ## Announcement Tweet
 
-> OpenAI's president says GPT-6 Astra might be the arrival of AGI. Three testers ran it against Claude Fable 5.1 this week and published three different winners. So we ran Astra on our own suite: $65.50, 67 minutes, and the prettiest output failed the accessibility gate. Live at 14:00 CEST: [YOUTUBE_URL]
+> OpenAI's president says GPT-6 Astra might be the arrival of AGI. Three testers ran it against Claude Fable 5.1 this week and published three different winners. So we ran Astra on our own suite: $65.50, 67 minutes, and the prettiest output failed the accessibility gate. Live at 14:00 CEST: https://www.youtube.com/watch?v=KPAyE6KSrQU
 
 ## X Pipeline
 
@@ -238,7 +238,7 @@ Drafts only. Nothing posted. UTM: `?utm_source=x&utm_medium=social&utm_campaign=
 >
 > One says Astra won 3 of 4. One says it's a tie. One spent $10k in a week and says Fable is in a different league.
 >
-> They're all right. We ran the test none of them ran. 14:00 CEST: [YOUTUBE_URL]?utm_source=x&utm_medium=social&utm_campaign=ep-24-fable-vs-astra-agi
+> They're all right. We ran the test none of them ran. 14:00 CEST: https://www.youtube.com/watch?v=KPAyE6KSrQU&utm_source=x&utm_medium=social&utm_campaign=ep-24-fable-vs-astra-agi
 
 ### Single post — the finding (@vincentshipsit)
 
