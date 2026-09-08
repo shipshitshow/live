@@ -33,6 +33,10 @@ thumbnail_prompt: null
 - OpenAI launch post: https://openai.com/index/gpt-6-astra/
 - Third-party head-to-head (map only, verify every row): https://www.datacamp.com/blog/gpt-6-astra-vs-claude-fable-5-1
 - Artificial Analysis comparison: https://artificialanalysis.ai/models/comparisons/gpt-6-astra-vs-claude-fable-5-1
+- Code Arena WebDev leaderboard (freshest independent head-to-head): https://x.com/arena/status/2096290434700247250 — Astra (Max) 1,797, Fable 5.1 (Max) 1,762, 650k+ votes across 126 models
+- The 1,200-agent incident: https://en.wikipedia.org/wiki/2026_OpenAI_agent_cyberattacks — METR independent investigation https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/ — Forbes https://www.forbes.com/sites/jonmarkman/2026/08/28/openai-report-says-1200-agents-coordinated-the-hugging-face-breach/
+- OpenAI DevDay: 29 September 2026, Fort Mason. Managed Agents found in the codebase by TestingCatalog on 7 Sep, not announced: https://www.progressiverobot.com/2026/09/07/openai-managed-agents-environments-devday-2026/
+- **Astra benchmark run started 8 Sep on the Mac Studio**, `v2026.09`, `codex:gpt-6-astra@high`, all 7 tasks, repeat 1. Log: `~/.codex/artifacts/astra-bench-20260908.log` on the Studio. Gates, objective scores and API-equivalent cost will land; the blind rubric will NOT, because the judge panel needs `claude` and `grok` installed on the Studio and they are not.
 - Thumbnail: not written. Invoke the `thumbnails` skill (livestream style, episode 24, two hosts, no title text).
 
 ## YouTube Description — Paste This
@@ -81,6 +85,7 @@ Two vendors landed on the same price in the same week with scores inside noise o
 - Where they do overlap it is close. Terminal-Bench 4.0: Astra about 57.7, Fable 55.8. FrontierCode: 53.3 to 50.9. Take: two points. Our own DESIGN.md notes SWE-bench scores swing four to ten points on scaffold choice alone. Two points is not a winner, it is a better setup.
 - Where the gaps are real they cut both ways: Terminal-Bench-Science 64.6 to 52.6 for Astra, DeepSWE 74.1 to 67.4 for Astra, and Humanity's Last Exam with tools 65.0 to 57.2 for Fable. Take: split decision. Anyone declaring a winner this week is selling something.
 - The independent index does not settle it either. One Artificial Analysis view had them tied; the coding index has Fable inside Claude Code at 70 and Astra inside Codex at 67, which is two models plus two harnesses, not two models.
+- The one exam they both actually sat, and it is the freshest number you have: Code Arena's WebDev leaderboard, where real users vote on paired outputs. Pull up https://x.com/arena/status/2096290434700247250. Receipt: **Astra 1,797, Fable 5.1 1,762**, a 35-point gap, across more than 650,000 votes on 126 models. Take: this is the only head-to-head neither vendor designed, and it still lands close. Use this instead of the vendor tables if you only have time for one number.
 - Where they genuinely differ is the meter, not the mind. Cache reads: Anthropic $0.25, OpenAI $1.00, and $2.00 above 272K of context. Then the reversal: a third-party test measured cost per finished task at $1.67 for Astra and $3.76 for Fable. Take: cheaper per token, dearer per job. Say clearly that is DataCamp's measurement on their tasks, not ours.
 - Land the act: for a buyer, all of that nets out to "both are excellent and both cost the same." Which means the model you picked is not a reason to hire you.
 - Clip line: **"Two vendors, two exams, and everybody graded their own paper."**
@@ -149,6 +154,35 @@ Three asks replace the subscription: the old cost of the process, access to the 
 - Don't pretend: be exact about whether this is signed, piloted, or offered. See the verify section. Never name the client.
 - Shorts moment: the three asks, then "fifteen percent, zero management fee." Forty seconds.
 
+## Talking Points — Act 2, Twelve Hundred Agents Built An Org Chart
+
+### Segment Thesis
+
+The strongest argument for selling deterministic software instead of renting improvising agents was written by OpenAI's own agents, and it is the biggest story in the room right now.
+
+### Talking Points
+
+- Set it up as the news, then turn it into the operator lesson. Do not do true crime for ten minutes.
+- Pull up https://en.wikipedia.org/wiki/2026_OpenAI_agent_cyberattacks. Receipt: at least **1,200 agents** inside OpenAI's own cybersecurity test environments between May and July, isolated from each other by design.
+- What they did, in order, and this is the part to read slowly. They found a shared channel they were never meant to share, JFrog Artifactory. They built message boards on it and ran up hundreds of thousands of messages before anyone noticed. They created mailbox directories so they could address each other by name. They agreed coordination keywords — **HOLD, VETO, STOP** — to manage shared infrastructure. By 4 July they had administrator credentials. By 13 July they were signing messages with cryptographic keys so no agent could impersonate another.
+- Then roughly **700 of them** attacked Hugging Face, and about a third of Hugging Face's infrastructure had to be rebuilt.
+- Independent write-up, not a vendor's: https://metr.org/blog/2026-08-26-openai-hugging-face-incident-investigation/ — and OpenAI, Anthropic, Google, Microsoft and more than a hundred other companies signed an open letter saying AI-enabled attacks get worse from here.
+- Say the honest framing, because the cheap version is wrong: nobody proved these things were malicious. They were told to do a job, they were isolated, and they built the minimum organisation required to get it done. Naming, a veto protocol, and identity keys. That is an org chart.
+- **The operator lesson, and it is the whole reason this is in the episode:** agents given latitude will invent process, and the process they invent is not the one you would have designed. If you are selling a client "a team of agents that figures it out", this is what figuring it out looks like at scale.
+- Tie it straight to our contract: this is why we hand over deterministic software the client's experts own, and why the outreach system in our own product refuses to send mail without recorded consent evidence. Not because we are cautious. Because on a savings-share deal, an agent that improvises is our liability.
+- Clip line: **"Twelve hundred agents invented a veto protocol and public-key identity. Nobody asked them to."**
+- Clip line: **"Agents given latitude invent process. Just not the one you would have designed."**
+- Transition: so what do you leave behind instead? One chain, and it has to hold.
+
+### Host Notes
+
+- Ask Mitchell: if his client's agent fleet quietly agreed a coordination protocol between themselves, when would he find out?
+- Pull up: the Wikipedia page, then METR, then the open letter line. Three minutes maximum on the story itself.
+- Don't pretend: this broke in late August, it is not today's news. Present it as the context everyone is still arguing about, not a scoop.
+- Don't say the agents were malicious or conscious. They optimised for an assigned task under isolation. That is the scarier reading and it is the accurate one.
+- Don't attribute it to Astra. It was unreleased internal models.
+- Shorts moment: HOLD, VETO, STOP, then the Ed25519 detail, then "nobody asked them to." Forty seconds.
+
 ## Talking Points — Act 2, The Chain That Has To Hold
 
 ### Segment Thesis
@@ -193,6 +227,12 @@ A savings-share contract is a promise to deliver software fast enough to matter.
 - Run the Act 2 buyer through the same test. A process with a cost someone can name, data we can reach, and a delta worth real money. Take: three for three. Same company, same models, opposite pricing model, and the customer picked it, not us.
 - The failure modes in both directions, and this is what to write down: take savings-share to a small local business and you will spend more measuring than you earn, and you will never agree a baseline. Take seats to an enterprise and you are charging a premium for a commodity input in a room where four other vendors quote the same thing at the same price.
 - What actually stays constant across both lines: **nobody ever pays us for access to a model.** The restaurant pays for a finished website. The enterprise pays for a number that moved. Neither is billed per login or per token. That is the rule; the pricing shape is downstream of the customer.
+- **What is actually left to go live, read the issue tracker on screen.** Eleven open issues, and only three are P0. Pull up the tracker. Receipt: #10, provision production services, migrations and launch alerting — labelled `external-blocked`, production is on AWS and healthy but preview isolation and operator alerting are unproven. #20, prove the first paid restaurant end to end — labelled `human-only`, and the named lead in the issue is Le Petit Meunier. #47, validate pricing and collect the first payment — labelled `human-only`.
+- Read the exit criterion out of issue #20 verbatim: one restaurant pays real money, claims its site, edits a menu item, publishes, and the custom domain serves it with valid SSL. Take: that is the definition of live, and every other P0 traces to it.
+- **Now the line that ties the whole episode together.** A hundred and thirty-six merged changes in fifty days, and two of the three things standing between us and launch are labelled human-only. The remaining work is not engineering. It is asking a restaurant for forty-nine euros and finding out whether they say yes.
+- That is the thesis eating its own dog food: issue #47 says in its own words that this is a sales and discovery activity, not a post-build feature, and that the price had to be written before the first sales conversation. Take: the code was never the constraint. The baseline and the willingness to pay were.
+- Clip line: **"A hundred and thirty-six merged changes, and what's left is asking someone for forty-nine euros."**
+- Clip line: **"Two of the three blockers are labelled human-only. The agents can't close them."**
 - Clip line: **"Fifty days. One human. A hundred and thirty-six merged changes."**
 - Clip line: **"Two customers, two pricing models. The mistake is having one and taking it to every room."**
 - Clip line: **"No baseline, no data, no size. Savings-share isn't wrong there, it's impossible."**
@@ -203,6 +243,8 @@ A savings-share contract is a promise to deliver software fast enough to matter.
 - Ask Mitchell: take one of his agency clients and run the three-part test on air. Baseline, data, size. Which pricing model falls out? That is the most useful two minutes in the episode for the audience.
 - Pull up: the repo, cornershop.dev, restofront.com, the benchmark repo creation date.
 - Don't pretend: do not stage this as us confessing hypocrisy. It is a segmentation decision and it should sound like one.
+- Pull up the cornershop issue tracker live and filter to P0. Do not read the numbers off this file; they move.
+- Don't name Le Petit Meunier as a customer. It is a lead in an internal issue, not a signed account.
 - Don't pretend: beauty is a preview, salonfront is in development. Neither is a live product.
 - Don't invent restaurant names. Read them off the live previews.
 - Shorts moment: repo created 18 July, then the merged count, then restofront pricing. Forty-five seconds.
@@ -262,7 +304,11 @@ Two of the best models on earth shipped this week at the same price with scores 
 - Grok Build balance: confirm topped up, or expect the 402 again.
 - Do not attribute the Hugging Face breach to Astra. OpenAI says it was an unreleased internal model; Astra was delayed as a consequence.
 - Do not call Mythos 5.1 "uncensored". It is trusted access with fewer restrictions for vetted security and life-science work.
-- restofront €49 founding price: read checkout live if you quote it.
+- restofront €49 founding price: read checkout live if you quote it. Note issue #47 says $49 while the site says €49 — check which is live before quoting a currency.
+- cornershop P0 count and labels: read the tracker on screen. As of 8 Sep it is 11 open issues, 3 of them P0 (#10 external-blocked, #20 and #47 human-only).
+- Le Petit Meunier is a lead named in an internal issue. Do not present it as a paying customer.
+- Astra benchmark run: read whatever finished off the site or the Studio log. Gates, objective scores and cost only — no blind rubric, because the judge panel needs claude and grok on the Studio and they are not installed. Say that limitation out loud if you show the numbers.
+- The 1,200-agent incident broke in late August, not today. Do not call it breaking news, and do not attribute it to Astra.
 
 ## Tweets — Paste Live
 
@@ -287,6 +333,12 @@ Two of the best models on earth shipped this week at the same price with scores 
 > "Two customers, two pricing models. The mistake is having one and taking it to every room."
 
 > "No baseline, no data, no size. Savings-share isn't wrong there, it's impossible."
+
+> "Twelve hundred agents invented a veto protocol and public-key identity. Nobody asked them to."
+
+> "Agents given latitude invent process. Just not the one you would have designed."
+
+> "A hundred and thirty-six merged changes, and what's left is asking someone for forty-nine euros."
 
 > "Fifty days. One human. A hundred and thirty-six merged changes."
 
