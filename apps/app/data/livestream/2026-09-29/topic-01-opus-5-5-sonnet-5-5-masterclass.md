@@ -312,6 +312,42 @@ Review the result against the brief. List only problems you'd block shipping for
 Read https://claude.dev/blog/what-a-task-costs-on-opus-5-5/ and review my Claude Code setup against it: default effort, subagents that don't set a model, MCP servers I don't use, and a CLAUDE.md over 200 lines. Quote each problem, say what it costs, suggest the smallest change. Show recommendations first. Don't change anything yet.
 ```
 
+## YouTube Description — Paste This
+
+GPT-6 Sol/Luna vs Grok 4.7 vs Opus/Sonnet 5.5: what should you actually use?
+Five new models landed while we were off air. Only two of them are ones we can test ourselves today.
+
+Anthropic shipped Claude Opus 5.5 and Claude Sonnet 5.5. OpenAI shipped GPT-6 Sol and Luna, xAI shipped Grok 4.7, and Google says Gemini 4 is coming but it is not out yet.
+
+We start with a report card on the other labs, using independent numbers from Artificial Analysis. We could not run the OpenAI or xAI models ourselves this time, so we say whose number is whose. Then a masterclass on Opus 5.5 and Sonnet 5.5: how Anthropic says to prompt them, how to set effort so the bill does not explode, and what real teams found versus what the benchmarks say. We finish by building the same short video on both Claude models, live, with the clock and the bill on screen.
+
+Subscribe so you don't miss the next build.
+Follow us: https://x.com/shipshitdev
+
+#ClaudeOpus #ClaudeSonnet #GPT6
+
+## LinkedIn Pipeline
+
+Pre-stream announcement (optional post, buyer register). Not yet published. Fill the link when the YouTube event exists. Episode number 25 is an assumption (24 was 8 Sep): confirm before posting. Cut the third arrow if the live build is dropped.
+
+### Vincent — announcement draft
+
+Most people are paying for the best AI models ever built and using them like a search box.
+
+Two Claude models from Anthropic, Claude Opus 5.5 and Claude Sonnet 5.5, launched this past week. OpenAI and xAI released new ones too. The question a business owner actually has: which one do I use, and what will it cost me?
+
+Today at 14:00 CEST we go through it live:
+
+→ A report card on the new releases, using independent scoreboards. We can't test every model ourselves this week, and we'll say which numbers are ours and which aren't.
+→ How Anthropic says to get the best work out of Claude, and where the default settings quietly cost you money.
+→ The same short video built with both Claude models, live, with the timer and the bill on screen.
+
+If you're deciding which AI to put in front of your team, come watch. If you have a video or a process you keep meaning to automate, reach out.
+
+[YOUTUBE_LIVE_URL]?utm_source=linkedin&utm_medium=social&utm_campaign=ep-25-opus-5-5-sonnet-5-5-masterclass
+
+#aiautomation #claude
+
 ## Verify Live Before Quoting
 
 - **Theo's video is opinion.** "Less dumb, not smarter," the RL-cleans-up-small-models mechanism, "Astra is the smartest and stupidest", "Haiku has had no update in 11 months" and the reasoning-token split are his claims. His token split (about 42K → 84K reasoning, about 30K → 35K output) adds to ~72K → ~119K, which matches Artificial Analysis's ~73K → ~119K, but check the live Artificial Analysis page before you put a slide on it.
