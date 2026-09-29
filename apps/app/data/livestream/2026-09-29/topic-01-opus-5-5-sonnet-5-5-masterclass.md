@@ -1,11 +1,11 @@
 ---
-title: "[LIVE] How To Use Opus 5.5 & Sonnet 5.5: The Masterclass"
+title: "[LIVE] GPT-6 Sol/Luna vs Grok 4.7 vs Opus/Sonnet 5.5: What To Use"
 slug: "opus-5-5-sonnet-5-5-masterclass"
 source: "Theo (t3.gg) 'So much for Pacing the Frontier' 27 Sep, Dario Amodei 'We Must Pace the Frontier' 12 Sep, Artificial Analysis X posts (Opus 5.5, Sonnet 5.5, Coding Agent Index), @claudeai and @ClaudeDevs launch posts, claude.dev blog (Getting the most out of Opus 5.5, What a task costs on Opus 5.5), Thariq @trq212 X article Spending your effort, X timeline use cases, release sweep 8-28 Sep, channel stats via yt-dlp 29 Sep"
 status: "in_progress"
 date: "2026-09-29"
 announcement_tweet: null
-thumbnail_prompt: null
+thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, photoreal cinematic render, ultra sharp, soft editorial lighting. PALETTE: deep graphite black, crisp white, brushed silver, natural skin, restrained electric cobalt on the left and violet on the right. COMPOSITION: two large chest-up hosts framing a centered three-way faceoff, each host about 30% of the frame and cropped at the outer edge, a thin diagonal white-blue light line running bottom-left to top-right. LOGO LOCK: use the actual flat white OpenAI knot, xAI Grok mark and Claude starburst logo assets, injected as flat raster assets, preserve geometry exactly, in one horizontal row in the center in that order, equal size, thin vertical light dividers between them. HOST LEFT: identity locked to ~/Desktop/thumbnails/pfps/vincentshipsit/vincentshipsit.jpg, Vincent, bald, olive skin, stubble, hazel eyes, black hoodie, curious disbelief, one palm-up presenting hand. HOST RIGHT: identity locked to ~/Desktop/thumbnails/pfps/mntll_nl/mntll_nl.jpg, Mitchell, swept-back brown hair, blue eyes, navy polo, skeptical wonder, hand on chin. BACKGROUND: minimal premium graphite studio with subtle smoke. CONTRAST RULE: bright natural faces separated from the dark background, logos readable at mobile size. LIGHTING: soft white editorial keys, cool cobalt rim on the left host, violet rim on the right host. TEXT: no title, letters, numbers, captions or episode badge. STYLE: premium creator-tech photography, believable skin, simple editorial composition. NEGATIVE: no neon, cyberpunk, orange, amber, beige, brown background, parchment, robot faces, fake or redrawn logos, terminal walls, clutter or watermarks."
 ---
 
 ## Sources — Livestream Notes
