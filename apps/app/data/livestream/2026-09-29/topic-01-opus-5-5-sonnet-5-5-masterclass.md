@@ -15,8 +15,9 @@ thumbnail_prompt: null
 - **Spine, in plain words:** You are paying for the best AI models ever made and probably driving them like a chatbot. Four habits change that. We teach them, then prove them by making a video live on both models and publishing the brief.
 - **Frame borrowed from Theo** (video below): the new models are not *smarter*, they are *less dumb*, so they can be trusted with longer jobs. Everything in the masterclass follows from that: longer jobs need a finish line, a task file, a cost dial and a check at the end.
 - **Dates:** Opus 5.5 launched Tue 22 Sep. Sonnet 5.5 launched Mon 28 Sep (~20:00 in the X timestamps I saw), so on air it is "yesterday". Artificial Analysis had Sonnet numbers out ~30 minutes later.
-- **Decision for Vincent before stream:** Capsule 5 (live build) needs a stand-in business, a renderer (browser 3D + screen record, or Blender) and a judging rule. Decide by 13:30 CEST or drop it and stretch Capsule 6.
-- Fable 5.1 is not in this episode's tests. We are out of Fable credits; every Fable comparison is somebody else's number, attributed.
+- **Decision for Vincent before stream:** Capsule 6 (live build) needs a stand-in business, a renderer (browser 3D + screen record, or Blender) and a judging rule. Decide by 13:30 CEST or drop it and let Capsule 2 run long.
+- **Scope (29 Sep, morning):** Codex limits are reached, so **no benchmark run and no OpenAI or xAI model tests today.** The live video build uses **Opus 5.5 and Sonnet 5.5 only.** The other labs' releases get their own report-card capsule (Capsule 2), told through Artificial Analysis's numbers.
+- Fable 5.1 is not in this episode's tests. We are out of Fable credits; every Fable, Sol, Luna, Astra and Grok comparison is somebody else's number, attributed.
 - Thumbnails and X posts: not written. Invoke the `thumbnails` and `x-pipeline` skills.
 
 ### What our streams did (from the channel Streams tab, read 29 Sep)
@@ -47,11 +48,11 @@ Small numbers, and older videos have had longer to collect views, so read the ra
 
 ## Cold Open — Read This
 
-> "You are paying for the best AI models anyone has ever built, and I'd bet most of you are using them like a chatbot. Claude Opus 5.5 landed last Tuesday. Claude Sonnet 5.5 landed yesterday. And on the timeline, one guy typed a single sentence into Opus 5.5, asked for a fifteen-second showreel, and got almost two million views. Someone else built a whole 3D world out of pure code, zero downloaded assets, sound included, for about sixty dollars in usage. Meanwhile most people are typing 'think step by step' at a model that already thinks, leaving it on the most expensive setting, and wondering why the meter is empty by Wednesday. So today is a masterclass. Four habits from the people who built these models, one theory of why they work, and then we make a video live on both models, show you the clock and the bill, and publish the brief. Let's go."
+> "You are paying for the best AI models anyone has ever built, and I'd bet most of you are using them like a chatbot. Claude Opus 5.5 landed last Tuesday. Claude Sonnet 5.5 landed yesterday. And on the timeline, one guy typed a single sentence into Opus 5.5, asked for a fifteen-second showreel, and got almost two million views. Someone else built a whole 3D world out of pure code, zero downloaded assets, sound included, for about sixty dollars in usage. Meanwhile most people are typing 'think step by step' at a model that already thinks, leaving it on the most expensive setting, and wondering why the meter is empty by Wednesday. So today: a quick report card on everything else the labs shipped while we were gone, OpenAI, xAI and Google included. Then a masterclass. Four habits from the people who built these models, one theory of why they work, and we make a video live on both Claude models, show you the clock and the bill, and publish the brief. Let's go."
 
 ## Summary
 
-Anthropic shipped Claude Opus 5.5 (22 Sep) and Claude Sonnet 5.5 (28 Sep). On Artificial Analysis's index Opus scores 58, several points clear of everything measured, and Sonnet scores 56 at a fifth of the price of Fable 5.1 on the price list. Theo's take (27 Sep) is that these releases are less about getting smarter and more about getting less dumb: a higher floor, fewer stupid mistakes, longer jobs you can hand over. That explains why the advice in Anthropic's own guide and Thariq's effort article all points one way: state the finish line, stop saying "think hard", keep a task file, use helpers, spend effort where checking matters, and verify at the end. The catch is cost. The price lists dropped, but both models think a lot more, so the number that matters is the cost of a finished task at the effort you actually run. The timeline shows what the payoff looks like, mostly procedural video, 3D and motion work. We close with a live two-model build and a rapid catch-up of everything else since 8 Sep, including a straight answer on Gemini 4 (not out).
+Anthropic shipped Claude Opus 5.5 (22 Sep) and Claude Sonnet 5.5 (28 Sep). On Artificial Analysis's index Opus scores 58, several points clear of everything measured, and Sonnet scores 56 at a fifth of the price of Fable 5.1 on the price list. Theo's take (27 Sep) is that these releases are less about getting smarter and more about getting less dumb: a higher floor, fewer stupid mistakes, longer jobs you can hand over. That explains why the advice in Anthropic's own guide and Thariq's effort article all points one way: state the finish line, stop saying "think hard", keep a task file, use helpers, spend effort where checking matters, and verify at the end. The catch is cost. The price lists dropped, but both models think a lot more, so the number that matters is the cost of a finished task at the effort you actually run. The timeline shows what the payoff looks like, mostly procedural video, 3D and motion work. Before the lessons, a report card on the other labs: OpenAI's Sol and Luna halved their price at the same score and lost ground on deliverable quality, xAI's Grok 4.7 improved the work but doubled its thinking to do it, and Gemini 4 is not out. We close with a live two-model build using only the Claude models.
 
 ## Talking Points — Capsule 1, Why These Models Feel Different
 
@@ -68,7 +69,7 @@ Opus 5.5 and Sonnet 5.5 are best understood as a reliability upgrade, and that c
 - His mechanism, in plain language. A benchmark score is an average over many tasks, so it rewards a model that fails less often, not only one that peaks higher. Labs take the good solutions from their biggest models (Fable 5.1, GPT-6 Astra) and use them to train the smaller ones, which cleans up their worst moments. His line: "less dumb" and "more smart" are different things. Theo, on Astra: the smartest model he's used and one of the stupidest this year.
 - Why this matters to us: **a model that fails less can be trusted with a longer job.** That is the reason every tip in the next capsules is about long jobs: a finish line, a task list in a file, helpers, a check at the end. Anthropic's guide even describes Opus 5.5 as carrying a change "through a large repository until the tests pass," and says early testers saw it run for hours with little steering.
 - **Push back honestly, this is the debate.** Theo says Opus 5.5 isn't raising the ceiling. Artificial Analysis has it at 58 and Fable 5.1 at 53, which is a real gap. Both can be true, because an index rewards consistency. But be clear on air: "less dumb" is Theo's read, not Anthropic's. Attribute it.
-- His numbers, which line up with ours. Theo reads Artificial Analysis and says reasoning tokens (the model's hidden thinking) roughly doubled from Opus 5 to Opus 5.5, about 42K to 84K per task, while visible output only went from about 30K to 35K. That adds to ~72K → ~119K, which matches Artificial Analysis's ~73K → ~119K that we use in Capsule 4. His spin: more visible reasoning makes the model easier to monitor. Our spin: it makes the bill bigger.
+- His numbers, which line up with ours. Theo reads Artificial Analysis and says reasoning tokens (the model's hidden thinking) roughly doubled from Opus 5 to Opus 5.5, about 42K to 84K per task, while visible output only went from about 30K to 35K. That adds to ~72K → ~119K, which matches Artificial Analysis's ~73K → ~119K that we use in Capsule 5. His spin: more visible reasoning makes the model easier to monitor. Our spin: it makes the bill bigger.
 - One more Theo point worth a minute: he says labs used to ignore the smaller tiers and now Anthropic is pouring effort into making Opus and Sonnet nearly as good as Fable. He notes Haiku has not been updated in about 11 months (his figure). VentureBeat reports Haiku 5.5 "in coming weeks"; that is unconfirmed.
 - **Which model for which job (our synthesis, from the sources).** Sonnet 5.5 for well-scoped everyday work: bug fixes, documents, slides, spreadsheets, and fast interactive sessions; on knowledge-work tests it is level with Opus. Opus 5.5 for the long autonomous jobs (migrations, audits, big reviews), the hard 10%, and factual recall: Artificial Analysis has 66% vs 54% on their factual-knowledge test (Sonnet hallucinates less though, 47% vs 59%). Cheaper helpers for lookups and log reading, per Anthropic's cost guide.
 - Clip line: **"These models aren't smarter. They're less dumb. And that's why you can finally give them a real job."**
@@ -81,7 +82,54 @@ Opus 5.5 and Sonnet 5.5 are best understood as a reliability upgrade, and that c
 - Don't pretend: Theo's pacing politics (that these releases prove the pacing plan works) is his argument. We are borrowing the reliability point and not endorsing the politics. Amodei's essay is real (12 Sep); Altman and Musk are reported to have said they agree.
 - Shorts moment: "These models aren't smarter, they're less dumb." Thirty seconds with Theo's drawing on screen.
 
-## Talking Points — Capsule 2, Lesson One: Brief It Like A Contractor
+## Talking Points — Capsule 2, The Frontier Report Card: Who Shipped What Since 8 Sep
+
+### Segment Thesis
+
+Everyone shipped in three weeks, and graded on the quality of the work, the cost and the mess, Anthropic raised the work and the bill, OpenAI cut the bill and slipped on the work, and xAI improved the work at double the thinking.
+
+### Talking Points
+
+Target ten to twelve minutes. Numbers are Artificial Analysis's (independent), not the labs'. We cannot run OpenAI or xAI models ourselves today (Codex limits are reached), so say "as measured by Artificial Analysis" every time.
+
+- **Grade on three things:** does the work get better, what does a finished task cost, and how messy was the launch. Names once, properly: **GPT-6 Sol** and **GPT-6 Luna** (OpenAI's mid and small models), **Grok 4.7** (xAI, now SpaceXAI). After this: Sol, Luna, Grok.
+- **OpenAI: Sol and Luna, 22 Sep**, about 90 minutes after Opus 5.5 per TechCrunch. Pull up [Artificial Analysis's Sol and Luna post](https://x.com/ArtificialAnlys/status/2102462962758033624) (721K views).
+  - **The win is price.** Sol drops from $4/$20 to **$2/$10** per million tokens, Luna from $0.20/$1.20 to **$0.10/$0.50**. Cost per index task: Sol $1.06 (was $1.99), Luna $0.07 (was $0.18). Sol in Codex scores 57 on the Coding Agent Index (+2) at $2.99 a task.
+  - **The miss is the work.** Overall index scores are level with the model they replace, so no leap. On Artificial Analysis's knowledge-work test (GDPval-AA), Sol drops about **100 Elo** and Luna about 75; Luna also drops ~45 on AA-Briefcase and loses 2 points on the Coding Agent Index. Their team read hundreds of outputs and says the drop comes from "reduced presentation quality and deliverables that omit rubric elements." Compare Opus 5.5's 1846 on GDPval-AA and 1822 on AA-Briefcase.
+  - **The honesty trade.** Sol's hallucination rate fell from 92% to 60%, but by answering fewer questions (attempts 83% vs 99%), and its accuracy actually fell from 59% to 54%. Take: it stopped guessing by answering less.
+  - **The mess.** OpenAI's API changelog (via the research pass, verify) lists an image-encoding bug that degraded image understanding and computer use in Sol and Luna, fixed 25 Sep.
+  - **Our grade:** half the price, same score, worse deliverables. Fair to call it a cost play, not a quality play.
+- **xAI: Grok 4.7, 21 Sep.** Pull up [Artificial Analysis's Grok 4.7 post](https://x.com/ArtificialAnlys/status/2102074898327932987) (21.7M views).
+  - **What improved.** Index **46**, +2 over Grok 4.6, which Artificial Analysis says puts SpaceXAI in the top four labs. Knowledge work +111 Elo (1657 on AA-Briefcase) and +90 on GDPval-AA. In its own coding harness (Grok Build) it scores **56** on the Coding Agent Index, +9, fourth among native harnesses. Price unchanged at $2/$6.
+  - **What it cost.** About **81K output tokens per task, against 36K for Grok 4.6**, and 27K for GPT-6 Astra. Double the thinking for two points on the index. Small regressions on long-context (AA-LCR −3.7 points) and AutomationBench (−1.1).
+  - **Reception (secondary sources, attribute):** [Cybernews: "falls short of Musk's hype"](https://cybernews.com/ai-news/grok-4-7-overhyped-more-guardrails/), a 36Kr headline about aggressive pricing meeting disappointing benchmark performance, a daily.dev-listed review titled "this is actually sad." Complaints in the search summaries: weak front-end and 3D, looping, and stronger content restrictions.
+  - **Contrast on screen:** Grok 4.7 at 1657 on AA-Briefcase, Opus 5.5 at 1822. Index 46 vs 58.
+  - **Our grade:** a real coding-agent jump, a cool reception and a bill that doubled its thinking.
+- **Was it "butchered"?** Say it straight. The data supports *mixed*, not *butchered*: OpenAI's price cut and Grok's coding jump are real wins. What's true is that neither lab improved the finished deliverable the way Anthropic did, and OpenAI's deliverables got worse. That is exactly the floor-not-ceiling point from Theo in Capsule 1. Take: the labs that cut cost or added thinking without raising the floor got the cold reception.
+- **Google: Gemini 4 is not out.** As of 29 Sep, Google's public Gemini API model list does not include it, and Google has announced no date, price, model ID or benchmarks. What's confirmed: on 24 Sep DeepMind's Koray Kavukcuoglu said Gemini 4 is in post-training, already powering Google's Antigravity coding tool internally, and Google wants an early version out "as soon as possible", "much earlier" than year-end. Sources: [9to5Google](https://9to5google.com/2026/09/24/google-says-gemini-4-release-is-coming-as-soon-as-possible/), [InfoWorld citing The Information](https://www.infoworld.com/article/4226642/google-plans-gemini-4-release-before-year-end-2.html). October is speculation. Say: "Google says soon. Not today."
+- **Quick hits, sixty seconds, skip what doesn't land in chat:**
+  - **Open-weight and China.** Xiaomi **MiMo-V2.6-Pro** (22 Sep): MIT license, index 46, top open-weights model at launch, leads Artificial Analysis's new CyberGym-E2E-AA test at 79% and $0.20 a task. **DeepSeek V4.1-Flash** (10 Sep), index 39. **Alibaba Qwen**: Qwen3.8-Omni-Flash (18 Sep) and, on 22 Sep, the Qwen lead said Qwen 4 is in training and coming "very soon". **Kimi K2.8 Preview** (11 Sep, API-only). **MiniMax M3.1-Flash-Preview** (27 Sep).
+  - **Anthropic's other news.** 10 Sep: accused Alibaba, Moonshot and DeepSeek of large distillation campaigns (using Claude's answers to train their own models), about 200 million exchanges per TechCrunch. 14 Sep: Claude Code weekly limits changed, [BleepingComputer counts a net 17% cut](https://www.bleepingcomputer.com/news/artificial-intelligence/anthropic-is-cutting-claude-codes-current-weekly-limits-by-17-percent/); Anthropic first framed it as an increase, deleted the post, then clarified. 23 Sep: Claude Marketplace.
+  - **Sol, Luna and Grok 4.7 numbers are Artificial Analysis's.** Read them off their posts (Sol/Luna 22 Sep, Grok 4.7 21 Sep). We did not test any of these models. "Butchered" is the user's word, not a measured result; the honest word is *mixed*.
+- **OpenAI image-encoding bug** (degraded image understanding and computer use, fixed 25 Sep) is from OpenAI's API changelog as relayed by the research pass. I did not open the changelog myself. Confirm before saying it.
+- **Grok 4.7 reception** rests on secondary sources: Cybernews, 36Kr, Stork.AI and a daily.dev-listed video review, read through search summaries. The "about 2.5x more per task" figure in one summary is not verified. Attribute or skip.
+- **Amodei's essay.** "We Must Pace the Frontier" (12 Sep), the essay behind Theo's video: [essay](https://darioamodei.com/post/we-must-pace-the-frontier), [CNN](https://www.cnn.com/2026/09/12/tech/anthropic-ceo-essay-ai).
+  - **OpenAI, smaller items.** ChatGPT Images 2.5 (8 Sep), Agents API beta (10 Sep), Codex 0.156/0.157 (23, 25 Sep), GPT-5.5 retirement announced for 14 Oct. Sora API discontinued 24 Sep, **one secondary source, not confirmed.** "OpenAI DevDay" is trending on X; check its date.
+  - **Tools.** Cursor Projects (10 Sep). GitHub Copilot added Sol and Luna (22 Sep) and Sonnet 5.5 (28 Sep). Mistral raised €3B (8 Sep).
+  - **Not found:** a new Veo, Runway, Kling or Midjourney model, or anything from Amazon, Apple or Microsoft. Say "nothing major that I found."
+- Clip line: **"OpenAI cut the price. Same score, worse deliverables."**
+- Clip line: **"Grok 4.7 doubled its thinking for two points."**
+- Transition: so the model that got better at the actual work is the one we came here to learn. How do you use it?
+
+### Host Notes
+
+- Ask Mitchell: if a supplier halves the price and the deliverable gets worse, did you save money?
+- Pull up: Artificial Analysis's Sol post, then Grok post. Have the Opus 5.5 AA-Briefcase number ready as the comparison.
+- Don't pretend: we did not test Sol, Luna or Grok. Codex limits are reached. All numbers are Artificial Analysis's; reception is from secondary sources.
+- Shorts moment: "Half the price, same score, worse deliverables." Thirty seconds, the GDPval-AA drop on screen.
+- If running long, cut to OpenAI, xAI, Gemini 4 and the Claude Code limit change.
+
+## Talking Points — Capsule 3, Lesson One: Brief It Like A Contractor
 
 ### Segment Thesis
 
@@ -108,7 +156,7 @@ A model that can carry a whole job needs a whole brief: what done looks like, wh
 - Don't pretend: the prompt examples in "Copy Paste" are our paraphrase of the guide's shapes, not quotes.
 - Shorts moment: "Delete 'think step by step' from your prompts." Thirty seconds, the guide on screen.
 
-## Talking Points — Capsule 3, Lesson Two: Run A Long Job Without Babysitting
+## Talking Points — Capsule 4, Lesson Two: Run A Long Job Without Babysitting
 
 ### Segment Thesis
 
@@ -122,7 +170,7 @@ Long runs need three things written down: when to stop, what's left, and who doe
 - **Helpers for big audits.** Tell it to give each service, folder or client to its own helper (subagent), check the evidence when each one reports back, and finish with one table: item, affected yes or no, evidence. The guide says early testers had Opus 5.5 coordinate parallel helpers on long audits and migrations with little oversight.
 - **A dashboard before the run.** [Vox's thread](https://x.com/Voxyz_ai/status/2103946635831050740) (315K views): before any long task, a small helper builds a one-file HTML dashboard showing progress, what's stuck, questions waiting on you, and what it will do by default if you don't answer. It runs on medium effort while the main job runs on high. He shared the exact prompt. [Ado, who works on Claude at Anthropic,](https://x.com/adocomplete/status/2103293477912268813) shared a similar visual harness built with Opus 5.5 on medium. Take: steal this for the build.
 - **Read the blockers first.** When a long run finishes, read what it needs from you before anything else. The guide says Opus 5.5 reports more clearly than Opus 5, and suggests ending every run with three headings: Blocked on me, Changed, Found.
-- **The time trade.** Same idea, [Stefan 3D AI's test](https://x.com/Stefan_3D_AI/status/2102471841046786153) (22 Sep, 468K views): one prompt, Blender only, all procedural, a 10-second shot. His figures: Opus 5.5 35 minutes, 199.6K output tokens, about $13.30 in API terms; GPT-6 Astra 28 minutes, 56.6K tokens, about $14.50. His read: Opus "juggles way more at once and is faster overall." Take: it writes 3.5x the words for about the same bill. Hold that for Capsule 4.
+- **The time trade.** Same idea, [Stefan 3D AI's test](https://x.com/Stefan_3D_AI/status/2102471841046786153) (22 Sep, 468K views): one prompt, Blender only, all procedural, a 10-second shot. His figures: Opus 5.5 35 minutes, 199.6K output tokens, about $13.30 in API terms; GPT-6 Astra 28 minutes, 56.6K tokens, about $14.50. His read: Opus "juggles way more at once and is faster overall." Take: it writes 3.5x the words for about the same bill. Hold that for Capsule 5.
 - Clip line: **"A long job is three files: a brief, a checklist and a rule for when to stop."**
 - Transition: long runs cost money. Here's how not to burn your week in a day.
 
@@ -133,7 +181,7 @@ Long runs need three things written down: when to stop, what's left, and who doe
 - Don't pretend: Provkin's and Stefan's figures are theirs, "in API terms." We did not reproduce either.
 - Shorts moment: Vox's dashboard opening with the four panels. Thirty seconds.
 
-## Talking Points — Capsule 4, Lesson Three: Spend Your Effort, Then Check The Bill
+## Talking Points — Capsule 5, Lesson Three: Spend Your Effort, Then Check The Bill
 
 ### Segment Thesis
 
@@ -162,7 +210,7 @@ Both models think more than the ones they replaced, so effort is the dial that d
 - Don't pretend: the effort receipts are Thariq's own Terminal-Bench 3.0 runs. The 64% → 87% security and 34% → 75% hardware figures are from the claude.dev version of his article via the research pass; confirm on the page.
 - Shorts moment: the $10.51 → $8.41 → $5.98 bridge. "The price cut only cancelled the extra thinking." Thirty seconds.
 
-## Talking Points — Capsule 5, Lesson Four: Verify, And The Live Build
+## Talking Points — Capsule 6, Lesson Four: Verify, And The Live Build
 
 ### Segment Thesis
 
@@ -176,9 +224,9 @@ Building on low effort and checking on high works, and we can prove it with one 
   - One brief with a finish line and a stop rule (Rule 1).
   - No "think hard" (Rule 2).
   - A banned-styles list (Rule 3).
-  - `TASKS.md` for progress, plus Vox's one-file HTML dashboard if quick (Capsule 3).
+  - `TASKS.md` for progress, plus Vox's one-file HTML dashboard if quick (Capsule 4).
   - Build on **medium**, verify on **high**, same for both models so the race is fair (Thariq's loop).
-- **The race:** Opus 5.5 and Sonnet 5.5, same brief, started together, timer on screen, `/usage` read at the end. The shape copies Stefan 3D AI's test (Capsule 3), so credit him.
+- **The race:** Opus 5.5 and Sonnet 5.5, same brief, started together, timer on screen, `/usage` read at the end. The shape copies Stefan 3D AI's test (Capsule 4), so credit him.
 - **Demo:** play both outputs back to back. Say what's rough. Say what it would take to run this for a real client: a brief template, a review pass, brand assets.
 - **Artifact + CTA:** publish the brief, the rules file and both outputs in a repo (name and link to fill in). Close on "if you have a video you keep meaning to make, reach out."
 - **Failure is content.** If one model turns out garbage, keep it on screen and say what we'd change in the brief. That is the honest version of every viral clip.
@@ -194,46 +242,17 @@ Building on low effort and checking on high works, and we can prove it with one 
 - Pull up: the brief in "Copy Paste — Live Build Prompts", `/usage`, the renderer window.
 - Don't pretend: one run per model, no blind rubric, no Fable side. Say that.
 - Shorts moment: both videos playing side by side with the timers. Thirty seconds.
-- If there's no decision by 13:30 CEST, drop the build and extend Capsule 6 with the use-case posts above.
-
-## Talking Points — Capsule 6, Everything Else We Missed (8 Sep → 28 Sep)
-
-### Segment Thesis
-
-Three weeks of releases, sorted by "does this change what you'd buy", including a straight answer on Gemini 4.
-
-### Talking Points
-
-Dates are 2026. Skip whatever does not land in chat.
-
-- **Gemini 4: not out.** As of 29 Sep, Google's public Gemini API model list does not include it and Google has announced no date, price, model ID or benchmarks. What is confirmed: on 24 Sep DeepMind's Koray Kavukcuoglu said Gemini 4 has entered post-training, is already powering Google's Antigravity coding tool internally, and Google wants to release an early version "as soon as possible", "much earlier" than the end of the year. Source: [9to5Google](https://9to5google.com/2026/09/24/google-says-gemini-4-release-is-coming-as-soon-as-possible/). [InfoWorld, citing The Information](https://www.infoworld.com/article/4226642/google-plans-gemini-4-release-before-year-end-2.html) (25 Sep) says the same. October is speculation, not an announcement. Say: "Google says soon. Not today."
-- **Anthropic CEO Dario Amodei's essay "We Must Pace the Frontier," 12 Sep.** He argues for deliberately slowing the rate at which frontier models gain capability so safety work can catch up, and proposes embedded third-party evaluators inside AI labs. CNN covered it; Sam Altman and Elon Musk said publicly they agreed. Sources: [Amodei's essay](https://darioamodei.com/post/we-must-pace-the-frontier), [CNN](https://www.cnn.com/2026/09/12/tech/anthropic-ceo-essay-ai). This is what Theo's video is about; give it 60 seconds.
-- **OpenAI: GPT-6 Sol and GPT-6 Luna, 22 Sep.** Updated Sol (complex coding and agent work) at **$2 in / $10 out**, Luna (small, high volume) at **$0.10 / $0.50**. About 90 minutes after Opus 5.5, per TechCrunch. Artificial Analysis: Sol (max) 48 at $1.06 per task, Luna (max) 37 at $0.068. Sources: [TechCrunch](https://techcrunch.com/2026/09/22/openai-launches-gpt-6-sol-and-luna/), [Artificial Analysis frontier post](https://x.com/ArtificialAnlys/status/2102833926788288704).
-- **OpenAI, smaller items.** ChatGPT Images 2.5 and GPT Image 2.5 API models (8 Sep). Agents API in public beta (10 Sep). Codex 0.156 (23 Sep) and 0.157 (25 Sep). GPT-5.5 retirement announced for 14 Oct. Sora API discontinued 24 Sep, **one secondary source plus a search snippet, not confirmed.** "OpenAI DevDay" is trending on X; check its date before mentioning.
-- **xAI: Grok 4.7, 21 Sep.** $2 in / $6 out, 500K context, Artificial Analysis **46**. In Cursor. [x.ai](https://x.ai/news/grok-4-7).
-- **Open-weight and China.** Xiaomi **MiMo-V2.6-Pro** (22 Sep): MIT license, index **46**, top open-weights model at launch; it also leads Artificial Analysis's new CyberGym-E2E-AA test at 79% and $0.20 a task. **DeepSeek V4.1-Flash** (10 Sep): open weights, index 39. **Alibaba Qwen**: Qwen3.8-Omni-Flash (18 Sep), Qwen-Image-2.1 (20 Sep), and on 22 Sep the Qwen lead said Qwen 4 is in training and coming "very soon". **Kimi K2.8 Preview** (11 Sep, API-only). **MiniMax M3.1-Flash-Preview** (27 Sep, only inside MiniMax's own tool).
-- **Anthropic, the other news.** 10 Sep: Anthropic accused Alibaba, Moonshot and DeepSeek of large distillation campaigns (using Claude's answers to train their own models), about 200 million exchanges across five campaigns per TechCrunch. 14 Sep: Claude Code weekly limits changed, which [BleepingComputer counts as a net 17% cut](https://www.bleepingcomputer.com/news/artificial-intelligence/anthropic-is-cutting-claude-codes-current-weekly-limits-by-17-percent/); Anthropic first framed it as an increase, deleted the post, then clarified. Then +20% five-hour limits on Opus 5.5 day. 23 Sep: Claude Marketplace (2,000+ connectors, plugins, agents).
-- **Coding tools.** Cursor Projects (10 Sep, a coordinator agent that plans and delegates). GitHub Copilot added Sol and Luna (22 Sep) and Sonnet 5.5 (28 Sep). Claude Code made Opus 5.5 and Sonnet 5.5 its default Opus and Sonnet.
-- **Money.** Mistral raised €3B at a valuation above €21B (8 Sep).
-- **Not found in the window:** a new Veo, Runway, Kling or Midjourney model, or anything from Amazon, Apple or Microsoft. Say "nothing major that I found."
-- Clip line: **"Three weeks off. Two Anthropic models, two OpenAI models, a Grok, and Gemini 4 still isn't out."**
-- Transition: so what do you actually do on Monday?
-
-### Host Notes
-
-- Ask Mitchell: which of these did you actually see on your feed?
-- Pull up: [Artificial Analysis leaderboard](https://artificialanalysis.ai/leaderboards/models), one slide with logos and dates. Don't read the list.
-- Don't pretend: the release sweep was done from the web on 28 Sep. Anything marked snippet-only in Verify Live is unconfirmed.
-- Shorts moment: "Gemini 4 isn't out yet." Twenty seconds.
-- If we're running long, skip everything except Gemini 4, Sol/Luna, Grok 4.7 and the Claude Code limit change.
+- If there's no decision by 13:30 CEST, drop the build, play three of the use-case clips above instead, and let the Frontier Report Card (Capsule 2) run long.
 
 ## Hot Take
 
 The launch posts say "cheaper" and the independent numbers say "flat." Anthropic cut Opus 5.5's list price by a fifth and its cache price by 60%, and Artificial Analysis found the cost per task landed within about twelve cents of the model it replaced, because the new model writes about 1.6 times as many words. Theo will tell you this is the good news: more visible thinking, fewer stupid mistakes, longer jobs you can trust. He might be right. But it's only good news if you set the dial on purpose. The people who will get burned are the ones who read "20% cheaper," left everything on max, and watched their usage meter empty on Wednesday. These models aren't smarter. They're less dumb, and you are still the one paying for the thinking.
 
+**And the second one, about the other labs.** Everyone says OpenAI and xAI "butchered" their releases, and the numbers say something narrower. OpenAI halved the price of Sol and Luna and the deliverables got worse: Artificial Analysis had Sol down about 100 Elo on knowledge-work quality and Luna down 75, with the hallucination fix coming from answering less. xAI's Grok 4.7 got better at the work and doubled its thinking to do it. Anthropic is the only lab this month that improved the finished work, and it charged you for the thinking. Cheap-and-worse and expensive-and-better are both choices. Nobody shipped cheap-and-better, and anyone selling you that is selling.
+
 ## Closing Take
 
-Three weeks off and the map changed. Anthropic has the number one model and the number two model, OpenAI answered ninety minutes later with cheaper ones, and Gemini 4 is coming but not here. Theo's theory is that these releases are about reliability, less dumb rather than smarter, and whether or not you buy his politics, the practical point holds: a model that drops the ball less can carry a longer job. So the masterclass was four habits. Brief it with a finish line and stop saying think hard. Give a long job a task file, helpers and a stop rule. Set the effort on purpose, and judge it by what a finished task costs. Build on low or medium, check on high. We ran a video on both models and you saw the clock and the bill. The brief, the rules file and both outputs are in the repo, link on screen. If you've got a video you keep meaning to make, or a business that needs one, reach out.
+Three weeks off and the map changed. Anthropic has the number one model and the number two model, OpenAI answered ninety minutes later with half-price models whose deliverables slipped, xAI shipped a Grok that thinks twice as much for two more points, and Gemini 4 is coming but not here. Theo's theory is that these releases are about reliability, less dumb rather than smarter, and whether or not you buy his politics, the practical point holds: a model that drops the ball less can carry a longer job. So the masterclass was four habits. Brief it with a finish line and stop saying think hard. Give a long job a task file, helpers and a stop rule. Set the effort on purpose, and judge it by what a finished task costs. Build on low or medium, check on high. We ran a video on both models and you saw the clock and the bill. The brief, the rules file and both outputs are in the repo, link on screen. If you've got a video you keep meaning to make, or a business that needs one, reach out.
 
 ## Copy Paste — Live Build Prompts
 
@@ -307,6 +326,9 @@ Read https://claude.dev/blog/what-a-task-costs-on-opus-5-5/ and review my Claude
 - Anthropic launch posts: [@claudeai Opus 5.5 via @ClaudeDevs](https://x.com/ClaudeDevs/status/2102438800836489554), [@claudeai Sonnet 5.5](https://x.com/claudeai/status/2104633115620823187), [price/speed](https://x.com/claudeai/status/2104633125511078314), [low/medium effort claim](https://x.com/claudeai/status/2104633128803582458)
 - Anthropic pages: https://www.anthropic.com/claude-opus-5-5, https://www.anthropic.com/claude-sonnet-5-5, https://platform.claude.com/docs/en/models/opus-5-5/overview, https://platform.claude.com/docs/en/models/sonnet-5-5/overview
 - Guides: [Getting the most out of Opus 5.5](https://claude.dev/blog/getting-the-most-out-of-opus-5-5/), [What a task costs on Opus 5.5](https://claude.dev/blog/what-a-task-costs-on-opus-5-5/), [Spending your effort](https://claude.dev/blog/spending-your-effort/), [Thariq's X article](https://x.com/trq212/article/2103576349499855160)
+- Artificial Analysis on other labs: [Grok 4.7 launch](https://x.com/ArtificialAnlys/status/2102074898327932987), [Grok 4.7 token use](https://x.com/ArtificialAnlys/status/2102074912253112682), [GPT-6 Sol and Luna](https://x.com/ArtificialAnlys/status/2102462962758033624), [Sol/Luna cost frontier](https://x.com/ArtificialAnlys/status/2102527962201624915)
+- Grok 4.7 reception (secondary): https://cybernews.com/ai-news/grok-4-7-overhyped-more-guardrails/, https://eu.36kr.com/en/p/3993827296148482, https://www.stork.ai/blog/xais-grok-47-is-a-deceptive-upgrade, https://news.ycombinator.com/item?id=49788838
+- Sol and Luna: https://openai.com/index/introducing-gpt-6-sol-and-luna/, https://news.ycombinator.com/item?id=49805509
 - Artificial Analysis: [Opus 5.5 launch](https://x.com/ArtificialAnlys/status/2102438210798514391), [Opus 5.5 cost per task](https://x.com/ArtificialAnlys/status/2102541956014657615), [Coding Agent Index](https://x.com/ArtificialAnlys/status/2102932119995756613), [Pareto frontier week](https://x.com/ArtificialAnlys/status/2102833926788288704), [Sonnet 5.5 launch](https://x.com/ArtificialAnlys/status/2104640155843989864), [Sonnet Terminal-Bench](https://x.com/ArtificialAnlys/status/2104640158364795297), [Cyber Index](https://x.com/ArtificialAnlys/status/2104548886442647864)
 - Model pages: https://artificialanalysis.ai/models/claude-opus-5-5, https://artificialanalysis.ai/models/claude-sonnet-5-5, https://artificialanalysis.ai/leaderboards/models
 - Cost thread: [Vox on the cost guide](https://x.com/Voxyz_ai/status/2103552376380457454)
@@ -346,3 +368,7 @@ Read https://claude.dev/blog/what-a-task-costs-on-opus-5-5/ and review my Claude
 > "Same brief. Two models. Clock's running."
 
 > "Gemini 4 isn't out yet. Google says soon. Not today."
+
+> "OpenAI cut the price. Same score, worse deliverables."
+
+> "Grok 4.7 doubled its thinking for two points."
