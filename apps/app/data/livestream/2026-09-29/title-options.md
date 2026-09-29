@@ -1,6 +1,6 @@
 # Title options — 2026-09-29 (stream day)
 
-**LOCKED: `[LIVE] GPT-6 Sol/Luna vs Grok 4.7 vs Opus/Sonnet 5.5: What To Use`** Set in frontmatter 29 Sep. The scope widened after the first draft: Sol, Luna and Grok 4.7 are covered from published data (we could not run them), and the masterclass and live build use Opus 5.5 and Sonnet 5.5 only. Say that in the description.
+**LOCKED: `[LIVE] GPT-6 Sol/Luna vs Grok 4.7 vs Opus/Sonnet 5.5: What To Use`** Set in frontmatter 29 Sep. Scope: a report card on Sol, Luna and Grok 4.7, then the masterclass and live build on Opus 5.5 and Sonnet 5.5.
 
 Format is a **masterclass**: how to use Claude Opus 5.5 and Claude Sonnet 5.5, framed on Theo's "less dumb, not smarter" take, with a live two-model build.
 
