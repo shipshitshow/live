@@ -99,7 +99,7 @@ Everyone shipped in three weeks, and graded on the quality of the work, the cost
 
 ### Talking Points
 
-Target ten to twelve minutes. Numbers are Artificial Analysis's (independent), not the labs'. We cannot run OpenAI or xAI models ourselves today (Codex limits are reached), so say "as measured by Artificial Analysis" every time.
+Target ten to twelve minutes. Numbers are Artificial Analysis's (independent), not the labs'. Attribute each one ("Artificial Analysis has...").
 
 - **Grade on three things:** does the work get better, what does a finished task cost, and how messy was the launch. Names once, properly: **GPT-6 Sol** and **GPT-6 Luna** (OpenAI's mid and small models), **Grok 4.7** (xAI, now SpaceXAI). After this: Sol, Luna, Grok.
 - **OpenAI: Sol and Luna, 22 Sep**, about 90 minutes after Opus 5.5 per TechCrunch. Pull up [Artificial Analysis's Sol and Luna post](https://x.com/ArtificialAnlys/status/2102462962758033624) (721K views).
@@ -141,7 +141,7 @@ Target ten to twelve minutes. Numbers are Artificial Analysis's (independent), n
 
 - Ask Mitchell: if a supplier halves the price and the deliverable gets worse, did you save money?
 - Pull up: Artificial Analysis's Sol post, then Grok post. Have the Opus 5.5 AA-Briefcase number ready as the comparison.
-- Don't pretend: we did not test Sol, Luna or Grok. Codex limits are reached. All numbers are Artificial Analysis's; reception is from secondary sources.
+- Don't pretend: all numbers are Artificial Analysis's; reception is from secondary sources. Attribute, don't apologise.
 - Shorts moment: "Half the price, same score, worse deliverables." Thirty seconds, the GDPval-AA drop on screen.
 - If running long, cut to OpenAI, xAI, Gemini 4 and the Claude Code limit change.
 
