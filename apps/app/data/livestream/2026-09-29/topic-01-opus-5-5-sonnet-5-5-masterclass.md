@@ -11,7 +11,9 @@ thumbnail_prompt: "16:9 YouTube livestream thumbnail, 1920x1080, ultra sharp, ph
 ## Sources — Livestream Notes
 
 - Start: 14:00 CEST. Format: **masterclass**, 60–90 minutes. Off air 8 Sep → 29 Sep (three weeks).
-- Stream links: **not created yet.** Add the YouTube and Restream links here when the event exists. Title above is a working title; ten options in `title-options.md`.
+- YouTube livestream: https://www.youtube.com/watch?v=uSuqoiEaB1k
+- Restream studio: https://studio.restream.io/eue-pcqd-vbw
+- Title is locked (see `title-options.md`).
 - **Spine, in plain words:** You are paying for the best AI models ever made and probably driving them like a chatbot. Four habits change that. We teach them, then prove them by making a video live on both models and publishing the brief.
 - **Frame borrowed from Theo** (video below): the new models are not *smarter*, they are *less dumb*, so they can be trusted with longer jobs. Everything in the masterclass follows from that: longer jobs need a finish line, a task file, a cost dial and a check at the end.
 - **Dates:** Opus 5.5 launched Tue 22 Sep. Sonnet 5.5 launched Mon 28 Sep (~20:00 in the X timestamps I saw), so on air it is "yesterday". Artificial Analysis had Sonnet numbers out ~30 minutes later.
