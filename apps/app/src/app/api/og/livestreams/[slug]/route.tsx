@@ -152,7 +152,7 @@ export async function GET(
             padding: '10px 18px',
           }}
         >
-          live.shipshit.dev
+          show.shipshit.dev
         </div>
       </div>
     </div>,

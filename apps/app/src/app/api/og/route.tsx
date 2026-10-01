@@ -82,7 +82,7 @@ export async function GET() {
             fontSize: 24,
           }}
         >
-          live.shipshit.dev
+          show.shipshit.dev
         </div>
       </div>
     </div>,
