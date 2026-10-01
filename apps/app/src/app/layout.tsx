@@ -4,7 +4,8 @@ import { buildDefaultMetadata } from '@/lib/site';
 import './globals.scss';
 
 export const metadata: Metadata = {
-  description: 'YouTube channel analytics and review dashboard',
+  description:
+    'Live coding, hot takes, and shipping in public. Every week on YouTube.',
   title: 'Ship Shit Show',
   ...buildDefaultMetadata(),
 };

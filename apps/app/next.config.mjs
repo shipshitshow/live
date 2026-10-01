@@ -44,11 +44,6 @@ const nextConfig = {
       {
         destination: "/analytics",
         permanent: false,
-        source: "/",
-      },
-      {
-        destination: "/analytics",
-        permanent: false,
         source: "/review",
       },
     ];

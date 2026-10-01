@@ -4,8 +4,8 @@
 @.agents/memory/architecture.md
 
 ## Apps
-- `apps/app` — producer dashboard (Next.js 16, port 3001, deployed to live.shipshit.dev)
-- `apps/web` — public marketing site (Next.js 16, port 3000, deployed to show.shipshit.dev)
+- `apps/app` — public site and producer dashboard (Next.js 16, port 3001, deployed to show.shipshit.dev)
+- `apps/web` — retired marketing stub (Next.js 16, port 3000). Do not deploy it.
 - `apps/desktop` — local show management (Electron + Vite, local-only, no deployment)
 
 ## Packages
