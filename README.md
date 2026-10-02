@@ -1,15 +1,18 @@
 # Ship Shit Show — Monorepo
 
 Turborepo (Bun workspaces) for the Ship Shit Show — a YouTube livestream/channel
-about AI tools for indie devs. Producer dashboard, public marketing site, and a
-local Electron control app, plus shared packages and show-runtime skills.
+about AI tools for indie devs. The public site and producer dashboard live in
+one Next.js app, plus a local Electron control app, shared packages, and
+show-runtime skills.
+
+GitHub: https://github.com/shipshitshow/show.shipshit.dev
 
 ## Apps
 
 | App | Package | Stack | Port | Deploy |
 | --- | --- | --- | --- | --- |
-| `apps/app` | `@shipshitshow/app` | Next.js 16 | 3001 | send.shipshit.dev (Vercel) |
-| `apps/web` | `@shipshitshow/web` | Next.js 16 | 3000 | show.shipshit.dev (Vercel) |
+| `apps/app` | `@shipshitshow/app` | Next.js 16 | 3001 | show.shipshit.dev (Vercel) |
+| `apps/web` | `@shipshitshow/web` | Next.js 16 | 3000 | retired stub, not the public host |
 | `apps/desktop` | `@shipshitshow/desktop` | Electron + Vite + React 19 | — | local only |
 
 `apps/app` is the producer dashboard: YouTube analytics (Data + Analytics APIs),
@@ -53,7 +56,7 @@ refresh token locally with `bun scripts/youtube-auth.ts` and store it as
 `YOUTUBE_REFRESH_TOKEN_MAIN` / `_CLIPS`.
 
 Production reauth requires the prod callback
-(`https://send.shipshit.dev/api/auth/youtube/callback`) to be registered as an
+(`https://show.shipshit.dev/api/auth/youtube/callback`) to be registered as an
 Authorized redirect URI in the Google Cloud Console OAuth client, and
 `YOUTUBE_CLIENT_ID`/`YOUTUBE_CLIENT_SECRET` (plus `OAUTH_STATE_SECRET`) set in
 Vercel. See `apps/app/.env.example` for the full variable list.

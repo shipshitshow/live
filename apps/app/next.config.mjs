@@ -44,12 +44,19 @@ const nextConfig = {
       {
         destination: "/analytics",
         permanent: false,
-        source: "/",
+        source: "/review",
       },
       {
-        destination: "/analytics",
-        permanent: false,
-        source: "/review",
+        source: "/",
+        has: [{ type: "host", value: "live.shipshit.dev" }],
+        destination: "https://show.shipshit.dev",
+        permanent: true,
+      },
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: "live.shipshit.dev" }],
+        destination: "https://show.shipshit.dev/:path*",
+        permanent: true,
       },
     ];
   },
