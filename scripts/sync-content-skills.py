@@ -16,9 +16,7 @@ for src,dst in mapping.items():
  if src=='youtube-metadata':expected[Path('scripts/analyze-vault-performance.js')]=(s/'scripts/analyze-vault-performance.js').read_bytes()
  for relative,content in expected.items():
   target=d/relative
-  # JSON/JS formatting can differ without changing the skill contract; generator writes source verbatim.
   if args.check:
-   if relative.suffix=='.js':continue
    if not target.is_file() or target.read_bytes()!=content:errors.append(str(target))
   else:
    target.parent.mkdir(parents=True,exist_ok=True);target.write_bytes(content)
