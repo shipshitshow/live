@@ -1,0 +1,11 @@
+{
+  "description": "The cost of Opus 5.5, Sonnet 5.5 and GPT-6.1 Sol is letting us use more agents than before. But does more parallel work mean more finished work\u2014or more coordination?\n\nWe pick up where the last show left off: how we split tasks, where orchestration gets expensive, and what evidence we need before calling an agent done. We will also show the local workflow for preparing this livestream from our repo and public skills.\n\nBring your own agent workflow to chat: what do you delegate, and how do you check the result?\n\nPrevious livestream: https://www.youtube.com/watch?v=uSuqoiEaB1k\nEdited recap: https://www.youtube.com/watch?v=WOTzkAWvb0w\nProduction skills: https://github.com/shipshitshow/skills\nEpisode vault: https://github.com/shipshitshow/vault\nExamples: https://github.com/shipshitshow/examples\n\nSubscribe so you do not miss the next build.\nFollow us: https://x.com/shipshitdev",
+  "destinations": [],
+  "id": "next-model-workflow",
+  "restream": null,
+  "rundownFile": "rundown.md",
+  "scheduledFor": null,
+  "sourceEpisodeDate": "2026-09-29",
+  "timezone": "Europe/Malta",
+  "title": "Cheaper AI. More Agents. What Actually Ships?"
+}

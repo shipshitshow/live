@@ -16,6 +16,7 @@ export function createWritableStorageError(label = 'livestream'): Error {
 
 export async function readBlobJson<T>(
   pathname: string,
+  strict = false,
 ): Promise<{ data: T; updatedAt: string } | null> {
   if (!isBlobPersistenceEnabled()) return null;
 
@@ -28,7 +29,8 @@ export async function readBlobJson<T>(
       data: JSON.parse(text) as T,
       updatedAt: result.blob.uploadedAt.toISOString(),
     };
-  } catch {
+  } catch (error) {
+    if (strict) throw error;
     return null;
   }
 }
@@ -47,6 +49,7 @@ export async function putBlobJson(
 
 export async function listAllBlobs(
   prefix: string,
+  strict = false,
 ): Promise<Array<{ pathname: string }>> {
   if (!isBlobPersistenceEnabled()) return [];
 
@@ -61,7 +64,8 @@ export async function listAllBlobs(
     } while (cursor);
 
     return blobs;
-  } catch {
+  } catch (error) {
+    if (strict) throw error;
     return [];
   }
 }

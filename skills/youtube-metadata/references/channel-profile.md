@@ -11,7 +11,7 @@ Verified against September 1, 8 and 29 recordings and Studio branding briefs on 
 - Voice: direct, conversational, specific, candid about limited experience. Keep the hosts' humor. Avoid manufactured panic, scripted catchphrases, invented quotes and unsupported certainty.
 - Preparation: hosts open Ressources/X links and discuss them; prepare a source board instead of text to read aloud.
 - Demo: prepare a short recorded or local fallback when live model quota is unavailable. Do not spend money or reserve subscriptions implicitly.
-- Public producer URL: https://send.shipshit.dev (migration supplied by owner). Public site: https://show.shipshit.dev.
+- Producer Home: https://show.shipshit.dev/studio. Sign-in: https://show.shipshit.dev/sign-in. Public site: https://show.shipshit.dev.
 - Archive: https://github.com/shipshitshow/vault
 - Viewer skills: https://github.com/shipshitshow/skills
 - Example code destination: https://github.com/shipshitshow/examples, attached to source livestreams.
