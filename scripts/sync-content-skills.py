@@ -24,5 +24,5 @@ for src,dst in mapping.items():
 if args.check:
  if json.loads((root/'skills/content-skills.lock.json').read_text())!=lock:errors.append('content-skills.lock.json')
  if errors:parser.exit(1,'Contract drift: '+', '.join(errors)+'\n')
-else:(root/'skills/content-skills.lock.json').write_text(json.dumps(lock,indent=2)+'\n')
+else:(root/'skills/content-skills.lock.json').write_text(json.dumps(lock,indent=2,sort_keys=True)+'\n')
 print('Content contracts match the supplied public skills checkout.')

@@ -33,6 +33,9 @@ apps/app/data/youtube-cache/
 # lead log (contact details — dev entries stay local, prod lives in Vercel Blob)
 apps/app/data/leads/
 
+# Local working show drafts; share selected examples under docs/show-prep/.
+apps/app/data/show-prep/
+
 # vercel
 .vercel
 

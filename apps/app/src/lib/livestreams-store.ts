@@ -18,16 +18,16 @@ import {
   listBlobDates,
   putBlobJson,
   readBlobJson,
-} from '@/lib/blob-storage';
+} from './blob-storage';
 import {
   findTopicFile,
   getTopicDrawingFile,
   isTopicMarkdownFile,
-} from '@/lib/livestreams-files';
+} from './livestreams-files';
 import {
   extractLivestreamYouTubeUrl,
   extractVideoId,
-} from '@/lib/livestreams-youtube';
+} from './livestreams-youtube';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
@@ -417,13 +417,17 @@ function applyTopicUpdate(topic: Topic, updates: TopicUpdate): Topic {
 
 async function getBlobTopicOverridesForDate(
   date: string,
+  strict = false,
 ): Promise<Map<string, TopicUpdate>> {
   const overrides = new Map<string, TopicUpdate>();
-  const blobs = await listAllBlobs(`${BLOB_TOPIC_OVERRIDES_PREFIX}/${date}/`);
+  const blobs = await listAllBlobs(
+    `${BLOB_TOPIC_OVERRIDES_PREFIX}/${date}/`,
+    strict,
+  );
 
   await Promise.all(
     blobs.map(async ({ pathname }) => {
-      const result = await readBlobJson<StoredTopicOverride>(pathname);
+      const result = await readBlobJson<StoredTopicOverride>(pathname, strict);
       if (!result) return;
 
       const slug = pathname
@@ -439,11 +443,14 @@ async function getBlobTopicOverridesForDate(
   return overrides;
 }
 
-async function getBlobTopicsForDate(date: string): Promise<Topic[]> {
-  const blobs = await listAllBlobs(`${BLOB_TOPICS_PREFIX}/${date}/`);
+async function getBlobTopicsForDate(
+  date: string,
+  strict = false,
+): Promise<Topic[]> {
+  const blobs = await listAllBlobs(`${BLOB_TOPICS_PREFIX}/${date}/`, strict);
   const topics = await Promise.all(
     blobs.map(async ({ pathname }) => {
-      const result = await readBlobJson<Topic>(pathname);
+      const result = await readBlobJson<Topic>(pathname, strict);
       return result?.data ?? null;
     }),
   );
@@ -660,18 +667,21 @@ export async function getTopicsForArchive(
   return getTopicsForDate(archive?.topicDate ?? fallbackDate);
 }
 
-export async function getTopicsForDate(date: string): Promise<Topic[]> {
+export async function getTopicsForDate(
+  date: string,
+  strict = false,
+): Promise<Topic[]> {
   const merged = new Map<string, Topic>();
 
   for (const topic of getFilesystemTopicsForDate(date)) {
     merged.set(topic.slug, topic);
   }
 
-  for (const topic of await getBlobTopicsForDate(date)) {
+  for (const topic of await getBlobTopicsForDate(date, strict)) {
     merged.set(topic.slug, topic);
   }
 
-  const overrides = await getBlobTopicOverridesForDate(date);
+  const overrides = await getBlobTopicOverridesForDate(date, strict);
   for (const [slug, updates] of overrides) {
     const topic = merged.get(slug);
     if (!topic) continue;
