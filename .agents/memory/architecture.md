@@ -1,13 +1,13 @@
 # Ship Shit Show — Monorepo Architecture
 
-last_verified: 2026-10-01
+last_verified: 2026-10-02
 
 ## Layout
 
 Turborepo monorepo with Bun workspaces.
 
 ### Apps
-- `apps/app` (@shipshitshow/app) — Public site and producer dashboard. Next.js 16, port 3001. Deployed to show.shipshit.dev via Vercel. `/` is public. `/login` is Clerk.
+- `apps/app` (@shipshitshow/app) — Public site and producer dashboard. Next.js 16, port 3001. Deployed to show.shipshit.dev via Vercel. `/` is public. `/login` is Clerk. The approved next refactor separates public-library reads and producer permissions; `send.shipshit.dev` is the intended producer entry point, pending verification of current host/auth configuration.
 - `apps/web` (@shipshitshow/web) — Retired marketing stub. Next.js 16, port 3000. Not the public host.
 - `apps/desktop` (@shipshitshow/desktop) — Local show management. Electron + Vite + React 19. Local-only, no deployment.
 

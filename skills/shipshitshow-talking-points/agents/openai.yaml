@@ -1,7 +1,4 @@
 interface:
-  display_name: "Ship Shit Show Talking Points"
-  short_description: "Turn a business problem into a build-episode rundown"
-  default_prompt: "Use $shipshitshow-talking-points to turn this brief into a Ship Shit Show build episode: problem, build, demo, published artifact, plus hook, segment arc, pull-up links, clip cues, and host-ready talking points."
-
-policy:
-  allow_implicit_invocation: true
+  display_name: "Talking Points"
+  short_description: "Source boards for natural livestream discussion"
+  default_prompt: "Use $shipshitshow-talking-points for this channel and its actual source material."
