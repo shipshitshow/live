@@ -7,6 +7,19 @@ show-runtime skills.
 
 GitHub: https://github.com/shipshitshow/show.shipshit.dev
 
+The public home is https://show.shipshit.dev. Producer sign-in is
+https://show.shipshit.dev/sign-in; protected pages use that same route.
+The legacy `/login` URL redirects to `/sign-in`.
+
+The home separates edited videos from full livestreams using YouTube video
+metadata, including actual stream start times for completed replays. Only
+public uploads from the main channel are shown. If the connected channel's
+metadata API is unavailable, `apps/app/src/lib/data/public-episodes.json`
+provides a dated snapshot of uploads verified public in the vault catalog.
+New RSS IDs wait for format metadata; their titles are never used to guess
+whether they were livestreams. Refresh the snapshot from verified public
+catalog entries when publishing episodes while YouTube OAuth is disconnected.
+
 ## Apps
 
 | App | Package | Stack | Port | Deploy |

@@ -60,6 +60,7 @@ export async function getLatestVideos(): Promise<PublicVideo[]> {
   try {
     const response = await fetch(`${FEED_URL}${youtubeChannelId()}`, {
       next: { revalidate: 3600 },
+      signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) {
       return [];

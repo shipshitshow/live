@@ -18,7 +18,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClerkProvider>{children}</ClerkProvider>
+        <ClerkProvider
+          signInUrl="/sign-in"
+          signInFallbackRedirectUrl="/analytics"
+        >
+          {children}
+        </ClerkProvider>
       </body>
     </html>
   );
