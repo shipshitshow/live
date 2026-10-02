@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 const LOCAL_SITE_URL = 'http://localhost:3001';
-const PRODUCTION_SITE_URL = 'https://live.shipshit.dev';
+const PRODUCTION_SITE_URL = 'https://send.shipshit.dev';
 
 export function getSiteUrl(): string {
   const configured = process.env.NEXT_PUBLIC_SITE_URL?.trim();

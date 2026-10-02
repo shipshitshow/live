@@ -8,7 +8,7 @@ local Electron control app, plus shared packages and show-runtime skills.
 
 | App | Package | Stack | Port | Deploy |
 | --- | --- | --- | --- | --- |
-| `apps/app` | `@shipshitshow/app` | Next.js 16 | 3001 | live.shipshit.dev (Vercel) |
+| `apps/app` | `@shipshitshow/app` | Next.js 16 | 3001 | send.shipshit.dev (Vercel) |
 | `apps/web` | `@shipshitshow/web` | Next.js 16 | 3000 | show.shipshit.dev (Vercel) |
 | `apps/desktop` | `@shipshitshow/desktop` | Electron + Vite + React 19 | — | local only |
 
@@ -53,7 +53,7 @@ refresh token locally with `bun scripts/youtube-auth.ts` and store it as
 `YOUTUBE_REFRESH_TOKEN_MAIN` / `_CLIPS`.
 
 Production reauth requires the prod callback
-(`https://live.shipshit.dev/api/auth/youtube/callback`) to be registered as an
+(`https://send.shipshit.dev/api/auth/youtube/callback`) to be registered as an
 Authorized redirect URI in the Google Cloud Console OAuth client, and
 `YOUTUBE_CLIENT_ID`/`YOUTUBE_CLIENT_SECRET` (plus `OAUTH_STATE_SECRET`) set in
 Vercel. See `apps/app/.env.example` for the full variable list.
