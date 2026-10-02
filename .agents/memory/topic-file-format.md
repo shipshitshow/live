@@ -1,107 +1,21 @@
-# Ship Shit Show — Topic File Format
+# Topic file and source-board format
 
-last_verified: 2026-05-19
+last_verified: 2026-10-02
 
-## File Location
+Topics live at `apps/app/data/livestream/YYYY-MM-DD/topic-NN-slug.md`. Preserve frontmatter keys (`title`, `slug`, `source`, `status`, `date`, `thumbnail_prompt`) and the zero-padded topic filename convention. Other Markdown notes beside topics are not treated as topics.
 
-`apps/app/data/livestream/YYYY-MM-DD/topic-NN-slug.md`
+Current show preparation uses short source boards: one viewer question, primary/X evidence, firsthand example, host challenge, consequence, rough timing and exit cue. Hosts navigate Ressources; they do not read scripted opening/clip lines. Canonical instructions are mirrored from `shipshitshow/skills`; use `scripts/sync-content-skills.py --source <skills-checkout> --check` to detect contract drift.
 
-One file per topic. NN is zero-padded order (01, 02, …). Slug is kebab-case topic name.
+## Current section routing
 
-## Frontmatter
+`livestream-sections.ts` routes parsed `##` sections. Use `###` for subheadings within a section.
 
-```yaml
----
-title: "Display title"
-slug: "kebab-case-slug"
-source: "Comma-separated attribution names"
-status: "backlog" | "draft" | "in_progress" | "done"
-date: "YYYY-MM-DD"
-thumbnail_prompt: null | "prompt string"
----
-```
+- `Sources — <question>` belongs in Ressources, with the sources and short conversation cues together.
+- Timeline recognizes legacy Talking Points, Segment N, Capsule N, Cold Open, Close/Closing, Hot Take and Summary headings.
+- Prompt titles containing `/goal`, `copy paste` or `goal prompt` route to prompts.
+- Titles containing `livestream notes` are treated as metadata and hidden as cards.
+- Other sections become resources; legacy thumbnail/clip utility headings are resources too.
 
-### Thumbnail Style Modes
+The old `isUsefulSection` list is not the current section/tab contract. Do not use it to hide source boards or require capsule scripts. A full run-of-show note can accompany multiple topic files without becoming another topic.
 
-There are two different Ship Shit Show thumbnail styles:
-
-- **Livestream topic thumbnail:** used in livestream topic frontmatter before the stream. Warm parchment editorial background, two large hosts cropped at left/right, centered asset/emblem or locked logo, top-right episode number, no title text except episode number.
-- **Recap/video thumbnail:** used for edited videos, recap uploads, cutdowns, and Shorts. One dominant proof visual from the final edit, big readable 2-5 word title/hook text, no episode number, hosts optional and secondary.
-
-Do not use recap/video style for livestream `thumbnail_prompt` unless explicitly requested. Do not use livestream two-host episode-number style for recap/video packaging unless explicitly requested.
-
-Agents should infer the mode from normal wording:
-
-- `new thumbnail for my livestream`, `live thumbnail`, `scheduled live`, `today's live`, or topic-file `thumbnail_prompt` means livestream style.
-- `video recap`, `recap`, `edited video`, `main video`, `video version`, `clip`, `cutdown`, or `Short` means recap/video style.
-- `keep everything`, `same thumbnail`, `only change`, `remove the title`, `change the color`, `redo the prompt`, `workflow app`, or iterative thumbnail correction means surgical re-prompt mode.
-
-## Section Structure
-
-Sections are delimited by `## Section Title` (h2). The parser (`parseSections` in `apps/app/src/lib/markdown-render.tsx`) splits on `## ` headers and passes each section body to `MarkdownBody` for rendering.
-
-### Sections shown in the talking points panel (`isUsefulSection`)
-
-| Section title (case-insensitive) | Match rule |
-|---|---|
-| `## Cold Open - READ THIS` | starts with `cold open` |
-| `## Talking Points — …` | starts with `talking points` |
-| `## Sources - Pull These Up` | starts with `sources` |
-| `## Summary` | exact match `summary` |
-| `## Hot Take` | exact match `hot take` |
-| `## Close` / `## Closing …` | starts with `close` |
-| `## Tweets — …` | starts with `tweets` |
-
-All other `## …` sections are parsed but not displayed in the panel (internal notes only).
-
-### Sections NOT shown (internal use only)
-
-Examples: `## Livestream Notes`, `## Episode Thesis`, `## Segment N - …`, `## Personal Takes`, `## Discussion Questions`, `## Clickbait Title Bank`, `## Host Notes`, `## The Live Build`, `## The Build Prompt`.
-
-## Body Markdown Syntax
-
-Within a section body, the renderer (`MarkdownBody`) handles these patterns line-by-line:
-
-| Pattern | Syntax | Rendered as |
-|---|---|---|
-| Sub-heading h3 | `### Text` | Bold, `text-base`, `text-text-primary` |
-| Sub-heading h4 | `#### Text` | Bold, `text-sm`, `text-text-secondary` |
-| Sub-heading h5+ | `##### Text` | Medium weight, `text-sm`, `text-text-muted` |
-| Blockquote | `> Text` | Red left border, `text-text-primary` |
-| Bare separator | `>` (alone) | Silently dropped |
-| Bullet | `- Text` or `-- Text` | Red dash prefix |
-| Bold | `**text**` | `<strong>` |
-| Inline code | `` `code` `` | Styled `<code>` |
-| Markdown link | `[label](url)` | Red underline anchor |
-| Plain URL | `https://…` | Auto-linked, red |
-| Plain text | anything else | `<p>` |
-| Blank line | (empty) | Silently dropped |
-
-**`##` is NEVER used inside a section body** — it would be parsed as a new section boundary. Use `###` for sub-headings within a section body.
-
-## Example: Sources Section
-
-```markdown
-## Sources - Pull These Up
-
-### Primary Incident Sources
-
-- Socket report: https://socket.dev/blog/…
-- SafeDep deep dive: https://safedep.io/…
-
-### YouTube Creator Signals
-
-- Theo - "title": https://www.youtube.com/watch?v=…
-```
-
-## Example: Cold Open Section
-
-```markdown
-## Cold Open - READ THIS
-
-> "First quote line."
->
-> "Second quote line — separate blockquote."
-```
-
-Note: `>` alone on a line is a visual separator in source editors but is silently dropped in the rendered panel.
+Thumbnail mode follows the actual asset: scheduled livestream, final recap/Short, or surgical correction. Apply current channel/profile references and preserve requested details. Old parchment/cool-palette prescriptions are historical examples, not universal defaults.
