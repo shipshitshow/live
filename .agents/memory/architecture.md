@@ -7,7 +7,7 @@ last_verified: 2026-10-02
 Turborepo monorepo with Bun workspaces.
 
 ### Apps
-- `apps/app` (@shipshitshow/app) — Public site and producer dashboard. Next.js 16, port 3001. Deployed to show.shipshit.dev via Vercel. `/` is public. `/login` is Clerk. The approved next refactor separates public-library reads and producer permissions; `send.shipshit.dev` is the intended producer entry point, pending verification of current host/auth configuration.
+- `apps/app` (@shipshitshow/app) — Public site and producer dashboard. Next.js 16, port 3001. Deployed to show.shipshit.dev via Vercel. `/` is public. `/sign-in` is the canonical Clerk entry on show.shipshit.dev; `/login` redirects there. Producer Home is `/studio`, with `/analytics`, `/livestreams`, `/socials`, `/partnerships` and `/research` as app paths. Public-library reads and producer authorization are separate concerns; producer capability enforcement is tracked in GitHub #54.
 - `apps/web` (@shipshitshow/web) — Retired marketing stub. Next.js 16, port 3000. Not the public host.
 - `apps/desktop` (@shipshitshow/desktop) — Local show management. Electron + Vite + React 19. Local-only, no deployment.
 
@@ -26,5 +26,5 @@ Turborepo monorepo with Bun workspaces.
 ### Key env vars
 - `DATA_DIR` — Override for livestream data directory (fallback: `process.cwd()/data/livestream`)
 - `TOKEN_FILE_PATH` — Override for YouTube token file path
-- `ANALYTICS_API_URL` — External analytics service (default: localhost:8000)
-- `PIPELINE_API_URL` — External pipeline service (default: localhost:8001)
+- Analytics is currently served by `apps/app/src/app/api/report/route.ts` with YouTube/social adapters. The old external analytics/pipeline localhost configuration does not describe the inspected app source.
+- Historical social ingestion and dedicated partner persistence remain pending design/implementation; do not provision infrastructure from old notes.

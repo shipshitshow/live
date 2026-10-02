@@ -7,7 +7,7 @@ export default function Page() {
         routing="path"
         path="/sign-in"
         signUpUrl="/sign-up"
-        fallbackRedirectUrl="/analytics"
+        fallbackRedirectUrl="/studio"
       />
     </main>
   );

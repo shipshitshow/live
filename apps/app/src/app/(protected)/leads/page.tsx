@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: 'Leads — Ship Shit Show' };
 
 export default function LeadsPage() {
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-full min-h-0 overflow-hidden">
       <LeadsView />
     </div>
   );

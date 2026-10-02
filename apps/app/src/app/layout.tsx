@@ -18,10 +18,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <ClerkProvider
-          signInUrl="/sign-in"
-          signInFallbackRedirectUrl="/analytics"
-        >
+        <ClerkProvider signInUrl="/sign-in" signInFallbackRedirectUrl="/studio">
           {children}
         </ClerkProvider>
       </body>

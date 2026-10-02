@@ -35,7 +35,11 @@ interface MultiChannelMetricPoint {
   avg_view_percentage_clips?: number;
 }
 
-export function DashboardClient() {
+export function DashboardClient({
+  view = 'channels',
+}: {
+  view?: 'channels' | 'overview' | 'socials';
+}) {
   const [days, setDays] = useState<DateRange>(30);
   const [report, setReport] = useState<MultiChannelReport | null>(null);
   const [loading, setLoading] = useState(true);
@@ -227,6 +231,51 @@ export function DashboardClient() {
     );
   }
 
+  if (view === 'socials') {
+    return (
+      <div className="space-y-6">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold">Social performance</h1>
+            <p className="mt-2 max-w-2xl text-sm text-text-secondary">
+              Latest media totals across connected accounts. These are not
+              comparable period metrics or unique audience counts.
+            </p>
+            {cachedAt && (
+              <p className="mt-1 text-xs text-text-muted">
+                Last loaded {new Date(cachedAt).toLocaleString()}
+              </p>
+            )}
+          </div>
+          <Button onClick={() => load({ force: true })} disabled={loading}>
+            Refresh socials
+          </Button>
+        </div>
+        {loading ? (
+          <TopVideosSkeleton title="Short-Form Performance" />
+        ) : (
+          <SocialPerformance
+            youtubeVideos={videos}
+            socialVideos={report?.social_videos ?? []}
+            socialStatuses={report?.social_status ?? []}
+          />
+        )}
+        <div className="border-t border-surface-border pt-5 text-sm text-text-secondary">
+          <h2 className="mb-2 font-medium text-text-primary">Coverage</h2>
+          <p>
+            YouTube Shorts, Instagram and TikTok media are supported when
+            connected. X analytics and LinkedIn history are not connected to
+            this view yet.
+          </p>
+          <p className="mt-2">
+            Use Channel analytics for YouTube metrics over a selected date
+            range.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   // Aggregate period totals from daily metrics
   const periodViews = daily.reduce((s, d) => s + d.views, 0);
   const periodWatchTime = daily.reduce((s, d) => s + d.watch_time_minutes, 0);
@@ -241,8 +290,8 @@ export function DashboardClient() {
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
           <div className="flex items-center gap-3">
-            <h2 className="text-xl font-bold text-text-primary">
-              {headerTitle}
+            <h2 className="text-xl font-semibold text-text-primary">
+              {view === 'overview' ? 'Your channels' : headerTitle}
             </h2>
           </div>
           <p className="text-text-muted text-sm mt-0.5">
@@ -263,6 +312,7 @@ export function DashboardClient() {
           <DateRangeSelector value={days} onChange={setDays} />
           <Button
             onClick={() => load({ force: true })}
+            aria-label="Refresh analytics"
             disabled={loading}
             className="hover:border-accent-red px-2.5 disabled:opacity-50"
           >
@@ -366,32 +416,22 @@ export function DashboardClient() {
 
       {loading ? <TopVideosSkeleton /> : <TopVideos videos={videos} />}
 
-      {loading ? (
-        <TopVideosSkeleton title="Short-Form Performance" />
-      ) : (
-        <SocialPerformance
-          youtubeVideos={videos}
-          socialVideos={report?.social_videos ?? []}
-          socialStatuses={report?.social_status ?? []}
-        />
-      )}
-
-      {/* Videos table */}
-      {loading ? (
-        <VideoTableSkeleton />
-      ) : (
-        <div className="bg-surface-card border border-surface-border rounded-xl">
-          <div className="px-5 pt-5 pb-3 border-b border-surface-border">
-            <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
-              Videos — {videos.length} total
-            </h3>
+      {view === 'channels' &&
+        (loading ? (
+          <VideoTableSkeleton />
+        ) : (
+          <div className="bg-surface-card border border-surface-border rounded-xl">
+            <div className="px-5 pt-5 pb-3 border-b border-surface-border">
+              <h3 className="text-xs font-medium text-text-secondary uppercase tracking-widest">
+                Videos — {videos.length} total
+              </h3>
+            </div>
+            <VideoTable
+              videos={videos}
+              showChannel={channelFilter === 'all' && channels.length > 1}
+            />
           </div>
-          <VideoTable
-            videos={videos}
-            showChannel={channelFilter === 'all' && channels.length > 1}
-          />
-        </div>
-      )}
+        ))}
     </div>
   );
 }
