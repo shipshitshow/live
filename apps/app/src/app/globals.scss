@@ -18,6 +18,19 @@ body {
   transition: padding-bottom 0.2s ease;
 }
 
+.production-shell {
+  --color-surface: #0b0b0b;
+  --color-surface-card: #101010;
+  --color-surface-elevated: #191919;
+  --color-surface-border: #292929;
+  --color-text-muted: #929292;
+
+  :is(a, button, summary):focus-visible {
+    outline: 2px solid #b5b5b5;
+    outline-offset: 3px;
+  }
+}
+
 body.terminal-open #app-content-shell {
   padding-bottom: var(--dev-terminal-height, 360px);
 }
