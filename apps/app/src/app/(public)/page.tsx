@@ -102,9 +102,6 @@ export default async function HomePage() {
           <a href="#livestreams">Livestreams</a>
           <a href="#resources">Resources</a>
         </nav>
-        <a className={styles.login} href="/sign-in">
-          Producer login <ArrowUpRight aria-hidden="true" size={15} />
-        </a>
       </header>
       <section aria-labelledby="show-title" className={styles.hero}>
         <div className={styles.heroCopy}>
