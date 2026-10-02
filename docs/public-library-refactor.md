@@ -4,7 +4,7 @@ Owner scope, October 2, 2026: a public library with transcripts, episode notes, 
 
 ## Current evidence
 
-- Trunk PRs #49/#50 now serve the public channel home and producer routes from `apps/app` at `show.shipshit.dev`; `apps/web` is a retired marketing stub. `/` is public, `/login` hosts Clerk and legacy `live.shipshit.dev` redirects to `show.shipshit.dev`. The owner has moved the producer entry point to `send.shipshit.dev`; verify actual host/Clerk/OAuth configuration before splitting route responsibilities.
+- Trunk PRs #49/#50 now serve the public channel home and producer routes from `apps/app` at `show.shipshit.dev`; `apps/web` is a retired marketing stub. `/` is public, `/sign-in` hosts Clerk and `/login` redirects there and legacy `live.shipshit.dev` redirects to `show.shipshit.dev`. Production and public routes share `show.shipshit.dev`; producer Home is `/studio` and sign-in is `/sign-in`. Google sign-in was verified on the canonical host on October 2, 2026.
 - Producer pages are grouped under `(protected)` and depend on Clerk proxy protection. Its layout itself does not check a session.
 - Public pages currently include the root channel home with a cached latest-video feed, `/login`, sign-in/sign-up, social/YouTube connection flows and `/talking-points/[slug]`. The public talking-points page shares producer topic loaders and displays source/prompt/rundown content.
 - `/api/public/schedule` projects a small public topic DTO and excludes backlog entries. This is a useful boundary to extend, not a reason to expose full producer records.
@@ -18,7 +18,7 @@ Do not revive `apps/web` or create a second frontend as part of this scope. Keep
 
 Public `show.shipshit.dev` within the current application: browse episodes/derivatives, read transcripts and notes, open resources/examples, discover podcast-production skills and download the approved brand kit. No login should be needed to read public published material.
 
-Producer `send.shipshit.dev` as the intended entry point: authenticated preparation, source-board editing, packaging, transcript handoff, integrations and publishing. Public navigation can link here with clear login semantics; producer state and integration tokens are not public-library data.
+Producer `show.shipshit.dev/studio`, reached through `show.shipshit.dev/sign-in`: authenticated preparation, source-board editing, packaging, transcript handoff, integrations and publishing. Public navigation can link here with clear login semantics; producer state and integration tokens are not public-library data.
 
 Use the vault catalog/coverage contract for public episode identity, status, provenance and derivative relationships. Public skills stay canonical in their own repository; the landing page explains outputs/install/use and links to source instructions. Brand assets include provenance and usage terms. Keep drafted/unreviewed/missing states honest.
 
