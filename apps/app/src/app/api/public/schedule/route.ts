@@ -1,18 +1,17 @@
-import type { Topic } from '@shipshitshow/types';
 import { NextResponse } from 'next/server';
-import { todayLocalDate } from '@/lib/date';
 import {
   getTopicsForDate,
-  listAvailableLivestreamDates,
-  resolveLivestreamDate,
+  resolvePublicLivestreamDate,
 } from '@/lib/livestreams-store';
+import { getVisibleTopics, isPastDate } from '@/lib/livestreams-visibility';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
-  const availableDates = await listAvailableLivestreamDates();
-  const requestedDate = searchParams.get('date') ?? availableDates[0];
+  const { availableDates, resolvedDate } = await resolvePublicLivestreamDate(
+    searchParams.get('date'),
+  );
 
-  if (!requestedDate) {
+  if (!resolvedDate) {
     return NextResponse.json({
       availableDates,
       resolvedDate: null,
@@ -20,27 +19,20 @@ export async function GET(request: Request) {
     });
   }
 
-  const resolvedDate = await resolveLivestreamDate(requestedDate);
-  const topics: Topic[] = await getTopicsForDate(resolvedDate);
-  const isPast = resolvedDate < todayLocalDate();
-
-  const publicTopics = topics.reduce<
-    { date: string; slug: string; status: string; title: string }[]
-  >((acc, t) => {
-    if (t.status !== 'backlog') {
-      acc.push({
-        date: t.date,
-        slug: t.slug,
-        status: isPast ? 'done' : t.status,
-        title: t.title,
-      });
-    }
-    return acc;
-  }, []);
+  const isPast = isPastDate(resolvedDate);
+  const topics = getVisibleTopics(
+    await getTopicsForDate(resolvedDate),
+    resolvedDate,
+  ).map((t) => ({
+    date: t.date,
+    slug: t.slug,
+    status: isPast ? 'done' : t.status,
+    title: t.title,
+  }));
 
   return NextResponse.json({
     availableDates,
     resolvedDate,
-    topics: publicTopics,
+    topics,
   });
 }
