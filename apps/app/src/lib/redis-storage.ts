@@ -12,12 +12,25 @@ import { StorageWriteError } from '@/lib/producer-storage';
  * read-modify-write can never overwrite stored data with defaults.
  */
 
+/** A queued set of commands sent in one request (`exec`). */
+export interface RedisChainLike {
+  exec(): Promise<unknown[]>;
+  hgetall(key: string): RedisChainLike;
+  hset(key: string, fields: Record<string, unknown>): RedisChainLike;
+  mget(...keys: string[]): RedisChainLike;
+  sadd(key: string, ...members: string[]): RedisChainLike;
+}
+
 export interface RedisLike {
   get<T>(key: string): Promise<T | null>;
   hget<T>(key: string, field: string): Promise<T | null>;
   hgetall<T>(key: string): Promise<Record<string, T> | null>;
   hset(key: string, fields: Record<string, unknown>): Promise<unknown>;
   mget<T extends unknown[]>(...keys: string[]): Promise<T>;
+  /** MULTI/EXEC: every queued command applies, or none does. */
+  multi(): RedisChainLike;
+  /** One request, not atomic. */
+  pipeline(): RedisChainLike;
   sadd(key: string, ...members: string[]): Promise<unknown>;
   set(key: string, value: unknown): Promise<unknown>;
   smembers(key: string): Promise<string[]>;
@@ -143,6 +156,67 @@ export async function writeRedisHashField(
   value: unknown,
 ): Promise<void> {
   await write(key, () => getClient().hset(key, { [field]: value }));
+}
+
+/**
+ * HSET one field and SADD one set member in a single MULTI/EXEC transaction, so
+ * the field is never stored without its index entry (or the reverse). Two
+ * writers touching different fields of the same hash never overwrite each other.
+ */
+export async function writeRedisHashFieldAndIndex(
+  hashKey: string,
+  field: string,
+  value: unknown,
+  setKey: string,
+  member: string,
+): Promise<void> {
+  await write(hashKey, () =>
+    getClient()
+      .multi()
+      .hset(hashKey, { [field]: value })
+      .sadd(setKey, member)
+      .exec(),
+  );
+}
+
+export interface RedisBatchRead<J, H> {
+  hashes: Array<Record<string, H>>;
+  json: Array<J | null>;
+}
+
+/**
+ * One pipelined request: an MGET over `jsonKeys` plus an HGETALL per hash key.
+ * Results line up with the inputs.
+ */
+export async function readRedisJsonAndHashes<J, H>(
+  jsonKeys: string[],
+  hashKeys: string[],
+  { strict = false }: ReadOptions = {},
+): Promise<RedisBatchRead<J, H>> {
+  const empty = (): RedisBatchRead<J, H> => ({
+    hashes: hashKeys.map(() => ({})),
+    json: jsonKeys.map(() => null),
+  });
+  if (jsonKeys.length === 0 && hashKeys.length === 0) return empty();
+
+  try {
+    let chain = getClient().pipeline();
+    if (jsonKeys.length > 0) chain = chain.mget(...jsonKeys);
+    for (const key of hashKeys) chain = chain.hgetall(key);
+    const results = await chain.exec();
+
+    const offset = jsonKeys.length > 0 ? 1 : 0;
+    const values = (offset ? (results[0] as Array<J | null>) : []) ?? [];
+    return {
+      hashes: hashKeys.map(
+        (_key, index) => (results[offset + index] as Record<string, H>) ?? {},
+      ),
+      json: jsonKeys.map((_key, index) => values[index] ?? null),
+    };
+  } catch (error) {
+    failRead([...jsonKeys, ...hashKeys].join(','), error, strict);
+    return empty();
+  }
 }
 
 export async function addRedisSetMember(

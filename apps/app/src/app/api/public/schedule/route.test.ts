@@ -140,14 +140,14 @@ describe('GET /api/public/schedule', () => {
     expect(body.resolvedDate).toBe(UPCOMING);
   });
 
-  test('responses are edge-cacheable and one request costs two Redis commands', async () => {
+  test('responses are edge-cacheable and one request costs two Redis requests', async () => {
     harness.redis.resetCommands();
 
     const { cacheControl, status } = await getSchedule(UPCOMING);
 
     expect(status).toBe(200);
     expect(cacheControl).toBe('s-maxage=60, stale-while-revalidate=300');
-    expect(harness.redis.commands).toEqual(['smembers', 'mget']);
+    expect(harness.redis.commands).toEqual(['smembers', 'exec']);
   });
 
   test('requesting an unpublished date falls back to the public catalog', async () => {

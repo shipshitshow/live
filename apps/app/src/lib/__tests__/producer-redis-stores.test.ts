@@ -12,6 +12,7 @@ import {
   saveLinkedInPosts,
 } from '@/lib/linkedin-metrics-store';
 import {
+  clearTopicOverlayCache,
   createTopic,
   getTopicsForDate,
   listAvailableLivestreamDates,
@@ -385,8 +386,26 @@ describe('topic overlay', () => {
     source: 'https://example.com',
     title: 'Redis topic',
   };
+  const FIELDS_KEY = (date: string) =>
+    `sss:test:v1:topic-overlay-fields:${date}`;
+  const LEGACY_KEY = (date: string) => `sss:test:v1:topic-overlay:${date}`;
 
-  test('createTopic writes the overlay and registers the date', async () => {
+  function legacyTopic(slug: string, title: string) {
+    return {
+      announcement_tweet: null,
+      content: 'Legacy body',
+      date: DATE,
+      fileName: `topic-01-${slug}.md`,
+      generated: {},
+      slug,
+      source: 'https://example.com',
+      status: 'backlog',
+      thumbnail_prompt: null,
+      title,
+    };
+  }
+
+  test('createTopic writes one hash field and registers the date atomically', async () => {
     const result = await createTopic(NEW_TOPIC);
 
     expect(result).toEqual({
@@ -394,13 +413,14 @@ describe('topic overlay', () => {
       slug: 'redis-topic',
       status: 'backlog',
     });
-    expect(harness.redis.strings.has(`sss:test:v1:topic-overlay:${DATE}`)).toBe(
-      true,
-    );
+    expect(
+      harness.redis.hashes.get(FIELDS_KEY(DATE))?.has('topic:redis-topic'),
+    ).toBe(true);
+    expect(harness.redis.strings.has(LEGACY_KEY(DATE))).toBe(false);
     expect(
       harness.redis.sets.get('sss:test:v1:topic-overlay-dates')?.has(DATE),
     ).toBe(true);
-    expect(harness.redis.commands).toEqual(['get', 'set', 'sadd']);
+    expect(harness.redis.commands).toEqual(['hgetall', 'get', 'exec']);
 
     const topics = await getTopicsForDate(DATE);
     expect(topics.map((topic) => topic.slug)).toEqual(['redis-topic']);
@@ -428,14 +448,11 @@ describe('topic overlay', () => {
   test('overrides apply to a repo seed topic without copying it', async () => {
     await saveTopicUpdate(SEED_DATE, SEED_SLUG, { status: 'done' });
 
-    const overlay = harness.redis.strings.get(
-      `sss:test:v1:topic-overlay:${SEED_DATE}`,
-    ) as {
-      overrides: Record<string, unknown>;
-      topics: Record<string, unknown>;
-    };
-    expect(Object.keys(overlay.topics)).toEqual([]);
-    expect(overlay.overrides[SEED_SLUG]).toMatchObject({ status: 'done' });
+    const fields = harness.redis.hashes.get(FIELDS_KEY(SEED_DATE));
+    expect([...(fields?.keys() ?? [])]).toEqual([`override:${SEED_SLUG}`]);
+    expect(fields?.get(`override:${SEED_SLUG}`)).toMatchObject({
+      status: 'done',
+    });
 
     const topic = (await getTopicsForDate(SEED_DATE)).find(
       (candidate) => candidate.slug === SEED_SLUG,
@@ -444,12 +461,145 @@ describe('topic overlay', () => {
     expect(topic?.content.length).toBeGreaterThan(0);
   });
 
-  test('a snapshot costs two commands and is memoized for reads', async () => {
+  test('interleaved updates to different slugs on one date both persist', async () => {
     await createTopic(NEW_TOPIC);
+    await createTopic({ ...NEW_TOPIC, slug: 'second-topic' });
+
+    const results = await Promise.all([
+      saveTopicUpdate(DATE, 'redis-topic', { status: 'done' }),
+      saveTopicUpdate(DATE, 'second-topic', { status: 'draft' }),
+    ]);
+    expect(results).toEqual([true, true]);
+
+    const statuses = Object.fromEntries(
+      (await getTopicsForDate(DATE, true)).map((topic) => [
+        topic.slug,
+        topic.status,
+      ]),
+    );
+    expect(statuses).toEqual({
+      'redis-topic': 'done',
+      'second-topic': 'draft',
+    });
+  });
+
+  test('createTopic and saveTopicUpdate on different slugs both persist', async () => {
+    await createTopic(NEW_TOPIC);
+
+    await Promise.all([
+      createTopic({ ...NEW_TOPIC, slug: 'second-topic' }),
+      saveTopicUpdate(DATE, 'redis-topic', { status: 'done' }),
+    ]);
+
+    const topics = await getTopicsForDate(DATE, true);
+    expect(topics.map((topic) => topic.slug).sort()).toEqual([
+      'redis-topic',
+      'second-topic',
+    ]);
+    expect(topics.find((topic) => topic.slug === 'redis-topic')?.status).toBe(
+      'done',
+    );
+  });
+
+  test('two creates for the same date keep both topics', async () => {
+    await Promise.all([
+      createTopic(NEW_TOPIC),
+      createTopic({ ...NEW_TOPIC, slug: 'second-topic' }),
+    ]);
+
+    expect(
+      (await getTopicsForDate(DATE, true)).map((topic) => topic.slug).sort(),
+    ).toEqual(['redis-topic', 'second-topic']);
+  });
+
+  test('a failed transaction writes neither the field nor the date index', async () => {
+    harness.redis.failNext('exec');
+    await expect(createTopic(NEW_TOPIC)).rejects.toBeInstanceOf(
+      StorageWriteError,
+    );
+    expect(harness.redis.hashes.size).toBe(0);
+    expect(harness.redis.sets.size).toBe(0);
+
+    await createTopic(NEW_TOPIC);
+    const before = JSON.stringify([
+      ...(harness.redis.hashes.get(FIELDS_KEY(DATE)) ?? []),
+    ]);
+    harness.redis.failNext('exec');
+    await expect(
+      saveTopicUpdate(DATE, 'redis-topic', { status: 'done' }),
+    ).rejects.toBeInstanceOf(StorageWriteError);
+    expect(
+      JSON.stringify([...(harness.redis.hashes.get(FIELDS_KEY(DATE)) ?? [])]),
+    ).toBe(before);
+    expect(
+      (await getTopicsForDate(DATE, true)).find(
+        (topic) => topic.slug === 'redis-topic',
+      )?.status,
+    ).toBe('backlog');
+  });
+
+  test('a legacy whole-date string is still read and hash fields win over it', async () => {
+    harness.redis.strings.set(LEGACY_KEY(DATE), {
+      overrides: {
+        'legacy-topic': { status: 'done', thumbnail_prompt: 'legacy prompt' },
+        'shared-topic': { status: 'draft' },
+      },
+      topics: {
+        'legacy-topic': legacyTopic('legacy-topic', 'Legacy title'),
+        'shared-topic': legacyTopic('shared-topic', 'Legacy shared'),
+      },
+    });
+    harness.redis.sets.set('sss:test:v1:topic-overlay-dates', new Set([DATE]));
+
+    const legacyOnly = await getTopicsForDate(DATE, true);
+    expect(legacyOnly.map((topic) => topic.slug).sort()).toEqual([
+      'legacy-topic',
+      'shared-topic',
+    ]);
+    expect(
+      legacyOnly.find((topic) => topic.slug === 'legacy-topic')?.status,
+    ).toBe('done');
+
+    harness.redis.hashes.set(
+      FIELDS_KEY(DATE),
+      new Map<string, unknown>([
+        [
+          'topic:shared-topic',
+          { ...legacyTopic('shared-topic', 'Hash shared'), content: 'Hash' },
+        ],
+        ['override:shared-topic', { status: 'recorded' }],
+      ]),
+    );
+
+    for (const strict of [true, false]) {
+      clearTopicOverlayCache();
+      const topics = await getTopicsForDate(DATE, strict);
+      const shared = topics.find((topic) => topic.slug === 'shared-topic');
+      expect(shared?.title).toBe('Hash shared');
+      expect(shared?.status).toBe('recorded');
+      const legacy = topics.find((topic) => topic.slug === 'legacy-topic');
+      expect(legacy?.title).toBe('Legacy title');
+      expect(legacy?.thumbnail_prompt).toBe('legacy prompt');
+    }
+
+    await saveTopicUpdate(DATE, 'legacy-topic', { status: 'draft' });
+    expect(harness.redis.strings.get(LEGACY_KEY(DATE))).toMatchObject({
+      overrides: { 'legacy-topic': { status: 'done' } },
+    });
+    const updated = (await getTopicsForDate(DATE, true)).find(
+      (topic) => topic.slug === 'legacy-topic',
+    );
+    expect(updated?.status).toBe('draft');
+    expect(updated?.thumbnail_prompt).toBe('legacy prompt');
+  });
+
+  test('a snapshot costs two requests and is memoized for reads', async () => {
+    await createTopic(NEW_TOPIC);
+    await createTopic({ ...NEW_TOPIC, date: DATE_B });
     harness.redis.resetCommands();
 
     await getTopicsForDate(DATE);
-    expect(harness.redis.commands).toEqual(['smembers', 'mget']);
+    expect(harness.redis.commands).toEqual(['smembers', 'exec']);
 
     await getTopicsForDate(DATE_B);
     await listAvailableLivestreamDates();
@@ -465,7 +615,7 @@ describe('topic overlay', () => {
     ]);
   });
 
-  test('a failed strict read causes no SET for createTopic or saveTopicUpdate', async () => {
+  test('a failed strict read causes no write for createTopic or saveTopicUpdate', async () => {
     await createTopic(NEW_TOPIC);
     harness.redis.resetCommands();
 
@@ -479,7 +629,12 @@ describe('topic overlay', () => {
       saveTopicUpdate(DATE, 'redis-topic', { status: 'done' }),
     ).rejects.toBeInstanceOf(StorageWriteError);
 
-    expect(harness.redis.count('set')).toBe(0);
+    harness.redis.failNext('hget');
+    await expect(
+      saveTopicUpdate(DATE, 'redis-topic', { status: 'done' }),
+    ).rejects.toBeInstanceOf(StorageWriteError);
+
+    expect(harness.redis.count('exec')).toBe(0);
     expect((await getTopicsForDate(DATE)).map((topic) => topic.slug)).toEqual([
       'redis-topic',
     ]);
@@ -489,6 +644,13 @@ describe('topic overlay', () => {
     await createTopic(NEW_TOPIC);
 
     harness.redis.failNext('smembers');
+    expect(await getTopicsForDate(DATE)).toEqual([]);
+    expect((await getTopicsForDate(DATE)).map((topic) => topic.slug)).toEqual([
+      'redis-topic',
+    ]);
+
+    clearTopicOverlayCache();
+    harness.redis.failNext('exec');
     expect(await getTopicsForDate(DATE)).toEqual([]);
     expect((await getTopicsForDate(DATE)).map((topic) => topic.slug)).toEqual([
       'redis-topic',

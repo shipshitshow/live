@@ -214,6 +214,17 @@ describe('write routes when Redis fails', () => {
     expect(harness.redis.count('set')).toBe(0);
   });
 
+  test('PATCH /api/topics/[date]/[slug] when the transaction fails', async () => {
+    harness.redis.failNext('exec');
+    await expectWriteFailed(
+      await patchTopic(request('PATCH', { status: 'done' }), {
+        params: Promise.resolve({ date: DATE, slug: SEED_SLUG }),
+      }),
+    );
+    expect(harness.redis.hashes.size).toBe(0);
+    expect(harness.redis.sets.size).toBe(0);
+  });
+
   test('PATCH /api/livestreams/[slug]/drawing', async () => {
     harness.redis.failNext('set');
     await expectWriteFailed(
@@ -325,8 +336,13 @@ describe('write routes when Redis is healthy', () => {
     });
 
     expect(response.status).toBe(200);
+    expect(
+      harness.redis.hashes
+        .get(`sss:test:v1:topic-overlay-fields:${DATE}`)
+        ?.has(`override:${SEED_SLUG}`),
+    ).toBe(true);
     expect(harness.redis.strings.has(`sss:test:v1:topic-overlay:${DATE}`)).toBe(
-      true,
+      false,
     );
   });
 });
