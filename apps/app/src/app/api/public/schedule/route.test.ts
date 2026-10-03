@@ -1,6 +1,10 @@
-import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
 import type { Topic, TopicStatus, TopicUpdate } from '@shipshitshow/types';
-import * as blob from '@vercel/blob';
+import {
+  type FakeRedisHarness,
+  installFakeRedis,
+} from '@/lib/__tests__/fake-redis';
+import { redisKey } from '@/lib/redis-storage';
 import { GET } from './route';
 
 // Far past/future dates keep the fixtures apart from real data/livestream dates.
@@ -48,58 +52,34 @@ const topicsByDate: Record<string, Topic[]> = {
     (status, i) => topic(UPCOMING_UNPUBLISHED, status, i),
   ),
 };
-// A producer moved an in-progress topic back to draft through a Blob override.
-const overrides: Record<string, TopicUpdate> = {
-  [`livestream/topic-overrides/${UPCOMING}/demoted.json`]: { status: 'draft' },
+// A producer moved an in-progress topic back to draft through a Redis override.
+const overrides: Record<string, Record<string, TopicUpdate>> = {
+  [UPCOMING]: { demoted: { status: 'draft' } },
 };
-const blobs: Record<string, unknown> = { ...overrides };
-for (const [date, topics] of Object.entries(topicsByDate)) {
-  for (const t of topics) blobs[`livestream/topics/${date}/${t.slug}.json`] = t;
-}
 
-let previousToken: string | undefined;
-let spies: Array<{ mockRestore: () => void }> = [];
+let harness: FakeRedisHarness;
 
 beforeEach(() => {
-  previousToken = process.env.BLOB_READ_WRITE_TOKEN;
-  process.env.BLOB_READ_WRITE_TOKEN = 'test-only';
-  spies = [
-    spyOn(blob, 'list').mockImplementation((async (options?: {
-      mode?: string;
-      prefix?: string;
-    }) => {
-      const prefix = options?.prefix ?? '';
-      const matches = Object.keys(blobs).filter((key) =>
-        key.startsWith(prefix),
-      );
-      if (options?.mode === 'folded') {
-        const folders = new Set(
-          matches.map(
-            (key) => `${prefix}${key.slice(prefix.length).split('/')[0]}/`,
-          ),
-        );
-        return { blobs: [], folders: [...folders], hasMore: false };
-      }
-      return {
-        blobs: matches.map((pathname) => ({ pathname })),
-        hasMore: false,
-      };
-    }) as unknown as typeof blob.list),
-    spyOn(blob, 'get').mockImplementation((async (pathname: string) => {
-      if (!(pathname in blobs)) return null;
-      return {
-        blob: { uploadedAt: new Date() },
-        statusCode: 200,
-        stream: new Response(JSON.stringify(blobs[pathname])).body,
-      };
-    }) as unknown as typeof blob.get),
-  ];
+  harness = installFakeRedis();
+
+  const dates = new Set([
+    ...Object.keys(topicsByDate),
+    ...Object.keys(overrides),
+  ]);
+  for (const date of dates) {
+    harness.redis.strings.set(redisKey('topic-overlay', date), {
+      overrides: overrides[date] ?? {},
+      topics: Object.fromEntries(
+        (topicsByDate[date] ?? []).map((t) => [t.slug, t]),
+      ),
+    });
+  }
+  harness.redis.sets.set(redisKey('topic-overlay-dates'), dates);
+  harness.redis.resetCommands();
 });
 
 afterEach(() => {
-  for (const spy of spies) spy.mockRestore();
-  if (previousToken === undefined) delete process.env.BLOB_READ_WRITE_TOKEN;
-  else process.env.BLOB_READ_WRITE_TOKEN = previousToken;
+  harness.restore();
 });
 
 async function getSchedule(date?: string) {
@@ -114,6 +94,7 @@ async function getSchedule(date?: string) {
       resolvedDate: string | null;
       topics: Array<Record<string, string>>;
     },
+    cacheControl: response.headers.get('Cache-Control'),
     raw,
     status: response.status,
   };
@@ -157,6 +138,16 @@ describe('GET /api/public/schedule', () => {
     expect(body.availableDates).not.toContain(PAST_DRAFT_ONLY);
     expect(body.availableDates).not.toContain(UPCOMING_UNPUBLISHED);
     expect(body.resolvedDate).toBe(UPCOMING);
+  });
+
+  test('responses are edge-cacheable and one request costs two Redis commands', async () => {
+    harness.redis.resetCommands();
+
+    const { cacheControl, status } = await getSchedule(UPCOMING);
+
+    expect(status).toBe(200);
+    expect(cacheControl).toBe('s-maxage=60, stale-while-revalidate=300');
+    expect(harness.redis.commands).toEqual(['smembers', 'mget']);
   });
 
   test('requesting an unpublished date falls back to the public catalog', async () => {

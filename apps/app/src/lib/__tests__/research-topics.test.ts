@@ -32,7 +32,7 @@ describe('persistTrendTopics', () => {
       Response.json(
         {
           error:
-            'Writable livestream storage requires BLOB_READ_WRITE_TOKEN on Vercel',
+            'Could not save the research topic: the storage backend did not accept the change, so nothing was saved.',
         },
         { status: 503 },
       ),
@@ -49,7 +49,7 @@ describe('persistTrendTopics', () => {
       {
         item: buildItem('a'),
         message:
-          'Writable livestream storage requires BLOB_READ_WRITE_TOKEN on Vercel',
+          'Could not save the research topic: the storage backend did not accept the change, so nothing was saved.',
       },
     ]);
   });

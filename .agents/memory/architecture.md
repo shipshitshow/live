@@ -1,6 +1,6 @@
 # Ship Shit Show — Monorepo Architecture
 
-last_verified: 2026-10-02
+last_verified: 2026-10-03
 
 ## Layout
 
@@ -20,8 +20,10 @@ Turborepo monorepo with Bun workspaces.
 - `.agents/skills/` — Dev workflow skills. Symlinked from `.claude/skills` and `.codex/skills`.
 
 ### Data
-- `apps/app/data/livestream/` — Topic markdown files per date. Local filesystem for dev, Vercel Blob for production.
+- `apps/app/data/livestream/` — Topic seed markdown per date (repo files, read-only in production).
 - `apps/app/data/transcripts/` — YouTube video transcripts (VTT + cleaned text).
+- Producer-edited data (prod topics and overrides, drawings, distribution, LinkedIn metrics, X posts, leads) lives in the Upstash Redis attached to the Vercel project (`KV_REST_API_URL`/`KV_REST_API_TOKEN`, Free plan; quota exhaustion makes writes return 503). Keys are `sss:{VERCEL_ENV}:v1:*`; backend selection is `lib/producer-storage.ts`, helpers `lib/redis-storage.ts`. Read order: repo seed, then Redis overlay. In dev, writes go to files unless `PRODUCER_STORAGE=redis`. `bun run storage:export --namespace production` is the read-only export; rollback is a code revert (data stays in Redis, the public site falls back to the repo seeds). No Blob store is attached to the project; Blob is used only by the show-prep draft CLI.
+- OAuth tokens and `yt-cache:*` stay on `@vercel/kv` unchanged.
 
 ### Key env vars
 - `DATA_DIR` — Override for livestream data directory (fallback: `process.cwd()/data/livestream`)

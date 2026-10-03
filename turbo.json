@@ -29,6 +29,7 @@
         "POSTHOG_API_KEY",
         "POSTHOG_HOST",
         "POSTHOG_PROJECT_ID",
+        "PRODUCER_STORAGE",
         "REDIS_URL",
         "SOCIAL_TOKEN_FILE_PATH",
         "TIKTOK_ACCESS_TOKEN",

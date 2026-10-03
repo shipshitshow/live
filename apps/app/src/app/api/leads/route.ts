@@ -8,6 +8,12 @@ import {
   parseLeadInput,
 } from '@/lib/leads-store';
 import { logError, logEvent } from '@/lib/logger';
+import { StorageWriteError } from '@/lib/producer-storage';
+import {
+  isStorageWritable,
+  storageUnavailableResponse,
+  storageWriteFailedResponse,
+} from '@/lib/storage-capability-server';
 
 export async function GET() {
   try {
@@ -38,6 +44,10 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  if (!isStorageWritable()) {
+    return storageUnavailableResponse('leads');
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -64,6 +74,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ lead }, { status: 201 });
   } catch (error) {
     logError('api.leads.create_failed', error, { source: input.source });
+    if (error instanceof StorageWriteError) {
+      return storageWriteFailedResponse('the lead');
+    }
     const response: ErrorResponse = {
       error: error instanceof Error ? error.message : 'Failed to save lead',
     };

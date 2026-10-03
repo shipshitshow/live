@@ -5,6 +5,14 @@ import {
   readTopicDrawing,
   saveTopicDrawing,
 } from '@/lib/livestreams-store';
+import { StorageWriteError } from '@/lib/producer-storage';
+import {
+  isStorageWritable,
+  storageUnavailableResponse,
+  storageWriteFailedResponse,
+} from '@/lib/storage-capability-server';
+
+const MAX_DRAWING_BYTES = 1_000_000;
 
 interface DrawingUpdateRequest {
   content?: string;
@@ -36,6 +44,10 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  if (!isStorageWritable()) {
+    return storageUnavailableResponse('drawings');
+  }
+
   const { slug } = await params;
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date') || todayLocalDate();
@@ -52,6 +64,13 @@ export async function PATCH(
     );
   }
 
+  if (Buffer.byteLength(content, 'utf8') > MAX_DRAWING_BYTES) {
+    return NextResponse.json(
+      { error: 'Drawing is too large to save (limit 1,000,000 bytes)' },
+      { status: 413 },
+    );
+  }
+
   try {
     JSON.parse(content);
   } catch {
@@ -65,6 +84,9 @@ export async function PATCH(
     const updatedAt = await saveTopicDrawing(date, slug, content);
     return NextResponse.json({ ok: true, updatedAt });
   } catch (error) {
+    if (error instanceof StorageWriteError) {
+      return storageWriteFailedResponse('the drawing');
+    }
     return NextResponse.json(
       {
         error:

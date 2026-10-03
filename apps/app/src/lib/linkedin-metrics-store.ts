@@ -9,11 +9,9 @@ import type {
 import { LINKEDIN_AUTHORS } from '@shipshitshow/types';
 import {
   createWritableStorageError,
-  isBlobPersistenceEnabled,
-  isReadOnlyVercelRuntime,
-  putBlobJson,
-  readBlobJson,
-} from '@/lib/blob-storage';
+  getProducerStorageBackend,
+} from '@/lib/producer-storage';
+import { readRedisJson, redisKey, writeRedisJson } from '@/lib/redis-storage';
 
 /**
  * Manually entered LinkedIn post metrics, one record per episode date.
@@ -27,7 +25,6 @@ import {
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
-const BLOB_LINKEDIN_POSTS_PREFIX = 'livestream/linkedin-posts';
 const POSTS_FILE_NAME = 'linkedin-posts.json';
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -40,8 +37,8 @@ export function isLivestreamDate(value: string): boolean {
   return DATE_PATTERN.test(value);
 }
 
-function getBlobPostsPath(date: string): string {
-  return `${BLOB_LINKEDIN_POSTS_PREFIX}/${date}.json`;
+function getPostsKey(date: string): string {
+  return redisKey('linkedin-posts', date);
 }
 
 function getFilesystemPostsPath(date: string): string {
@@ -258,35 +255,38 @@ function readFilesystemPosts(date: string): LinkedInPostEntry[] {
   }
 }
 
+/** The Redis record wins; the repo file is the fallback, then empty. */
 export async function readLinkedInPosts(
   date: string,
+  strict = false,
 ): Promise<LinkedInPostEntry[]> {
-  if (!isBlobPersistenceEnabled()) return readFilesystemPosts(date);
+  if (getProducerStorageBackend() === 'redis') {
+    const stored = await readRedisJson<StoredLinkedInPosts>(getPostsKey(date), {
+      strict,
+    });
+    if (stored) return parseStoredLinkedInPosts(stored.posts);
+  }
 
-  const stored = await readBlobJson<StoredLinkedInPosts>(
-    getBlobPostsPath(date),
-  );
-  if (!stored) return [];
-
-  return parseStoredLinkedInPosts(stored.data.posts);
+  return readFilesystemPosts(date);
 }
 
 export async function saveLinkedInPosts(
   date: string,
   input: unknown,
 ): Promise<LinkedInPostEntry[]> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError();
   }
 
-  const existing = await readLinkedInPosts(date);
+  const existing = await readLinkedInPosts(date, true);
   const posts = normalizeLinkedInPosts(
     input,
     existing,
     new Date().toISOString(),
   );
 
-  if (!isBlobPersistenceEnabled()) {
+  if (backend === 'filesystem') {
     const filePath = getFilesystemPostsPath(date);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(
@@ -297,7 +297,7 @@ export async function saveLinkedInPosts(
     return posts;
   }
 
-  await putBlobJson(getBlobPostsPath(date), {
+  await writeRedisJson(getPostsKey(date), {
     posts,
   } satisfies StoredLinkedInPosts);
 

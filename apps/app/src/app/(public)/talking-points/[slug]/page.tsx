@@ -29,6 +29,8 @@ import {
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
 
+export const revalidate = 60;
+
 async function resolveDate(slug: string): Promise<string | null> {
   if (isDateSlug(slug)) return slug;
 

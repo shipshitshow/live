@@ -13,28 +13,29 @@ import {
   UNATTRIBUTED_EPISODE,
 } from '@shipshitshow/types';
 import {
-  createWritableStorageError,
-  isBlobPersistenceEnabled,
-  isReadOnlyVercelRuntime,
-  listAllBlobs,
-  putBlobJson,
-  readBlobJson,
-} from '@/lib/blob-storage';
-import {
   listAvailableLivestreamDates,
   listLivestreamHistory,
 } from '@/lib/livestreams-store';
+import {
+  createWritableStorageError,
+  getProducerStorageBackend,
+} from '@/lib/producer-storage';
+import {
+  readRedisHash,
+  readRedisHashField,
+  redisKey,
+  writeRedisHashField,
+} from '@/lib/redis-storage';
 
 const LEADS_DIR =
   process.env.LEADS_DIR || path.join(process.cwd(), 'data', 'leads');
-const BLOB_LEADS_PREFIX = 'leads/entries';
 
 function getLeadFilePath(id: string): string {
   return path.join(LEADS_DIR, `${id}.json`);
 }
 
-function getBlobLeadPath(id: string): string {
-  return `${BLOB_LEADS_PREFIX}/${id}.json`;
+function getLeadsKey(): string {
+  return redisKey('leads');
 }
 
 function isIsoDate(value: unknown): value is string {
@@ -116,40 +117,39 @@ function listFilesystemLeads(): Lead[] {
   return leads;
 }
 
-async function listBlobLeads(): Promise<Lead[]> {
-  const blobs = await listAllBlobs(`${BLOB_LEADS_PREFIX}/`);
-  const leads = await Promise.all(
-    blobs.map(async ({ pathname }) => {
-      const result = await readBlobJson<unknown>(pathname);
-      return result ? parseLead(result.data) : null;
-    }),
-  );
+async function listRedisLeads(): Promise<Lead[]> {
+  const stored = await readRedisHash<unknown>(getLeadsKey());
 
-  return leads.filter((lead): lead is Lead => lead !== null);
+  return Object.values(stored)
+    .map(parseLead)
+    .filter((lead): lead is Lead => lead !== null);
 }
 
 async function writeLead(lead: Lead): Promise<void> {
-  if (!isBlobPersistenceEnabled()) {
-    fs.mkdirSync(LEADS_DIR, { recursive: true });
-    fs.writeFileSync(
-      getLeadFilePath(lead.id),
-      `${JSON.stringify(lead, null, 2)}\n`,
-      'utf-8',
-    );
+  if (getProducerStorageBackend() === 'redis') {
+    await writeRedisHashField(getLeadsKey(), lead.id, lead);
     return;
   }
 
-  await putBlobJson(getBlobLeadPath(lead.id), lead);
+  fs.mkdirSync(LEADS_DIR, { recursive: true });
+  fs.writeFileSync(
+    getLeadFilePath(lead.id),
+    `${JSON.stringify(lead, null, 2)}\n`,
+    'utf-8',
+  );
 }
 
+/** Repo-file leads and Redis leads, unioned by id with Redis winning. */
 export async function listLeads(): Promise<Lead[]> {
   const merged = new Map<string, Lead>();
 
   for (const lead of listFilesystemLeads()) {
     merged.set(lead.id, lead);
   }
-  for (const lead of await listBlobLeads()) {
-    merged.set(lead.id, lead);
+  if (getProducerStorageBackend() === 'redis') {
+    for (const lead of await listRedisLeads()) {
+      merged.set(lead.id, lead);
+    }
   }
 
   return Array.from(merged.values()).sort(
@@ -159,7 +159,7 @@ export async function listLeads(): Promise<Lead[]> {
 }
 
 export async function createLead(input: LeadInput): Promise<Lead> {
-  if (isReadOnlyVercelRuntime()) {
+  if (getProducerStorageBackend() === 'read-only') {
     throw createWritableStorageError('lead');
   }
 
@@ -185,11 +185,21 @@ export async function updateLead(
   id: string,
   updates: LeadUpdate,
 ): Promise<Lead | null> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError('lead');
   }
 
-  const existing = (await listLeads()).find((lead) => lead.id === id) ?? null;
+  // Redis writes read the one lead strictly (HGET) so a failed read can never
+  // turn into a write; a repo-file lead is promoted into Redis on first edit.
+  const existing =
+    backend === 'redis'
+      ? (parseLead(
+          await readRedisHashField<unknown>(getLeadsKey(), id, {
+            strict: true,
+          }),
+        ) ?? listFilesystemLeads().find((lead) => lead.id === id))
+      : (await listLeads()).find((lead) => lead.id === id);
   if (!existing) return null;
 
   const next: Lead = {

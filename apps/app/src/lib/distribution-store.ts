@@ -14,15 +14,17 @@ import {
 } from '@shipshitshow/types';
 import {
   createWritableStorageError,
-  isBlobPersistenceEnabled,
-  isReadOnlyVercelRuntime,
-  putBlobJson,
-  readBlobJson,
-} from '@/lib/blob-storage';
+  getProducerStorageBackend,
+} from '@/lib/producer-storage';
+import {
+  readRedisJson,
+  readRedisJsonMany,
+  redisKey,
+  writeRedisJson,
+} from '@/lib/redis-storage';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
-const BLOB_DISTRIBUTION_PREFIX = 'livestream/distribution';
 const DISTRIBUTION_FILE_NAME = 'distribution.json';
 
 /**
@@ -43,8 +45,8 @@ interface StoredEpisodeDistribution {
   updatedAt: string;
 }
 
-function getBlobDistributionPath(date: string): string {
-  return `${BLOB_DISTRIBUTION_PREFIX}/${date}.json`;
+function getDistributionKey(date: string): string {
+  return redisKey('distribution', date);
 }
 
 function getDistributionFilePath(date: string): string {
@@ -101,33 +103,38 @@ function readFilesystemDistribution(
   }
 }
 
+/** The Redis record wins; the repo file is the fallback, then empty. */
 async function readStoredDistribution(
   date: string,
+  strict = false,
 ): Promise<StoredEpisodeDistribution | null> {
-  if (!isBlobPersistenceEnabled()) {
-    return readFilesystemDistribution(date);
+  if (getProducerStorageBackend() === 'redis') {
+    const stored = parseStored(
+      await readRedisJson<unknown>(getDistributionKey(date), { strict }),
+    );
+    if (stored) return stored;
   }
 
-  const blob = await readBlobJson<unknown>(getBlobDistributionPath(date));
-  return blob ? parseStored(blob.data) : null;
+  return readFilesystemDistribution(date);
 }
 
 async function writeStoredDistribution(
   date: string,
   stored: StoredEpisodeDistribution,
 ): Promise<void> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError();
   }
 
-  if (!isBlobPersistenceEnabled()) {
+  if (backend === 'filesystem') {
     const filePath = getDistributionFilePath(date);
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, `${JSON.stringify(stored, null, 2)}\n`, 'utf-8');
     return;
   }
 
-  await putBlobJson(getBlobDistributionPath(date), stored);
+  await writeRedisJson(getDistributionKey(date), stored);
 }
 
 function buildPlanAssets(): StoredDistributionAsset[] {
@@ -227,11 +234,22 @@ export async function readEpisodeDistribution(
 export async function readEpisodeDistributions(
   dates: string[],
 ): Promise<Map<string, EpisodeDistribution>> {
-  const entries = await Promise.all(
-    dates.map(
-      async (date) => [date, await readEpisodeDistribution(date)] as const,
-    ),
-  );
+  const redisRecords =
+    getProducerStorageBackend() === 'redis'
+      ? await readRedisJsonMany<unknown>(dates.map(getDistributionKey))
+      : [];
+
+  const entries = dates.map((date, index) => {
+    const stored =
+      parseStored(redisRecords[index] ?? null) ??
+      readFilesystemDistribution(date);
+    return [
+      date,
+      stored
+        ? toEpisodeDistribution(date, mergeWithPlan(stored), stored.updatedAt)
+        : null,
+    ] as const;
+  });
 
   return new Map(
     entries.filter(
@@ -283,11 +301,11 @@ export async function saveEpisodeDistributionAsset(
   assetId: string,
   update: EpisodeDistributionAssetUpdate,
 ): Promise<EpisodeDistribution | null> {
-  if (isReadOnlyVercelRuntime()) {
+  if (getProducerStorageBackend() === 'read-only') {
     throw createWritableStorageError();
   }
 
-  const stored = await readStoredDistribution(date);
+  const stored = await readStoredDistribution(date, true);
   const assets = mergeWithPlan(stored);
   const index = assets.findIndex((asset) => asset.id === assetId);
   if (index === -1) return null;

@@ -3,11 +3,21 @@ import { isLeadStatus } from '@shipshitshow/types';
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateLead } from '@/lib/leads-store';
 import { logError, logEvent } from '@/lib/logger';
+import { StorageWriteError } from '@/lib/producer-storage';
+import {
+  isStorageWritable,
+  storageUnavailableResponse,
+  storageWriteFailedResponse,
+} from '@/lib/storage-capability-server';
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  if (!isStorageWritable()) {
+    return storageUnavailableResponse('lead changes');
+  }
+
   const { id } = await params;
 
   let body: unknown;
@@ -39,6 +49,9 @@ export async function PATCH(
     return NextResponse.json({ lead });
   } catch (error) {
     logError('api.leads.update_failed', error, { leadId: id });
+    if (error instanceof StorageWriteError) {
+      return storageWriteFailedResponse('the lead change');
+    }
     const response: ErrorResponse = {
       error: error instanceof Error ? error.message : 'Failed to update lead',
     };

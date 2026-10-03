@@ -22,6 +22,7 @@
     "lint:write": "biome check --write .",
     "prepare": "bunx husky",
     "show:prep": "bun run --cwd apps/app show:prep",
+    "storage:export": "bun run --cwd apps/app storage:export",
     "test": "turbo test",
     "youtube:metadata": "bun scripts/generate-youtube-metadata.ts"
   },

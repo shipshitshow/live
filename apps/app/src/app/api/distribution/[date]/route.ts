@@ -9,9 +9,11 @@ import {
   getEpisodeDistribution,
   saveEpisodeDistributionAsset,
 } from '@/lib/distribution-store';
+import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
   storageUnavailableResponse,
+  storageWriteFailedResponse,
 } from '@/lib/storage-capability-server';
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
@@ -105,6 +107,9 @@ export async function PATCH(
       isWritable: true,
     } satisfies EpisodeDistributionResponse);
   } catch (error) {
+    if (error instanceof StorageWriteError) {
+      return storageWriteFailedResponse('checklist changes');
+    }
     return NextResponse.json(
       {
         error:
