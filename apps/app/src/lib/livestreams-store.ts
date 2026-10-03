@@ -24,6 +24,7 @@ import {
   getTopicDrawingFile,
   isTopicMarkdownFile,
 } from './livestreams-files';
+import { getVisibleTopics } from './livestreams-visibility';
 import {
   extractLivestreamYouTubeUrl,
   extractVideoId,
@@ -477,6 +478,32 @@ export async function resolveLivestreamDate(
   const availableDates = await listAvailableLivestreamDates();
   if (availableDates.includes(requestedDate)) return requestedDate;
   return availableDates[0] || requestedDate;
+}
+
+/**
+ * Dates with at least one publicly visible topic. Dates holding only drafts or
+ * backlog are unpublished planning and stay out of the public catalog.
+ */
+async function listPublicLivestreamDates(): Promise<string[]> {
+  const dates = await listAvailableLivestreamDates();
+  const hasVisibleTopics = await Promise.all(
+    dates.map(
+      async (date) =>
+        getVisibleTopics(await getTopicsForDate(date), date).length > 0,
+    ),
+  );
+  return dates.filter((_, index) => hasVisibleTopics[index]);
+}
+
+export async function resolvePublicLivestreamDate(
+  requestedDate: string | null,
+): Promise<{ availableDates: string[]; resolvedDate: string | null }> {
+  const availableDates = await listPublicLivestreamDates();
+  const resolvedDate =
+    requestedDate && availableDates.includes(requestedDate)
+      ? requestedDate
+      : (availableDates[0] ?? null);
+  return { availableDates, resolvedDate };
 }
 
 export async function listLivestreamHistory(): Promise<

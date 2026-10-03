@@ -1,5 +1,5 @@
 import type { Topic } from '@shipshitshow/types';
-import { todayLocalDate } from '@/lib/date';
+import { isPastDate } from '@/lib/livestreams-visibility';
 import {
   buildYouTubeThumbnailUrl,
   extractRestreamUrl,
@@ -7,6 +7,7 @@ import {
   extractYouTubeUrl,
 } from '@/lib/livestreams-youtube';
 
+export { getVisibleTopics, isPastDate } from '@/lib/livestreams-visibility';
 export type { MarkdownSection } from '@/lib/markdown-render';
 export {
   extractTweetIds,
@@ -51,24 +52,11 @@ export function formatLivestreamDate(date: string): string {
   return DATE_FORMATTER.format(new Date(Date.UTC(year, month - 1, day)));
 }
 
-export function isPastDate(date: string): boolean {
-  return date < todayLocalDate();
-}
-
 export function sortTopics(topics: Topic[]): Topic[] {
   return [...topics].sort(
     (a, b) =>
       b.date.localeCompare(a.date) || a.fileName.localeCompare(b.fileName),
   );
-}
-
-export function getVisibleTopics(topics: Topic[], date: string): Topic[] {
-  if (isPastDate(date)) {
-    return topics.filter(
-      (topic) => topic.status !== 'backlog' && topic.status !== 'draft',
-    );
-  }
-  return topics.filter((topic) => topic.status === 'in_progress');
 }
 
 export function getEffectiveStatus(date: string): keyof typeof STATUS_META {
