@@ -356,6 +356,7 @@ export function EpisodeRollupClient() {
         </div>
         <Button
           onClick={() => load({ force: true })}
+          aria-label="Refresh episode rollup"
           disabled={loading}
           className="px-2.5 hover:border-accent-red disabled:opacity-50"
         >
