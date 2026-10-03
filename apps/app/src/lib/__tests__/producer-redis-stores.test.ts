@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test';
 import fs from 'node:fs';
 import path from 'node:path';
 import {
@@ -257,20 +257,66 @@ describe('X posts', () => {
     expect((await getEpisodeXMetrics(DATE)).posts[0].url).toBe(X_URL);
   });
 
-  test('rendering after a failed MGET never writes defaults back', async () => {
-    await saveEpisodeXPosts(DATE, {
-      posts: [{ id: 'post-1', manual_metrics: { likes: 3 }, url: X_URL }],
+  describe('with an X API token', () => {
+    let fetchSpy: { mockClear: () => void; mockRestore: () => void };
+
+    beforeEach(() => {
+      process.env.X_BEARER_TOKEN = 'test-only';
+      fetchSpy = spyOn(globalThis, 'fetch').mockImplementation((async () =>
+        Response.json({
+          data: [
+            {
+              id: '1234567890',
+              public_metrics: {
+                bookmark_count: 0,
+                impression_count: 50,
+                like_count: 4,
+                quote_count: 0,
+                reply_count: 0,
+                retweet_count: 1,
+              },
+            },
+          ],
+        })) as unknown as typeof fetch);
     });
-    harness.redis.resetCommands();
 
-    harness.redis.failNext('mget');
-    const rendered = await getEpisodeXMetrics(DATE);
+    afterEach(() => {
+      fetchSpy.mockRestore();
+    });
 
-    expect(rendered.posts[0].url).toBeNull();
-    expect(harness.redis.count('set')).toBe(0);
-    expect(
-      (await getEpisodeXMetrics(DATE)).posts[0].manual_metrics?.likes,
-    ).toBe(3);
+    test('the API metric cache is persisted next to the manual entry', async () => {
+      await saveEpisodeXPosts(DATE, {
+        posts: [{ id: 'post-1', manual_metrics: { likes: 3 }, url: X_URL }],
+      });
+
+      const stored = harness.redis.strings.get(
+        `sss:test:v1:x-posts:${DATE}`,
+      ) as { posts: Array<Record<string, unknown>> };
+      expect(stored.posts[0].api_metrics).toMatchObject({ impressions: 50 });
+      expect(stored.posts[0].manual_metrics).toMatchObject({ likes: 3 });
+    });
+
+    test('a failed MGET renders from the repo file and never writes it back over Redis', async () => {
+      await saveEpisodeXPosts(DATE_B, {
+        posts: [{ id: 'post-1', manual_metrics: { likes: 3 }, url: X_URL }],
+      });
+      writeRepoFile(path.join(DATA_DIR, DATE_B, 'x-posts.json'), {
+        posts: [{ id: 'post-1', url: X_URL }],
+        updated_at: null,
+      });
+      const key = `sss:test:v1:x-posts:${DATE_B}`;
+      const before = JSON.stringify(harness.redis.strings.get(key));
+      harness.redis.resetCommands();
+      fetchSpy.mockClear();
+
+      harness.redis.failNext('mget');
+      const rendered = await getEpisodeXMetrics(DATE_B);
+
+      expect(fetchSpy).toHaveBeenCalled();
+      expect(rendered.posts[0].api_metrics?.impressions).toBe(50);
+      expect(harness.redis.count('set')).toBe(0);
+      expect(JSON.stringify(harness.redis.strings.get(key))).toBe(before);
+    });
   });
 });
 
