@@ -204,6 +204,7 @@ export function TrendsView() {
     const query = getSelectedQuery();
     if (!query) return;
     setMobilePane('preview');
+    setFocusRequest({ pane: 'preview' });
 
     const hasSameQuery = deepDiveQuery === query;
     setDeepDiveLoading(true);
@@ -235,6 +236,7 @@ export function TrendsView() {
     const query = getSelectedQuery();
     if (!query) return;
     setMobilePane('preview');
+    setFocusRequest({ pane: 'preview' });
 
     const hasSameQuery = deepDiveQuery === query;
     setManualXLoading(true);
