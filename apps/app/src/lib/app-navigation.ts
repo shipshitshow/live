@@ -82,6 +82,14 @@ export const PRODUCTION_APPS = [
 export function isNavigationActive(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
+export function getActiveNavigationHref(
+  pathname: string,
+  links: readonly { href: string }[],
+): string | undefined {
+  return links
+    .filter((link) => isNavigationActive(pathname, link.href))
+    .sort((a, b) => b.href.length - a.href.length)[0]?.href;
+}
 export function getProductionApp(pathname: string) {
   return PRODUCTION_APPS.find((app) =>
     app.roots.some((root) => isNavigationActive(pathname, root)),
