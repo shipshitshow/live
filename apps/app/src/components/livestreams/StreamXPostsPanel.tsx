@@ -11,6 +11,8 @@ import { Button, Input } from '@shipshitshow/ui';
 import { useState } from 'react';
 import { formatNumber } from '@/lib/format';
 import { parseJsonResponse } from '@/lib/parse-json-response';
+import { isStorageUnavailableResponse } from '@/lib/storage-capability';
+import { ReadOnlyStorageNotice } from './ReadOnlyStorageNotice';
 
 const METRIC_FIELDS = [
   { key: 'impressions', label: 'Impressions' },
@@ -119,11 +121,14 @@ function EntryModeBadge({ mode }: { mode: XMetricsEntryMode | null }) {
 
 export function StreamXPostsPanel({
   initialMetrics,
+  isWritable,
   slug,
 }: {
   initialMetrics: XEpisodeMetrics;
+  isWritable: boolean;
   slug: string;
 }) {
+  const [hasWritableStorage, setHasWritableStorage] = useState(isWritable);
   const [metrics, setMetrics] = useState(initialMetrics);
   const [drafts, setDrafts] = useState(() => toDrafts(initialMetrics.posts));
   const [pending, setPending] = useState<'refresh' | 'save' | null>(null);
@@ -174,6 +179,10 @@ export function StreamXPostsPanel({
         method: 'PUT',
       });
       const next = await parseJsonResponse<XEpisodeMetrics>(res);
+      if (isStorageUnavailableResponse(next)) {
+        setHasWritableStorage(false);
+        return;
+      }
       if (!res.ok) throw new Error('Could not save X posts.');
       applyMetrics(next);
       setSavedAt(new Date().toLocaleTimeString());
@@ -234,7 +243,7 @@ export function StreamXPostsPanel({
               type="button"
               variant="accent"
               onClick={handleSave}
-              disabled={pending !== null}
+              disabled={!hasWritableStorage || pending !== null}
             >
               {pending === 'save' ? 'Saving…' : 'Save'}
             </Button>
@@ -271,6 +280,10 @@ export function StreamXPostsPanel({
           ))}
         </dl>
       </div>
+
+      {!hasWritableStorage ? (
+        <ReadOnlyStorageNotice subject="X post URLs and metrics" />
+      ) : null}
 
       {apiNotice ? (
         <p className="rounded-xl border border-dashed border-surface-border bg-surface-card/40 px-4 py-3 text-sm text-text-muted">
@@ -315,6 +328,7 @@ export function StreamXPostsPanel({
                 Post URL
               </span>
               <Input
+                disabled={!hasWritableStorage}
                 value={draft.url}
                 onChange={(event) =>
                   updateDraft(post.id, { url: event.target.value })
@@ -343,6 +357,7 @@ export function StreamXPostsPanel({
                       </span>
                     </span>
                     <Input
+                      disabled={!hasWritableStorage}
                       value={draft.metrics[key]}
                       onChange={(event) =>
                         updateMetricDraft(post.id, key, event.target.value)

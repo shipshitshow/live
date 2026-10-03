@@ -300,7 +300,3 @@ export async function saveEpisodeDistributionAsset(
 
   return toEpisodeDistribution(date, assets, now);
 }
-
-export function isDistributionWritable(): boolean {
-  return !isReadOnlyVercelRuntime();
-}

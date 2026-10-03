@@ -18,6 +18,7 @@ import {
 import { getEpisodeXMetrics } from '@/lib/livestreams-x-posts';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
+import { isStorageWritable } from '@/lib/storage-capability-server';
 
 async function resolveFullDate(slug: string): Promise<string> {
   const resolved = await resolveStreamDate(slug);
@@ -90,5 +91,11 @@ export default async function XPostsPage({
   const resolvedDate = await resolveFullDate(slug);
   const metrics = await getEpisodeXMetrics(resolvedDate);
 
-  return <StreamXPostsPanel initialMetrics={metrics} slug={slug} />;
+  return (
+    <StreamXPostsPanel
+      initialMetrics={metrics}
+      isWritable={isStorageWritable()}
+      slug={slug}
+    />
+  );
 }

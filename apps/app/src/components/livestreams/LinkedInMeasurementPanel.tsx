@@ -20,7 +20,9 @@ import { useId, useState } from 'react';
 import { CopyButton } from '@/components/CopyButton';
 import { StatCard } from '@/components/StatCard';
 import { parseJsonResponse } from '@/lib/parse-json-response';
+import { isStorageUnavailableResponse } from '@/lib/storage-capability';
 import { buildUtmUrl } from '@/lib/utm';
+import { ReadOnlyStorageNotice } from './ReadOnlyStorageNotice';
 
 /**
  * Per-episode LinkedIn distribution measurement (issue #20).
@@ -173,10 +175,13 @@ function TaggedLinkBuilder({ campaign }: { campaign: string }) {
 }
 
 export function LinkedInMeasurementPanel({
+  isWritable,
   measurement,
 }: {
+  isWritable: boolean;
   measurement: EpisodeLinkedInMeasurement;
 }) {
+  const [hasWritableStorage, setHasWritableStorage] = useState(isWritable);
   const [posts, setPosts] = useState<LinkedInPostEntry[]>(measurement.posts);
   const [error, setError] = useState<string | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -216,6 +221,11 @@ export function LinkedInMeasurementPanel({
         error?: string;
         posts?: LinkedInPostEntry[];
       }>(response);
+
+      if (isStorageUnavailableResponse(payload)) {
+        setHasWritableStorage(false);
+        return;
+      }
 
       if (!response.ok || !payload.posts) {
         setError(payload.error ?? 'Failed to save LinkedIn metrics');
@@ -295,6 +305,7 @@ export function LinkedInMeasurementPanel({
             </p>
           </div>
           <Button
+            disabled={!hasWritableStorage}
             onClick={() =>
               setPosts((previous) => [...previous, createDraftPost()])
             }
@@ -303,6 +314,10 @@ export function LinkedInMeasurementPanel({
             Add post
           </Button>
         </header>
+
+        {!hasWritableStorage ? (
+          <ReadOnlyStorageNotice subject="LinkedIn post metrics" />
+        ) : null}
 
         {posts.length === 0 ? (
           <div className="rounded-xl border border-dashed border-surface-border bg-surface-card/40 p-6 text-sm text-text-muted">
@@ -317,6 +332,7 @@ export function LinkedInMeasurementPanel({
               >
                 <div className="flex flex-wrap items-center gap-3">
                   <Select
+                    disabled={!hasWritableStorage}
                     onValueChange={(value) =>
                       updatePost(post.id, { author: value as LinkedInAuthor })
                     }
@@ -336,6 +352,7 @@ export function LinkedInMeasurementPanel({
                   <Input
                     aria-label="LinkedIn post URL"
                     className="min-w-0 flex-1"
+                    disabled={!hasWritableStorage}
                     onChange={(event) =>
                       updatePost(post.id, { postUrl: event.target.value })
                     }
@@ -345,6 +362,7 @@ export function LinkedInMeasurementPanel({
                   <Input
                     aria-label="Published on"
                     className="w-40"
+                    disabled={!hasWritableStorage}
                     onChange={(event) =>
                       updatePost(post.id, {
                         publishedOn: event.target.value || null,
@@ -354,6 +372,7 @@ export function LinkedInMeasurementPanel({
                     value={post.publishedOn ?? ''}
                   />
                   <Button
+                    disabled={!hasWritableStorage}
                     onClick={() =>
                       setPosts((previous) =>
                         previous.filter((entry) => entry.id !== post.id),
@@ -373,6 +392,7 @@ export function LinkedInMeasurementPanel({
                     >
                       {field.label}
                       <Input
+                        disabled={!hasWritableStorage}
                         inputMode="numeric"
                         min={0}
                         onChange={(event) =>
@@ -400,7 +420,11 @@ export function LinkedInMeasurementPanel({
         )}
 
         <div className="flex flex-wrap items-center gap-3">
-          <Button disabled={isSaving} onClick={handleSave} variant="accent">
+          <Button
+            disabled={!hasWritableStorage || isSaving}
+            onClick={handleSave}
+            variant="accent"
+          >
             {isSaving ? 'Saving…' : 'Save metrics'}
           </Button>
           {error && <span className="text-xs text-accent-red">{error}</span>}

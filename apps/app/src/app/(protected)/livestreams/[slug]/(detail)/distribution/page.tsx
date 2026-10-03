@@ -2,10 +2,7 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 import { LinkedInMeasurementPanel } from '@/components/livestreams/LinkedInMeasurementPanel';
 import { StreamDistributionPanel } from '@/components/livestreams/StreamDistributionPanel';
-import {
-  getEpisodeDistribution,
-  isDistributionWritable,
-} from '@/lib/distribution-store';
+import { getEpisodeDistribution } from '@/lib/distribution-store';
 import { getEpisodeLinkedInMeasurement } from '@/lib/linkedin-measurement';
 import {
   isDateSlug,
@@ -29,6 +26,7 @@ import {
 } from '@/lib/livestreams-ui';
 import { buildYouTubeThumbnailUrl } from '@/lib/livestreams-youtube';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
+import { isStorageWritable } from '@/lib/storage-capability-server';
 
 async function resolveDate(slug: string): Promise<string> {
   if (isDateSlug(slug)) return slug;
@@ -128,14 +126,19 @@ export default async function DistributionPage({
     getEpisodeLinkedInMeasurement(resolvedDate),
   ]);
 
+  const isWritable = isStorageWritable();
+
   return (
     <div className="space-y-8">
       <StreamDistributionPanel
         date={resolvedDate}
         initialDistribution={distribution}
-        isWritable={isDistributionWritable()}
+        isWritable={isWritable}
       />
-      <LinkedInMeasurementPanel measurement={measurement} />
+      <LinkedInMeasurementPanel
+        isWritable={isWritable}
+        measurement={measurement}
+      />
     </div>
   );
 }

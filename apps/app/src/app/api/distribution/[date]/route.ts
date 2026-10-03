@@ -7,9 +7,12 @@ import { NextResponse } from 'next/server';
 import { normalizeDistributionUrl } from '@/lib/distribution';
 import {
   getEpisodeDistribution,
-  isDistributionWritable,
   saveEpisodeDistributionAsset,
 } from '@/lib/distribution-store';
+import {
+  isStorageWritable,
+  storageUnavailableResponse,
+} from '@/lib/storage-capability-server';
 
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
@@ -30,7 +33,7 @@ export async function GET(
 
   return NextResponse.json({
     distribution: await getEpisodeDistribution(date),
-    isWritable: isDistributionWritable(),
+    isWritable: isStorageWritable(),
   } satisfies EpisodeDistributionResponse);
 }
 
@@ -38,6 +41,10 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ date: string }> },
 ) {
+  if (!isStorageWritable()) {
+    return storageUnavailableResponse('checklist changes');
+  }
+
   const { date } = await params;
   if (!DATE_PATTERN.test(date)) {
     return NextResponse.json({ error: 'Invalid date' }, { status: 400 });

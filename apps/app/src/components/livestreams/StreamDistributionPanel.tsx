@@ -29,6 +29,8 @@ import {
   summarizeDistribution,
 } from '@/lib/distribution';
 import { parseJsonResponse } from '@/lib/parse-json-response';
+import { isStorageUnavailableResponse } from '@/lib/storage-capability';
+import { ReadOnlyStorageNotice } from './ReadOnlyStorageNotice';
 
 const STATUS_LABELS: Record<DistributionAssetStatus, string> = {
   pending: 'Pending',
@@ -80,6 +82,7 @@ export function StreamDistributionPanel({
   initialDistribution: EpisodeDistribution;
   isWritable: boolean;
 }) {
+  const [hasWritableStorage, setHasWritableStorage] = useState(isWritable);
   const [distribution, setDistribution] = useState(initialDistribution);
   const [urlDrafts, setUrlDrafts] = useState<Record<string, string>>({});
   const [savingAssetId, setSavingAssetId] = useState<string | null>(null);
@@ -112,6 +115,11 @@ export function StreamDistributionPanel({
           },
         );
         const data = await parseJsonResponse<EpisodeDistributionResponse>(res);
+
+        if (isStorageUnavailableResponse(data)) {
+          setHasWritableStorage(false);
+          return;
+        }
 
         if (!res.ok) {
           setError(isErrorResponse(data) ? data.error : 'Failed to save asset');
@@ -170,11 +178,8 @@ export function StreamDistributionPanel({
         ) : null}
       </div>
 
-      {!isWritable ? (
-        <p className="rounded-xl border border-accent-red/20 bg-accent-red/5 px-5 py-3 text-xs text-accent-red">
-          This deployment has no writable storage, so the checklist is
-          read-only.
-        </p>
+      {!hasWritableStorage ? (
+        <ReadOnlyStorageNotice subject="checklist changes" />
       ) : null}
 
       {error ? (
@@ -234,7 +239,7 @@ export function StreamDistributionPanel({
                         inputMode="url"
                         placeholder="Published URL"
                         aria-label={`${asset.label} published URL`}
-                        disabled={!isWritable || isSaving}
+                        disabled={!hasWritableStorage || isSaving}
                         value={draft}
                         onChange={(event) =>
                           setUrlDrafts((prev) => ({
@@ -269,7 +274,7 @@ export function StreamDistributionPanel({
 
                     <Select
                       value={asset.status}
-                      disabled={!isWritable || isSaving}
+                      disabled={!hasWritableStorage || isSaving}
                       onValueChange={(value) => {
                         if (!isDistributionAssetStatus(value)) return;
                         void saveAsset(asset.id, { status: value });
