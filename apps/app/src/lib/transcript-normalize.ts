@@ -20,6 +20,8 @@ const NAMED_ENTITIES: Record<string, string> = {
 };
 
 const SPEAKER_MARKER = /(?:>>\s*)+/;
+/** Older imports mark a speaker with a single line-leading `> `. */
+const LINE_LEADING_MARKER = /^[ \t]*>+[ \t]*/gm;
 const SENTENCE_BOUNDARY = /(?<=[.!?…]["')\]]?)\s+(?=["'([]?[\p{Lu}\p{N}])/u;
 const PARAGRAPH_TARGET_LENGTH = 480;
 const PARAGRAPH_MAX_LENGTH = 720;
@@ -95,12 +97,15 @@ function splitParagraphs(turn: string): string[] {
 
 /**
  * Render-only structure for imported caption transcripts. Wrapped caption
- * lines are joined, `>>` markers become unnamed speaker turns, and long turns
- * break at sentence boundaries. Wording is never changed: uncertain names and
+ * lines are joined, `>>` and line-leading `>` markers become unnamed speaker
+ * turns, and long turns break at sentence boundaries. Wording is never changed: uncertain names and
  * claims stay exactly as captured. The source file is not rewritten.
  */
 export function normalizeTranscript(raw: string): NormalizedTranscript {
-  const text = decodeTranscriptEntities(raw).replace(/\s+/g, ' ').trim();
+  const text = decodeTranscriptEntities(raw)
+    .replace(LINE_LEADING_MARKER, '>> ')
+    .replace(/\s+/g, ' ')
+    .trim();
   const turns: TranscriptTurn[] = [];
   text.split(SPEAKER_MARKER).forEach((segment, index) => {
     const content = segment.trim();

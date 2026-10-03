@@ -53,6 +53,27 @@ describe('normalizeTranscript', () => {
     ]);
   });
 
+  test('splits legacy imports that mark speakers with a line-leading >', () => {
+    const raw = [
+      "What's up, Michelle?",
+      '>  Yes. Yes. How are you?',
+      '>  Good. Uh, living my best life. Living',
+      'the the best timeline, man.',
+      '>',
+    ].join('\n');
+
+    expect(normalizeTranscript(raw).turns).toEqual([
+      { paragraphs: ["What's up, Michelle?"], speakerChange: false },
+      { paragraphs: ['Yes. Yes. How are you?'], speakerChange: true },
+      {
+        paragraphs: [
+          'Good. Uh, living my best life. Living the the best timeline, man.',
+        ],
+        speakerChange: true,
+      },
+    ]);
+  });
+
   test('splits inline markers in single-line imports', () => {
     const raw =
       'There is the culprit. &gt;&gt; That is a well done motherboard. [laughter] &gt;&gt; Yeah. Okay.';
