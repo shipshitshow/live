@@ -1,8 +1,8 @@
 import type { CommentReplyDraftCapability } from '@shipshitshow/types';
 
-// OpenAI-compatible chat endpoint. Point OPENAI_BASE_URL at OpenRouter
-// (https://openrouter.ai/api/v1) or any compatible gateway; defaults to OpenAI.
-const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
+const OPENROUTER_BASE_URL = 'https://openrouter.ai/api/v1';
+// OpenRouter model ids are provider-prefixed; override with OPENROUTER_MODEL.
+const DEFAULT_MODEL = 'google/gemini-3.5-flash-lite';
 const MAX_PROVIDER_MESSAGE_LENGTH = 200;
 
 interface DraftReplyInput {
@@ -43,30 +43,17 @@ export class CommentDraftError extends Error {
 
 // Read per call so the capability reflects the live server environment.
 function getProviderConfig() {
-  const baseUrl = (
-    process.env.OPENAI_BASE_URL?.trim() || DEFAULT_BASE_URL
-  ).replace(/\/+$/, '');
-  const isOpenRouter = baseUrl.includes('openrouter.ai');
-  const provider: CommentReplyDraftCapability['provider'] = isOpenRouter
-    ? 'openrouter'
-    : baseUrl === DEFAULT_BASE_URL
-      ? 'openai'
-      : 'custom';
-  // On OpenRouter, model ids are provider-prefixed (e.g. google/gemini-2.0-flash-001).
-  const model =
-    process.env.OPENAI_MODEL?.trim() ||
-    (isOpenRouter ? 'google/gemini-2.0-flash-001' : 'gpt-4o-mini');
-  const apiKey = process.env.OPENAI_API_KEY?.trim() || null;
-  return { apiKey, baseUrl, isOpenRouter, model, provider };
+  const model = process.env.OPENROUTER_MODEL?.trim() || DEFAULT_MODEL;
+  const apiKey = process.env.OPENROUTER_API_KEY?.trim() || null;
+  return { apiKey, model };
 }
 
 export function getCommentDraftCapability(): CommentReplyDraftCapability {
-  const { apiKey, model, provider } = getProviderConfig();
+  const { apiKey, model } = getProviderConfig();
   return {
     available: Boolean(apiKey),
-    missing: apiKey ? [] : ['OPENAI_API_KEY'],
+    missing: apiKey ? [] : ['OPENROUTER_API_KEY'],
     model,
-    provider,
   };
 }
 
@@ -107,7 +94,7 @@ function providerError(status: number, body: string): CommentDraftError {
       'draft_provider_unauthorized',
       `The reply-draft provider rejected the API key (${status}).`,
       502,
-      'Check OPENAI_API_KEY (and OPENAI_BASE_URL when using OpenRouter) in the server environment.',
+      'Check OPENROUTER_API_KEY in the server environment.',
     );
   }
   if (status === 429) {
@@ -130,9 +117,7 @@ function providerError(status: number, body: string): CommentDraftError {
     'draft_provider_rejected',
     `The reply-draft provider rejected the request (${status}).`,
     502,
-    withDetail(
-      'Check OPENAI_MODEL and OPENAI_BASE_URL in the server environment.',
-    ),
+    withDetail('Check OPENROUTER_MODEL in the server environment.'),
   );
 }
 
@@ -177,13 +162,13 @@ function extractJson(raw: string): DraftReplyPayload {
 export async function generateCommentReplyDrafts(
   input: DraftReplyInput,
 ): Promise<string[]> {
-  const { apiKey, baseUrl, isOpenRouter, model } = getProviderConfig();
+  const { apiKey, model } = getProviderConfig();
   if (!apiKey) {
     throw new CommentDraftError(
       'draft_not_configured',
       'Reply drafts are not configured on the server.',
       503,
-      'Set OPENAI_API_KEY (optionally OPENAI_BASE_URL and OPENAI_MODEL) in the server environment and redeploy.',
+      'Set OPENROUTER_API_KEY (optionally OPENROUTER_MODEL) in the server environment and redeploy.',
     );
   }
   const prompt = [
@@ -208,7 +193,7 @@ export async function generateCommentReplyDrafts(
 
   let res: Response;
   try {
-    res = await fetch(`${baseUrl}/chat/completions`, {
+    res = await fetch(`${OPENROUTER_BASE_URL}/chat/completions`, {
       body: JSON.stringify({
         messages: [
           {
@@ -224,13 +209,9 @@ export async function generateCommentReplyDrafts(
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
-        // Optional attribution for OpenRouter's dashboard/leaderboards.
-        ...(isOpenRouter
-          ? {
-              'HTTP-Referer': 'https://show.shipshit.dev',
-              'X-Title': 'Ship Shit Show',
-            }
-          : {}),
+        // Attribution for OpenRouter's dashboard/leaderboards.
+        'HTTP-Referer': 'https://show.shipshit.dev',
+        'X-Title': 'Ship Shit Show',
       },
       method: 'POST',
     });

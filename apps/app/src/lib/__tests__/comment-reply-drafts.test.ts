@@ -15,7 +15,7 @@ const INPUT = {
 // Fake provider credential; assembled so secret scanners do not flag the fixture.
 const FIXTURE_CREDENTIAL = ['sk', 'live', 'SECRET1234567890'].join('-');
 
-const ENV_KEYS = ['OPENAI_API_KEY', 'OPENAI_BASE_URL', 'OPENAI_MODEL'] as const;
+const ENV_KEYS = ['OPENROUTER_API_KEY', 'OPENROUTER_MODEL'] as const;
 const realFetch = globalThis.fetch;
 const savedEnv: Record<string, string | undefined> = {};
 
@@ -55,21 +55,18 @@ describe('getCommentDraftCapability', () => {
   test('reports the missing key instead of an apparently working action', () => {
     expect(getCommentDraftCapability()).toEqual({
       available: false,
-      missing: ['OPENAI_API_KEY'],
-      model: 'gpt-4o-mini',
-      provider: 'openai',
+      missing: ['OPENROUTER_API_KEY'],
+      model: 'google/gemini-3.5-flash-lite',
     });
   });
 
-  test('reflects the configured OpenRouter provider and model', () => {
-    process.env.OPENAI_API_KEY = 'sk-or-test';
-    process.env.OPENAI_BASE_URL = 'https://openrouter.ai/api/v1/';
-    process.env.OPENAI_MODEL = 'google/gemini-test';
+  test('reflects the configured OpenRouter model', () => {
+    process.env.OPENROUTER_API_KEY = 'sk-or-test';
+    process.env.OPENROUTER_MODEL = 'anthropic/claude-haiku-4.5';
     expect(getCommentDraftCapability()).toEqual({
       available: true,
       missing: [],
-      model: 'google/gemini-test',
-      provider: 'openrouter',
+      model: 'anthropic/claude-haiku-4.5',
     });
   });
 });
@@ -80,11 +77,11 @@ describe('generateCommentReplyDrafts errors', () => {
     expect(error.code).toBe('draft_not_configured');
     expect(error.status).toBe(503);
     expect(error.retryable).toBe(false);
-    expect(error.hint).toContain('OPENAI_API_KEY');
+    expect(error.hint).toContain('OPENROUTER_API_KEY');
   });
 
   test('provider auth failure never echoes the key or raw body', async () => {
-    process.env.OPENAI_API_KEY = FIXTURE_CREDENTIAL;
+    process.env.OPENROUTER_API_KEY = FIXTURE_CREDENTIAL;
     mockProvider(401, {
       error: {
         message: `Incorrect API key provided: ${FIXTURE_CREDENTIAL}. Bearer ${FIXTURE_CREDENTIAL}`,
@@ -99,7 +96,7 @@ describe('generateCommentReplyDrafts errors', () => {
   });
 
   test('rate limits are retryable and keep the provider status', async () => {
-    process.env.OPENAI_API_KEY = 'sk-test';
+    process.env.OPENROUTER_API_KEY = 'sk-test';
     mockProvider(429, { error: { message: 'Rate limit reached' } });
     const error = await captureError();
     expect(error.code).toBe('draft_provider_rate_limited');
@@ -107,20 +104,20 @@ describe('generateCommentReplyDrafts errors', () => {
     expect(error.retryable).toBe(true);
   });
 
-  test('a rejected model points at OPENAI_MODEL with a sanitized message', async () => {
-    process.env.OPENAI_API_KEY = 'sk-test';
-    process.env.OPENAI_MODEL = 'retired-model';
+  test('a rejected model points at OPENROUTER_MODEL with a sanitized message', async () => {
+    process.env.OPENROUTER_API_KEY = 'sk-test';
+    process.env.OPENROUTER_MODEL = 'retired-model';
     mockProvider(404, {
       error: { message: 'The model `retired-model` does not exist' },
     });
     const error = await captureError();
     expect(error.code).toBe('draft_provider_rejected');
-    expect(error.hint).toContain('OPENAI_MODEL');
+    expect(error.hint).toContain('OPENROUTER_MODEL');
     expect(error.hint).toContain('does not exist');
   });
 
   test('provider outages are retryable', async () => {
-    process.env.OPENAI_API_KEY = 'sk-test';
+    process.env.OPENROUTER_API_KEY = 'sk-test';
     mockProvider(503, '<html>upstream down</html>');
     const error = await captureError();
     expect(error.code).toBe('draft_provider_unavailable');
@@ -129,7 +126,7 @@ describe('generateCommentReplyDrafts errors', () => {
   });
 
   test('network failures are retryable', async () => {
-    process.env.OPENAI_API_KEY = 'sk-test';
+    process.env.OPENROUTER_API_KEY = 'sk-test';
     globalThis.fetch = (async () => {
       throw new TypeError('fetch failed');
     }) as unknown as typeof fetch;
@@ -139,7 +136,7 @@ describe('generateCommentReplyDrafts errors', () => {
   });
 
   test('returns drafts from a valid provider response', async () => {
-    process.env.OPENAI_API_KEY = 'sk-test';
+    process.env.OPENROUTER_API_KEY = 'sk-test';
     mockProvider(200, {
       choices: [
         { message: { content: '{"drafts":["One","Two","Three","Four"]}' } },
@@ -150,5 +147,24 @@ describe('generateCommentReplyDrafts errors', () => {
       'Two',
       'Three',
     ]);
+  });
+
+  test('sends the request to OpenRouter with the configured model', async () => {
+    process.env.OPENROUTER_API_KEY = 'sk-test';
+    process.env.OPENROUTER_MODEL = 'anthropic/claude-haiku-4.5';
+    let requestUrl = '';
+    let requestModel: unknown;
+    globalThis.fetch = (async (url: string, init: RequestInit) => {
+      requestUrl = url;
+      requestModel = JSON.parse(String(init.body)).model;
+      return new Response(
+        JSON.stringify({
+          choices: [{ message: { content: '{"drafts":["One"]}' } }],
+        }),
+      );
+    }) as unknown as typeof fetch;
+    await generateCommentReplyDrafts(INPUT);
+    expect(requestUrl).toBe('https://openrouter.ai/api/v1/chat/completions');
+    expect(requestModel).toBe('anthropic/claude-haiku-4.5');
   });
 });
