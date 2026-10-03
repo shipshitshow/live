@@ -7,6 +7,10 @@ import {
   saveLinkedInPosts,
 } from '@/lib/linkedin-metrics-store';
 import { logError, logEvent } from '@/lib/logger';
+import {
+  isStorageWritable,
+  storageUnavailableResponse,
+} from '@/lib/storage-capability-server';
 
 /**
  * Manual LinkedIn post metrics for one episode date (issue #20). Metrics are
@@ -38,6 +42,10 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ date: string }> },
 ) {
+  if (!isStorageWritable()) {
+    return storageUnavailableResponse('LinkedIn post metrics');
+  }
+
   const { date } = await params;
   if (!isLivestreamDate(date)) {
     return NextResponse.json({ error: 'Invalid date' }, { status: 400 });

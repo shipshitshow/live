@@ -5,6 +5,10 @@ import {
   getEpisodeXMetrics,
   saveEpisodeXPosts,
 } from '@/lib/livestreams-x-posts';
+import {
+  isStorageWritable,
+  storageUnavailableResponse,
+} from '@/lib/storage-capability-server';
 
 function parsePostInputs(value: unknown): XEpisodePostInput[] | null {
   if (!value || typeof value !== 'object') return null;
@@ -67,6 +71,10 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  if (!isStorageWritable()) {
+    return storageUnavailableResponse('X post URLs and metrics');
+  }
+
   const { slug } = await params;
   const date = await resolveStreamDate(slug);
   if (!date) {
