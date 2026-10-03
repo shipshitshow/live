@@ -1,18 +1,28 @@
 import type { YouTubeCommentThread } from '@shipshitshow/types';
 import { type NextRequest, NextResponse } from 'next/server';
 import { fetchCommentThreads } from '@/lib/youtube/comments';
-import { getAccessToken, getChannelConfigs } from '@/lib/youtube/token';
+import {
+  getAccessToken,
+  getChannelConfigs,
+  getConfiguredChannelMeta,
+} from '@/lib/youtube/token';
 
 export async function GET(req: NextRequest) {
   const maxResults = Number(req.nextUrl.searchParams.get('maxResults') ?? 100);
 
   try {
     const channels = await getChannelConfigs();
+    const ownedChannelIds = getConfiguredChannelMeta().map(
+      (channel) => channel.id,
+    );
     const allItems: YouTubeCommentThread[] = [];
 
     for (const channel of channels) {
       const token = await getAccessToken(channel);
-      const threads = await fetchCommentThreads(token, channel, { maxResults });
+      const threads = await fetchCommentThreads(token, channel, {
+        maxResults,
+        ownedChannelIds,
+      });
       allItems.push(...threads);
     }
 

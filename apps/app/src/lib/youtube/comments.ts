@@ -16,6 +16,8 @@ const DATA_API = 'https://www.googleapis.com/youtube/v3';
 interface FetchCommentThreadsOptions {
   maxResults?: number;
   videoId?: string | null;
+  /** Every show channel ID; comments or replies from any of them are owned. */
+  ownedChannelIds?: string[];
 }
 
 function isDefined<T>(value: T | null | undefined): value is T {
@@ -103,6 +105,10 @@ export const fetchCommentThreads = async (
   options: FetchCommentThreadsOptions = {},
 ): Promise<YouTubeCommentThread[]> => {
   const maxResults = Math.min(100, Math.max(1, options.maxResults ?? 50));
+  const ownedChannelIds = new Set([
+    channelConfig.id,
+    ...(options.ownedChannelIds ?? []),
+  ]);
   const params = new URLSearchParams({
     maxResults: String(maxResults),
     moderationStatus: 'published',
@@ -145,7 +151,10 @@ export const fetchCommentThreads = async (
         replies = await fetchAllReplies(token, commentId);
       }
 
+      const authorChannelId = topLevelSnippet.authorChannelId?.value ?? null;
+
       return {
+        authorChannelId,
         authorDisplayName: topLevelSnippet.authorDisplayName ?? 'Unknown',
         authorProfileImageUrl: topLevelSnippet.authorProfileImageUrl ?? null,
         canReply: Boolean(item.snippet?.canReply),
@@ -153,9 +162,13 @@ export const fetchCommentThreads = async (
         channelLabel: channelConfig.label,
         commentId,
         hasChannelReply: replies.some(
-          (reply) => reply.authorChannelId === channelConfig.id,
+          (reply) =>
+            reply.authorChannelId !== null &&
+            ownedChannelIds.has(reply.authorChannelId),
         ),
         id: item.id,
+        isOwnedComment:
+          authorChannelId !== null && ownedChannelIds.has(authorChannelId),
         likeCount: Number(topLevelSnippet.likeCount ?? 0),
         publishedAt: topLevelSnippet.publishedAt ?? '',
         replies,

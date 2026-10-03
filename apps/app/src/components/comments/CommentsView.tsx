@@ -1,16 +1,41 @@
 'use client';
 
-import type {
-  YouTubeCommentReply,
-  YouTubeCommentThread,
+import {
+  type CommentReplyDraftCapability,
+  type ErrorResponse,
+  isErrorResponse,
+  type YouTubeCommentReply,
+  type YouTubeCommentThread,
 } from '@shipshitshow/types';
-import { Button } from '@shipshitshow/ui';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  Button,
+  cn,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@shipshitshow/ui';
+import { ArrowLeft } from 'lucide-react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { CopyButton } from '@/components/CopyButton';
+import { filterComments, type ReplyFilter } from './comment-filters';
 
 type DraftState = Record<string, string[]>;
 type SendingState = Record<string, number | null>;
-type ReplyFilter = 'needs_reply' | 'all';
+type MobileView = 'list' | 'detail';
+
+interface ActionError {
+  commentId: string;
+  kind: 'draft' | 'send';
+  error: ErrorResponse;
+}
+
+const PAGE_SIZE = 15;
+// Matches the `lg:` breakpoint where list and reply panes sit side by side.
+const SPLIT_LAYOUT_QUERY = '(min-width: 1024px)';
+const FILTER_TRIGGER_CLASS = 'h-9 min-w-0 text-left text-xs';
+const FILTER_CONTENT_CLASS = 'max-w-[min(28rem,calc(100vw-2rem))]';
 
 const formatPublishedAt = (value: string) =>
   new Date(value).toLocaleString([], {
@@ -24,6 +49,18 @@ const buildYouTubeVideoUrl = (videoId: string) =>
 const buildYouTubeCommentUrl = (videoId: string, commentId: string) =>
   `${buildYouTubeVideoUrl(videoId)}&lc=${encodeURIComponent(commentId)}`;
 
+const isSplitLayout = () => window.matchMedia(SPLIT_LAYOUT_QUERY).matches;
+
+async function readErrorResponse(
+  res: Response,
+  fallback: string,
+): Promise<ErrorResponse> {
+  const data: unknown = await res.json().catch(() => null);
+  return isErrorResponse(data)
+    ? data
+    : { error: `${fallback} (HTTP ${res.status})` };
+}
+
 export function CommentsView() {
   const [comments, setComments] = useState<YouTubeCommentThread[]>([]);
   const [loading, setLoading] = useState(true);
@@ -35,9 +72,14 @@ export function CommentsView() {
   const [draftsByComment, setDraftsByComment] = useState<DraftState>({});
   const [draftLoadingId, setDraftLoadingId] = useState<string | null>(null);
   const [sendingByComment, setSendingByComment] = useState<SendingState>({});
-  const [actionError, setActionError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<ActionError | null>(null);
+  const [draftCapability, setDraftCapability] =
+    useState<CommentReplyDraftCapability | null>(null);
   const [fetchedAt, setFetchedAt] = useState<string | null>(null);
   const [page, setPage] = useState(0);
+  const [mobileView, setMobileView] = useState<MobileView>('list');
+  const listRef = useRef<HTMLDivElement>(null);
+  const backButtonRef = useRef<HTMLButtonElement>(null);
 
   const loadComments = useCallback(async () => {
     setLoading(true);
@@ -65,27 +107,37 @@ export function CommentsView() {
     }
   }, []);
 
+  const loadDraftCapability = useCallback(async () => {
+    try {
+      const res = await fetch('/api/comments/draft');
+      if (!res.ok) return;
+      setDraftCapability((await res.json()) as CommentReplyDraftCapability);
+    } catch {
+      // Unknown capability keeps the action enabled; a failed POST explains why.
+    }
+  }, []);
+
   useEffect(() => {
     loadComments();
-  }, [loadComments]);
+    loadDraftCapability();
+  }, [loadComments, loadDraftCapability]);
 
   const channelOptions = useMemo(
     () => Array.from(new Set(comments.map((item) => item.channelLabel))).sort(),
     [comments],
   );
 
-  const filteredByChannel = useMemo(() => {
-    if (channelFilter === 'all') return comments;
-    return comments.filter((item) => item.channelLabel === channelFilter);
-  }, [comments, channelFilter]);
-
   const videoOptions = useMemo(() => {
     const map = new Map<string, string>();
-    for (const item of filteredByChannel) {
+    for (const item of filterComments(comments, {
+      channel: channelFilter,
+      reply: 'all',
+      video: 'all',
+    })) {
       map.set(item.videoId, item.videoTitle);
     }
     return Array.from(map.entries()).sort((a, b) => a[1].localeCompare(b[1]));
-  }, [filteredByChannel]);
+  }, [comments, channelFilter]);
 
   useEffect(() => {
     if (videoFilter === 'all') return;
@@ -94,17 +146,16 @@ export function CommentsView() {
     }
   }, [videoFilter, videoOptions]);
 
-  const visibleComments = useMemo(() => {
-    const byReplyStatus =
-      replyFilter === 'needs_reply'
-        ? filteredByChannel.filter((item) => !item.hasChannelReply)
-        : filteredByChannel;
+  const visibleComments = useMemo(
+    () =>
+      filterComments(comments, {
+        channel: channelFilter,
+        reply: replyFilter,
+        video: videoFilter,
+      }),
+    [comments, channelFilter, replyFilter, videoFilter],
+  );
 
-    if (videoFilter === 'all') return byReplyStatus;
-    return byReplyStatus.filter((item) => item.videoId === videoFilter);
-  }, [filteredByChannel, replyFilter, videoFilter]);
-
-  const PAGE_SIZE = 15;
   const totalPages = Math.max(1, Math.ceil(visibleComments.length / PAGE_SIZE));
   const pagedComments = visibleComments.slice(
     page * PAGE_SIZE,
@@ -126,12 +177,34 @@ export function CommentsView() {
   useEffect(() => {
     if (!selectedComment) {
       setSelectedId(null);
+      setMobileView('list');
       return;
     }
     if (selectedId !== selectedComment.commentId) {
       setSelectedId(selectedComment.commentId);
     }
   }, [selectedComment, selectedId]);
+
+  const openComment = useCallback((commentId: string) => {
+    setSelectedId(commentId);
+    setMobileView('detail');
+    if (!isSplitLayout()) {
+      requestAnimationFrame(() => backButtonRef.current?.focus());
+    }
+  }, []);
+
+  const backToList = useCallback(() => {
+    setMobileView('list');
+    const commentId = selectedComment?.commentId;
+    if (!commentId) return;
+    requestAnimationFrame(() => {
+      listRef.current
+        ?.querySelector<HTMLElement>(
+          `[data-comment-id="${CSS.escape(commentId)}"]`,
+        )
+        ?.focus();
+    });
+  }, [selectedComment]);
 
   const handleGenerateDrafts = useCallback(
     async (comment: YouTubeCommentThread) => {
@@ -148,21 +221,39 @@ export function CommentsView() {
           headers: { 'Content-Type': 'application/json' },
           method: 'POST',
         });
-        if (!res.ok) throw new Error('Failed to generate drafts');
+        if (!res.ok) {
+          const failure = await readErrorResponse(
+            res,
+            'Failed to generate drafts',
+          );
+          if (failure.code === 'draft_not_configured') {
+            loadDraftCapability();
+          }
+          setActionError({
+            commentId: comment.commentId,
+            error: failure,
+            kind: 'draft',
+          });
+          return;
+        }
         const data = await res.json();
         setDraftsByComment((prev) => ({
           ...prev,
           [comment.commentId]: data.drafts,
         }));
       } catch (e) {
-        setActionError(
-          e instanceof Error ? e.message : 'Failed to generate drafts',
-        );
+        setActionError({
+          commentId: comment.commentId,
+          error: {
+            error: e instanceof Error ? e.message : 'Failed to generate drafts',
+          },
+          kind: 'draft',
+        });
       } finally {
         setDraftLoadingId(null);
       }
     },
-    [],
+    [loadDraftCapability],
   );
 
   const handleSendReply = useCallback(
@@ -179,7 +270,14 @@ export function CommentsView() {
           headers: { 'Content-Type': 'application/json' },
           method: 'POST',
         });
-        if (!res.ok) throw new Error('Failed to send reply');
+        if (!res.ok) {
+          setActionError({
+            commentId: comment.commentId,
+            error: await readErrorResponse(res, 'Failed to send reply'),
+            kind: 'send',
+          });
+          return;
+        }
         const reply: YouTubeCommentReply = await res.json();
         setComments((prev) =>
           prev.map((item) =>
@@ -194,7 +292,13 @@ export function CommentsView() {
           ),
         );
       } catch (e) {
-        setActionError(e instanceof Error ? e.message : 'Failed to send reply');
+        setActionError({
+          commentId: comment.commentId,
+          error: {
+            error: e instanceof Error ? e.message : 'Failed to send reply',
+          },
+          kind: 'send',
+        });
       } finally {
         setSendingByComment((prev) => ({
           ...prev,
@@ -205,10 +309,22 @@ export function CommentsView() {
     [],
   );
 
+  const isDraftUnavailable = draftCapability?.available === false;
+  const selectedError =
+    actionError && actionError.commentId === selectedComment?.commentId
+      ? actionError
+      : null;
+
   return (
-    <div className="flex h-full">
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="flex items-center justify-between gap-4 mb-4 flex-wrap">
+    <div className="flex h-full min-h-0">
+      <section
+        aria-label="Comments"
+        className={cn(
+          'min-h-0 min-w-0 flex-1 overflow-y-auto p-4 sm:p-6',
+          mobileView === 'detail' && 'hidden lg:block',
+        )}
+      >
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <p className="text-xs text-text-muted">
             {loading
               ? 'Loading comments...'
@@ -217,42 +333,66 @@ export function CommentsView() {
               ? ` · updated ${new Date(fetchedAt).toLocaleTimeString()}`
               : ''}
           </p>
-          <div className="flex items-center gap-3 flex-wrap">
-            <select
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:gap-3">
+            <Select
               value={replyFilter}
-              onChange={(e) => setReplyFilter(e.target.value as ReplyFilter)}
-              className="h-9 rounded-md border border-surface-border bg-surface-card px-3 text-xs text-text-primary"
+              onValueChange={(value) => setReplyFilter(value as ReplyFilter)}
             >
-              <option value="needs_reply">Needs reply</option>
-              <option value="all">All comments</option>
-            </select>
-            <select
-              value={channelFilter}
-              onChange={(e) => setChannelFilter(e.target.value)}
-              className="h-9 rounded-md border border-surface-border bg-surface-card px-3 text-xs text-text-primary"
-            >
-              <option value="all">All channels</option>
-              {channelOptions.map((ch) => (
-                <option key={ch} value={ch}>
-                  {ch}
-                </option>
-              ))}
-            </select>
-            <select
-              value={videoFilter}
-              onChange={(e) => setVideoFilter(e.target.value)}
-              className="h-9 max-w-[320px] rounded-md border border-surface-border bg-surface-card px-3 text-xs text-text-primary"
-            >
-              <option value="all">All videos</option>
-              {videoOptions.map(([videoId, videoTitle]) => (
-                <option key={videoId} value={videoId}>
-                  {videoTitle}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger
+                aria-label="Reply status"
+                className={cn(
+                  FILTER_TRIGGER_CLASS,
+                  'grow basis-[calc(50%-0.25rem)] sm:w-36 sm:grow-0 sm:basis-auto',
+                )}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className={FILTER_CONTENT_CLASS}>
+                <SelectItem value="needs_reply">Needs reply</SelectItem>
+                <SelectItem value="all">All comments</SelectItem>
+              </SelectContent>
+            </Select>
+            <Select value={channelFilter} onValueChange={setChannelFilter}>
+              <SelectTrigger
+                aria-label="Channel"
+                className={cn(
+                  FILTER_TRIGGER_CLASS,
+                  'grow basis-[calc(50%-0.25rem)] sm:w-36 sm:grow-0 sm:basis-auto',
+                )}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className={FILTER_CONTENT_CLASS}>
+                <SelectItem value="all">All channels</SelectItem>
+                {channelOptions.map((ch) => (
+                  <SelectItem key={ch} value={ch}>
+                    {ch}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <Select value={videoFilter} onValueChange={setVideoFilter}>
+              <SelectTrigger
+                aria-label="Video"
+                className={cn(
+                  FILTER_TRIGGER_CLASS,
+                  'flex-1 sm:w-[260px] sm:max-w-[320px] sm:flex-none',
+                )}
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className={FILTER_CONTENT_CLASS}>
+                <SelectItem value="all">All videos</SelectItem>
+                {videoOptions.map(([videoId, videoTitle]) => (
+                  <SelectItem key={videoId} value={videoId}>
+                    {videoTitle}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
             <Button
               onClick={loadComments}
-              className="text-xs hover:border-accent-red"
+              className="shrink-0 text-xs hover:border-accent-red"
             >
               Refresh
             </Button>
@@ -284,14 +424,16 @@ export function CommentsView() {
             <p className="text-text-secondary text-sm">No comments found</p>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div ref={listRef} className="space-y-3">
             {pagedComments.map((comment) => {
               const isSelected =
                 selectedComment?.commentId === comment.commentId;
               return (
                 <Button
                   key={comment.commentId}
-                  onClick={() => setSelectedId(comment.commentId)}
+                  data-comment-id={comment.commentId}
+                  aria-current={isSelected ? 'true' : undefined}
+                  onClick={() => openComment(comment.commentId)}
                   variant="ghost"
                   className={`h-auto w-full flex-col items-stretch justify-start whitespace-normal rounded-xl border p-4 text-left transition-colors ${
                     isSelected
@@ -303,14 +445,19 @@ export function CommentsView() {
                     <span className="text-[10px] font-bold px-2 py-1 rounded bg-accent-red/15 text-accent-red uppercase">
                       {comment.channelLabel}
                     </span>
-                    <span className="text-[10px] text-text-muted">
+                    {comment.isOwnedComment && (
+                      <span className="text-[10px] font-medium px-2 py-1 rounded bg-surface-elevated text-text-muted">
+                        Channel post
+                      </span>
+                    )}
+                    <span className="min-w-0 break-words text-[10px] text-text-muted">
                       {comment.videoTitle}
                     </span>
                   </div>
                   <p className="text-sm text-text-primary font-medium">
                     {comment.authorDisplayName}
                   </p>
-                  <p className="text-xs text-text-secondary leading-relaxed mt-1 line-clamp-3">
+                  <p className="text-xs text-text-secondary leading-relaxed mt-1 line-clamp-3 break-words">
                     {comment.text}
                   </p>
                   <div className="flex items-center gap-3 mt-2 text-[10px] text-text-muted">
@@ -345,9 +492,15 @@ export function CommentsView() {
             </Button>
           </div>
         )}
-      </div>
+      </section>
 
-      <aside className="w-[460px] shrink-0 border-l border-surface-border overflow-y-auto p-4">
+      <aside
+        aria-label="Reply"
+        className={cn(
+          'min-h-0 min-w-0 overflow-y-auto border-surface-border p-4 lg:block lg:w-[400px] lg:flex-none lg:shrink-0 lg:border-l xl:w-[460px]',
+          mobileView === 'list' ? 'hidden' : 'flex-1',
+        )}
+      >
         {!selectedComment ? (
           <div className="flex items-center justify-center h-full">
             <p className="text-xs text-text-muted text-center">
@@ -358,6 +511,16 @@ export function CommentsView() {
           </div>
         ) : (
           <div className="space-y-4">
+            <Button
+              ref={backButtonRef}
+              onClick={backToList}
+              variant="ghost"
+              size="sm"
+              className="-ml-2 text-xs lg:hidden"
+            >
+              <ArrowLeft className="size-4" aria-hidden="true" />
+              All comments
+            </Button>
             <div className="bg-surface-card border border-surface-border rounded-xl p-4 space-y-3">
               <div>
                 <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
@@ -367,7 +530,7 @@ export function CommentsView() {
                   href={buildYouTubeVideoUrl(selectedComment.videoId)}
                   target="_blank"
                   rel="noreferrer"
-                  className="text-sm font-semibold text-text-primary transition-colors hover:text-accent-red hover:underline"
+                  className="break-words text-sm font-semibold text-text-primary transition-colors hover:text-accent-red hover:underline"
                 >
                   {selectedComment.videoTitle}
                 </a>
@@ -376,18 +539,29 @@ export function CommentsView() {
                 <p className="text-[10px] uppercase tracking-wider text-text-muted mb-1">
                   Comment
                 </p>
-                <p className="text-xs text-text-secondary leading-relaxed">
+                <p className="break-words text-xs text-text-secondary leading-relaxed">
                   {selectedComment.text}
                 </p>
               </div>
-              <div className="flex items-center justify-between gap-3">
-                <div className="text-[10px] text-text-muted">
+              {selectedComment.isOwnedComment && (
+                <p className="text-[10px] text-text-muted">
+                  Posted by the show, so it is excluded from Needs reply.
+                </p>
+              )}
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="min-w-0 text-[10px] text-text-muted">
                   {selectedComment.authorDisplayName} ·{' '}
                   {formatPublishedAt(selectedComment.publishedAt)}
                 </div>
                 <Button
                   onClick={() => handleGenerateDrafts(selectedComment)}
-                  disabled={draftLoadingId === selectedComment.commentId}
+                  disabled={
+                    isDraftUnavailable ||
+                    draftLoadingId === selectedComment.commentId
+                  }
+                  aria-describedby={
+                    isDraftUnavailable ? 'draft-unavailable' : undefined
+                  }
                   className="text-xs bg-accent-red/10 text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
                 >
                   {draftLoadingId === selectedComment.commentId
@@ -397,9 +571,50 @@ export function CommentsView() {
               </div>
             </div>
 
-            {actionError && (
-              <div className="bg-accent-red/10 border border-accent-red/20 rounded-xl p-3 text-xs text-accent-red">
-                {actionError}
+            {isDraftUnavailable && (
+              <div
+                id="draft-unavailable"
+                className="rounded-xl border border-surface-border bg-surface-elevated p-3 text-xs text-text-secondary"
+              >
+                <p className="font-medium text-text-primary">
+                  Reply drafts are unavailable
+                </p>
+                <p className="mt-1">
+                  The server is missing{' '}
+                  {draftCapability.missing.map((name, index) => (
+                    <span key={name}>
+                      {index > 0 ? ', ' : ''}
+                      <code className="text-text-primary">{name}</code>
+                    </span>
+                  ))}
+                  . Set it in the deployment environment and redeploy. You can
+                  still reply on YouTube directly.
+                </p>
+              </div>
+            )}
+
+            {selectedError && (
+              <div
+                role="alert"
+                className="space-y-2 rounded-xl border border-accent-red/20 bg-accent-red/10 p-3 text-xs text-accent-red"
+              >
+                <p className="font-medium">{selectedError.error.error}</p>
+                {selectedError.error.hint && (
+                  <p className="text-text-secondary">
+                    {selectedError.error.hint}
+                  </p>
+                )}
+                {selectedError.kind === 'draft' &&
+                  selectedError.error.code !== 'draft_not_configured' && (
+                    <Button
+                      onClick={() => handleGenerateDrafts(selectedComment)}
+                      disabled={draftLoadingId === selectedComment.commentId}
+                      variant="danger"
+                      size="sm"
+                    >
+                      Retry
+                    </Button>
+                  )}
               </div>
             )}
 
@@ -420,7 +635,7 @@ export function CommentsView() {
                           </span>
                           <CopyButton text={draft} />
                         </div>
-                        <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap">
+                        <p className="text-xs text-text-secondary leading-relaxed whitespace-pre-wrap break-words">
                           {draft}
                         </p>
                         <div className="mt-4">
@@ -462,14 +677,14 @@ export function CommentsView() {
                       className="block rounded-lg border border-surface-border bg-surface-elevated p-3 transition-colors hover:border-accent-red/40 hover:bg-surface-elevated/80"
                     >
                       <div className="flex items-center justify-between gap-3">
-                        <p className="text-xs font-medium text-text-primary">
+                        <p className="min-w-0 truncate text-xs font-medium text-text-primary">
                           {reply.authorDisplayName}
                         </p>
-                        <span className="text-[10px] text-text-muted">
+                        <span className="shrink-0 text-[10px] text-text-muted">
                           {formatPublishedAt(reply.publishedAt)}
                         </span>
                       </div>
-                      <p className="text-xs text-text-secondary leading-relaxed mt-2">
+                      <p className="break-words text-xs text-text-secondary leading-relaxed mt-2">
                         {reply.text}
                       </p>
                     </a>

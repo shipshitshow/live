@@ -104,6 +104,7 @@ export { X_EPISODE_POST_SLOTS } from './x';
 export type {
   ChannelFilter,
   ChannelStats,
+  CommentReplyDraftCapability,
   CommentReplyDraftResponse,
   DailyMetric,
   DateRange,
