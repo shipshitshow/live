@@ -1,30 +1,29 @@
 # Ship Shit Show — Product Marketing Context
 
-last_verified: 2026-10-02
+last_verified: 2026-10-03
 
 ## What is it?
-A YouTube livestream show and content channel about AI tools for indie developers. Weekly streams covering trending AI/dev news, tool reviews, and hot takes on the AI coding ecosystem.
+A weekly YouTube show and podcast (video + live) where two founders, Vincent and Mitchell, talk about AI and how they actually use it to run their businesses. It is not a model-testing or benchmark show (Vincent, 2026-10-03).
 
 ## Target Audience
-**Primary:** Indie developers and solo founders who use AI coding tools (Cursor, Claude Code, Codex, OpenClaw) daily to ship products faster.
+**Primary:** Founders, indie developers and small-team operators who want to see how AI is used day to day inside real businesses.
 
-**Demographics:** 25-40, developers, English-speaking, active on X/Twitter and Hacker News.
+**Demographics:** 25-40, builders and founders, English-speaking, active on X/Twitter and YouTube.
 
 **Pain points:**
-- Overwhelmed by the pace of AI tool releases
-- Don't know which tools to trust or invest time learning
-- Want honest takes, not sponsored shill content
-- Need to stay current without reading 50 newsletters
+- Hear a lot about AI, see little about how operators actually use it
+- Unsure where AI belongs in their own business
+- Want honest experience, not sponsored shill content
 
 ## Voice & Tone
 - Direct, no fluff, no corporate speak
 - Opinionated but informed — always backs claims with sources
 - Two hosts speak naturally from their own experience; use "I" for a host's own claim and "we" for shared show actions.
 - Swears occasionally, never excessively
-- Think: your smart dev friend who reads all the AI news so you don't have to
+- Think: two founder friends comparing notes on what AI actually does in their businesses
 
 ## Key Differentiator
-Firsthand operator experience and honest disagreement between Vincent and Mitchell. Source-led model/workflow comparisons lead to a useful builder decision. A verified live, recorded or local demo supplies proof when available; discussion does not promise a demo without readiness.
+Two founders sharing firsthand use of AI in their own businesses, including honest disagreement between Vincent and Mitchell. A verified live, recorded or local demo supplies proof when available; discussion does not promise a demo without readiness.
 
 ## Brand
 - **Name:** Ship Shit Show
@@ -34,10 +33,9 @@ Firsthand operator experience and honest disagreement between Vincent and Mitche
 - **X account:** @shipshitdev is the Ship Shit Show account. Treat `shipshitdev` as the show account for X/trends/social integrations, not as a separate personal fallback.
 
 ## Content Pillars
-1. Weekly source-led livestream answering a builder's model/workflow question
-2. Tool comparisons and honest reviews
-3. Building in public with AI tools
-4. Hot takes on AI industry moves
+1. Weekly conversation (video + live) on how we use AI in our businesses
+2. Building in public with AI
+3. Takes on AI industry moves and what they mean for founders
 
 ## CTA Style
 - Never begging: "like and subscribe if you're not braindead"
