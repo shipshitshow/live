@@ -1,4 +1,5 @@
 import type { TrendItem } from '@shipshitshow/types';
+import { toPlainTextSummary } from './summary';
 
 const HN_FRONT_PAGE =
   'https://hn.algolia.com/api/v1/search?tags=front_page&hitsPerPage=30';
@@ -22,7 +23,7 @@ function toTrendItem(hit: HNHit): TrendItem {
     id: `hn-${hit.objectID}`,
     score: hit.points,
     source: 'hackernews',
-    summary: hit.story_text?.slice(0, 200) || undefined,
+    summary: toPlainTextSummary(hit.story_text),
     timestamp: hit.created_at,
     title: hit.title,
     url: hit.url || `https://news.ycombinator.com/item?id=${hit.objectID}`,

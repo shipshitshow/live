@@ -21,7 +21,7 @@ interface TrendFiltersProps {
 
 export function TrendFilters({ active, onChange, counts }: TrendFiltersProps) {
   return (
-    <div className="flex gap-1.5">
+    <div className="flex flex-wrap gap-1.5">
       {FILTERS.map((f) => (
         <Button
           key={f.value}
