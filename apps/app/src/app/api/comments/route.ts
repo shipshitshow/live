@@ -1,5 +1,6 @@
 import type { YouTubeCommentThread } from '@shipshitshow/types';
 import { type NextRequest, NextResponse } from 'next/server';
+import { requireProducer } from '@/lib/producer-auth';
 import { fetchCommentThreads } from '@/lib/youtube/comments';
 import {
   getAccessToken,
@@ -8,6 +9,9 @@ import {
 } from '@/lib/youtube/token';
 
 export async function GET(req: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const maxResults = Number(req.nextUrl.searchParams.get('maxResults') ?? 100);
 
   try {

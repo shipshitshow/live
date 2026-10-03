@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 
 interface ClientLogBody {
   event?: unknown;
@@ -12,6 +13,9 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 }
 
 export async function POST(request: Request) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   let body: ClientLogBody;
 
   try {

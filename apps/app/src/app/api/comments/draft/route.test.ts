@@ -1,5 +1,6 @@
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test';
 import { NextRequest } from 'next/server';
+import { producerSession } from '@/lib/producer-session';
 import { GET, POST } from './route';
 
 const BODY = {
@@ -15,12 +16,25 @@ const FIXTURE_CREDENTIAL = ['sk', 'live', 'SECRET999'].join('-');
 const realFetch = globalThis.fetch;
 let savedKey: string | undefined;
 
+let savedProducerIds: string | undefined;
+let producerSpy: ReturnType<typeof producerAs>;
+function producerAs() {
+  return spyOn(producerSession, 'getUserId').mockResolvedValue('user_producer');
+}
+
 beforeEach(() => {
+  savedProducerIds = process.env.PRODUCER_CLERK_USER_IDS;
+  process.env.PRODUCER_CLERK_USER_IDS = 'user_producer';
+  producerSpy = producerAs();
   savedKey = process.env.OPENROUTER_API_KEY;
   delete process.env.OPENROUTER_API_KEY;
 });
 
 afterEach(() => {
+  producerSpy.mockRestore();
+  if (savedProducerIds === undefined)
+    delete process.env.PRODUCER_CLERK_USER_IDS;
+  else process.env.PRODUCER_CLERK_USER_IDS = savedProducerIds;
   globalThis.fetch = realFetch;
   if (savedKey === undefined) delete process.env.OPENROUTER_API_KEY;
   else process.env.OPENROUTER_API_KEY = savedKey;

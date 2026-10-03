@@ -5,9 +5,13 @@ import type {
 import { NextResponse } from 'next/server';
 import { buildEpisodeRollup } from '@/lib/episode-rollup';
 import { logError, logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import { isYouTubeReauthError } from '@/lib/youtube/token';
 
 export async function GET() {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   try {
     const rollup = await buildEpisodeRollup();
     logEvent('api.episode_rollup.list', {
@@ -16,7 +20,7 @@ export async function GET() {
     });
 
     return NextResponse.json(rollup, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=60' },
+      headers: { 'Cache-Control': 'private, max-age=300' },
     });
   } catch (error) {
     if (isYouTubeReauthError(error)) {

@@ -9,6 +9,7 @@ import {
   getEpisodeDistribution,
   saveEpisodeDistributionAsset,
 } from '@/lib/distribution-store';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -28,6 +29,9 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ date: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { date } = await params;
   if (!DATE_PATTERN.test(date)) {
     return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
@@ -43,6 +47,9 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ date: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('checklist changes');
   }

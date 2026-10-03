@@ -5,6 +5,7 @@ import {
   getEpisodeXMetrics,
   saveEpisodeXPosts,
 } from '@/lib/livestreams-x-posts';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -54,6 +55,9 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { slug } = await params;
   const date = await resolveStreamDate(slug);
   if (!date) {
@@ -73,6 +77,9 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('X post URLs and metrics');
   }

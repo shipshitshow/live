@@ -1,5 +1,6 @@
 import type { ErrorResponse } from '@shipshitshow/types';
 import { type NextRequest, NextResponse } from 'next/server';
+import { requireProducer } from '@/lib/producer-auth';
 import { replyToComment } from '@/lib/youtube/comments';
 import { getAccessToken, getChannelConfigs } from '@/lib/youtube/token';
 
@@ -12,6 +13,9 @@ function statusForCode(code: string | undefined): number {
 }
 
 export async function POST(req: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   let body: unknown;
   try {
     body = await req.json();

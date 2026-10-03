@@ -9,6 +9,7 @@ import {
   getCommentDraftCapability,
 } from '@/lib/comment-reply-drafts';
 import { logError } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 
 const REQUIRED_FIELDS = [
   'videoTitle',
@@ -18,12 +19,18 @@ const REQUIRED_FIELDS = [
 ] as const;
 
 export async function GET() {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   return NextResponse.json<CommentReplyDraftCapability>(
     getCommentDraftCapability(),
   );
 }
 
 export async function POST(req: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   let body: unknown;
   try {
     body = await req.json();

@@ -8,6 +8,7 @@ import {
   parseLeadInput,
 } from '@/lib/leads-store';
 import { logError, logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -16,6 +17,9 @@ import {
 } from '@/lib/storage-capability-server';
 
 export async function GET() {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   try {
     const [leads, episodes] = await Promise.all([
       listLeads(),
@@ -44,6 +48,9 @@ export async function GET() {
 }
 
 export async function POST(request: Request) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('leads');
   }

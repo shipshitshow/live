@@ -1,28 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireProducer } from '@/lib/producer-auth';
 import {
   getSocialOAuthConfig,
   isSocialOAuthPlatform,
 } from '@/lib/social/oauth';
-
-function encodeState(payload: { next: string; nonce: string }) {
-  return Buffer.from(JSON.stringify(payload), 'utf8').toString('base64url');
-}
+import {
+  createOAuthState,
+  OAUTH_STATE_MAX_AGE_SECONDS,
+  SOCIAL_OAUTH_STATE_COOKIE,
+  sanitizeNextPath,
+} from '@/lib/youtube/oauth-state';
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ platform: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { platform } = await params;
   if (!isSocialOAuthPlatform(platform)) {
     return NextResponse.json({ error: 'Unknown platform' }, { status: 404 });
   }
 
-  const next = request.nextUrl.searchParams.get('next') || '/analytics';
+  const next = sanitizeNextPath(
+    request.nextUrl.searchParams.get('next'),
+    '/analytics',
+  );
   const config = getSocialOAuthConfig(platform, request.nextUrl.origin);
-  const state = encodeState({
-    next,
-    nonce: crypto.randomUUID(),
-  });
+  const { state, nonce } = createOAuthState({ channel: platform, next });
 
   const query: Record<string, string> =
     platform === 'tiktok'
@@ -41,7 +47,15 @@ export async function GET(
           state,
         };
 
-  return NextResponse.redirect(
+  const response = NextResponse.redirect(
     `${config.authorizeUrl}?${new URLSearchParams(query)}`,
   );
+  response.cookies.set(SOCIAL_OAUTH_STATE_COOKIE, nonce, {
+    httpOnly: true,
+    maxAge: OAUTH_STATE_MAX_AGE_SECONDS,
+    path: '/api/auth/social',
+    sameSite: 'lax',
+    secure: request.nextUrl.protocol === 'https:',
+  });
+  return response;
 }

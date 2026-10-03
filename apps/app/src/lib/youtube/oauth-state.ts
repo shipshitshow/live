@@ -9,7 +9,25 @@ import crypto from 'node:crypto';
  */
 
 export const OAUTH_STATE_COOKIE = 'yt_oauth_state';
+export const SOCIAL_OAUTH_STATE_COOKIE = 'social_oauth_state';
 export const OAUTH_STATE_MAX_AGE_SECONDS = 600; // 10 min to complete consent
+
+export function sanitizeNextPath(
+  raw: string | null | undefined,
+  fallback: string,
+): string {
+  if (
+    !raw?.startsWith('/') ||
+    raw.startsWith('//') ||
+    raw.includes('\\') ||
+    Array.from(raw).some((character) => {
+      const code = character.charCodeAt(0);
+      return code < 32 || code === 127;
+    })
+  )
+    return fallback;
+  return raw;
+}
 
 interface OAuthStatePayload {
   channel: string;
@@ -62,8 +80,8 @@ export function verifyOAuthState(
 ): { channel: string; next: string } | null {
   if (!rawState || !cookieNonce) return null;
 
-  const [payloadB64, signature] = rawState.split('.');
-  if (!payloadB64 || !signature) return null;
+  const [payloadB64, signature, extra] = rawState.split('.');
+  if (!payloadB64 || !signature || extra !== undefined) return null;
 
   const expected = sign(payloadB64);
   const provided = Buffer.from(signature);

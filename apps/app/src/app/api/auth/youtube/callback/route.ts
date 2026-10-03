@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
+import { logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import {
   OAUTH_STATE_COOKIE,
+  sanitizeNextPath,
   verifyOAuthState,
 } from '@/lib/youtube/oauth-state';
 import {
@@ -22,6 +25,9 @@ function clearStateCookie(response: NextResponse): NextResponse {
 }
 
 export async function GET(request: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isYouTubeAuthEnabled()) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
@@ -37,7 +43,8 @@ export async function GET(request: NextRequest) {
   if (error) {
     const redirectUrl = new URL('/auth/youtube', request.nextUrl.origin);
     redirectUrl.searchParams.set('error', error);
-    if (state?.next) redirectUrl.searchParams.set('next', state.next);
+    if (state?.next)
+      redirectUrl.searchParams.set('next', sanitizeNextPath(state.next, '/'));
     return clearStateCookie(NextResponse.redirect(redirectUrl));
   }
 
@@ -89,13 +96,18 @@ export async function GET(request: NextRequest) {
       'error',
       body.error_description || body.error || 'token_exchange_failed',
     );
-    redirectUrl.searchParams.set('next', state.next);
+    redirectUrl.searchParams.set('next', sanitizeNextPath(state.next, '/'));
     return clearStateCookie(NextResponse.redirect(redirectUrl));
   }
 
   await saveRefreshToken(state.channel, body.refresh_token);
+  logEvent('oauth.connected', {
+    producerUserId: producer.userId,
+    provider: 'youtube',
+    target: state.channel,
+  });
 
-  const nextPath = state.next.startsWith('/') ? state.next : '/';
+  const nextPath = sanitizeNextPath(state.next, '/');
   return clearStateCookie(
     NextResponse.redirect(new URL(nextPath, request.nextUrl.origin)),
   );

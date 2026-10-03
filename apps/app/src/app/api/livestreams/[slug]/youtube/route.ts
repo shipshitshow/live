@@ -4,6 +4,7 @@ import { todayLocalDate } from '@/lib/date';
 import { findTopicFile } from '@/lib/livestreams-files';
 import { extractVideoId, extractYouTubeUrl } from '@/lib/livestreams-youtube';
 import { logError, logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import {
   getAccessToken,
   getChannelConfigs,
@@ -28,6 +29,9 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { slug } = await params;
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date') || todayLocalDate();

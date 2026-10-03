@@ -7,6 +7,7 @@ import {
   saveLinkedInPosts,
 } from '@/lib/linkedin-metrics-store';
 import { logError, logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -24,6 +25,9 @@ export async function GET(
   _request: Request,
   { params }: { params: Promise<{ date: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { date } = await params;
   if (!isLivestreamDate(date)) {
     return NextResponse.json({ error: 'Invalid date' }, { status: 400 });
@@ -44,6 +48,9 @@ export async function PUT(
   request: Request,
   { params }: { params: Promise<{ date: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('LinkedIn post metrics');
   }

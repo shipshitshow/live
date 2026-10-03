@@ -1,8 +1,12 @@
 import { NextResponse } from 'next/server';
 import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
+import { requireProducer } from '@/lib/producer-auth';
 import { getYouTubeAuthStatus } from '@/lib/youtube/token';
 
 export async function GET() {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isYouTubeAuthEnabled()) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }

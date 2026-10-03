@@ -19,6 +19,8 @@ const ENV_KEYS = [
   'PRODUCER_CLERK_USER_IDS',
   'OAUTH_STATE_SECRET',
   'YOUTUBE_CLIENT_ID',
+  'YOUTUBE_CHANNEL_ID_MAIN',
+  'YOUTUBE_CHANNEL_ID_CLIPS',
   'INSTAGRAM_CLIENT_ID',
   'INSTAGRAM_CLIENT_SECRET',
   'VERCEL',
@@ -65,6 +67,8 @@ beforeEach(() => {
   process.env.INSTAGRAM_CLIENT_ID = 'test-client';
   process.env.INSTAGRAM_CLIENT_SECRET = 'test-secret';
   delete process.env.YOUTUBE_CLIENT_ID;
+  delete process.env.YOUTUBE_CHANNEL_ID_MAIN;
+  delete process.env.YOUTUBE_CHANNEL_ID_CLIPS;
   session = spyOn(producerSession, 'getUserId').mockResolvedValue(
     'user_producer',
   );
