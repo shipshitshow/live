@@ -44,7 +44,7 @@ export function KanbanColumn({
 
   return (
     <div
-      className={`flex-1 min-w-[280px] rounded-xl p-2 transition-colors ${
+      className={`min-w-0 rounded-xl p-2 transition-colors ${
         isDragOver ? 'bg-surface-elevated ring-1 ring-accent-red/30' : ''
       }`}
       onDragOver={(e) => {

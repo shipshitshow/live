@@ -17,6 +17,10 @@ import {
 } from '@/lib/markdown-render';
 import { buildDefaultMetadata, toAbsoluteUrl } from '@/lib/site';
 import { clampText, stripMarkdown } from '@/lib/text';
+import {
+  type NormalizedTranscript,
+  normalizeTranscript,
+} from '@/lib/transcript-normalize';
 import { analyzeTranscriptScorecard } from '@/lib/transcript-scorecard';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
@@ -138,6 +142,71 @@ function TalkingPointsPanel({ topics }: { topics: Topic[] }) {
   );
 }
 
+function TranscriptPanel({
+  transcript,
+  youtubeUrl,
+}: {
+  transcript: NormalizedTranscript;
+  youtubeUrl: string | null;
+}) {
+  return (
+    <>
+      <div className="space-y-2 border-b border-surface-border pb-4">
+        <h2 className="text-sm font-semibold text-text-primary">Transcript</h2>
+        <p className="text-xs leading-relaxed text-text-muted">
+          <span className="mr-2 inline-flex rounded-full border border-yellow-500/20 bg-yellow-500/5 px-2 py-0.5 text-[10px] font-medium uppercase tracking-wider text-yellow-400">
+            ASR · not reviewed
+          </span>
+          Imported from{' '}
+          {youtubeUrl ? (
+            <a
+              href={youtubeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-text-secondary underline decoration-surface-border underline-offset-2 transition-colors hover:text-accent-red"
+            >
+              the original YouTube captions
+            </a>
+          ) : (
+            'the original caption file'
+          )}
+          . Wording, names and claims are kept as captured
+          {transcript.hasSpeakerMarkers
+            ? '; breaks mark caption speaker changes, speakers are not identified.'
+            : '.'}
+        </p>
+      </div>
+      {transcript.turns.length === 0 ? (
+        <p className="pt-4 text-sm text-text-muted">
+          This transcript is empty.
+        </p>
+      ) : (
+        <div className="max-h-[760px] space-y-3 overflow-auto pt-4 text-sm leading-relaxed text-text-secondary">
+          {transcript.turns.map((turn, turnIndex) => (
+            <div
+              key={turnIndex}
+              className={
+                turn.speakerChange
+                  ? 'space-y-2 border-l-2 border-surface-border pl-3'
+                  : 'space-y-2'
+              }
+            >
+              {turn.speakerChange ? (
+                <span className="sr-only">Speaker change.</span>
+              ) : null}
+              {turn.paragraphs.map((paragraph, paragraphIndex) => (
+                <p key={paragraphIndex} className="break-words">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
+          ))}
+        </div>
+      )}
+    </>
+  );
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -158,7 +227,10 @@ export async function generateMetadata({
   const pageUrl = toAbsoluteUrl(
     `/videos/${encodeURIComponent(video.routeSlug)}`,
   );
-  const description = clampText(stripMarkdown(video.transcript), 180);
+  const description = clampText(
+    stripMarkdown(normalizeTranscript(video.transcript).plainText),
+    180,
+  );
 
   return {
     ...defaults,
@@ -207,7 +279,8 @@ export default async function VideoDetailPage({
   const thumbnailUrl = video.videoId
     ? await buildYouTubeThumbnailUrl(video.videoId)
     : '/icon.svg';
-  const transcriptScorecard = analyzeTranscriptScorecard(video.transcript);
+  const transcript = normalizeTranscript(video.transcript);
+  const transcriptScorecard = analyzeTranscriptScorecard(transcript.plainText);
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-8">
@@ -243,16 +316,10 @@ export default async function VideoDetailPage({
               {activeTab === 'talking-points' ? (
                 <TalkingPointsPanel topics={topics} />
               ) : (
-                <>
-                  <div className="border-b border-surface-border pb-4">
-                    <h2 className="text-sm font-semibold text-text-primary">
-                      Transcript
-                    </h2>
-                  </div>
-                  <pre className="max-h-[760px] overflow-auto whitespace-pre-wrap pt-4 text-sm leading-relaxed text-text-secondary">
-                    {video.transcript}
-                  </pre>
-                </>
+                <TranscriptPanel
+                  transcript={transcript}
+                  youtubeUrl={video.youtubeUrl}
+                />
               )}
             </div>
           </section>
