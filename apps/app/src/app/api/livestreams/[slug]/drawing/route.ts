@@ -5,6 +5,7 @@ import {
   readTopicDrawing,
   saveTopicDrawing,
 } from '@/lib/livestreams-store';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -22,6 +23,9 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { slug } = await params;
   const { searchParams } = new URL(request.url);
   const date = searchParams.get('date') || todayLocalDate();
@@ -44,6 +48,9 @@ export async function PATCH(
   request: Request,
   { params }: { params: Promise<{ slug: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('drawings');
   }

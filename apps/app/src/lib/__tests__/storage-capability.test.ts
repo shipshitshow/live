@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, test } from 'bun:test';
+import { afterEach, beforeEach, describe, expect, spyOn, test } from 'bun:test';
 import { NextRequest } from 'next/server';
 import { PUT as putLinkedIn } from '@/app/api/distribution/[date]/linkedin/route';
 import { PATCH as patchDistribution } from '@/app/api/distribution/[date]/route';
@@ -8,6 +8,7 @@ import { PATCH as patchDrawing } from '@/app/api/livestreams/[slug]/drawing/rout
 import { PUT as putXPosts } from '@/app/api/livestreams/[slug]/x-posts/route';
 import { PATCH as patchTopic } from '@/app/api/topics/[date]/[slug]/route';
 import { POST as postTopic } from '@/app/api/topics/route';
+import { producerSession } from '@/lib/producer-session';
 import {
   isStorageUnavailableResponse,
   STORAGE_UNAVAILABLE_CODE,
@@ -42,11 +43,24 @@ function useReadOnlyVercelRuntime() {
   delete process.env.PRODUCER_STORAGE;
 }
 
+let savedProducerIds: string | undefined;
+let producerSpy: ReturnType<typeof producerAs>;
+function producerAs() {
+  return spyOn(producerSession, 'getUserId').mockResolvedValue('user_producer');
+}
+
 beforeEach(() => {
+  savedProducerIds = process.env.PRODUCER_CLERK_USER_IDS;
+  process.env.PRODUCER_CLERK_USER_IDS = 'user_producer';
+  producerSpy = producerAs();
   previous = ENV_KEYS.map((key) => [key, process.env[key]] as const);
 });
 
 afterEach(() => {
+  producerSpy.mockRestore();
+  if (savedProducerIds === undefined)
+    delete process.env.PRODUCER_CLERK_USER_IDS;
+  else process.env.PRODUCER_CLERK_USER_IDS = savedProducerIds;
   for (const [key, value] of previous) {
     if (value === undefined) delete process.env[key];
     else process.env[key] = value;

@@ -3,6 +3,7 @@ import { isLeadStatus } from '@shipshitshow/types';
 import { type NextRequest, NextResponse } from 'next/server';
 import { updateLead } from '@/lib/leads-store';
 import { logError, logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -14,6 +15,9 @@ export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('lead changes');
   }

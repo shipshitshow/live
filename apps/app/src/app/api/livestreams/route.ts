@@ -10,8 +10,12 @@ import {
   resolveLivestreamDate,
 } from '@/lib/livestreams-store';
 import { logError, logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 
 export async function GET(request: Request) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { searchParams } = new URL(request.url);
   const requestedDate = searchParams.get('date') || todayLocalDate();
 

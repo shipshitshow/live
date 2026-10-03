@@ -1,21 +1,25 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { logEvent } from '@/lib/logger';
+import { requireProducer } from '@/lib/producer-auth';
 import {
   getSocialOAuthConfig,
   isSocialOAuthPlatform,
 } from '@/lib/social/oauth';
 import { saveSocialToken } from '@/lib/social/tokens';
+import {
+  SOCIAL_OAUTH_STATE_COOKIE,
+  sanitizeNextPath,
+  verifyOAuthState,
+} from '@/lib/youtube/oauth-state';
 
-function decodeState(raw: string | null): { next: string } | null {
-  if (!raw) return null;
-
-  try {
-    const parsed = JSON.parse(
-      Buffer.from(raw, 'base64url').toString('utf8'),
-    ) as { next?: string };
-    return typeof parsed.next === 'string' ? { next: parsed.next } : null;
-  } catch {
-    return null;
-  }
+function clearStateCookie(response: NextResponse): NextResponse {
+  response.cookies.set(SOCIAL_OAUTH_STATE_COOKIE, '', {
+    httpOnly: true,
+    maxAge: 0,
+    path: '/api/auth/social',
+    sameSite: 'lax',
+  });
+  return response;
 }
 
 function expiresAt(seconds: number | undefined): string | undefined {
@@ -27,6 +31,9 @@ export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ platform: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const { platform } = await params;
   if (!isSocialOAuthPlatform(platform)) {
     return NextResponse.json({ error: 'Unknown platform' }, { status: 404 });
@@ -36,13 +43,16 @@ export async function GET(
   const error =
     request.nextUrl.searchParams.get('error_description') ||
     request.nextUrl.searchParams.get('error');
-  const state = decodeState(request.nextUrl.searchParams.get('state'));
+  const state = verifyOAuthState(
+    request.nextUrl.searchParams.get('state'),
+    request.cookies.get(SOCIAL_OAUTH_STATE_COOKIE)?.value,
+  );
 
-  if (error || !code || !state) {
+  if (error || !code || !state || state.channel !== platform) {
     const redirectUrl = new URL('/auth/social', request.nextUrl.origin);
     redirectUrl.searchParams.set('platform', platform);
     redirectUrl.searchParams.set('error', error || 'invalid_callback');
-    return NextResponse.redirect(redirectUrl);
+    return clearStateCookie(NextResponse.redirect(redirectUrl));
   }
 
   const config = getSocialOAuthConfig(platform, request.nextUrl.origin);
@@ -88,7 +98,7 @@ export async function GET(
       'error',
       body.error_description || body.error || 'token_exchange_failed',
     );
-    return NextResponse.redirect(redirectUrl);
+    return clearStateCookie(NextResponse.redirect(redirectUrl));
   }
 
   await saveSocialToken(platform, {
@@ -99,6 +109,13 @@ export async function GET(
     scope: body.scope,
   });
 
-  const nextPath = state.next.startsWith('/') ? state.next : '/analytics';
-  return NextResponse.redirect(new URL(nextPath, request.nextUrl.origin));
+  logEvent('oauth.connected', {
+    producerUserId: producer.userId,
+    provider: platform,
+    target: body.open_id || body.user_id || platform,
+  });
+  const nextPath = sanitizeNextPath(state.next, '/analytics');
+  return clearStateCookie(
+    NextResponse.redirect(new URL(nextPath, request.nextUrl.origin)),
+  );
 }

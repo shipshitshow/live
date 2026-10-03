@@ -7,6 +7,7 @@ import type {
 } from '@shipshitshow/types';
 import { NextRequest, NextResponse } from 'next/server';
 import { formatLocalDate, todayLocalDate } from '@/lib/date';
+import { requireProducer } from '@/lib/producer-auth';
 import { fetchSocialPerformance } from '@/lib/social/performance';
 import {
   fetchChannelStats,
@@ -132,6 +133,9 @@ async function fetchChannelData(
 }
 
 export async function GET(req: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   const days = Number(req.nextUrl.searchParams.get('days') ?? '30');
   const channels = await getChannelConfigs();
   const socialPerformance = fetchSocialPerformance();
@@ -190,7 +194,7 @@ export async function GET(req: NextRequest) {
     };
 
     return NextResponse.json(report, {
-      headers: { 'Cache-Control': 's-maxage=300, stale-while-revalidate=60' },
+      headers: { 'Cache-Control': 'private, max-age=300' },
     });
   } catch (error) {
     if (isYouTubeReauthError(error)) {

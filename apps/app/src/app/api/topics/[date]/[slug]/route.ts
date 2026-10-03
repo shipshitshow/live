@@ -1,5 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server';
 import { saveTopicUpdate } from '@/lib/livestreams-store';
+import { requireProducer } from '@/lib/producer-auth';
 import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
@@ -11,6 +12,9 @@ export async function PATCH(
   req: NextRequest,
   { params }: { params: Promise<{ date: string; slug: string }> },
 ) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isStorageWritable()) {
     return storageUnavailableResponse('topic changes');
   }

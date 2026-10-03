@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { Suspense } from 'react';
+import { requireProducerPage } from '@/lib/producer-auth';
 
 export const metadata: Metadata = {
   description: 'Authenticate with YouTube for Ship Shit Show.',
@@ -11,7 +12,8 @@ import { YouTubeAuthContentSkeleton } from '@/components/PageSkeletons';
 import { YouTubeAuthPageClient } from '@/components/YouTubeAuthPageClient';
 import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
 
-export default function YouTubeAuthPage() {
+export default async function YouTubeAuthPage() {
+  await requireProducerPage();
   if (!isYouTubeAuthEnabled()) {
     notFound();
   }

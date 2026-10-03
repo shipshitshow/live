@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { requireProducer } from '@/lib/producer-auth';
 import {
   getConfiguredChannelMeta,
   saveRefreshToken,
 } from '@/lib/youtube/token';
 
 export async function POST(req: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   let body: Record<string, string> = {};
   try {
     body = await req.json();

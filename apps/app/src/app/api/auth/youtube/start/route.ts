@@ -1,9 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { isYouTubeAuthEnabled } from '@/lib/dev-tools';
+import { requireProducer } from '@/lib/producer-auth';
 import {
   createOAuthState,
   OAUTH_STATE_COOKIE,
   OAUTH_STATE_MAX_AGE_SECONDS,
+  sanitizeNextPath,
 } from '@/lib/youtube/oauth-state';
 import {
   getConfiguredChannelMeta,
@@ -12,15 +14,16 @@ import {
 } from '@/lib/youtube/token';
 
 export async function GET(request: NextRequest) {
+  const producer = await requireProducer();
+  if (!producer.ok) return producer.response;
+
   if (!isYouTubeAuthEnabled()) {
     return NextResponse.json({ error: 'Not found' }, { status: 404 });
   }
 
   const { clientId, scopes } = getYouTubeOAuthConfig();
   const channel = request.nextUrl.searchParams.get('channel') || 'main';
-  const nextParam = request.nextUrl.searchParams.get('next') || '/';
-  // Only allow same-origin relative paths as the post-auth redirect target.
-  const next = nextParam.startsWith('/') ? nextParam : '/';
+  const next = sanitizeNextPath(request.nextUrl.searchParams.get('next'), '/');
   const allowedChannels = new Set(
     getConfiguredChannelMeta().map((item) => item.label),
   );
