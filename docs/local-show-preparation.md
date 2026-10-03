@@ -19,7 +19,7 @@ For an existing draft, pass the exact `revision` returned by preview rather than
 
 Local working records live in `apps/app/data/show-prep/` (ignored by Git). `SHOW_PREP_DIR` can select another local directory; use an absolute path. Publish selected reusable examples under `docs/show-prep/`. `DATA_DIR` overrides the existing topic directory.
 
-`--store local` disables Blob credentials for that command. `--store blob` requires an existing `BLOB_READ_WRITE_TOKEN` for the intended store and never falls back to local data. Do not put the token in a command, draft, Git commit or chat. This workflow does not fetch or change Vercel environment files. Blob drafts use `livestream/show-prep/<id>.json`. Blob topic context combines tracked baseline topics with stored topics and overrides, and fails on backend errors.
+`--store local` disables Blob credentials for that command. `--store blob` requires an existing `BLOB_READ_WRITE_TOKEN` for the intended store and never falls back to local data. Do not put the token in a command, draft, Git commit or chat. This workflow does not fetch or change Vercel environment files. Blob drafts use `livestream/show-prep/<id>.json`. Topic `context` combines tracked baseline topics with the Upstash Redis overlay (topics and overrides added in the app) when `PRODUCER_STORAGE=redis` and `KV_REST_API_URL`/`KV_REST_API_TOKEN` are set for the command, and fails on Redis read errors; without them it returns only the tracked baseline topics.
 
 These episode drafts are separate from the app's current topic cards. Saving a draft does not populate the cohost screen, edit historical topics, create a platform event or publish anything. Connecting episode drafts to that screen remains #57.
 

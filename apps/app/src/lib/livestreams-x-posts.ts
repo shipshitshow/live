@@ -10,21 +10,23 @@ import type {
   XPostTotals,
 } from '@shipshitshow/types';
 import { X_EPISODE_POST_SLOTS } from '@shipshitshow/types';
+import { getEpisodeXPostsFile } from '@/lib/livestreams-files';
+import { logError } from '@/lib/logger';
 import {
   createWritableStorageError,
-  isBlobPersistenceEnabled,
-  isReadOnlyVercelRuntime,
-  putBlobJson,
-  readBlobJson,
-} from '@/lib/blob-storage';
-import { getEpisodeXPostsFile } from '@/lib/livestreams-files';
+  getProducerStorageBackend,
+} from '@/lib/producer-storage';
+import {
+  readRedisJson,
+  readRedisJsonMany,
+  redisKey,
+  writeRedisJson,
+} from '@/lib/redis-storage';
 import {
   fetchXPostMetrics,
   hasXCredentials,
   parseXStatusId,
 } from '@/lib/social/x';
-
-const BLOB_X_POSTS_PREFIX = 'livestream/x-posts';
 
 const METRIC_KEYS = [
   'impressions',
@@ -58,8 +60,8 @@ interface StoredXEpisode {
   updated_at: string | null;
 }
 
-function getBlobXPostsPath(date: string): string {
-  return `${BLOB_X_POSTS_PREFIX}/${date}.json`;
+function getXPostsKey(date: string): string {
+  return redisKey('x-posts', date);
 }
 
 function emptyMetrics(): XPostMetrics {
@@ -149,12 +151,7 @@ function normalizeStoredEpisode(value: unknown): StoredXEpisode {
   };
 }
 
-async function readStoredEpisode(date: string): Promise<StoredXEpisode> {
-  if (isBlobPersistenceEnabled()) {
-    const blob = await readBlobJson<unknown>(getBlobXPostsPath(date));
-    return normalizeStoredEpisode(blob?.data);
-  }
-
+function readFilesystemEpisode(date: string): StoredXEpisode {
   try {
     const filePath = getEpisodeXPostsFile(date);
     if (!fs.existsSync(filePath)) return normalizeStoredEpisode(null);
@@ -166,16 +163,69 @@ async function readStoredEpisode(date: string): Promise<StoredXEpisode> {
   }
 }
 
+/** The Redis record wins; the repo file is the fallback, then empty slots. */
+async function readStoredEpisode(
+  date: string,
+  strict = false,
+): Promise<StoredXEpisode> {
+  if (getProducerStorageBackend() === 'redis') {
+    const stored = await readRedisJson<unknown>(getXPostsKey(date), { strict });
+    if (stored) return normalizeStoredEpisode(stored);
+  }
+
+  return readFilesystemEpisode(date);
+}
+
+/**
+ * One MGET for every requested date. `persistable` is false when Redis could
+ * not be read: the defaults render, but they must never be written back over
+ * data nobody could see.
+ */
+async function readStoredEpisodes(
+  dates: string[],
+): Promise<{ episodes: StoredXEpisode[]; persistable: boolean }> {
+  if (getProducerStorageBackend() !== 'redis') {
+    return {
+      episodes: dates.map(readFilesystemEpisode),
+      persistable: true,
+    };
+  }
+
+  let records: Array<unknown | null>;
+  try {
+    records = await readRedisJsonMany<unknown>(dates.map(getXPostsKey), {
+      strict: true,
+    });
+  } catch (error) {
+    logError('storage.redis_read_failed', error, { key: 'x-posts' });
+    return {
+      episodes: dates.map(readFilesystemEpisode),
+      persistable: false,
+    };
+  }
+
+  return {
+    episodes: dates.map((date, index) => {
+      const record = records[index];
+      return record
+        ? normalizeStoredEpisode(record)
+        : readFilesystemEpisode(date);
+    }),
+    persistable: true,
+  };
+}
+
 async function writeStoredEpisode(
   date: string,
   episode: StoredXEpisode,
 ): Promise<void> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError();
   }
 
-  if (isBlobPersistenceEnabled()) {
-    await putBlobJson(getBlobXPostsPath(date), episode);
+  if (backend === 'redis') {
+    await writeRedisJson(getXPostsKey(date), episode);
     return;
   }
 
@@ -192,7 +242,7 @@ async function persistQuietly(
   try {
     await writeStoredEpisode(date, episode);
   } catch {
-    // Read-only runtime or blob outage: metrics still render from memory.
+    // Read-only runtime or Redis outage: metrics still render from memory.
   }
 }
 
@@ -357,13 +407,13 @@ export async function listEpisodeXMetrics(
   options: EpisodeXMetricsOptions = {},
 ): Promise<XEpisodeMetrics[]> {
   const force = options.refresh === true;
-  const episodes = await Promise.all(
-    dates.map(async (date) => ({
-      date,
-      statusIds: new Map<string, string | null>(),
-      stored: await readStoredEpisode(date),
-    })),
-  );
+  const { episodes: storedEpisodes, persistable } =
+    await readStoredEpisodes(dates);
+  const episodes = dates.map((date, index) => ({
+    date,
+    statusIds: new Map<string, string | null>(),
+    stored: storedEpisodes[index],
+  }));
 
   const staleIds = new Set<string>();
   for (const episode of episodes) {
@@ -409,7 +459,7 @@ export async function listEpisodeXMetrics(
 
       if (changed) {
         episode.stored.updated_at = fetchedAt;
-        await persistQuietly(episode.date, episode.stored);
+        if (persistable) await persistQuietly(episode.date, episode.stored);
       }
     }
   }
@@ -442,7 +492,11 @@ export async function saveEpisodeXPosts(
   date: string,
   update: XEpisodeMetricsUpdate,
 ): Promise<XEpisodeMetrics> {
-  const stored = await readStoredEpisode(date);
+  if (getProducerStorageBackend() === 'read-only') {
+    throw createWritableStorageError();
+  }
+
+  const stored = await readStoredEpisode(date, true);
   const now = new Date().toISOString();
 
   for (const input of update.posts) {

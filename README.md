@@ -30,8 +30,11 @@ catalog entries when publishing episodes while YouTube OAuth is disconnected.
 
 `apps/app` is the producer dashboard: YouTube analytics (Data + Analytics APIs),
 comment triage with AI-drafted replies, livestream topic prep/kanban, and trend
-discovery. Auth is Clerk; caching/token storage is Vercel KV; livestream data is
-the local filesystem in dev and Vercel Blob in production.
+discovery. Auth is Clerk. Tokens, caches and every producer-edited record (topic
+overlays, drawings, distribution, LinkedIn/X metrics, leads) live in the attached
+Upstash Redis in production; in dev they are files under `apps/app/data`. Topic
+seeds and transcripts stay in the repo. `bun run storage:export --namespace
+production` prints the Redis data as JSON (read-only).
 
 ## Packages
 

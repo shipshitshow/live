@@ -11,15 +11,6 @@ import type {
 } from '@shipshitshow/types';
 import { CONTENT_FIELDS } from '@shipshitshow/types';
 import {
-  createWritableStorageError,
-  isBlobPersistenceEnabled,
-  isReadOnlyVercelRuntime,
-  listAllBlobs,
-  listBlobDates,
-  putBlobJson,
-  readBlobJson,
-} from './blob-storage';
-import {
   findTopicFile,
   getTopicDrawingFile,
   isTopicMarkdownFile,
@@ -29,14 +20,26 @@ import {
   extractLivestreamYouTubeUrl,
   extractVideoId,
 } from './livestreams-youtube';
+import { logError } from './logger';
+import {
+  createWritableStorageError,
+  getProducerStorageBackend,
+} from './producer-storage';
+import {
+  addRedisSetMember,
+  readRedisJson,
+  readRedisJsonMany,
+  readRedisSetMembers,
+  redisKey,
+  writeRedisJson,
+} from './redis-storage';
 
 const DATA_DIR =
   process.env.DATA_DIR || path.join(process.cwd(), 'data', 'livestream');
 const TRANSCRIPTS_DIR = path.join(process.cwd(), 'data', 'transcripts');
 const CLEAN_TRANSCRIPTS_DIR = path.join(TRANSCRIPTS_DIR, 'clean');
-const BLOB_TOPICS_PREFIX = 'livestream/topics';
-const BLOB_TOPIC_OVERRIDES_PREFIX = 'livestream/topic-overrides';
-const BLOB_DRAWINGS_PREFIX = 'livestream/drawings';
+const OVERLAY_SNAPSHOT_TTL_MS = 2000;
+const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 
 const EMPTY_GENERATED: TopicGeneratedContent = {
   linkedin_post: null,
@@ -53,6 +56,17 @@ interface StoredTopicOverride {
   generated?: Partial<TopicGeneratedContent>;
   status?: TopicStatus;
   thumbnail_prompt?: string | null;
+}
+
+/** Everything a producer added or changed for one date, in one Redis value. */
+interface TopicOverlay {
+  overrides: Record<string, StoredTopicOverride>;
+  topics: Record<string, Topic>;
+}
+
+interface StoredDrawing {
+  scene: Record<string, unknown>;
+  updatedAt: string;
 }
 
 export interface LivestreamHistoryItem {
@@ -89,16 +103,16 @@ export interface LivestreamArchiveItem {
   youtubeUrl: string | null;
 }
 
-function getBlobTopicPath(date: string, slug: string): string {
-  return `${BLOB_TOPICS_PREFIX}/${date}/${slug}.json`;
+function overlayDatesKey(): string {
+  return redisKey('topic-overlay-dates');
 }
 
-function getBlobTopicOverridePath(date: string, slug: string): string {
-  return `${BLOB_TOPIC_OVERRIDES_PREFIX}/${date}/${slug}.json`;
+function overlayKey(date: string): string {
+  return redisKey('topic-overlay', date);
 }
 
-function getBlobDrawingPath(date: string, slug: string): string {
-  return `${BLOB_DRAWINGS_PREFIX}/${date}/${slug}.json`;
+function drawingKey(date: string, slug: string): string {
+  return redisKey('drawing', date, slug);
 }
 
 function updateFrontmatterField(
@@ -416,57 +430,101 @@ function applyTopicUpdate(topic: Topic, updates: TopicUpdate): Topic {
   return nextTopic;
 }
 
-async function getBlobTopicOverridesForDate(
-  date: string,
-  strict = false,
-): Promise<Map<string, TopicUpdate>> {
-  const overrides = new Map<string, TopicUpdate>();
-  const blobs = await listAllBlobs(
-    `${BLOB_TOPIC_OVERRIDES_PREFIX}/${date}/`,
-    strict,
-  );
-
-  await Promise.all(
-    blobs.map(async ({ pathname }) => {
-      const result = await readBlobJson<StoredTopicOverride>(pathname, strict);
-      if (!result) return;
-
-      const slug = pathname
-        .split('/')
-        .pop()
-        ?.replace(/\.json$/, '');
-      if (!slug) return;
-
-      overrides.set(slug, result.data);
-    }),
-  );
-
-  return overrides;
+function normalizeOverlay(value: Partial<TopicOverlay> | null): TopicOverlay {
+  return { overrides: value?.overrides ?? {}, topics: value?.topics ?? {} };
 }
 
-async function getBlobTopicsForDate(
-  date: string,
-  strict = false,
-): Promise<Topic[]> {
-  const blobs = await listAllBlobs(`${BLOB_TOPICS_PREFIX}/${date}/`, strict);
-  const topics = await Promise.all(
-    blobs.map(async ({ pathname }) => {
-      const result = await readBlobJson<Topic>(pathname, strict);
-      return result?.data ?? null;
-    }),
+let overlaySnapshot: {
+  expiresAt: number;
+  promise: Promise<Map<string, TopicOverlay>>;
+} | null = null;
+
+/** Writes call this so the next read sees them instead of a 2-second-old snapshot. */
+export function clearTopicOverlayCache(): void {
+  overlaySnapshot = null;
+}
+
+/** One SMEMBERS plus one MGET loads every date's overlay. */
+async function loadOverlaySnapshotStrict(): Promise<Map<string, TopicOverlay>> {
+  const dates = (
+    await readRedisSetMembers(overlayDatesKey(), { strict: true })
+  ).filter((date) => DATE_PATTERN.test(date));
+  const documents = await readRedisJsonMany<Partial<TopicOverlay>>(
+    dates.map(overlayKey),
+    { strict: true },
   );
 
-  return topics.filter((topic): topic is Topic => topic !== null);
+  return new Map(
+    dates.map((date, index) => [date, normalizeOverlay(documents[index])]),
+  );
+}
+
+/**
+ * Non-strict snapshot for public and read paths, memoized briefly so one page
+ * render that asks for many dates costs two Redis commands. A failed load is
+ * logged, never cached, and reads as "no overlay".
+ */
+async function loadOverlaySnapshot(): Promise<Map<string, TopicOverlay>> {
+  const now = Date.now();
+  let entry = overlaySnapshot;
+  if (!entry || entry.expiresAt <= now) {
+    entry = {
+      expiresAt: now + OVERLAY_SNAPSHOT_TTL_MS,
+      promise: loadOverlaySnapshotStrict(),
+    };
+    overlaySnapshot = entry;
+  }
+
+  try {
+    return await entry.promise;
+  } catch (error) {
+    if (overlaySnapshot === entry) overlaySnapshot = null;
+    logError('storage.redis_read_failed', error, { key: 'topic-overlay' });
+    return new Map();
+  }
+}
+
+/** Strict read of one date's overlay, for read-modify-write paths. */
+async function readOverlayStrict(date: string): Promise<TopicOverlay> {
+  if (!DATE_PATTERN.test(date)) return normalizeOverlay(null);
+
+  return normalizeOverlay(
+    await readRedisJson<Partial<TopicOverlay>>(overlayKey(date), {
+      strict: true,
+    }),
+  );
+}
+
+function mergeTopics(date: string, overlay: TopicOverlay | undefined): Topic[] {
+  const merged = new Map<string, Topic>();
+
+  for (const topic of getFilesystemTopicsForDate(date)) {
+    merged.set(topic.slug, topic);
+  }
+
+  if (overlay) {
+    for (const topic of Object.values(overlay.topics)) {
+      merged.set(topic.slug, topic);
+    }
+    for (const [slug, updates] of Object.entries(overlay.overrides)) {
+      const topic = merged.get(slug);
+      if (!topic) continue;
+      merged.set(slug, applyTopicUpdate(topic, updates));
+    }
+  }
+
+  return Array.from(merged.values()).sort((a, b) =>
+    a.fileName.localeCompare(b.fileName),
+  );
 }
 
 export async function listAvailableLivestreamDates(): Promise<string[]> {
   const dates = new Set<string>(listFilesystemDates());
 
-  for (const date of await listBlobDates(BLOB_TOPICS_PREFIX)) {
-    dates.add(date);
-  }
-  for (const date of await listBlobDates(BLOB_TOPIC_OVERRIDES_PREFIX)) {
-    dates.add(date);
+  if (getProducerStorageBackend() === 'redis') {
+    for (const date of (await loadOverlaySnapshot()).keys()) {
+      dates.add(date);
+    }
   }
 
   return Array.from(dates).sort((a, b) => b.localeCompare(a));
@@ -694,30 +752,23 @@ export async function getTopicsForArchive(
   return getTopicsForDate(archive?.topicDate ?? fallbackDate);
 }
 
+/**
+ * Repo seed, then the Redis overlay topic for that slug, then its override.
+ * `strict` reads the overlay fresh and throws if Redis cannot be read, so a
+ * caller about to write never builds on an empty fallback.
+ */
 export async function getTopicsForDate(
   date: string,
   strict = false,
 ): Promise<Topic[]> {
-  const merged = new Map<string, Topic>();
-
-  for (const topic of getFilesystemTopicsForDate(date)) {
-    merged.set(topic.slug, topic);
+  if (getProducerStorageBackend() !== 'redis') {
+    return mergeTopics(date, undefined);
   }
 
-  for (const topic of await getBlobTopicsForDate(date, strict)) {
-    merged.set(topic.slug, topic);
-  }
-
-  const overrides = await getBlobTopicOverridesForDate(date, strict);
-  for (const [slug, updates] of overrides) {
-    const topic = merged.get(slug);
-    if (!topic) continue;
-    merged.set(slug, applyTopicUpdate(topic, updates));
-  }
-
-  return Array.from(merged.values()).sort((a, b) =>
-    a.fileName.localeCompare(b.fileName),
-  );
+  const overlay = strict
+    ? await readOverlayStrict(date)
+    : (await loadOverlaySnapshot()).get(date);
+  return mergeTopics(date, overlay);
 }
 
 export async function getTopicBySlug(
@@ -732,7 +783,7 @@ export async function readTopicRaw(
   date: string,
   slug: string,
 ): Promise<string | null> {
-  if (!isBlobPersistenceEnabled()) {
+  if (getProducerStorageBackend() !== 'redis') {
     const filePath = findTopicFile(slug, date);
     if (!filePath) return null;
     return fs.readFileSync(filePath, 'utf-8');
@@ -742,16 +793,26 @@ export async function readTopicRaw(
   return topic ? topicToMarkdown(topic) : null;
 }
 
+async function writeOverlay(date: string, overlay: TopicOverlay) {
+  try {
+    await writeRedisJson(overlayKey(date), overlay);
+    await addRedisSetMember(overlayDatesKey(), date);
+  } finally {
+    clearTopicOverlayCache();
+  }
+}
+
 export async function saveTopicUpdate(
   date: string,
   slug: string,
   updates: TopicUpdate,
 ): Promise<boolean> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError('livestream');
   }
 
-  if (!isBlobPersistenceEnabled()) {
+  if (backend === 'filesystem') {
     const filePath = findTopicFile(slug, date);
     if (!filePath) return false;
 
@@ -781,24 +842,29 @@ export async function saveTopicUpdate(
     return true;
   }
 
-  const topic = await getTopicBySlug(date, slug);
+  if (!DATE_PATTERN.test(date)) return false;
+
+  const overlay = await readOverlayStrict(date);
+  const topic = mergeTopics(date, overlay).find(
+    (candidate) => candidate.slug === slug,
+  );
   if (!topic) return false;
 
-  const current =
-    (
-      await readBlobJson<StoredTopicOverride>(
-        getBlobTopicOverridePath(date, slug),
-      )
-    )?.data ?? {};
-
-  await putBlobJson(getBlobTopicOverridePath(date, slug), {
-    ...current,
-    ...updates,
-    generated: {
-      ...(current.generated ?? {}),
-      ...(updates.generated ?? {}),
+  const current = overlay.overrides[slug] ?? {};
+  await writeOverlay(date, {
+    ...overlay,
+    overrides: {
+      ...overlay.overrides,
+      [slug]: {
+        ...current,
+        ...updates,
+        generated: {
+          ...(current.generated ?? {}),
+          ...(updates.generated ?? {}),
+        },
+      } satisfies StoredTopicOverride,
     },
-  } satisfies StoredTopicOverride);
+  });
 
   return true;
 }
@@ -810,16 +876,14 @@ export async function createTopic(input: {
   source: string;
   title: string;
 }): Promise<{ fileName: string; slug: string; status: TopicStatus }> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError('livestream');
   }
 
-  const topics = await getTopicsForDate(input.date);
-  const nextNum = topics.length + 1;
-  const padded = String(nextNum).padStart(2, '0');
-  const fileName = `topic-${padded}-${input.slug}.md`;
-
-  if (!isBlobPersistenceEnabled()) {
+  if (backend === 'filesystem') {
+    const topics = await getTopicsForDate(input.date);
+    const fileName = buildTopicFileName(topics.length + 1, input.slug);
     const dir = path.join(DATA_DIR, input.date);
     if (!fs.existsSync(dir)) {
       fs.mkdirSync(dir, { recursive: true });
@@ -844,6 +908,15 @@ ${input.content}
     return { fileName, slug: input.slug, status: 'backlog' };
   }
 
+  if (!DATE_PATTERN.test(input.date)) {
+    throw new Error('Topic date must be YYYY-MM-DD');
+  }
+
+  const overlay = await readOverlayStrict(input.date);
+  const fileName = buildTopicFileName(
+    mergeTopics(input.date, overlay).length + 1,
+    input.slug,
+  );
   const topic: Topic = {
     announcement_tweet: null,
     content: input.content,
@@ -857,39 +930,39 @@ ${input.content}
     title: input.title,
   };
 
-  await putBlobJson(getBlobTopicPath(input.date, input.slug), topic);
+  await writeOverlay(input.date, {
+    ...overlay,
+    topics: { ...overlay.topics, [input.slug]: topic },
+  });
   return { fileName, slug: input.slug, status: 'backlog' };
+}
+
+function buildTopicFileName(position: number, slug: string): string {
+  return `topic-${String(position).padStart(2, '0')}-${slug}.md`;
 }
 
 export async function readTopicDrawing(
   date: string,
   slug: string,
 ): Promise<TopicDrawingResponse> {
-  if (!isBlobPersistenceEnabled()) {
-    const drawingFile = getTopicDrawingFile(slug, date);
-    if (!drawingFile || !fs.existsSync(drawingFile)) {
-      return { scene: null, updatedAt: null };
+  if (getProducerStorageBackend() === 'redis') {
+    const stored = await readRedisJson<StoredDrawing>(drawingKey(date, slug));
+    if (stored) {
+      return { scene: stored.scene, updatedAt: stored.updatedAt };
     }
-
-    const raw = fs.readFileSync(drawingFile, 'utf-8');
-    const stat = fs.statSync(drawingFile);
-
-    return {
-      scene: JSON.parse(raw) as Record<string, unknown>,
-      updatedAt: stat.mtime.toISOString(),
-    };
   }
 
-  const drawing = await readBlobJson<Record<string, unknown>>(
-    getBlobDrawingPath(date, slug),
-  );
-  if (!drawing) {
+  const drawingFile = getTopicDrawingFile(slug, date);
+  if (!drawingFile || !fs.existsSync(drawingFile)) {
     return { scene: null, updatedAt: null };
   }
 
+  const raw = fs.readFileSync(drawingFile, 'utf-8');
+  const stat = fs.statSync(drawingFile);
+
   return {
-    scene: drawing.data,
-    updatedAt: drawing.updatedAt,
+    scene: JSON.parse(raw) as Record<string, unknown>,
+    updatedAt: stat.mtime.toISOString(),
   };
 }
 
@@ -898,11 +971,12 @@ export async function saveTopicDrawing(
   slug: string,
   content: string,
 ): Promise<string> {
-  if (isReadOnlyVercelRuntime()) {
+  const backend = getProducerStorageBackend();
+  if (backend === 'read-only') {
     throw createWritableStorageError('livestream');
   }
 
-  if (!isBlobPersistenceEnabled()) {
+  if (backend === 'filesystem') {
     const drawingFile = getTopicDrawingFile(slug, date);
     if (!drawingFile) {
       throw new Error('Topic not found');
@@ -913,6 +987,10 @@ export async function saveTopicDrawing(
     return new Date().toISOString();
   }
 
-  await putBlobJson(getBlobDrawingPath(date, slug), JSON.parse(content));
-  return new Date().toISOString();
+  const updatedAt = new Date().toISOString();
+  await writeRedisJson(drawingKey(date, slug), {
+    scene: JSON.parse(content),
+    updatedAt,
+  } satisfies StoredDrawing);
+  return updatedAt;
 }

@@ -30,7 +30,7 @@ logs/
 apps/app/data/youtube-tokens.json
 apps/app/data/youtube-cache/
 
-# lead log (contact details — dev entries stay local, prod lives in Vercel Blob)
+# lead log (contact details — dev entries stay local, prod lives in Upstash Redis)
 apps/app/data/leads/
 
 # Local working show drafts; share selected examples under docs/show-prep/.

@@ -10,6 +10,7 @@ import {
   readShowPrep,
   saveShowPrep,
 } from '../show-prep-store';
+import { installFakeRedis } from './fake-redis';
 
 const draft: ShowPrep = {
   description: 'Compare completed work and the checks behind it.',
@@ -121,17 +122,17 @@ test('Blob storage never falls back to a local draft when credentials are missin
 });
 
 test('strict topic context reports backend failures instead of returning a misleading empty episode', async () => {
-  process.env.BLOB_READ_WRITE_TOKEN = 'test-only';
-  const listSpy = spyOn(blob, 'list').mockRejectedValue(
-    new Error('backend unavailable'),
-  );
+  const harness = installFakeRedis();
   try {
+    harness.redis.failNext('get');
     await expect(getTopicsForDate('2099-01-01', true)).rejects.toThrow(
-      'backend unavailable',
+      'Redis read failed',
     );
+
+    harness.redis.failNext('smembers');
     expect(await getTopicsForDate('2099-01-01')).toEqual([]);
   } finally {
-    listSpy.mockRestore();
+    harness.restore();
   }
 });
 

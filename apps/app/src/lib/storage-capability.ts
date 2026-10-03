@@ -8,9 +8,14 @@ import type { ErrorResponse } from '@shipshitshow/types';
  */
 
 export const STORAGE_UNAVAILABLE_CODE = 'storage_unavailable';
+export const STORAGE_WRITE_FAILED_CODE = 'storage_write_failed';
 
 export interface StorageUnavailableResponse extends ErrorResponse {
   code: typeof STORAGE_UNAVAILABLE_CODE;
+}
+
+export interface StorageWriteFailedResponse extends ErrorResponse {
+  code: typeof STORAGE_WRITE_FAILED_CODE;
 }
 
 export function readOnlyStorageMessage(subject: string): string {

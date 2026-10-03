@@ -7,9 +7,11 @@ import {
   saveLinkedInPosts,
 } from '@/lib/linkedin-metrics-store';
 import { logError, logEvent } from '@/lib/logger';
+import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
   storageUnavailableResponse,
+  storageWriteFailedResponse,
 } from '@/lib/storage-capability-server';
 
 /**
@@ -90,6 +92,9 @@ export async function PUT(
     return NextResponse.json({ posts: saved });
   } catch (error) {
     logError('api.distribution.linkedin_save_failed', error, { date });
+    if (error instanceof StorageWriteError) {
+      return storageWriteFailedResponse('LinkedIn post metrics');
+    }
     return NextResponse.json(
       { error: 'Failed to save LinkedIn metrics' },
       { status: 500 },

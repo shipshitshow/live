@@ -5,9 +5,11 @@ import {
   getEpisodeXMetrics,
   saveEpisodeXPosts,
 } from '@/lib/livestreams-x-posts';
+import { StorageWriteError } from '@/lib/producer-storage';
 import {
   isStorageWritable,
   storageUnavailableResponse,
+  storageWriteFailedResponse,
 } from '@/lib/storage-capability-server';
 
 function parsePostInputs(value: unknown): XEpisodePostInput[] | null {
@@ -96,6 +98,9 @@ export async function PUT(
   try {
     return NextResponse.json(await saveEpisodeXPosts(date, { posts }));
   } catch (error) {
+    if (error instanceof StorageWriteError) {
+      return storageWriteFailedResponse('X post URLs and metrics');
+    }
     return NextResponse.json(
       {
         error:
