@@ -1,4 +1,5 @@
 import type { TrendItem } from '@shipshitshow/types';
+import { toPlainTextSummary } from './summary';
 
 const REDDIT_BASE = 'https://www.reddit.com';
 const DEFAULT_SUBREDDITS = [
@@ -88,7 +89,7 @@ function toTrendItem(post: RedditPost): TrendItem {
     score: post.score,
     source: 'reddit',
     subreddit: post.subreddit,
-    summary: post.selftext?.slice(0, 200) || undefined,
+    summary: toPlainTextSummary(post.selftext),
     thumbnail: pickThumbnail(post),
     timestamp: new Date(post.created_utc * 1000).toISOString(),
     title: post.title,

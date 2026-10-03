@@ -9,7 +9,8 @@
   "name": "@shipshitshow/talking-points",
   "private": true,
   "scripts": {
-    "check:types": "tsc --noEmit"
+    "check:types": "tsc --noEmit",
+    "test": "bun test src"
   },
   "types": "./src/index.ts",
   "version": "0.1.0"

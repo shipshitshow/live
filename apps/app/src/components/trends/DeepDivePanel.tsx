@@ -23,6 +23,8 @@ const SOURCE_BADGES: Record<TrendSource, string> = {
 interface DeepDivePanelProps {
   activeItem: TrendItem | null;
   activeSelected: boolean;
+  addedIds: ReadonlySet<string>;
+  adding: boolean;
   items: TrendItem[];
   loading: boolean;
   query: string | null;
@@ -33,6 +35,8 @@ interface DeepDivePanelProps {
 export function DeepDivePanel({
   activeItem,
   activeSelected,
+  addedIds,
+  adding,
   items,
   loading,
   query,
@@ -128,13 +132,13 @@ export function DeepDivePanel({
               <h4 className="text-[10px] font-medium text-text-secondary uppercase tracking-widest">
                 Preview
               </h4>
-              <p className="text-sm text-text-secondary leading-relaxed">
+              <p className="text-sm text-text-secondary leading-relaxed whitespace-pre-line break-words">
                 {activeItem.summary ||
                   'No inline preview for this source. Open the original content to read the full post.'}
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <a
                 href={activeItem.url}
                 target="_blank"
@@ -146,10 +150,15 @@ export function DeepDivePanel({
               <Button
                 type="button"
                 onClick={() => onAddToLivestream(activeItem)}
+                disabled={adding || addedIds.has(activeItem.id)}
                 size="sm"
                 className="rounded-md bg-accent-red/10 text-[10px] text-accent-red hover:bg-accent-red/20 hover:text-accent-red"
               >
-                + Livestream
+                {addedIds.has(activeItem.id)
+                  ? 'Added'
+                  : adding
+                    ? 'Adding...'
+                    : '+ Livestream'}
               </Button>
             </div>
           </div>
@@ -157,7 +166,7 @@ export function DeepDivePanel({
       ) : (
         <div className="flex flex-col items-center justify-center h-full text-center py-24">
           <p className="text-sm text-text-muted">
-            Click a trend to preview it here
+            Choose a trend to preview it here
           </p>
           <p className="text-xs text-text-muted mt-1">
             {query
@@ -186,6 +195,8 @@ export function DeepDivePanel({
                     selected={false}
                     onToggle={() => {}}
                     compact
+                    added={addedIds.has(item.id)}
+                    adding={adding}
                     onAddToLivestream={onAddToLivestream}
                   />
                 ))}
