@@ -25,6 +25,7 @@
         "OPENROUTER_API_KEY",
         "OPENROUTER_MODEL",
         "PIPELINE_API_URL",
+        "PRODUCER_CLERK_USER_IDS",
         "POSTHOG_API_KEY",
         "POSTHOG_HOST",
         "POSTHOG_PROJECT_ID",
