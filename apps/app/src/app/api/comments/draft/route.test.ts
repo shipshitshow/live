@@ -16,14 +16,14 @@ const realFetch = globalThis.fetch;
 let savedKey: string | undefined;
 
 beforeEach(() => {
-  savedKey = process.env.OPENAI_API_KEY;
-  delete process.env.OPENAI_API_KEY;
+  savedKey = process.env.OPENROUTER_API_KEY;
+  delete process.env.OPENROUTER_API_KEY;
 });
 
 afterEach(() => {
   globalThis.fetch = realFetch;
-  if (savedKey === undefined) delete process.env.OPENAI_API_KEY;
-  else process.env.OPENAI_API_KEY = savedKey;
+  if (savedKey === undefined) delete process.env.OPENROUTER_API_KEY;
+  else process.env.OPENROUTER_API_KEY = savedKey;
 });
 
 function post(body: unknown) {
@@ -41,7 +41,7 @@ describe('/api/comments/draft', () => {
     expect(res.status).toBe(200);
     const data = await res.json();
     expect(data.available).toBe(false);
-    expect(data.missing).toEqual(['OPENAI_API_KEY']);
+    expect(data.missing).toEqual(['OPENROUTER_API_KEY']);
   });
 
   test('POST returns a structured 503 when the provider is not configured', async () => {
@@ -50,11 +50,11 @@ describe('/api/comments/draft', () => {
     const data = await res.json();
     expect(data.code).toBe('draft_not_configured');
     expect(data.error).toBeString();
-    expect(data.hint).toContain('OPENAI_API_KEY');
+    expect(data.hint).toContain('OPENROUTER_API_KEY');
   });
 
   test('POST surfaces a sanitized provider failure', async () => {
-    process.env.OPENAI_API_KEY = FIXTURE_CREDENTIAL;
+    process.env.OPENROUTER_API_KEY = FIXTURE_CREDENTIAL;
     globalThis.fetch = (async () =>
       new Response(
         JSON.stringify({ error: { message: `Bad key ${FIXTURE_CREDENTIAL}` } }),

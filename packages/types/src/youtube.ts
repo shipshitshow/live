@@ -114,5 +114,4 @@ export interface CommentReplyDraftCapability {
   /** Server environment variables that must be set before drafts work. */
   missing: string[];
   model: string;
-  provider: 'openai' | 'openrouter' | 'custom';
 }
