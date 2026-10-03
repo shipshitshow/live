@@ -4,17 +4,13 @@ import type { VideoStats } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { useState } from 'react';
 import { formatNumber, formatWatchTime } from '@/lib/format';
-
-type SortKey =
-  | 'published_at'
-  | 'views'
-  | 'impressions'
-  | 'ctr'
-  | 'likes'
-  | 'comments'
-  | 'watch_time_minutes';
-
-const PAGE_SIZE = 10;
+import {
+  getAriaSort,
+  getVideoPageWindow,
+  sortVideos,
+  VIDEO_TABLE_PAGE_SIZE,
+  type VideoSortKey,
+} from '@/lib/video-table';
 
 const DATE_FORMATTER = new Intl.DateTimeFormat('en', {
   day: 'numeric',
@@ -34,27 +30,24 @@ export function VideoTable({
   videos: VideoStats[];
   showChannel?: boolean;
 }) {
-  const [sortKey, setSortKey] = useState<SortKey>('views');
+  const [sortKey, setSortKey] = useState<VideoSortKey>('views');
   const [desc, setDesc] = useState(true);
-  const [page, setPage] = useState(0);
+  const [requestedPage, setPage] = useState(0);
 
-  const sorted = [...videos].sort((a, b) => {
-    const aValue =
-      sortKey === 'published_at'
-        ? new Date(a.published_at).getTime()
-        : a[sortKey];
-    const bValue =
-      sortKey === 'published_at'
-        ? new Date(b.published_at).getTime()
-        : b[sortKey];
+  const sorted = sortVideos(videos, sortKey, desc);
+  const { end, page, start, total, totalPages } = getVideoPageWindow(
+    sorted.length,
+    requestedPage,
+  );
+  // A channel switch or refresh can shrink the dataset under the current
+  // page; keep stored state on the clamped page so Prev/Next stay valid.
+  if (page !== requestedPage) setPage(page);
+  const paged = sorted.slice(
+    page * VIDEO_TABLE_PAGE_SIZE,
+    (page + 1) * VIDEO_TABLE_PAGE_SIZE,
+  );
 
-    return desc ? bValue - aValue : aValue - bValue;
-  });
-
-  const totalPages = Math.ceil(sorted.length / PAGE_SIZE);
-  const paged = sorted.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
-
-  function handleSort(key: SortKey) {
+  function handleSort(key: VideoSortKey) {
     if (sortKey === key) setDesc((d) => !d);
     else {
       setSortKey(key);
@@ -63,7 +56,7 @@ export function VideoTable({
     setPage(0);
   }
 
-  const cols: { key: SortKey; label: string }[] = [
+  const cols: { key: VideoSortKey; label: string }[] = [
     { key: 'published_at', label: 'Date' },
     { key: 'views', label: 'Views' },
     { key: 'impressions', label: 'Impr.' },
@@ -98,15 +91,23 @@ export function VideoTable({
               {cols.map((col) => (
                 <th
                   key={col.key}
-                  className="text-right py-3 px-4 text-text-secondary font-medium text-xs uppercase tracking-wider cursor-pointer select-none hover:text-text-primary transition-colors"
-                  onClick={() => handleSort(col.key)}
+                  aria-sort={getAriaSort(sortKey === col.key, desc)}
+                  className="text-right py-3 px-4 text-text-secondary font-medium text-xs uppercase tracking-wider"
                 >
-                  {col.label}
-                  {sortKey === col.key && (
-                    <span className="ml-1 text-accent-red">
-                      {desc ? '↓' : '↑'}
-                    </span>
-                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => handleSort(col.key)}
+                    className="-mx-1 gap-0 rounded px-1 py-0 text-xs uppercase tracking-wider select-none hover:bg-transparent"
+                  >
+                    {col.label}
+                    {sortKey === col.key && (
+                      <span aria-hidden="true" className="ml-1 text-accent-red">
+                        {desc ? '↓' : '↑'}
+                      </span>
+                    )}
+                  </Button>
                 </th>
               ))}
             </tr>
@@ -179,12 +180,11 @@ export function VideoTable({
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-5 py-3 border-t border-surface-border">
           <span className="text-[11px] text-text-muted">
-            {page * PAGE_SIZE + 1}–
-            {Math.min((page + 1) * PAGE_SIZE, sorted.length)} of {sorted.length}
+            {start}–{end} of {total}
           </span>
           <div className="flex items-center gap-1">
             <Button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage(page - 1)}
               disabled={page === 0}
               size="sm"
               className="rounded bg-surface-elevated text-xs text-text-secondary hover:text-text-primary"
@@ -206,7 +206,7 @@ export function VideoTable({
               </Button>
             ))}
             <Button
-              onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+              onClick={() => setPage(page + 1)}
               disabled={page === totalPages - 1}
               size="sm"
               className="rounded bg-surface-elevated text-xs text-text-secondary hover:text-text-primary"
