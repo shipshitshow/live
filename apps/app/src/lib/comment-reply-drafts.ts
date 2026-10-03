@@ -1,10 +1,9 @@
+import type { CommentReplyDraftCapability } from '@shipshitshow/types';
+
 // OpenAI-compatible chat endpoint. Point OPENAI_BASE_URL at OpenRouter
 // (https://openrouter.ai/api/v1) or any compatible gateway; defaults to OpenAI.
-const API_BASE_URL = (
-  process.env.OPENAI_BASE_URL?.trim() || 'https://api.openai.com/v1'
-).replace(/\/+$/, '');
-const CHAT_COMPLETIONS_URL = `${API_BASE_URL}/chat/completions`;
-const IS_OPENROUTER = API_BASE_URL.includes('openrouter.ai');
+const DEFAULT_BASE_URL = 'https://api.openai.com/v1';
+const MAX_PROVIDER_MESSAGE_LENGTH = 200;
 
 interface DraftReplyInput {
   videoTitle: string;
@@ -17,26 +16,147 @@ interface DraftReplyPayload {
   drafts: string[];
 }
 
-function getOpenAIConfig() {
-  const apiKey = process.env.OPENAI_API_KEY;
+export type CommentDraftErrorCode =
+  | 'draft_not_configured'
+  | 'draft_provider_unauthorized'
+  | 'draft_provider_rate_limited'
+  | 'draft_provider_rejected'
+  | 'draft_provider_unavailable'
+  | 'draft_invalid_response';
+
+/** Safe to return to the client: messages never include raw provider bodies. */
+export class CommentDraftError extends Error {
+  constructor(
+    readonly code: CommentDraftErrorCode,
+    message: string,
+    readonly status: number,
+    readonly hint?: string,
+  ) {
+    super(message);
+    this.name = 'CommentDraftError';
+  }
+
+  get retryable(): boolean {
+    return this.code !== 'draft_not_configured';
+  }
+}
+
+// Read per call so the capability reflects the live server environment.
+function getProviderConfig() {
+  const baseUrl = (
+    process.env.OPENAI_BASE_URL?.trim() || DEFAULT_BASE_URL
+  ).replace(/\/+$/, '');
+  const isOpenRouter = baseUrl.includes('openrouter.ai');
+  const provider: CommentReplyDraftCapability['provider'] = isOpenRouter
+    ? 'openrouter'
+    : baseUrl === DEFAULT_BASE_URL
+      ? 'openai'
+      : 'custom';
   // On OpenRouter, model ids are provider-prefixed (e.g. google/gemini-2.0-flash-001).
   const model =
-    process.env.OPENAI_MODEL ??
-    (IS_OPENROUTER ? 'google/gemini-2.0-flash-001' : 'gpt-4o-mini');
-  if (!apiKey) throw new Error('OPENAI_API_KEY is not configured');
-  return { apiKey, model };
+    process.env.OPENAI_MODEL?.trim() ||
+    (isOpenRouter ? 'google/gemini-2.0-flash-001' : 'gpt-4o-mini');
+  const apiKey = process.env.OPENAI_API_KEY?.trim() || null;
+  return { apiKey, baseUrl, isOpenRouter, model, provider };
 }
+
+export function getCommentDraftCapability(): CommentReplyDraftCapability {
+  const { apiKey, model, provider } = getProviderConfig();
+  return {
+    available: Boolean(apiKey),
+    missing: apiKey ? [] : ['OPENAI_API_KEY'],
+    model,
+    provider,
+  };
+}
+
+/** Pull the provider's own message out of an error body, minus anything secret. */
+function sanitizeProviderMessage(body: string): string | null {
+  let message: string | undefined;
+  try {
+    const parsed = JSON.parse(body) as {
+      error?: { message?: unknown } | string;
+      message?: unknown;
+    };
+    const candidate =
+      typeof parsed.error === 'string'
+        ? parsed.error
+        : (parsed.error?.message ?? parsed.message);
+    if (typeof candidate === 'string') message = candidate;
+  } catch {
+    // Non-JSON bodies (HTML error pages, proxies) are never echoed.
+    return null;
+  }
+  if (!message?.trim()) return null;
+  const redacted = message
+    .replace(/Bearer\s+\S+/gi, 'Bearer [redacted]')
+    .replace(/\b(sk|pk|rk)-[A-Za-z0-9_*.-]{4,}/g, '[redacted key]')
+    .replace(/\s+/g, ' ')
+    .trim();
+  return redacted.length > MAX_PROVIDER_MESSAGE_LENGTH
+    ? `${redacted.slice(0, MAX_PROVIDER_MESSAGE_LENGTH - 1)}…`
+    : redacted;
+}
+
+function providerError(status: number, body: string): CommentDraftError {
+  const detail = sanitizeProviderMessage(body);
+  const withDetail = (hint: string) => (detail ? `${detail} ${hint}` : hint);
+
+  if (status === 401 || status === 403) {
+    return new CommentDraftError(
+      'draft_provider_unauthorized',
+      `The reply-draft provider rejected the API key (${status}).`,
+      502,
+      'Check OPENAI_API_KEY (and OPENAI_BASE_URL when using OpenRouter) in the server environment.',
+    );
+  }
+  if (status === 429) {
+    return new CommentDraftError(
+      'draft_provider_rate_limited',
+      'The reply-draft provider rate limit or quota was reached (429).',
+      429,
+      withDetail('Wait a moment and retry, or check the provider billing.'),
+    );
+  }
+  if (status >= 500) {
+    return new CommentDraftError(
+      'draft_provider_unavailable',
+      `The reply-draft provider is unavailable (${status}).`,
+      502,
+      'This is usually transient. Retry in a moment.',
+    );
+  }
+  return new CommentDraftError(
+    'draft_provider_rejected',
+    `The reply-draft provider rejected the request (${status}).`,
+    502,
+    withDetail(
+      'Check OPENAI_MODEL and OPENAI_BASE_URL in the server environment.',
+    ),
+  );
+}
+
+const invalidResponse = () =>
+  new CommentDraftError(
+    'draft_invalid_response',
+    'The model returned drafts in an unexpected format.',
+    502,
+    'Retry to generate a fresh set.',
+  );
 
 function extractJson(raw: string): DraftReplyPayload {
   const start = raw.indexOf('{');
   const end = raw.lastIndexOf('}');
   if (start === -1 || end === -1 || end <= start) {
-    throw new Error('AI response did not return JSON');
+    throw invalidResponse();
   }
 
-  const parsed = JSON.parse(
-    raw.slice(start, end + 1),
-  ) as Partial<DraftReplyPayload>;
+  let parsed: Partial<DraftReplyPayload>;
+  try {
+    parsed = JSON.parse(raw.slice(start, end + 1));
+  } catch {
+    throw invalidResponse();
+  }
   const drafts = Array.isArray(parsed.drafts)
     ? parsed.drafts.reduce<string[]>((acc, draft) => {
         if (typeof draft === 'string') {
@@ -48,7 +168,7 @@ function extractJson(raw: string): DraftReplyPayload {
     : [];
 
   if (drafts.length === 0) {
-    throw new Error('AI response did not include any drafts');
+    throw invalidResponse();
   }
 
   return { drafts: drafts.slice(0, 3) };
@@ -57,7 +177,15 @@ function extractJson(raw: string): DraftReplyPayload {
 export async function generateCommentReplyDrafts(
   input: DraftReplyInput,
 ): Promise<string[]> {
-  const { apiKey, model } = getOpenAIConfig();
+  const { apiKey, baseUrl, isOpenRouter, model } = getProviderConfig();
+  if (!apiKey) {
+    throw new CommentDraftError(
+      'draft_not_configured',
+      'Reply drafts are not configured on the server.',
+      503,
+      'Set OPENAI_API_KEY (optionally OPENAI_BASE_URL and OPENAI_MODEL) in the server environment and redeploy.',
+    );
+  }
   const prompt = [
     'You write reply drafts for the Ship Shit Show YouTube channel.',
     'Voice: sharp, founder-level, direct, high-signal, not corporate, not cringe, not needy.',
@@ -78,42 +206,56 @@ export async function generateCommentReplyDrafts(
     `Comment: ${input.commentText}`,
   ].join('\n');
 
-  const res = await fetch(CHAT_COMPLETIONS_URL, {
-    body: JSON.stringify({
-      messages: [
-        {
-          content:
-            'You generate concise YouTube creator replies and follow output format exactly.',
-          role: 'system',
-        },
-        { content: prompt, role: 'user' },
-      ],
-      model,
-      temperature: 0.8,
-    }),
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-      // Optional attribution for OpenRouter's dashboard/leaderboards.
-      ...(IS_OPENROUTER
-        ? {
-            'HTTP-Referer': 'https://show.shipshit.dev',
-            'X-Title': 'Ship Shit Show',
-          }
-        : {}),
-    },
-    method: 'POST',
-  });
-
-  if (!res.ok) {
-    const body = await res.text();
-    throw new Error(`OpenAI API ${res.status}: ${body}`);
+  let res: Response;
+  try {
+    res = await fetch(`${baseUrl}/chat/completions`, {
+      body: JSON.stringify({
+        messages: [
+          {
+            content:
+              'You generate concise YouTube creator replies and follow output format exactly.',
+            role: 'system',
+          },
+          { content: prompt, role: 'user' },
+        ],
+        model,
+        temperature: 0.8,
+      }),
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+        // Optional attribution for OpenRouter's dashboard/leaderboards.
+        ...(isOpenRouter
+          ? {
+              'HTTP-Referer': 'https://show.shipshit.dev',
+              'X-Title': 'Ship Shit Show',
+            }
+          : {}),
+      },
+      method: 'POST',
+    });
+  } catch {
+    throw new CommentDraftError(
+      'draft_provider_unavailable',
+      'Could not reach the reply-draft provider.',
+      502,
+      'This is usually transient. Retry in a moment.',
+    );
   }
 
-  const data = await res.json();
-  const content = data.choices?.[0]?.message?.content;
+  if (!res.ok) {
+    throw providerError(res.status, await res.text());
+  }
+
+  let content: unknown;
+  try {
+    const data = await res.json();
+    content = data.choices?.[0]?.message?.content;
+  } catch {
+    throw invalidResponse();
+  }
   if (typeof content !== 'string') {
-    throw new Error('OpenAI response did not include message content');
+    throw invalidResponse();
   }
 
   return extractJson(content).drafts;

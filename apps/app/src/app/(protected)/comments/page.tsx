@@ -5,7 +5,7 @@ export const metadata: Metadata = { title: 'Comments — Ship Shit Show' };
 
 export default function CommentsPage() {
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-full min-h-0 overflow-hidden">
       <CommentsView />
     </div>
   );

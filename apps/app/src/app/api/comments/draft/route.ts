@@ -1,5 +1,14 @@
+import type {
+  CommentReplyDraftCapability,
+  ErrorResponse,
+} from '@shipshitshow/types';
 import { type NextRequest, NextResponse } from 'next/server';
-import { generateCommentReplyDrafts } from '@/lib/comment-reply-drafts';
+import {
+  CommentDraftError,
+  generateCommentReplyDrafts,
+  getCommentDraftCapability,
+} from '@/lib/comment-reply-drafts';
+import { logError } from '@/lib/logger';
 
 const REQUIRED_FIELDS = [
   'videoTitle',
@@ -7,6 +16,12 @@ const REQUIRED_FIELDS = [
   'channelLabel',
   'authorDisplayName',
 ] as const;
+
+export async function GET() {
+  return NextResponse.json<CommentReplyDraftCapability>(
+    getCommentDraftCapability(),
+  );
+}
 
 export async function POST(req: NextRequest) {
   let body: unknown;
@@ -36,10 +51,21 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ drafts });
   } catch (e) {
-    const message =
-      e instanceof Error ? e.message : 'Failed to generate drafts';
-    // Missing API key is a server-config problem, not a client error.
-    const status = message.includes('OPENAI_API_KEY') ? 503 : 502;
-    return NextResponse.json({ error: message }, { status });
+    if (e instanceof CommentDraftError) {
+      return NextResponse.json<ErrorResponse>(
+        { code: e.code, error: e.message, hint: e.hint },
+        { status: e.status },
+      );
+    }
+    // Unknown failures may carry provider internals; log them, return a generic error.
+    logError('api.comments.draft_failed', e);
+    return NextResponse.json<ErrorResponse>(
+      {
+        code: 'draft_failed',
+        error: 'Failed to generate drafts.',
+        hint: 'Retry in a moment.',
+      },
+      { status: 502 },
+    );
   }
 }

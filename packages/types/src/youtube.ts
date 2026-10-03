@@ -91,6 +91,10 @@ export interface YouTubeCommentThread {
   likeCount: number;
   totalReplyCount: number;
   hasChannelReply: boolean;
+  /** Stable YouTube channel ID of the top-level comment's author. */
+  authorChannelId?: string | null;
+  /** Top-level comment written by one of the show's own channels. */
+  isOwnedComment?: boolean;
   canReply: boolean;
   viewerRating: string;
   replies: YouTubeCommentReply[];
@@ -103,4 +107,12 @@ export interface YouTubeCommentListResponse {
 
 export interface CommentReplyDraftResponse {
   drafts: string[];
+}
+
+export interface CommentReplyDraftCapability {
+  available: boolean;
+  /** Server environment variables that must be set before drafts work. */
+  missing: string[];
+  model: string;
+  provider: 'openai' | 'openrouter' | 'custom';
 }
