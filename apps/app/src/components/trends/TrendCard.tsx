@@ -1,24 +1,11 @@
 'use client';
 
-import type { TrendItem, TrendSource } from '@shipshitshow/types';
+import type { TrendItem } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { formatDistanceToNow } from 'date-fns';
 import { ArrowUpRight } from 'lucide-react';
 import Image from 'next/image';
-
-const SOURCE_COLORS: Record<TrendSource, string> = {
-  hackernews: 'bg-orange-500/20 text-orange-400',
-  reddit: 'bg-orange-600/20 text-orange-300',
-  x: 'bg-blue-400/20 text-blue-400',
-  youtube: 'bg-red-500/20 text-red-400',
-};
-
-const SOURCE_LABELS: Record<TrendSource, string> = {
-  hackernews: 'HN',
-  reddit: 'Reddit',
-  x: 'X',
-  youtube: 'YouTube',
-};
+import { SourceLogo } from './SourceLogo';
 
 interface TrendCardProps {
   item: TrendItem;
@@ -93,11 +80,7 @@ export function TrendCard({
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1.5">
-            <span
-              className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_COLORS[item.source]}`}
-            >
-              {SOURCE_LABELS[item.source]}
-            </span>
+            <SourceLogo source={item.source} />
             {item.subreddit && (
               <span className="text-[10px] font-mono text-text-muted">
                 r/{item.subreddit}
