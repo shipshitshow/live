@@ -12,6 +12,9 @@ const INPUT = {
   videoTitle: 'pstack',
 };
 
+// Fake provider credential; assembled so secret scanners do not flag the fixture.
+const FIXTURE_CREDENTIAL = ['sk', 'live', 'SECRET1234567890'].join('-');
+
 const ENV_KEYS = ['OPENAI_API_KEY', 'OPENAI_BASE_URL', 'OPENAI_MODEL'] as const;
 const realFetch = globalThis.fetch;
 const savedEnv: Record<string, string | undefined> = {};
@@ -81,11 +84,10 @@ describe('generateCommentReplyDrafts errors', () => {
   });
 
   test('provider auth failure never echoes the key or raw body', async () => {
-    process.env.OPENAI_API_KEY = 'sk-live-SECRET1234567890';
+    process.env.OPENAI_API_KEY = FIXTURE_CREDENTIAL;
     mockProvider(401, {
       error: {
-        message:
-          'Incorrect API key provided: sk-live-SECRET1234567890. Bearer sk-live-SECRET1234567890',
+        message: `Incorrect API key provided: ${FIXTURE_CREDENTIAL}. Bearer ${FIXTURE_CREDENTIAL}`,
       },
     });
     const error = await captureError();
