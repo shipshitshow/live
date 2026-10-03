@@ -27,6 +27,6 @@ describe('TrendFilters', () => {
   });
 
   test('the All chip stays a text label', () => {
-    expect(render()).toMatch(/>All<span[^>]*>9<\/span>/);
+    expect(render()).toMatch(/>All <span[^>]*>9<\/span>/);
   });
 });
