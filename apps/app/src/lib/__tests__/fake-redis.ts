@@ -1,7 +1,12 @@
 import { clearTopicOverlayCache } from '@/lib/livestreams-store';
-import { type RedisLike, setRedisClientForTests } from '@/lib/redis-storage';
+import {
+  type RedisChainLike,
+  type RedisLike,
+  setRedisClientForTests,
+} from '@/lib/redis-storage';
 
 type Method =
+  | 'exec'
   | 'get'
   | 'hget'
   | 'hgetall'
@@ -66,13 +71,7 @@ export class FakeRedis implements RedisLike {
   }
 
   mget<T extends unknown[]>(...keys: string[]): Promise<T> {
-    return this.run(
-      'mget',
-      () =>
-        keys.map((key) =>
-          this.strings.has(key) ? roundTrip(this.strings.get(key)) : null,
-        ) as unknown as T,
-    );
+    return this.run('mget', () => this.applyMget(keys) as T);
   }
 
   hget<T>(key: string, field: string): Promise<T | null> {
@@ -83,31 +82,76 @@ export class FakeRedis implements RedisLike {
   }
 
   hgetall<T>(key: string): Promise<Record<string, T> | null> {
-    return this.run('hgetall', () => {
-      const hash = this.hashes.get(key);
-      if (!hash || hash.size === 0) return null;
-      return roundTrip(Object.fromEntries(hash)) as Record<string, T>;
-    });
+    return this.run('hgetall', () => this.applyHgetall<T>(key));
   }
 
   hset(key: string, fields: Record<string, unknown>): Promise<unknown> {
-    return this.run('hset', () => {
-      const hash = this.hashes.get(key) ?? new Map<string, unknown>();
-      for (const [field, value] of Object.entries(fields)) {
-        hash.set(field, roundTrip(value));
-      }
-      this.hashes.set(key, hash);
-      return Object.keys(fields).length;
-    });
+    return this.run('hset', () => this.applyHset(key, fields));
   }
 
   sadd(key: string, ...members: string[]): Promise<unknown> {
-    return this.run('sadd', () => {
-      const set = this.sets.get(key) ?? new Set<string>();
-      for (const member of members) set.add(member);
-      this.sets.set(key, set);
-      return members.length;
-    });
+    return this.run('sadd', () => this.applySadd(key, members));
+  }
+
+  /** Commands queue locally; all apply on `exec()`, or none if it fails. */
+  multi(): RedisChainLike {
+    return this.chain();
+  }
+
+  pipeline(): RedisChainLike {
+    return this.chain();
+  }
+
+  private chain(): RedisChainLike {
+    const queued: Array<() => unknown> = [];
+    const chain: RedisChainLike = {
+      exec: () => this.run('exec', () => queued.map((apply) => apply())),
+      hgetall: (key) => {
+        queued.push(() => this.applyHgetall(key));
+        return chain;
+      },
+      hset: (key, fields) => {
+        queued.push(() => this.applyHset(key, fields));
+        return chain;
+      },
+      mget: (...keys) => {
+        queued.push(() => this.applyMget(keys));
+        return chain;
+      },
+      sadd: (key, ...members) => {
+        queued.push(() => this.applySadd(key, members));
+        return chain;
+      },
+    };
+    return chain;
+  }
+
+  private applyMget(keys: string[]): unknown[] {
+    return keys.map((key) =>
+      this.strings.has(key) ? roundTrip(this.strings.get(key)) : null,
+    );
+  }
+
+  private applyHgetall<T>(key: string): Record<string, T> | null {
+    const hash = this.hashes.get(key);
+    if (!hash || hash.size === 0) return null;
+    return roundTrip(Object.fromEntries(hash)) as Record<string, T>;
+  }
+
+  private applyHset(key: string, fields: Record<string, unknown>): number {
+    const hash = this.hashes.get(key) ?? new Map<string, unknown>();
+    for (const [field, value] of Object.entries(fields)) {
+      hash.set(field, roundTrip(value));
+    }
+    this.hashes.set(key, hash);
+    return Object.keys(fields).length;
+  }
+
+  private applySadd(key: string, members: string[]): number {
+    const set = this.sets.get(key) ?? new Set<string>();
+    for (const member of members) set.add(member);
+    this.sets.set(key, set);
+    return members.length;
   }
 
   smembers(key: string): Promise<string[]> {

@@ -26,11 +26,13 @@ import {
   getProducerStorageBackend,
 } from './producer-storage';
 import {
-  addRedisSetMember,
+  readRedisHash,
+  readRedisHashField,
   readRedisJson,
-  readRedisJsonMany,
+  readRedisJsonAndHashes,
   readRedisSetMembers,
   redisKey,
+  writeRedisHashFieldAndIndex,
   writeRedisJson,
 } from './redis-storage';
 
@@ -58,10 +60,20 @@ interface StoredTopicOverride {
   thumbnail_prompt?: string | null;
 }
 
-/** Everything a producer added or changed for one date, in one Redis value. */
-interface TopicOverlay {
+/**
+ * What producers added or changed for one date. Stored as a Redis hash with a
+ * `topic:{slug}` and an `override:{slug}` field each, so a write touches only
+ * its own field. The legacy whole-date JSON string has the same shape and is
+ * still read, but never written.
+ */
+interface OverlayLayer {
   overrides: Record<string, StoredTopicOverride>;
   topics: Record<string, Topic>;
+}
+
+interface TopicOverlay {
+  hash: OverlayLayer;
+  legacy: OverlayLayer;
 }
 
 interface StoredDrawing {
@@ -107,9 +119,16 @@ function overlayDatesKey(): string {
   return redisKey('topic-overlay-dates');
 }
 
-function overlayKey(date: string): string {
+function legacyOverlayKey(date: string): string {
   return redisKey('topic-overlay', date);
 }
+
+function overlayFieldsKey(date: string): string {
+  return redisKey('topic-overlay-fields', date);
+}
+
+const TOPIC_FIELD_PREFIX = 'topic:';
+const OVERRIDE_FIELD_PREFIX = 'override:';
 
 function drawingKey(date: string, slug: string): string {
   return redisKey('drawing', date, slug);
@@ -430,8 +449,26 @@ function applyTopicUpdate(topic: Topic, updates: TopicUpdate): Topic {
   return nextTopic;
 }
 
-function normalizeOverlay(value: Partial<TopicOverlay> | null): TopicOverlay {
-  return { overrides: value?.overrides ?? {}, topics: value?.topics ?? {} };
+function toOverlay(
+  legacy: Partial<OverlayLayer> | null,
+  fields: Record<string, unknown>,
+): TopicOverlay {
+  const hash: OverlayLayer = { overrides: {}, topics: {} };
+  for (const [field, value] of Object.entries(fields)) {
+    if (field.startsWith(TOPIC_FIELD_PREFIX)) {
+      hash.topics[field.slice(TOPIC_FIELD_PREFIX.length)] = value as Topic;
+    } else if (field.startsWith(OVERRIDE_FIELD_PREFIX)) {
+      hash.overrides[field.slice(OVERRIDE_FIELD_PREFIX.length)] =
+        value as StoredTopicOverride;
+    }
+  }
+  return {
+    hash,
+    legacy: {
+      overrides: legacy?.overrides ?? {},
+      topics: legacy?.topics ?? {},
+    },
+  };
 }
 
 let overlaySnapshot: {
@@ -444,24 +481,26 @@ export function clearTopicOverlayCache(): void {
   overlaySnapshot = null;
 }
 
-/** One SMEMBERS plus one MGET loads every date's overlay. */
+/** One SMEMBERS, then one pipelined request (MGET of legacy keys + HGETALL per date). */
 async function loadOverlaySnapshotStrict(): Promise<Map<string, TopicOverlay>> {
   const dates = (
     await readRedisSetMembers(overlayDatesKey(), { strict: true })
   ).filter((date) => DATE_PATTERN.test(date));
-  const documents = await readRedisJsonMany<Partial<TopicOverlay>>(
-    dates.map(overlayKey),
-    { strict: true },
-  );
+  const { hashes, json } = await readRedisJsonAndHashes<
+    Partial<OverlayLayer>,
+    unknown
+  >(dates.map(legacyOverlayKey), dates.map(overlayFieldsKey), {
+    strict: true,
+  });
 
   return new Map(
-    dates.map((date, index) => [date, normalizeOverlay(documents[index])]),
+    dates.map((date, index) => [date, toOverlay(json[index], hashes[index])]),
   );
 }
 
 /**
  * Non-strict snapshot for public and read paths, memoized briefly so one page
- * render that asks for many dates costs two Redis commands. A failed load is
+ * render that asks for many dates costs two Redis requests. A failed load is
  * logged, never cached, and reads as "no overlay".
  */
 async function loadOverlaySnapshot(): Promise<Map<string, TopicOverlay>> {
@@ -486,13 +525,15 @@ async function loadOverlaySnapshot(): Promise<Map<string, TopicOverlay>> {
 
 /** Strict read of one date's overlay, for read-modify-write paths. */
 async function readOverlayStrict(date: string): Promise<TopicOverlay> {
-  if (!DATE_PATTERN.test(date)) return normalizeOverlay(null);
+  if (!DATE_PATTERN.test(date)) return toOverlay(null, {});
 
-  return normalizeOverlay(
-    await readRedisJson<Partial<TopicOverlay>>(overlayKey(date), {
+  const [fields, legacy] = await Promise.all([
+    readRedisHash<unknown>(overlayFieldsKey(date), { strict: true }),
+    readRedisJson<Partial<OverlayLayer>>(legacyOverlayKey(date), {
       strict: true,
     }),
-  );
+  ]);
+  return toOverlay(legacy, fields);
 }
 
 function mergeTopics(date: string, overlay: TopicOverlay | undefined): Topic[] {
@@ -503,13 +544,18 @@ function mergeTopics(date: string, overlay: TopicOverlay | undefined): Topic[] {
   }
 
   if (overlay) {
-    for (const topic of Object.values(overlay.topics)) {
-      merged.set(topic.slug, topic);
+    const layers = [overlay.legacy, overlay.hash];
+    for (const layer of layers) {
+      for (const topic of Object.values(layer.topics)) {
+        merged.set(topic.slug, topic);
+      }
     }
-    for (const [slug, updates] of Object.entries(overlay.overrides)) {
-      const topic = merged.get(slug);
-      if (!topic) continue;
-      merged.set(slug, applyTopicUpdate(topic, updates));
+    for (const layer of layers) {
+      for (const [slug, updates] of Object.entries(layer.overrides)) {
+        const topic = merged.get(slug);
+        if (!topic) continue;
+        merged.set(slug, applyTopicUpdate(topic, updates));
+      }
     }
   }
 
@@ -793,10 +839,16 @@ export async function readTopicRaw(
   return topic ? topicToMarkdown(topic) : null;
 }
 
-async function writeOverlay(date: string, overlay: TopicOverlay) {
+/** One atomic HSET + SADD, so a failed write leaves neither the field nor the date index. */
+async function writeOverlayField(date: string, field: string, value: unknown) {
   try {
-    await writeRedisJson(overlayKey(date), overlay);
-    await addRedisSetMember(overlayDatesKey(), date);
+    await writeRedisHashFieldAndIndex(
+      overlayFieldsKey(date),
+      field,
+      value,
+      overlayDatesKey(),
+      date,
+    );
   } finally {
     clearTopicOverlayCache();
   }
@@ -850,21 +902,22 @@ export async function saveTopicUpdate(
   );
   if (!topic) return false;
 
-  const current = overlay.overrides[slug] ?? {};
-  await writeOverlay(date, {
-    ...overlay,
-    overrides: {
-      ...overlay.overrides,
-      [slug]: {
-        ...current,
-        ...updates,
-        generated: {
-          ...(current.generated ?? {}),
-          ...(updates.generated ?? {}),
-        },
-      } satisfies StoredTopicOverride,
+  // Only this slug's field is read and written; the legacy override (if any)
+  // keeps applying underneath it, so it never needs copying forward.
+  const current =
+    (await readRedisHashField<StoredTopicOverride>(
+      overlayFieldsKey(date),
+      `${OVERRIDE_FIELD_PREFIX}${slug}`,
+      { strict: true },
+    )) ?? {};
+  await writeOverlayField(date, `${OVERRIDE_FIELD_PREFIX}${slug}`, {
+    ...current,
+    ...updates,
+    generated: {
+      ...(current.generated ?? {}),
+      ...(updates.generated ?? {}),
     },
-  });
+  } satisfies StoredTopicOverride);
 
   return true;
 }
@@ -930,10 +983,11 @@ ${input.content}
     title: input.title,
   };
 
-  await writeOverlay(input.date, {
-    ...overlay,
-    topics: { ...overlay.topics, [input.slug]: topic },
-  });
+  await writeOverlayField(
+    input.date,
+    `${TOPIC_FIELD_PREFIX}${input.slug}`,
+    topic,
+  );
   return { fileName, slug: input.slug, status: 'backlog' };
 }
 
