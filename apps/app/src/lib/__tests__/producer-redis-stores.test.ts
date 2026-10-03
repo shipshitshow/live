@@ -567,7 +567,7 @@ describe('topic overlay', () => {
           'topic:shared-topic',
           { ...legacyTopic('shared-topic', 'Hash shared'), content: 'Hash' },
         ],
-        ['override:shared-topic', { status: 'recorded' }],
+        ['override:shared-topic', { status: 'in_progress' }],
       ]),
     );
 
@@ -576,7 +576,7 @@ describe('topic overlay', () => {
       const topics = await getTopicsForDate(DATE, strict);
       const shared = topics.find((topic) => topic.slug === 'shared-topic');
       expect(shared?.title).toBe('Hash shared');
-      expect(shared?.status).toBe('recorded');
+      expect(shared?.status).toBe('in_progress');
       const legacy = topics.find((topic) => topic.slug === 'legacy-topic');
       expect(legacy?.title).toBe('Legacy title');
       expect(legacy?.thumbnail_prompt).toBe('legacy prompt');
