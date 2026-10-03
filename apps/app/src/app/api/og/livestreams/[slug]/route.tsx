@@ -1,6 +1,10 @@
 import { ImageResponse } from 'next/og';
 import { todayLocalDate } from '@/lib/date';
-import { getTopicBySlug, resolveLivestreamDate } from '@/lib/livestreams-store';
+import {
+  getTopicsForDate,
+  resolveLivestreamDate,
+} from '@/lib/livestreams-store';
+import { getVisibleTopics } from '@/lib/livestreams-visibility';
 import { clampText, stripMarkdown } from '@/lib/text';
 
 export const runtime = 'nodejs';
@@ -21,7 +25,10 @@ export async function GET(
   const { searchParams } = new URL(request.url);
   const requestedDate = searchParams.get('date') || todayLocalDate();
   const resolvedDate = await resolveLivestreamDate(requestedDate);
-  const topic = await getTopicBySlug(resolvedDate, slug);
+  const topic = getVisibleTopics(
+    await getTopicsForDate(resolvedDate),
+    resolvedDate,
+  ).find((candidate) => candidate.slug === slug);
 
   const title = topic?.title || 'Ship Shit Show';
   const summary = clampText(

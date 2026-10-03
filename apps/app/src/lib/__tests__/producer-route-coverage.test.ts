@@ -19,7 +19,7 @@ function pathname(file: string): string {
 
 describe('producer route coverage', () => {
   for (const file of filesUnder(join(appRoot, 'api')).filter((path) =>
-    path.endsWith('/route.ts'),
+    /\/route\.tsx?$/.test(path),
   )) {
     const path = pathname(file);
     if (classifyPath(path) === 'public') continue;
