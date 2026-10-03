@@ -4,6 +4,7 @@ import type { TrendItem, TrendSource } from '@shipshitshow/types';
 import { Button } from '@shipshitshow/ui';
 import { formatDistanceToNow } from 'date-fns';
 import Image from 'next/image';
+import { SourceLogo } from './SourceLogo';
 import { TrendCard } from './TrendCard';
 
 const SOURCE_ORDER: TrendSource[] = ['hackernews', 'reddit', 'youtube', 'x'];
@@ -13,13 +14,6 @@ const SOURCE_LABELS: Record<TrendSource, string> = {
   x: 'X',
   youtube: 'YouTube',
 };
-const SOURCE_BADGES: Record<TrendSource, string> = {
-  hackernews: 'bg-orange-500/20 text-orange-400',
-  reddit: 'bg-orange-600/20 text-orange-300',
-  x: 'bg-blue-400/20 text-blue-400',
-  youtube: 'bg-red-500/20 text-red-400',
-};
-
 interface DeepDivePanelProps {
   activeItem: TrendItem | null;
   activeSelected: boolean;
@@ -73,11 +67,7 @@ export function DeepDivePanel({
           <div className="flex items-center justify-between gap-3 p-4 border-b border-surface-border">
             <div className="min-w-0">
               <div className="flex items-center gap-2 mb-1.5">
-                <span
-                  className={`text-[10px] font-mono font-medium px-1.5 py-0.5 rounded ${SOURCE_BADGES[activeItem.source]}`}
-                >
-                  {SOURCE_LABELS[activeItem.source]}
-                </span>
+                <SourceLogo source={activeItem.source} />
                 {activeItem.subreddit && (
                   <span className="text-[10px] font-mono text-text-muted">
                     r/{activeItem.subreddit}

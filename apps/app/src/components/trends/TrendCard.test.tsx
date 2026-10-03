@@ -64,3 +64,21 @@ describe('TrendCard preview control', () => {
     expect(markup).toContain('href="https://blog.google/gemini-4-argon"');
   });
 });
+
+describe('TrendCard source badge', () => {
+  test('shows the brand logo with the source name kept for assistive tech', () => {
+    const badge = render().match(
+      /<span[^>]*data-source-logo="hackernews"[\s\S]*?<\/span><\/span>/,
+    )?.[0];
+
+    expect(badge).toBeDefined();
+    expect(badge).toContain('<svg');
+    expect(badge).toContain('aria-hidden="true"');
+    expect(badge).toContain('title="Hacker News"');
+    expect(badge).toContain('<span class="sr-only">Hacker News</span>');
+  });
+
+  test('drops the visible text-only source badge', () => {
+    expect(render()).not.toMatch(/>HN<\/span>/);
+  });
+});
